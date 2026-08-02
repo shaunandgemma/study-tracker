@@ -36,7 +36,7 @@ function createQuestion(id) {
 const completeBank = Object.keys(QUESTION_DOMAIN_MAP).map(createQuestion);
 
 test('the primary-domain map covers the bank and has enough questions for every quota', () => {
-  assert.equal(completeBank.length, 150);
+  assert.equal(completeBank.length, 250);
 
   const poolCounts = completeBank.reduce((counts, question) => {
     const domainId = getPrimaryDomainIdForQuestion(question);
