@@ -20,6 +20,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { buildCompleteAttemptObject, generateAttemptPDF, exportAttemptJSON } from '../../utils/exportUtils';
+import ExplanationViewer from './ExplanationViewer';
 
 export const ExamResults = ({ attemptResult, onRetake, onChangeMode, isReadOnly = false, saveError = false }) => {
   const { activeExam, jumpToTopicChecklist, flagged } = useExam();
@@ -560,10 +561,7 @@ export const ExamResults = ({ attemptResult, onRetake, onChangeMode, isReadOnly 
                   </div>
 
                   {/* Rationale Explanation */}
-                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
-                    <strong className="text-indigo-400 block mb-1">Explanation Rationale:</strong>
-                    {q.explanation}
-                  </div>
+                  <ExplanationViewer explanation={q.explanation} optionMapping={q.optionMapping} />
 
                 </div>
               );

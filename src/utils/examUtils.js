@@ -81,7 +81,8 @@ export function shuffleQuestionOptions(question, random = Math.random) {
     ...question,
     options: newOptions,
     correctAnswer: newCorrectAnswer,
-    correctAnswers: newCorrectAnswers
+    correctAnswers: newCorrectAnswers,
+    optionMapping: origToNewMap
   };
 }
 

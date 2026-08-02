@@ -15,6 +15,7 @@ import {
   LogOut,
   AlertOctagon
 } from 'lucide-react';
+import ExplanationViewer from './ExplanationViewer';
 
 export const QuizEngine = ({ config, onFinishExam, onCancelExam }) => {
   const { activeExam, flagged, toggleFlag, activeExamId } = useExam();
@@ -340,10 +341,7 @@ export const QuizEngine = ({ config, onFinishExam, onCancelExam }) => {
                 </>
               )}
             </div>
-            <p className="text-xs sm:text-sm leading-relaxed text-slate-300 mt-2 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
-              <strong className="text-indigo-400 block mb-1">Explanation Rationale:</strong>
-              {currentQuestion.explanation}
-            </p>
+            <ExplanationViewer explanation={currentQuestion.explanation} optionMapping={currentQuestion.optionMapping} />
           </div>
         )}
 
