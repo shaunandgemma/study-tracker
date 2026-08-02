@@ -1,0 +1,1309 @@
+[
+  {
+    "id": "task-saa-ecr-store-secure-container-blueprints-with-amazon-ecr-001",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-ecr",
+    "title": "Store & Secure Container Blueprints with Amazon ECR",
+    "slug": "store-secure-container-blueprints-with-amazon-ecr",
+    "service": "Amazon ECR",
+    "feature": "Amazon ECR",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Create a private Amazon ECR repository with automated vulnerability scanning, KMS encryption at rest, and lifecycle management rules.",
+    "status": "published",
+    "tags": [
+      "Amazon ECR",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Amazon ECR (Elastic Container Registry)",
+        "body": "Fully managed Docker/OCI container image registry that stores, manages, and deploys container images securely."
+      },
+      {
+        "id": "concept-2",
+        "title": "Scan on Push Vulnerability Detection",
+        "body": "Automatically scans pushed container images for known OS and software vulnerabilities (CVEs) to prevent vulnerable images from deploying."
+      },
+      {
+        "id": "concept-3",
+        "title": "ECR Lifecycle Policies",
+        "body": "Automated rules that purge untagged images or old image tags after a specified number of days to control ECR storage costs."
+      },
+      {
+        "id": "concept-4",
+        "title": "KMS Encryption at Rest",
+        "body": "Encrypts container image layers at rest using AWS KMS customer managed keys (CMK) or default AWS managed keys."
+      },
+      {
+        "id": "concept-5",
+        "title": "ECR Repository Configuration Plan",
+        "body": "SettingLab valuePurposeRepository namesaa-ecr-app-repoPrivate container registryTag mutabilityMUTABLE (or IMMUTABLE)Prevent image tag overwritesScan configurationScan on push = EnabledAuto-detect software CVEsEncryption typeKMS (or AES-256)Encrypt container layers at restLifecycle policyExpire untagged images > 14 daysAuto-clean obsolete image storage"
+      }
+    ],
+    "whyItMatters": "This matters because SAA-C03 routinely tests container image vulnerability scanning, KMS encryption at rest, and automated lifecycle policies to control image storage costs.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Repository Name",
+        "value": "saa-ecr-app-repo"
+      },
+      {
+        "label": "Tag Mutability",
+        "value": "MUTABLE"
+      },
+      {
+        "label": "Scan Configuration",
+        "value": "Scan on push = Enabled"
+      },
+      {
+        "label": "Lifecycle Rule",
+        "value": "Expire untagged images older than 14 days"
+      }
+    ],
+    "costWarning": "Container image storage, scanning, replication and data-transfer charges may apply. Complete cleanup promptly after testing.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity ECR permissions: ecr:CreateRepository, ecr:PutImageScanningConfiguration, ecr:PutLifecyclePolicy, ecr:DescribeImageScanFindings Cleanup: ecr:DeleteRepository",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create a Private Amazon ECR Repository",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open Amazon ECR."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Choose Region us-east-1."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Choose Repositories -> Create repository."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Select Private visibility."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Set Repository name to saa-ecr-app-repo."
+          },
+          {
+            "id": "console-step-2-item-6",
+            "text": "Under Scan configuration, toggle Scan on push to Enabled."
+          },
+          {
+            "id": "console-step-2-item-7",
+            "text": "Under Encryption configuration, keep KMS or AES-256 enabled."
+          },
+          {
+            "id": "console-step-2-item-8",
+            "text": "Choose Create repository."
+          }
+        ],
+        "note": "Scan on push automatically triggers vulnerability scanning whenever a new image tag is pushed.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Configure ECR Lifecycle Policy Rules",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Select repository saa-ecr-app-repo -> Click Lifecycle policies in left sidebar."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Choose Create rule."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Set Rule description to Purge untagged images."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Set Image status to Untagged."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Set Match criteria to Since image pushed -> Set Count to 14 days."
+          },
+          {
+            "id": "console-step-3-item-6",
+            "text": "Choose Save."
+          }
+        ],
+        "note": "Lifecycle policies prevent unused untagged image layers from accumulating storage charges.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Authenticate Docker CLI and Push a Container Image",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open terminal and authenticate Docker to ECR: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin .dkr.ecr.us-east-1.amazonaws.com."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Pull a small public image: docker pull alpine:latest."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Tag the image: docker tag alpine:latest .dkr.ecr.us-east-1.amazonaws.com/saa-ecr-app-repo:v1."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Push the image: docker push .dkr.ecr.us-east-1.amazonaws.com/saa-ecr-app-repo:v1."
+          }
+        ],
+        "note": "Pushing the image automatically triggers the Scan on Push vulnerability scan.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Inspect Image Vulnerability Scanning Findings",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Return to Amazon ECR -> Select saa-ecr-app-repo."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Click on image tag v1."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Locate the Vulnerabilities section."
+          },
+          {
+            "id": "console-step-5-item-4",
+            "text": "Review vulnerability severity breakdown (Informational, Low, Medium, High, Critical)."
+          }
+        ],
+        "note": "ECR provides basic scanning (Clair engine) or enhanced scanning (Inspector integration).",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Select repository saa-ecr-app-repo -> Choose Delete."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Check Delete all images confirmation checkbox and click Delete."
+          }
+        ],
+        "note": null,
+        "warning": "Delete the repository to clean up all stored container images.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Set variables",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "REGION=us-east-1\nREPO_NAME=saa-ecr-app-repo"
+          }
+        ],
+        "note": "Sets CLI variable names.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      },
+      {
+        "id": "cli-step-3",
+        "number": 3,
+        "title": "Create ECR Private Repository with Scan on Push",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-3-cmd-1",
+            "language": "bash",
+            "text": "aws ecr create-repository --repository-name $REPO_NAME --image-scanning-configuration scanOnPush=true --region $REGION"
+          }
+        ],
+        "note": "Creates repository with automatic scanning enabled.",
+        "warning": null,
+        "expectedResult": "CLI command step 3 executed successfully."
+      },
+      {
+        "id": "cli-step-4",
+        "number": 4,
+        "title": "Configure ECR Lifecycle Policy",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-4-cmd-1",
+            "language": "bash",
+            "text": "aws ecr put-lifecycle-policy --repository-name $REPO_NAME --lifecycle-policy-text '{\"rules\":[{\"rulePriority\":1,\"description\":\"Expire untagged images\",\"selection\":{\"tagStatus\":\"untagged\",\"countType\":\"sinceImagePushed\",\"countUnit\":\"days\",\"countNumber\":14},\"action\":{\"type\":\"expire\"}}]}' --region $REGION"
+          }
+        ],
+        "note": "Applies automatic expiration rule for untagged images.",
+        "warning": null,
+        "expectedResult": "CLI command step 4 executed successfully."
+      },
+      {
+        "id": "cli-step-5",
+        "number": 5,
+        "title": "Describe Image Vulnerability Scan Findings",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-5-cmd-1",
+            "language": "bash",
+            "text": "aws ecr describe-image-scan-findings --repository-name $REPO_NAME --image-id imageTag=v1 --region $REGION"
+          }
+        ],
+        "note": "Displays CVE vulnerability report findings.",
+        "warning": null,
+        "expectedResult": "CLI command step 5 executed successfully."
+      },
+      {
+        "id": "cli-step-6",
+        "number": 6,
+        "title": "Delete ECR Repository and Images",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-6-cmd-1",
+            "language": "bash",
+            "text": "aws ecr delete-repository --repository-name $REPO_NAME --force --region $REGION"
+          }
+        ],
+        "note": "Deletes ECR repository and all contained images.",
+        "warning": "Destructive Command Warning: This command permanently deletes container repositories, images, ECS services, task definitions, or clusters.",
+        "expectedResult": "CLI command step 6 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon ECR configuration verified in Amazon ECR."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Delete all container images from the ECR repository."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Delete the Amazon ECR repository."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Amazon ECR Overview",
+        "body": "Fully managed container image registry supporting private/public repos, KMS encryption, vulnerability scanning, and lifecycle rules."
+      },
+      {
+        "id": "cs-2",
+        "title": "Basic vs Enhanced Scanning",
+        "body": "Basic Scanning: Free, powered by Clair engine on push. Enhanced Scanning: Powered by Amazon Inspector for continuous automated scanning."
+      },
+      {
+        "id": "cs-3",
+        "title": "Tag Mutability",
+        "body": "IMMUTABLE prevents image tag overwriting (secures production deployments). MUTABLE allows pushing updated images under the same tag."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Docker Push Access Denied",
+        "body": "Run `aws ecr get-login-password` to refresh your temporary 12-hour Docker CLI authentication token."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "ECR Lifecycle vs S3 Lifecycle",
+        "body": "ECR Lifecycle policies control container image versions/tags. S3 Lifecycle policies control S3 object storage classes."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon ECR concepts and container orchestration patterns in Amazon ECR."
+      }
+    ],
+    "memoryHook": "ECR Stores images | Scan on Push Finds vulnerabilities | Lifecycle Rules Clear clutter",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-fargate-serverless-container-microservice-with-aws-fargate-alb-002",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-fargate",
+    "title": "Serverless Container Microservice with AWS Fargate & ALB",
+    "slug": "serverless-container-microservice-with-aws-fargate-alb",
+    "service": "AWS Fargate",
+    "feature": "AWS Fargate",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Deploy a load-balanced, auto-scaling web service on Amazon ECS using the serverless Fargate launch type.",
+    "status": "published",
+    "tags": [
+      "AWS Fargate",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Amazon ECS Fargate Launch Type",
+        "body": "Serverless compute engine for containers where AWS provisions and manages underlying EC2 instances, OS patching, and server capacity."
+      },
+      {
+        "id": "concept-2",
+        "title": "awsvpc Network Mode",
+        "body": "Assigns a dedicated Elastic Network Interface (ENI) and private IP address to every Fargate task for native VPC security group isolation."
+      },
+      {
+        "id": "concept-3",
+        "title": "ECS Task Definition",
+        "body": "JSON blueprint specifying container images, task-level CPU/Memory allocations, port mappings, environment variables, and logging."
+      },
+      {
+        "id": "concept-4",
+        "title": "ALB Integration & Target Tracking Scaling",
+        "body": "ALB automatically routes traffic to Fargate task IP addresses. Target Tracking Auto Scaling dynamically adjusts task count based on CPU/RAM metrics."
+      },
+      {
+        "id": "concept-5",
+        "title": "Fargate Microservice Deployment Plan",
+        "body": "ComponentLab valuePurposeClustersaa-fargate-clusterECS cluster for serverless tasksTask definitionsaa-fargate-task-def (0.25 vCPU / 512 MB)NGINX container specNetwork modeawsvpcDedicated ENI per taskLoad balancersaa-fargate-alb (Port 80)Distributes HTTP web trafficAuto scalingTarget Tracking (CPU > 70%)Dynamic task scaling (1–4 tasks)"
+      }
+    ],
+    "whyItMatters": "This matters because Fargate + ALB + Target Tracking is the single most tested container architecture on SAA-C03 when minimizing operational overhead is required.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Cluster Name",
+        "value": "saa-fargate-cluster"
+      },
+      {
+        "label": "Task CPU / Memory",
+        "value": "0.25 vCPU / 512 MB"
+      },
+      {
+        "label": "Network Mode",
+        "value": "awsvpc"
+      },
+      {
+        "label": "Container Image",
+        "value": "public.ecr.aws/docker/library/nginx:latest"
+      }
+    ],
+    "costWarning": "Fargate CPU, memory, ephemeral storage, networking, logging and connected-service charges may apply while tasks run.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity ECS permissions: ecs:CreateCluster, ecs:RegisterTaskDefinition, ecs:CreateService, ecs:UpdateService ALB permissions: elbv2:CreateLoadBalancer, elbv2:CreateTargetGroup, elbv2:CreateListener Cleanup: ecs:DeleteService, ecs:DeleteCluster, elbv2:DeleteLoadBalancer",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create an Amazon ECS Fargate Cluster",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open Amazon ECS."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Choose Region us-east-1."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "In the left navigation sidebar, click Clusters -> Choose Create cluster."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Set Cluster name to saa-fargate-cluster."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Under Infrastructure, check AWS Fargate (serverless)."
+          },
+          {
+            "id": "console-step-2-item-6",
+            "text": "Choose Create."
+          }
+        ],
+        "note": "Fargate clusters do not require EC2 instance management or capacity provider scaling.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Register an ECS Task Definition",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "In the ECS left sidebar, click Task definitions -> Choose Create new task definition -> Select Create new task definition."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Set Task definition family to saa-fargate-task-def."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Select Launch type AWS Fargate."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Set Network mode to awsvpc."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Set Task CPU to 0.25 vCPU and Task memory to 0.5 GB."
+          },
+          {
+            "id": "console-step-3-item-6",
+            "text": "Under Container 1: Set Name to web-container -> Image URI to public.ecr.aws/docker/library/nginx:latest -> Container port to 80 (TCP)."
+          },
+          {
+            "id": "console-step-3-item-7",
+            "text": "Choose Create."
+          }
+        ],
+        "note": "Task definitions specify container image parameters, CPU/RAM limits, and awsvpc networking.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Create Application Load Balancer & Target Group",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open EC2 Console -> Click Target groups -> Choose Create target group."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Select Target type IP addresses (required for Fargate `awsvpc` network mode)."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Set Target group name to saa-fargate-tg -> Protocol HTTP -> Port 80 -> Select lab VPC."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Choose Next -> Choose Create target group."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Click Load balancers -> Choose Create load balancer -> Select Application Load Balancer."
+          },
+          {
+            "id": "console-step-4-item-6",
+            "text": "Set Name to saa-fargate-alb -> Internet-facing -> Select two public subnets -> Attach security group allowing HTTP 80."
+          },
+          {
+            "id": "console-step-4-item-7",
+            "text": "Set Listener to forward to saa-fargate-tg -> Choose Create load balancer."
+          }
+        ],
+        "note": "Fargate tasks use IP target types because `awsvpc` assigns individual ENI IP addresses.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Create an ECS Service Backed by ALB",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Return to Amazon ECS -> Click Clusters -> Select saa-fargate-cluster."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Under Services tab, choose Create."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Set Launch type to Fargate."
+          },
+          {
+            "id": "console-step-5-item-4",
+            "text": "Select Task definition saa-fargate-task-def."
+          },
+          {
+            "id": "console-step-5-item-5",
+            "text": "Set Service name to saa-fargate-web-service -> Desired tasks to 2."
+          },
+          {
+            "id": "console-step-5-item-6",
+            "text": "Under Networking: Select your VPC and two private subnets."
+          },
+          {
+            "id": "console-step-5-item-7",
+            "text": "Under Load balancing: Select Load balancer type Application Load Balancer -> Select saa-fargate-alb -> Select Target group saa-fargate-tg."
+          },
+          {
+            "id": "console-step-5-item-8",
+            "text": "Choose Create."
+          }
+        ],
+        "note": "The ECS service maintains desired task count and registers new task IPs with the ALB.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Configure Target Tracking Auto Scaling Policy",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Select saa-fargate-web-service -> Choose Service auto scaling tab -> Click Edit."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Check Use service auto scaling."
+          },
+          {
+            "id": "console-step-6-item-3",
+            "text": "Set Minimum number of tasks to 1 and Maximum number of tasks to 4."
+          },
+          {
+            "id": "console-step-6-item-4",
+            "text": "Set Scaling policy type to Target tracking."
+          },
+          {
+            "id": "console-step-6-item-5",
+            "text": "Select Metric ECSServiceAverageCPUUtilization -> Set Target value to 70 %."
+          },
+          {
+            "id": "console-step-6-item-6",
+            "text": "Choose Save."
+          }
+        ],
+        "note": "Target tracking automatically provisions or terminates Fargate tasks to maintain 70% CPU target.",
+        "warning": null,
+        "expectedResult": "Step 6 completed successfully."
+      },
+      {
+        "id": "console-step-7",
+        "number": 7,
+        "title": "Verify HTTP Endpoint and Tear Down Resources",
+        "instructions": [
+          {
+            "id": "console-step-7-item-1",
+            "text": "Open EC2 Load Balancers -> Copy the DNS name of saa-fargate-alb."
+          },
+          {
+            "id": "console-step-7-item-2",
+            "text": "Paste the DNS name into a browser window to verify the NGINX welcome page."
+          },
+          {
+            "id": "console-step-7-item-3",
+            "text": "Open ECS -> Select saa-fargate-web-service -> Click Update service -> Set Desired tasks to 0 -> Click Delete service."
+          },
+          {
+            "id": "console-step-7-item-4",
+            "text": "Delete cluster saa-fargate-cluster."
+          },
+          {
+            "id": "console-step-7-item-5",
+            "text": "Delete ALB saa-fargate-alb and Target group saa-fargate-tg."
+          }
+        ],
+        "note": null,
+        "warning": "Delete the ECS service, cluster, and ALB to prevent continuous hourly compute charges.",
+        "expectedResult": "Step 7 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Set variables",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "REGION=us-east-1\nCLUSTER=saa-fargate-cluster\nSERVICE=saa-fargate-web-service"
+          }
+        ],
+        "note": "Sets CLI variable names.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      },
+      {
+        "id": "cli-step-3",
+        "number": 3,
+        "title": "Create ECS Fargate Cluster",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-3-cmd-1",
+            "language": "bash",
+            "text": "aws ecs create-cluster --cluster-name $CLUSTER --region $REGION"
+          }
+        ],
+        "note": "Creates serverless Fargate ECS cluster.",
+        "warning": null,
+        "expectedResult": "CLI command step 3 executed successfully."
+      },
+      {
+        "id": "cli-step-4",
+        "number": 4,
+        "title": "Register Fargate Task Definition",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-4-cmd-1",
+            "language": "bash",
+            "text": "aws ecs register-task-definition --family saa-fargate-task-def --network-mode awsvpc --requires-compatibilities FARGATE --cpu 256 --memory 512 --container-definitions '[{\"name\":\"web\",\"image\":\"public.ecr.aws/docker/library/nginx:latest\",\"portMappings\":[{\"containerPort\":80}]}]' --region $REGION"
+          }
+        ],
+        "note": "Registers Task Definition with awsvpc network mode.",
+        "warning": null,
+        "expectedResult": "CLI command step 4 executed successfully."
+      },
+      {
+        "id": "cli-step-5",
+        "number": 5,
+        "title": "Create ECS Fargate Service",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-5-cmd-1",
+            "language": "bash",
+            "text": "aws ecs create-service --cluster $CLUSTER --service-name $SERVICE --task-definition saa-fargate-task-def --desired-count 2 --launch-type FARGATE --network-configuration '{\"awsvpcConfiguration\":{\"subnets\":[\"subnet-123\",\"subnet-456\"],\"securityGroups\":[\"sg-123\"],\"assignPublicIp\":\"ENABLED\"}}' --region $REGION"
+          }
+        ],
+        "note": "Deploys 2 Fargate tasks in awsvpc network mode.",
+        "warning": null,
+        "expectedResult": "CLI command step 5 executed successfully."
+      },
+      {
+        "id": "cli-step-6",
+        "number": 6,
+        "title": "Tear down ECS Fargate Service and Cluster",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-6-cmd-1",
+            "language": "bash",
+            "text": "aws ecs update-service --cluster $CLUSTER --service $SERVICE --desired-count 0 --region $REGION\naws ecs delete-service --cluster $CLUSTER --service $SERVICE --region $REGION\naws ecs delete-cluster --cluster $CLUSTER --region $REGION"
+          }
+        ],
+        "note": "Scales service down to 0 tasks and deletes resources.",
+        "warning": "Destructive Command Warning: This command permanently deletes container repositories, images, ECS services, task definitions, or clusters.",
+        "expectedResult": "CLI command step 6 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "AWS Fargate configuration verified in AWS Fargate."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Scale the Fargate ECS service desired count to 0."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Delete the ECS service, load balancer target group, and ECS cluster."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete CloudWatch Log Groups and IAM task execution roles created for the lab."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Fargate vs EC2 Launch Type",
+        "body": "Fargate: Serverless container compute (no EC2 server management). EC2 Launch Type: You manage underlying EC2 instance clusters, scaling, and OS patches."
+      },
+      {
+        "id": "cs-2",
+        "title": "awsvpc Network Mode",
+        "body": "Every task receives its own ENI and private IP in your VPC. Required for Fargate tasks."
+      },
+      {
+        "id": "cs-3",
+        "title": "Target Tracking Auto Scaling",
+        "body": "Automatically adds or removes Fargate tasks to maintain a specified target metric (e.g., 70% average CPU)."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Fargate Tasks Failing to Pull Image",
+        "body": "Ensure `assignPublicIp: ENABLED` if tasks run in public subnets, or configure a NAT Gateway / S3 VPC Endpoint if tasks run in private subnets."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Minimizing Operational Overhead",
+        "body": "If an exam question specifies minimizing operational overhead for containers, always select AWS Fargate over EC2 launch types."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master AWS Fargate concepts and container orchestration patterns in AWS Fargate."
+      }
+    ],
+    "memoryHook": "Fargate = Serverless Containers | awsvpc = Task ENI IP | ALB = Traffic Distribution",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-ecs-iam-task-roles-vs-task-execution-roles-in-amazon-ecs-004",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-ecs",
+    "title": "IAM Task Roles vs Task Execution Roles in Amazon ECS",
+    "slug": "iam-task-roles-vs-task-execution-roles-in-amazon-ecs",
+    "service": "Amazon ECS",
+    "feature": "Amazon ECS",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Implement secure access control in Amazon ECS by distinguishing between infrastructure-level execution roles and application-level task roles.",
+    "status": "published",
+    "tags": [
+      "Amazon ECS",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "ECS Task Execution Role (executionRoleArn)",
+        "body": "Grants the ECS Container Agent permission to pull container images from ECR, retrieve parameters from Secrets Manager, and stream logs to CloudWatch."
+      },
+      {
+        "id": "concept-2",
+        "title": "ECS Task Role (taskRoleArn)",
+        "body": "Grants the Container Application Code inside the container permission to call AWS APIs (e.g. read S3 objects, write to DynamoDB tables)."
+      },
+      {
+        "id": "concept-3",
+        "title": "Least Privilege Role Isolation",
+        "body": "Separating agent permissions from application code permissions prevents containers from exploiting ECS infrastructure privileges."
+      },
+      {
+        "id": "concept-4",
+        "title": "ECS Task Execution Role vs Task Role Comparison",
+        "body": "Role AttributeTask Execution Role (executionRoleArn)Task Role (taskRoleArn)Used byECS Container Agent (Infrastructure)Container Application Code (App Level)Primary purposePull ECR images, write CloudWatch logs, fetch Secrets Manager secretsCall AWS SDK APIs (Read S3, write DynamoDB, publish SQS)Managed policyAmazonECSTaskExecutionRolePolicyCustom policy (e.g. AmazonS3ReadOnlyAccess)Trust policy principalecs-tasks.amazonaws.comecs-tasks.amazonaws.comKey exam question keywordECR image pull / CloudWatch log stream errorApplication AWS SDK permission denied error"
+      }
+    ],
+    "whyItMatters": "This matters because SAA-C03 heavily tests the distinction between executionRoleArn (infrastructure level for agent operations) and taskRoleArn (application code level for container AWS API calls).",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Execution Role",
+        "value": "ecsTaskExecutionRole"
+      },
+      {
+        "label": "Task Role",
+        "value": "saa-ecs-app-task-role"
+      },
+      {
+        "label": "Test S3 Bucket",
+        "value": "saa-ecs-app-data-[account-id]"
+      },
+      {
+        "label": "Log Group",
+        "value": "/ecs/saa-task-role-lab"
+      }
+    ],
+    "costWarning": "ECS container instances, Fargate tasks, load balancers, NAT Gateways, logs and data-transfer charges may apply.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate container service permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity IAM permissions: iam:CreateRole, iam:AttachRolePolicy, iam:PassRole ECS permissions: ecs:RegisterTaskDefinition, ecs:RunTask Cleanup: iam:DetachRolePolicy, iam:DeleteRole, s3:DeleteBucket",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create the ECS Task Execution Role (executionRoleArn)",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open IAM Console -> Choose Roles -> Click Create role."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Select Trusted entity type AWS service -> Use case Elastic Container Service -> Select Elastic Container Service Task."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Choose Next."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Search for and attach managed policy AmazonECSTaskExecutionRolePolicy."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Set Role name to ecsTaskExecutionRole -> Choose Create role."
+          }
+        ],
+        "note": "This role allows the ECS Container Agent to pull images from ECR and send logs to CloudWatch.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Create the ECS Task Role (taskRoleArn)",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "In IAM Roles, click Create role."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Select Trusted entity type AWS service -> Select Elastic Container Service Task."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Choose Next."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Search for and attach managed policy AmazonS3ReadOnlyAccess."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Set Role name to saa-ecs-app-task-role -> Choose Create role."
+          }
+        ],
+        "note": "This role grants container application code permission to read objects from S3.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Create Test S3 Data Bucket",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open Amazon S3 -> Choose Create bucket."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Set Bucket name to saa-ecs-app-data-[account-id] in us-east-1."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Upload a sample test file app-data.json into the bucket."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Choose Create bucket."
+          }
+        ],
+        "note": "This S3 bucket will be accessed by the container application code via Task Role credentials.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Register ECS Task Definition Mapping Both Roles",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Open Amazon ECS -> Click Task definitions -> Choose Create new task definition."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Set Task definition family to saa-roles-task-def."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Select Launch type AWS Fargate -> Set Network mode to awsvpc."
+          },
+          {
+            "id": "console-step-5-item-4",
+            "text": "Set Task execution role to ecsTaskExecutionRole."
+          },
+          {
+            "id": "console-step-5-item-5",
+            "text": "Set Task role to saa-ecs-app-task-role."
+          },
+          {
+            "id": "console-step-5-item-6",
+            "text": "Add Container: Name aws-cli-app -> Image amazon/aws-cli:latest -> Command s3,ls,s3://saa-ecs-app-data-[account-id]."
+          },
+          {
+            "id": "console-step-5-item-7",
+            "text": "Under Logging: Enable CloudWatch logs under log group /ecs/saa-task-role-lab."
+          },
+          {
+            "id": "console-step-5-item-8",
+            "text": "Choose Create."
+          }
+        ],
+        "note": "Mapping both roles demonstrates the clear boundary between executionRoleArn and taskRoleArn.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Run ECS Task and Verify Log Streaming and S3 Access",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Open Amazon ECS -> Select your cluster -> Choose Run new task."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Select Task definition saa-roles-task-def -> Launch type Fargate."
+          },
+          {
+            "id": "console-step-6-item-3",
+            "text": "Select your VPC and public subnet -> Choose Create."
+          },
+          {
+            "id": "console-step-6-item-4",
+            "text": "Wait for task execution status to reach Stopped (completed)."
+          },
+          {
+            "id": "console-step-6-item-5",
+            "text": "Open CloudWatch Console -> Open Log group /ecs/saa-task-role-lab."
+          },
+          {
+            "id": "console-step-6-item-6",
+            "text": "Verify log stream displays successful output from aws s3 ls."
+          }
+        ],
+        "note": "The task execution role handled log creation; the task role handled the S3 list API request.",
+        "warning": null,
+        "expectedResult": "Step 6 completed successfully."
+      },
+      {
+        "id": "console-step-7",
+        "number": 7,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-7-item-1",
+            "text": "Deregister Task definition saa-roles-task-def."
+          },
+          {
+            "id": "console-step-7-item-2",
+            "text": "Delete test S3 bucket saa-ecs-app-data-[account-id]."
+          },
+          {
+            "id": "console-step-7-item-3",
+            "text": "Open IAM Roles -> Delete saa-ecs-app-task-role and ecsTaskExecutionRole (if created for lab)."
+          }
+        ],
+        "note": null,
+        "warning": "Delete test S3 buckets and task definitions to clean up your workspace.",
+        "expectedResult": "Step 7 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Set variables",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "REGION=us-east-1\nEXEC_ROLE=ecsTaskExecutionRole\nTASK_ROLE=saa-ecs-app-task-role"
+          }
+        ],
+        "note": "Sets CLI variable names for IAM roles.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      },
+      {
+        "id": "cli-step-3",
+        "number": 3,
+        "title": "Create ECS Task Execution Role",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-3-cmd-1",
+            "language": "bash",
+            "text": "aws iam create-role --role-name $EXEC_ROLE --assume-role-policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}'\naws iam attach-role-policy --role-name $EXEC_ROLE --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+          }
+        ],
+        "note": "Creates execution role for container agent infrastructure tasks.",
+        "warning": null,
+        "expectedResult": "CLI command step 3 executed successfully."
+      },
+      {
+        "id": "cli-step-4",
+        "number": 4,
+        "title": "Create ECS Task Role for S3 Application Access",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-4-cmd-1",
+            "language": "bash",
+            "text": "aws iam create-role --role-name $TASK_ROLE --assume-role-policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}'\naws iam attach-role-policy --role-name $TASK_ROLE --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+          }
+        ],
+        "note": "Creates task role for container application code AWS API access.",
+        "warning": null,
+        "expectedResult": "CLI command step 4 executed successfully."
+      },
+      {
+        "id": "cli-step-5",
+        "number": 5,
+        "title": "Register ECS Task Definition with Both Roles",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-5-cmd-1",
+            "language": "bash",
+            "text": "aws ecs register-task-definition --family saa-roles-task-def --execution-role-arn arn:aws:iam::ACCOUNT_ID:role/$EXEC_ROLE --task-role-arn arn:aws:iam::ACCOUNT_ID:role/$TASK_ROLE --network-mode awsvpc --requires-compatibilities FARGATE --cpu 256 --memory 512 --container-definitions '[{\"name\":\"app\",\"image\":\"amazon/aws-cli:latest\",\"command\":[\"s3\",\"ls\"]}]' --region $REGION"
+          }
+        ],
+        "note": "Maps executionRoleArn and taskRoleArn in Task Definition.",
+        "warning": null,
+        "expectedResult": "CLI command step 5 executed successfully."
+      },
+      {
+        "id": "cli-step-6",
+        "number": 6,
+        "title": "Tear down IAM roles and Task Definition",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-6-cmd-1",
+            "language": "bash",
+            "text": "aws iam detach-role-policy --role-name $EXEC_ROLE --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy\naws iam delete-role --role-name $EXEC_ROLE\naws iam detach-role-policy --role-name $TASK_ROLE --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess\naws iam delete-role --role-name $TASK_ROLE"
+          }
+        ],
+        "note": "Detaches policies and deletes IAM roles.",
+        "warning": null,
+        "expectedResult": "CLI command step 6 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon ECS configuration verified in Amazon ECS."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Scale the ECS service desired count to 0 and delete the service."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Deregister task definition revisions and delete the ECS cluster."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete IAM task roles, execution roles, and CloudWatch Log Groups."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Task Execution Role (executionRoleArn)",
+        "body": "Used by ECS Agent to pull ECR images, fetch Secrets Manager parameters, and stream logs to CloudWatch."
+      },
+      {
+        "id": "cs-2",
+        "title": "Task Role (taskRoleArn)",
+        "body": "Used by Container Application Code to call AWS SDK APIs (S3, DynamoDB, SQS, Kinesis)."
+      },
+      {
+        "id": "cs-3",
+        "title": "Least Privilege Security",
+        "body": "Always grant container applications their own isolated Task Role instead of using EC2 instance profiles."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Unable to Pull Image from ECR",
+        "body": "Verify that `executionRoleArn` is attached and contains `AmazonECSTaskExecutionRolePolicy` permissions."
+      },
+      {
+        "id": "ts-2",
+        "title": "Application Code S3 Access Denied",
+        "body": "Verify that `taskRoleArn` is attached to the task definition and contains S3 permissions."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "executionRoleArn vs taskRoleArn Traps",
+        "body": "If an app running inside a container gets `AccessDenied` reading S3, updating `executionRoleArn` will NOT fix it. You MUST update `taskRoleArn`."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon ECS concepts and container orchestration patterns in Amazon ECS."
+      }
+    ],
+    "memoryHook": "Execution Role = Agent pulls images & logs | Task Role = Application reads S3 & DBs",
+    "flashcardSetId": null
+  }
+]

@@ -1,0 +1,238 @@
+[
+  {
+    "id": "q-saa-85",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company runs microservices in two separate VPCs (VPC A and VPC B) within the same AWS account, connected via VPC Peering. Microservices in VPC B need to resolve internal domain names in a Route 53 Private Hosted Zone associated with VPC A. How can private DNS resolution be enabled for VPC B?",
+    "options": [
+      "Create a second public hosted zone in Route 53 with matching record names and enable DNSSEC validation across both VPCs.",
+      "Associate VPC B with the existing Route 53 Private Hosted Zone for api.internal.company.local using the Route 53 console, AWS CLI, or SDK.",
+      "Configure an Amazon Route 53 Resolver outbound endpoint in VPC A and an inbound endpoint in VPC B connected via Transit Gateway.",
+      "Configure a Route 53 Latency Routing Policy pointing the domain name to the private IP address of the ALB in VPC A."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Route 53 Private Hosted Zones can be associated with multiple VPCs within the same AWS account using the Route 53 console, AWS CLI, or SDK, allowing instances in both VPCs to resolve internal private DNS records over VPC Peering.",
+    "topics": [
+      "topic-route53",
+      "topic-vpc"
+    ]
+  },
+  {
+    "id": "q-saa-86",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A centralized IT compliance team uses AWS Backup to manage backups across 100 AWS accounts. The disaster recovery policy mandates that daily backups of EBS volumes and RDS databases must be copied automatically to a secondary AWS Region in a separate backup vault. Which AWS Backup solution automates this requirement?",
+    "options": [
+      "Configure an AWS Backup Plan with scheduled backup rules that include automated copy actions to replicate backups into a target backup vault in the secondary Region.",
+      "Configure AWS DataSync scheduled tasks to synchronize EBS snapshot files and RDS database volume blocks across Regions continuously.",
+      "Enable Amazon S3 Cross-Region Replication rules on the default underlying S3 buckets used by EBS and RDS for automated snapshot storage.",
+      "Deploy an AWS CloudFormation StackSet to trigger AWS Lambda functions that take daily snapshots and execute custom S3 copy API calls."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "AWS Backup Plans support automated copy actions within backup rules to copy backup snapshots to different target vaults across AWS Regions or accounts, satisfying compliance and disaster recovery requirements.",
+    "topics": [
+      "topic-backup"
+    ]
+  },
+  {
+    "id": "q-saa-137",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A financial institution requires a resilient hybrid connection between its corporate data center and an AWS VPC. The primary connection must provide dedicated 10 Gbps low-latency connectivity over a private link. If the primary physical connection fails, traffic must automatically fail over to an encrypted backup tunnel over the public internet. Which TWO networking components fulfill this design? (Select TWO.)",
+    "options": [
+      "AWS Direct Connect Dedicated Connection with a Private Virtual Interface (Private VIF) as the primary low-latency link.",
+      "AWS Site-to-Site VPN with IPsec encryption and BGP dynamic routing as the automated backup link over the internet.",
+      "AWS Transit Gateway Inter-Region Peering with static route tables to route backup traffic over the AWS global backbone.",
+      "AWS Storage Gateway Volume Gateway configured in cached mode to buffer on-premises network packets during connection outages.",
+      "AWS Global Accelerator Anycast IP addresses associated with Transit Gateway to automatically reroute physical connection traffic."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "AWS Direct Connect Dedicated Connection with a Private VIF delivers private, high-bandwidth primary connectivity to a VPC. AWS Site-to-Site VPN with BGP dynamic routing provides an automated, IPsec-encrypted backup path over the public internet if the Direct Connect link fails.",
+    "topics": [
+      "topic-direct-connect",
+      "topic-vpn"
+    ]
+  },
+  {
+    "id": "q-saa-140",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "An enterprise runs an Amazon Aurora MySQL database and requires cross-Region disaster recovery. The business can tolerate an RPO typically measured in seconds and an RTO measured in minutes after an unplanned outage of the primary Region. Which TWO actions or characteristics correctly implement and describe this solution? (Select TWO.)",
+    "options": [
+      "Create an Aurora Global Database with a secondary cluster in another Region, using low-latency asynchronous storage-based replication between Regions.",
+      "During an unplanned outage, initiate a managed cross-Region failover to promote the chosen secondary, accepting possible seconds of data loss and recovery within minutes.",
+      "Copy automated database snapshots to another Region and restore them after an outage to achieve an RPO of seconds and recovery within minutes.",
+      "Create an independent cross-Region Aurora Replica outside a global database and use managed global failover to promote it during a Regional outage.",
+      "Configure synchronous writes to both Regional clusters so every committed transaction is preserved before the secondary is promoted during an unplanned outage."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Amazon Aurora Global Database provides low-latency asynchronous storage-based replication from a primary Region to secondary Regions. During an unplanned outage, a managed cross-Region failover promotes a chosen secondary cluster to the primary role. Because replication is asynchronous, the RPO is typically non-zero and measured in seconds, while the RTO can be in the order of minutes.",
+    "topics": [
+      "topic-aurora",
+      "topic-rds"
+    ]
+  },
+  {
+    "id": "q-saa-143",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A web application hosted on EC2 instances in private subnets receives public web traffic through an Application Load Balancer (ALB). The security policy mandates inspecting Layer 7 traffic for SQL injection attacks, enforcing HTTPS encryption in transit, and restricting administrative SSH access to a bastion host. Which THREE security controls fulfill these requirements? (Select THREE.)",
+    "options": [
+      "Associate an AWS WAF Web ACL with the Application Load Balancer to inspect Layer 7 HTTP requests for SQL injection patterns.",
+      "Configure an HTTPS Listener on the Application Load Balancer with an SSL/TLS certificate managed by AWS Certificate Manager (ACM).",
+      "Configure Security Groups on application EC2 instances to allow inbound SSH (port 22) strictly from the Bastion Host Security Group ID.",
+      "Enable AWS Network Firewall on the Application Load Balancer target group to block SQL injection attacks.",
+      "Configure egress Network ACLs on private subnets to enforce HTTPS encryption in transit between client browsers and the load balancer.",
+      "Configure Amazon GuardDuty Malware Protection on the Application Load Balancer to restrict administrative SSH access."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "AWS WAF associated with an ALB inspects HTTP/HTTPS Layer 7 traffic for SQL injection attacks. ACM provides managed SSL/TLS certificates for HTTPS ALB listeners. Security Group nesting (referencing the bastion security group ID) restricts SSH access on port 22 exclusively to the bastion host.",
+    "topics": [
+      "topic-waf",
+      "topic-alb",
+      "topic-security-groups"
+    ]
+  },
+  {
+    "id": "q-saa-150",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "An enterprise is executing a large-scale migration of on-premises applications to AWS. The portfolio includes 100 Linux/Windows physical servers, a 20 TB Oracle database, and 50 TB of NFS file storage. The migration must minimize downtime and preserve file permissions. Which THREE AWS migration services should be deployed? (Select THREE.)",
+    "options": [
+      "AWS Application Migration Service (AWS MGN) for continuous server block-level replication.",
+      "AWS Database Migration Service (AWS DMS) for continuous relational database replication to AWS.",
+      "AWS DataSync for online transfer of NFS file storage to Amazon EFS while preserving POSIX metadata.",
+      "AWS Transfer Family for SFTP to perform continuous live block-level replication of physical Linux and Windows servers.",
+      "AWS Snowball Edge Storage Optimized appliances to perform continuous real-time database replication for the 20 TB Oracle database.",
+      "AWS Storage Gateway Volume Gateway to migrate the NFS file storage while preserving local file permissions."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "AWS MGN performs continuous block-level replication for server lift-and-shift migration. AWS DMS handles continuous replication of relational databases with minimal downtime. AWS DataSync transfers NFS file systems to Amazon EFS while retaining POSIX file permissions and metadata.",
+    "topics": [
+      "topic-mgn",
+      "topic-dms",
+      "topic-datasync"
+    ]
+  },
+  {
+    "id": "q-saa-99",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company relies on a 1 Gbps AWS Direct Connect connection for hybrid connectivity. To ensure business continuity during an unexpected Direct Connect outage, the company needs a backup network connection that automatically takes over traffic if Direct Connect fails. What is the most resilient, cost-effective backup option?",
+    "options": [
+      "Order a second 10 Gbps AWS Direct Connect connection at a separate Direct Connect location and configure equal-cost multi-path (ECMP) BGP routing across both physical connections.",
+      "Establish an AWS Site-to-Site VPN over the public internet as a backup path, configuring dynamic BGP routing and applying BGP route attributes such as AS-path prepending on the VPN advertisement so the Direct Connect path remains preferred.",
+      "Deploy an AWS Transit Gateway peering connection over the public internet with static route tables pointing to on-premises IP ranges to automatically reroute traffic during physical link outages.",
+      "Configure an AWS Client VPN endpoint connected to the virtual private gateway and distribute Client VPN software profiles to all on-premises routers to establish automated backup tunnels."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Site-to-Site VPN over the public internet provides a highly cost-effective failover path for AWS Direct Connect. Configuring BGP dynamic routing with AS-path prepending on the VPN route advertisement ensures the shorter Direct Connect path is preferred during normal operations, failing over automatically if Direct Connect drops.",
+    "topics": [
+      "topic-direct-connect",
+      "topic-vpn"
+    ]
+  },
+  {
+    "id": "q-saa-134",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A company runs containerized batch workloads on Amazon ECS. Some tasks require high CPU/RAM for short durations, while others run continuously 24/7. Which TWO purchasing strategies optimize compute costs across this container infrastructure? (Select TWO.)",
+    "options": [
+      "Use Fargate Spot for fault-tolerant, interruptible batch container tasks to reduce compute costs.",
+      "Purchase Compute Savings Plans for baseline 24/7 continuous container workloads to achieve consistent hourly discounts.",
+      "Purchase EC2 On-Demand Dedicated Hosts to run all batch and continuous ECS container tasks.",
+      "Purchase Amazon DynamoDB Reserved Capacity to offset Fargate compute execution costs for batch processing.",
+      "Use AWS Batch with On-Demand EC2 Reserved Instances configured strictly for short-duration interruptible tasks."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Fargate Spot provides significant discounts (up to 70%) for interruptible container batch tasks. Compute Savings Plans apply discounts (up to 66%) across steady-state 24/7 Fargate and EC2 compute usage.",
+    "topics": [
+      "topic-ecs",
+      "topic-cost-optimization"
+    ]
+  },
+  {
+    "id": "q-saa-2",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company requires all data uploaded to Amazon S3 to be encrypted at rest. Key management mandates dictate that encryption keys must be managed in AWS KMS with automatic annual key rotation enabled and CloudTrail auditing for key usage. Which solution satisfies these compliance demands?",
+    "options": [
+      "Configure SSE-S3 with S3-managed keys, rely on automatic key management, and use CloudTrail data events to audit encrypted object operations.",
+      "Configure SSE-KMS with a customer managed AWS KMS key, enable automatic annual rotation, and use CloudTrail to audit key operations.",
+      "Configure SSE-KMS with an AWS managed KMS key, rely on its annual rotation, and use CloudTrail to audit key operations.",
+      "Configure SSE-KMS with a customer managed AWS KMS key, replace its alias annually, and use CloudTrail to audit key operations."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "SSE-KMS with a customer managed AWS KMS key supports key usage auditing in AWS CloudTrail and automatic annual key rotation managed directly by AWS KMS.",
+    "topics": [
+      "topic-s3",
+      "topic-kms"
+    ]
+  },
+  {
+    "id": "q-saa-69",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A Lambda function running in Account A needs to retrieve a database password secret stored in AWS Secrets Manager in Account B. How should access be granted across accounts securely?",
+    "options": [
+      "Configure an Amazon S3 bucket policy in Account B to expose the secret as a plain text object accessible via cross-account IAM role assumption from Account A, and attach an S3 read policy to the Lambda execution role.",
+      "Configure a resource-based policy on the secret in Account B granting GetSecretValue permission to the Account A Lambda execution role, attach an IAM policy to the Lambda role, and grant kms:Decrypt permissions on the customer managed AWS KMS key in Account B.",
+      "Establish an AWS Transit Gateway inter-VPC peering connection between Account A and Account B to enable direct private network routing to the Secrets Manager VPC interface endpoint in Account B.",
+      "Create an IAM user in Account B with secretsmanager:GetSecretValue permissions, generate long-lived IAM access keys, and store the credentials in the Lambda function environment variables in Account A."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Cross-account Secrets Manager access requires a resource-based policy on the secret in Account B granting GetSecretValue to the Account A Lambda role, an IAM policy attached to the Lambda role, and KMS key policy permissions in Account B allowing kms:Decrypt.",
+    "topics": [
+      "topic-secrets-manager",
+      "topic-kms",
+      "topic-iam"
+    ]
+  }
+]

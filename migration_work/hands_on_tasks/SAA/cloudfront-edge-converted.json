@@ -1,0 +1,2575 @@
+[
+  {
+    "id": "task-saa-cloudfront-static-website-acceleration-with-s3-cloudfront-oac-001",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Static Website Acceleration with S3 & CloudFront OAC",
+    "slug": "static-website-acceleration-with-s3-cloudfront-oac",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Securely serve static S3 assets globally through CloudFront while restricting direct public access to S3 using Origin Access Control (OAC).",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Origin Access Control (OAC)",
+        "body": "The modern AWS recommended feature to secure S3 origins by restricting access strictly to authorized CloudFront distributions."
+      },
+      {
+        "id": "concept-2",
+        "title": "OAC vs Legacy OAI",
+        "body": "OAC supports all S3 buckets in all Regions, SSE-KMS encryption, dynamic HTTP requests, and improved security posture compared to legacy Origin Access Identity (OAI)."
+      },
+      {
+        "id": "concept-3",
+        "title": "S3 Bucket Policy Restriction",
+        "body": "S3 bucket policy conditions allow s3:GetObject only when aws:SourceArn matches the CloudFront distribution ARN."
+      },
+      {
+        "id": "concept-4",
+        "title": "Global Edge Caching",
+        "body": "CloudFront caches static content at edge locations worldwide, reducing latency and backend S3 read requests."
+      },
+      {
+        "id": "concept-5",
+        "title": "OAC vs Legacy OAI Comparison Matrix",
+        "body": "FeatureOrigin Access Control (OAC)Origin Access Identity (OAI)StatusAWS Recommended (Current Standard)Legacy (Maintenance Mode)点SSE-KMS EncryptionSupported nativelyNot supportedAll S3 RegionsSupported globally across all AWS RegionsLimited in newer AWS RegionsHTTP MethodsSupports GET, PUT, POST, PATCH, DELETESupports GET / HEAD onlyPolicy conditionaws:SourceArn matching distribution ARNaws:PrincipalARN matching OAI ID"
+      }
+    ],
+    "whyItMatters": "This matters because OAC (the modern replacement for legacy OAI) and restricting S3 public access are constantly tested on SAA-C03.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "S3 Bucket",
+        "value": "saa-oac-private-site-[account-id]"
+      },
+      {
+        "label": "OAC Name",
+        "value": "saa-s3-oac-control"
+      },
+      {
+        "label": "Viewer Protocol",
+        "value": "Redirect HTTP to HTTPS"
+      },
+      {
+        "label": "Default Root Object",
+        "value": "index.html"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity CloudFront permissions: cloudfront:CreateDistribution, cloudfront:CreateOriginAccessControl, cloudfront:GetDistribution S3 permissions: s3:CreateBucket, s3:PutBucketPolicy, s3:PutObject Cleanup: cloudfront:DeleteDistribution, s3:DeleteBucket",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create a Private S3 Bucket and Upload Static Files",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open Amazon S3 Console."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Choose Region us-east-1."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Click Create bucket."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Set Bucket name to saa-oac-private-site-[account-id]."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Keep Block all public access enabled."
+          },
+          {
+            "id": "console-step-2-item-6",
+            "text": "Click Create bucket."
+          },
+          {
+            "id": "console-step-2-item-7",
+            "text": "Upload an index.html file into the private bucket."
+          }
+        ],
+        "note": "Keeping Block Public Access enabled ensures the bucket cannot be accessed directly from the public internet.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Create CloudFront Distribution with Origin Access Control (OAC)",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open Amazon CloudFront Console."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Click Create distribution."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Under Origin domain, select your private bucket saa-oac-private-site-[account-id].s3.us-east-1.amazonaws.com."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Under Origin access, select Origin access control settings (recommended)."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Click Create control setting."
+          },
+          {
+            "id": "console-step-3-item-6",
+            "text": "Set Name to saa-s3-oac-control and Signing behavior to Sign requests (recommended)."
+          },
+          {
+            "id": "console-step-3-item-7",
+            "text": "Click Create."
+          },
+          {
+            "id": "console-step-3-item-8",
+            "text": "Under Viewer protocol policy, select Redirect HTTP to HTTPS."
+          },
+          {
+            "id": "console-step-3-item-9",
+            "text": "Set Default root object to index.html."
+          },
+          {
+            "id": "console-step-3-item-10",
+            "text": "Click Create distribution."
+          }
+        ],
+        "note": "OAC signs requests sent from CloudFront to S3 using AWS signature version 4.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Attach OAC S3 Bucket Policy",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "On the distribution details page, copy the autogenerated S3 bucket policy."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Open Amazon S3 Console -> Select saa-oac-private-site-[account-id]."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Choose Permissions tab -> Click Edit bucket policy."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Paste the policy granting s3:GetObject permission strictly to cloudfront.amazonaws.com with condition matching your distribution ARN."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Click Save changes."
+          }
+        ],
+        "note": "Bucket policy condition ensures only your specific CloudFront distribution can fetch objects.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Test Distribution URL and Verify Restricted S3 Access",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Copy the Distribution domain name (e.g. d111111abcdef8.cloudfront.net)."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Open the CloudFront domain URL in your browser to verify the website loads via HTTPS."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Open the raw S3 object URL directly in your browser to confirm direct S3 access returns 403 Access Denied."
+          }
+        ],
+        "note": "Confirms content is served globally via CloudFront while S3 remains completely private.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Select your CloudFront distribution -> Click Disable."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Wait for status to show Disabled -> Click Delete."
+          },
+          {
+            "id": "console-step-6-item-3",
+            "text": "Empty and delete S3 bucket saa-oac-private-site-[account-id]."
+          }
+        ],
+        "note": null,
+        "warning": "CloudFront distributions must be disabled before they can be deleted.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Set variables",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "REGION=us-east-1\nACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)\nBUCKET=saa-oac-private-site-$ACCOUNT_ID"
+          }
+        ],
+        "note": "Sets CLI variable names.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      },
+      {
+        "id": "cli-step-3",
+        "number": 3,
+        "title": "Create Private S3 Bucket",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-3-cmd-1",
+            "language": "bash",
+            "text": "aws s3api create-bucket --bucket $BUCKET --region $REGION"
+          }
+        ],
+        "note": "Creates private S3 bucket.",
+        "warning": null,
+        "expectedResult": "CLI command step 3 executed successfully."
+      },
+      {
+        "id": "cli-step-4",
+        "number": 4,
+        "title": "Create Origin Access Control (OAC)",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-4-cmd-1",
+            "language": "bash",
+            "text": "aws cloudfront create-origin-access-control --origin-access-control-config Name=saa-s3-oac-control,OriginAccessControlOriginType=s3,SigningBehavior=always,SigningProtocol=sigv4"
+          }
+        ],
+        "note": "Creates OAC configuration.",
+        "warning": null,
+        "expectedResult": "CLI command step 4 executed successfully."
+      },
+      {
+        "id": "cli-step-5",
+        "number": 5,
+        "title": "Clean up CloudFront and S3 resources",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-5-cmd-1",
+            "language": "bash",
+            "text": "aws s3 rb s3://$BUCKET --force"
+          }
+        ],
+        "note": "Deletes test S3 bucket.",
+        "warning": null,
+        "expectedResult": "CLI command step 5 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Origin Access Control (OAC)",
+        "body": "AWS recommended method for securing S3 origins behind CloudFront. Replaces legacy OAI."
+      },
+      {
+        "id": "cs-2",
+        "title": "S3 Bucket Policy Condition",
+        "body": "Uses `StringEquals` on `AWS:SourceArn` matching `arn:aws:cloudfront::123456789012:distribution/DIST_ID`."
+      },
+      {
+        "id": "cs-3",
+        "title": "Viewer Protocol Policy",
+        "body": "Choose **Redirect HTTP to HTTPS** to enforce encrypted communication between clients and edge locations."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "403 Forbidden on CloudFront URL",
+        "body": "Verify that the S3 Bucket Policy grants `s3:GetObject` to `cloudfront.amazonaws.com` and that `aws:SourceArn` matches the CloudFront distribution ARN."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Legacy OAI vs OAC Traps",
+        "body": "Always choose Origin Access Control (OAC) for modern S3 bucket origin security. OAI is legacy and does not support SSE-KMS."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "OAC = Modern S3 Origin Security | Bucket Policy = Lock S3 to CloudFront ARN",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-multi-origin-routing-path-based-behaviors-alb-s3-002",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Multi-Origin Routing & Path-Based Behaviors (ALB + S3)",
+    "slug": "multi-origin-routing-path-based-behaviors-alb-s3",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Route dynamic requests to an Application Load Balancer and static media to S3 under a single domain.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Multi-Origin Distribution",
+        "body": "A single CloudFront distribution can connect to multiple backend origins (e.g. ALBs, EC2 instances, S3 buckets, or custom HTTP endpoints)."
+      },
+      {
+        "id": "concept-2",
+        "title": "Path Pattern Behaviors",
+        "body": "Cache behaviors evaluate URL paths in order (e.g., /images/*, /api/*, Default (*)) to route requests to specific origins with tailored TTL and caching policies."
+      },
+      {
+        "id": "concept-3",
+        "title": "Hybrid Caching Policies",
+        "body": "Dynamic ALB paths can disable caching (TTL=0) or forward query strings/headers, while static S3 image paths use aggressive edge caching (CachingOptimized)."
+      },
+      {
+        "id": "concept-4",
+        "title": "Single Domain Simplification",
+        "body": "Consolidates static assets and dynamic APIs under one custom domain (e.g. example.com), avoiding Cross-Origin Resource Sharing (CORS) complexity."
+      },
+      {
+        "id": "concept-5",
+        "title": "Multi-Origin Path Routing Comparison Matrix",
+        "body": "Path PatternTarget OriginCache PolicyForward Headers / Query Strings/images/*Amazon S3 BucketCachingOptimized (Aggressive Caching)None (Maximizes Cache Hit Ratio)/api/*Application Load BalancerCachingDisabledAll headers & query strings forwardedDefault (*)Application Load BalancerCustom / Managed PolicyForwarded based on application needs"
+      }
+    ],
+    "whyItMatters": "This matters because path-based origin routing, reducing domain complexity, and hybrid static/dynamic caching policies are heavily tested on SAA-C03.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Dynamic Origin",
+        "value": "Application Load Balancer (saa-alb-origin)"
+      },
+      {
+        "label": "Static Origin",
+        "value": "Amazon S3 Bucket (saa-media-origin-[account-id])"
+      },
+      {
+        "label": "Path Pattern",
+        "value": "/images/*"
+      },
+      {
+        "label": "Default Path",
+        "value": "Default (*)"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity CloudFront permissions: cloudfront:CreateDistribution, cloudfront:UpdateDistribution EC2 / ELB permissions: elasticloadbalancing:CreateLoadBalancer S3 permissions: s3:CreateBucket, s3:PutObject Cleanup: cloudfront:DeleteDistribution, elasticloadbalancing:DeleteLoadBalancer",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Prepare Primary Origins (ALB & S3 Bucket)",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open EC2 Console -> Provision an Application Load Balancer saa-alb-origin for dynamic requests."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Open Amazon S3 Console -> Provision an S3 bucket saa-media-origin-[account-id] for static assets."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Create an /images/ folder inside the S3 bucket and upload a test file logo.png."
+          }
+        ],
+        "note": "Establishes two distinct backend origins for dynamic code and static media.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Configure Multi-Origin CloudFront Distribution",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open Amazon CloudFront Console -> Click Create distribution."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Under Origin domain, select saa-alb-origin (Default dynamic origin)."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Under Viewer protocol policy, select Redirect HTTP to HTTPS."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Click Create distribution."
+          }
+        ],
+        "note": "Sets up the distribution with ALB as the default origin.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Add Second Origin and Path-Based Cache Behavior",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open distribution details -> Choose Origins tab -> Click Create origin."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Add Origin 2: Select saa-media-origin-[account-id].s3.us-east-1.amazonaws.com -> Click Create origin."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Choose Behaviors tab -> Click Create behavior."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Set Path pattern to /images/*."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Set Target origin to saa-media-origin-[account-id]."
+          },
+          {
+            "id": "console-step-4-item-6",
+            "text": "Set Cache policy to CachingOptimized."
+          },
+          {
+            "id": "console-step-4-item-7",
+            "text": "Click Create behavior."
+          }
+        ],
+        "note": "Directs all /images/* traffic to S3 with edge caching while default traffic routes to ALB.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Verify Path Routing and Headers",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Open CloudFront URL https:/// to verify dynamic ALB response."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Open CloudFront URL https:///images/logo.png to verify static S3 image response."
+          }
+        ],
+        "note": "Confirms path routing to distinct origins under a single domain.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Disable and delete CloudFront distribution."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete ALB saa-alb-origin and target groups."
+          },
+          {
+            "id": "console-step-6-item-3",
+            "text": "Delete S3 bucket saa-media-origin-[account-id]."
+          }
+        ],
+        "note": null,
+        "warning": "Delete ALB to prevent ongoing hourly load balancer charges.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "List CloudFront Distributions",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws cloudfront list-distributions --region us-east-1"
+          }
+        ],
+        "note": "Lists active distributions.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Multi-Origin Distributions",
+        "body": "Single distribution serving multiple origins (ALBs, S3, EC2) using path behaviors."
+      },
+      {
+        "id": "cs-2",
+        "title": "Path Pattern Order",
+        "body": "CloudFront evaluates cache behaviors in precedence order from top to bottom before falling back to `Default (*)`."
+      },
+      {
+        "id": "cs-3",
+        "title": "Single Domain Consolidation",
+        "body": "Eliminates CORS complexity by serving APIs (`/api/*`) and static media (`/images/*`) on one domain."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Path Matching Failure",
+        "body": "Verify that path patterns use correct wildcard syntax (e.g. `/images/*`) and that precedence order lists specific paths above `Default (*)`."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Multiple Distributions vs Multi-Origin Trap",
+        "body": "Do NOT create separate CloudFront distributions for static and dynamic paths of the same website. Use a single CloudFront distribution with multiple origins and path behaviors."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "Multi-Origin = Single Domain | Behaviors = Path Routing Rules",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-restricting-content-access-with-cloudfront-signed-urls-signed-cookies-003",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Restricting Content Access with CloudFront Signed URLs & Signed Cookies",
+    "slug": "restricting-content-access-with-cloudfront-signed-urls-signed-cookies",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1",
+    "goal": "Goal: Protect premium or paid media content from unauthorized distribution using Trusted Key Groups, Signed URLs, and Signed Cookies.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Signed URLs vs Signed Cookies",
+        "body": "Signed URLs: Restrict access to individual files (e.g. single video download). Signed Cookies: Restrict access to multiple files or an entire directory (e.g. subscriber-only streaming media)."
+      },
+      {
+        "id": "concept-2",
+        "title": "Trusted Key Groups (Recommended)",
+        "body": "Modern mechanism where public keys are uploaded to CloudFront key groups and referenced by cache behaviors to validate signatures."
+      },
+      {
+        "id": "concept-3",
+        "title": "Legacy CloudFront Key Pairs",
+        "body": "Legacy mechanism requiring root account access to generate CloudFront key pairs. AWS strongly recommends Trusted Key Groups."
+      },
+      {
+        "id": "concept-4",
+        "title": "Signature Expiration & IP Restriction",
+        "body": "Signed URL parameters include expiration timestamps (`DateLessThan`) and optional IP address restriction policies."
+      },
+      {
+        "id": "concept-5",
+        "title": "Signed URLs vs Signed Cookies vs S3 Presigned URLs Decision Matrix",
+        "body": "FeatureCloudFront Signed URLsCloudFront Signed CookiesS3 Presigned URLsScopeSingle file / object access via CloudFrontMultiple files / directory access via CloudFrontSingle file access directly from S3Client compatibilityUniversal (HTML links)Requires browser cookie supportUniversal (Direct S3 REST endpoint)Use casePaid digital download, individual file streamPremium subscriber portal, HLS media streamsTemporary direct S3 object access or uploadCDN CachingCached at CloudFront edge locationsCached at CloudFront edge locationsDirect S3 read (Bypasses CDN edge)"
+      }
+    ],
+    "whyItMatters": "This matters because distinguishing between CloudFront Signed URLs (single file) vs Signed Cookies (directory/multiple files) vs S3 Presigned URLs is a primary exam topic on SAA-C03.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Public Key Name",
+        "value": "saa-premium-public-key"
+      },
+      {
+        "label": "Key Group Name",
+        "value": "saa-premium-key-group"
+      },
+      {
+        "label": "Key Algorithm",
+        "value": "RSA 2048-bit"
+      },
+      {
+        "label": "Restricted Behavior Path",
+        "value": "/premium/*"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity CloudFront permissions: cloudfront:CreatePublicKey, cloudfront:CreateKeyGroup, cloudfront:UpdateDistribution Cleanup: cloudfront:DeleteKeyGroup, cloudfront:DeletePublicKey",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Generate Public/Private Key Pair for CloudFront Key Group",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Generate an RSA 2048-bit key pair on your local computer: openssl genrsa -out private_key.pem 2048."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Extract public key: openssl rsa -pubout -in private_key.pem -out public_key.pem."
+          }
+        ],
+        "note": "RSA 2048-bit key pairs are required for signing CloudFront URLs and cookies.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Create Public Key and Trusted Key Group in CloudFront",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open Amazon CloudFront Console -> Click Public keys in left navigation -> Choose Create public key."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Set Name to saa-premium-public-key and paste public_key.pem file content."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Click Create public key and copy generated Key ID."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Click Key groups -> Choose Create key group."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Set Name to saa-premium-key-group and attach saa-premium-public-key."
+          },
+          {
+            "id": "console-step-3-item-6",
+            "text": "Click Create key group."
+          }
+        ],
+        "note": "Trusted Key Groups allow delegating URL signing without AWS root account access.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Restrict Behavior to Trusted Key Group",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open your CloudFront distribution -> Choose Behaviors tab -> Select /premium/* path."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Under Restrict viewer access, select Yes (Use signed URLs or signed cookies)."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Select Trusted key groups (recommended) -> Attach saa-premium-key-group."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Click Save changes."
+          }
+        ],
+        "note": "Blocks all unauthorized requests that lack a valid cryptographic signature.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Generate Signed URL and Test Restricted Access",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Attempt to open https:///premium/video.mp4 directly in your browser (observe 403 Forbidden)."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Use AWS CLI or SDK script with private_key.pem to generate a Signed URL with expiration timestamp DateLessThan."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Open the generated Signed URL to verify successful video playback."
+          }
+        ],
+        "note": "Validates that signed URLs grant temporary access while blocking unsigned attempts.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Remove key group restriction from distribution behavior."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete key group saa-premium-key-group."
+          },
+          {
+            "id": "console-step-6-item-3",
+            "text": "Delete public key saa-premium-public-key."
+          }
+        ],
+        "note": null,
+        "warning": "Key groups cannot be deleted while attached to active behaviors.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Create CloudFront Public Key",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws cloudfront create-public-key --public-key-config Name=saa-premium-public-key,EncodedKey=\"$(cat public_key.pem)\",CallerReference=$(date +%s)"
+          }
+        ],
+        "note": "Uploads public key to CloudFront.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Signed URLs",
+        "body": "Use for individual file downloads or single streams when clients don't support cookies."
+      },
+      {
+        "id": "cs-2",
+        "title": "Signed Cookies",
+        "body": "Use when providing access to multiple files, HLS video streams, or an entire subscriber directory without altering URLs."
+      },
+      {
+        "id": "cs-3",
+        "title": "Trusted Key Groups",
+        "body": "AWS recommended method for validating CloudFront signed URLs/cookies without root user key pairs."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "403 Missing Key Pair ID",
+        "body": "Ensure the query string parameter `Key-Pair-Id` matches the exact Public Key ID created in CloudFront."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Signed URLs vs Signed Cookies Traps",
+        "body": "If an exam question specifies restricting access to multiple files or an entire folder, do NOT select Signed URLs. Select Signed Cookies."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "Signed URL = 1 Specific File | Signed Cookie = Directory / Multiple Files",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-edge-perimeter-protection-with-aws-waf-cloudfront-004",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Edge Perimeter Protection with AWS WAF & CloudFront",
+    "slug": "edge-perimeter-protection-with-aws-waf-cloudfront",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Medium",
+    "estimatedMinutes": 30,
+    "region": "us-east-1 (Global WAF scope)",
+    "goal": "Goal: Block malicious web traffic, SQL injections, and geo-restricted requests at the AWS edge before touching backend servers using AWS WAF and CloudFront.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Medium"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "AWS WAF Global Scope (us-east-1)",
+        "body": "Web ACLs protecting CloudFront distributions MUST be created in the Global (CloudFront) scope, which resides physically in `us-east-1`."
+      },
+      {
+        "id": "concept-2",
+        "title": "AWS Managed Rule Groups",
+        "body": "Pre-configured security rules maintained by AWS Threat Research to protect against OWASP Top 10 vulnerabilities (SQL injection, XSS, bots)."
+      },
+      {
+        "id": "concept-3",
+        "title": "Rate-Based Rules",
+        "body": "Automatically track request rates per client IP address over 5-minute sliding windows to mitigate Layer 7 HTTP flood DDoS attacks."
+      },
+      {
+        "id": "concept-4",
+        "title": "Edge Defense vs Origin Defense",
+        "body": "Inspecting and blocking malicious requests at CloudFront edge locations prevents malicious traffic from reaching backend ALBs or EC2 instances."
+      },
+      {
+        "id": "concept-5",
+        "title": "AWS WAF Scope & Target Matrix",
+        "body": "Web ACL ScopeMandatory RegionAttachable Target ResourcesCLOUDFRONT (Global)us-east-1 (N. Virginia)Amazon CloudFront DistributionsREGIONALAny specific AWS Region (e.g., eu-west-1)Application Load Balancers (ALB), Amazon API Gateway, AWS AppSync"
+      }
+    ],
+    "whyItMatters": "This matters because WAF + CloudFront integration for DDoS/OWASP Top 10 mitigation at the edge is a high-frequency SAA-C03 scenario.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1 (Global Scope)"
+      },
+      {
+        "label": "Web ACL Name",
+        "value": "saa-cloudfront-edge-waf"
+      },
+      {
+        "label": "Resource Type",
+        "value": "CloudFront Distributions"
+      },
+      {
+        "label": "Managed Rules",
+        "value": "Core rule set (CRS) & SQL database"
+      },
+      {
+        "label": "Rate Limit",
+        "value": "100 requests per 5 minutes"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity WAF permissions: wafv2:CreateWebACL, wafv2:AssociateWebACL, wafv2:GetWebACL CloudFront permissions: cloudfront:UpdateDistribution Cleanup: wafv2:DeleteWebACL",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create a Global Web ACL in AWS WAF",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open AWS WAF & Shield Console."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Select Region dropdown to Global (CloudFront) (must be created in us-east-1)."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Click Create web ACL."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Set Name to saa-cloudfront-edge-waf."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Set Resource type to CloudFront distributions."
+          }
+        ],
+        "note": "CloudFront Web ACLs must reside in the Global (us-east-1) scope.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Configure AWS Managed Rules & Rate-Limiting",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Under Rules, click Add rules -> Select Add managed rule groups."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Expand AWS managed rule groups -> Enable Core rule set (CRS) and SQL database."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Click Add rules -> Select Add my own rules."
+          },
+          {
+            "id": "console-step-3-item-4",
+            "text": "Add Rate-based rule: Set Name to LimitRequests and Limit to 100 requests per 5 minutes per IP address."
+          },
+          {
+            "id": "console-step-3-item-5",
+            "text": "Set Default action to Allow."
+          }
+        ],
+        "note": "Combines OWASP vulnerability protection with rate-based HTTP flood DDoS protection.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Attach Web ACL to CloudFront Distribution",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Under Associated AWS resources, click Add AWS resources."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Select your CloudFront distribution."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Click Save and complete Web ACL creation."
+          }
+        ],
+        "note": "Deploys WAF rules across all global CloudFront edge locations.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Test Malicious Request Blocking at the Edge",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Send a SQL injection test query: https:///?id=1%20OR%201=1."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Verify that AWS WAF blocks the request at the edge with HTTP status 403 Forbidden."
+          }
+        ],
+        "note": "Confirms malicious queries are dropped at edge locations before reaching backend servers.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Disassociate Web ACL from CloudFront distribution."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete Web ACL saa-cloudfront-edge-waf."
+          }
+        ],
+        "note": null,
+        "warning": "Disassociate resources before deleting Web ACLs to prevent billing charges.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "List WAF Global Web ACLs",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws wafv2 list-web-acls --scope CLOUDFRONT --region us-east-1"
+          }
+        ],
+        "note": "Lists CloudFront Web ACLs in us-east-1.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "WAF Scope for CloudFront",
+        "body": "MUST be `CLOUDFRONT` scope created in `us-east-1` region."
+      },
+      {
+        "id": "cs-2",
+        "title": "AWS Managed Rules",
+        "body": "Core Rule Set (CRS) provides baseline protection against OWASP Top 10 web exploits."
+      },
+      {
+        "id": "cs-3",
+        "title": "Rate-Based Rules",
+        "body": "Mitigates HTTP flood DDoS attacks by limiting requests per IP address per 5 minutes."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Web ACL Not Visible in CloudFront Console",
+        "body": "Ensure the Web ACL was created with scope `CLOUDFRONT` in region `us-east-1`."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "WAF Region Scope Trap",
+        "body": "If an exam question asks to protect a CloudFront distribution with AWS WAF, do NOT create a Regional Web ACL in `eu-west-1`. Select us-east-1 (Global Scope)."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "WAF + CloudFront = Global Scope (us-east-1) | Block at Edge = Shield Backend",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-dynamic-request-manipulation-with-cloudfront-functions-vs-lambda-edge-005",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Dynamic Request Manipulation with CloudFront Functions vs Lambda@Edge",
+    "slug": "dynamic-request-manipulation-with-cloudfront-functions-vs-lambda-edge",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Hard",
+    "estimatedMinutes": 45,
+    "region": "us-east-1",
+    "goal": "Goal: Inspect and rewrite HTTP headers or redirect URLs closer to the user using CloudFront Functions and compare with Lambda@Edge.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Hard"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "CloudFront Functions",
+        "body": "Lightweight JavaScript runtime executing at 225+ CloudFront Edge Locations. Ideal for high-scale, sub-millisecond tasks like URL rewrites, header manipulation, and token validation."
+      },
+      {
+        "id": "concept-2",
+        "title": "Lambda@Edge",
+        "body": "Full Node.js or Python Lambda runtime executing at Regional Edge Caches. Supports network access, body manipulation, third-party API calls, and longer execution times."
+      },
+      {
+        "id": "concept-3",
+        "title": "Execution Events",
+        "body": "Viewer Request / Response: Runs before cache lookup / before returning to viewer (Supports CloudFront Functions & Lambda@Edge). Origin Request / Response: Runs before cache miss goes to origin / after receiving origin response (Lambda@Edge only)."
+      },
+      {
+        "id": "concept-4",
+        "title": "CloudFront Functions vs Lambda@Edge Decision Matrix",
+        "body": "FeatureCloudFront FunctionsLambda@EdgeRuntimeJavaScript (ECMAScript v5.1)Node.js & PythonExecution location225+ Edge Locations (Viewer side)13+ Regional Edge Caches (Viewer & Origin side)Execution time5 seconds (Viewer) / 30 seconds (Origin)Max Memory2 MB128 MB to 10 GBNetwork / File AccessNo network or file system accessFull network & file system accessHTTP Body AccessNo body accessCan inspect & modify bodyPrimary Use CasesHeader rewrites, URL redirects, JWT validationDynamic SSR, image resizing, origin side auth"
+      }
+    ],
+    "whyItMatters": "This matters because choosing CloudFront Functions (lightweight, sub-ms, JavaScript, Viewer side) vs Lambda@Edge (full Node.js/Python, network calls, Origin side) is a classic SAA-C03 question.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Function Name",
+        "value": "saa-header-rewrite-function"
+      },
+      {
+        "label": "Runtime",
+        "value": "CloudFront Functions JavaScript 2.0"
+      },
+      {
+        "label": "Event Type",
+        "value": "Viewer Request / Response"
+      },
+      {
+        "label": "Execution Latency",
+        "value": "< 1 millisecond"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity CloudFront permissions: cloudfront:CreateFunction, cloudfront:PublishFunction, cloudfront:UpdateDistribution Cleanup: cloudfront:DeleteFunction",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create a Lightweight CloudFront Function",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open Amazon CloudFront Console -> Click Functions in left navigation sidebar."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Click Create function."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Set Name to saa-header-rewrite-function."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Select Runtime CloudFront Functions JavaScript 2.0."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Click Create function."
+          }
+        ],
+        "note": "Creates a sub-millisecond edge function.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Write Header Rewrite JavaScript Code",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "In the Code tab, write JavaScript code to inject custom security headers (e.g., Strict-Transport-Security, X-Frame-Options)."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Click Save changes."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Click Publish to publish the function code to live edge locations."
+          }
+        ],
+        "note": "Publishing deploys the code across all 225+ global edge locations.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Associate Function with CloudFront Viewer Event",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Go to Associations tab -> Click Add association."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Select your CloudFront distribution."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Select Event type Viewer Response."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Select Behavior Default (*)."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Click Add association."
+          }
+        ],
+        "note": "Attaches the function to run automatically whenever CloudFront returns a response to a viewer.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Verify Response Headers and Evaluate Lambda@Edge Differences",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Open CloudFront URL in browser -> Open Developer Tools -> Network tab."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Verify custom security headers are present on the HTTP response."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Review CloudFront Functions vs Lambda@Edge comparison criteria."
+          }
+        ],
+        "note": "CloudFront Functions handle simple header rewrites with sub-millisecond latency.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Remove function association from distribution behavior."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete function saa-header-rewrite-function."
+          }
+        ],
+        "note": null,
+        "warning": "Disassociate functions before deleting them.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "List CloudFront Functions",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws cloudfront list-functions --region us-east-1"
+          }
+        ],
+        "note": "Lists active CloudFront Functions.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "CloudFront Functions",
+        "body": "Lightweight JavaScript at 225+ edge locations. Sub-ms latency, high scale, no network access. Ideal for header rewrites & URL redirects."
+      },
+      {
+        "id": "cs-2",
+        "title": "Lambda@Edge",
+        "body": "Node.js/Python at 13+ Regional Edge Caches. Full network/file access, up to 10 GB memory. Ideal for image processing & third-party API calls."
+      },
+      {
+        "id": "cs-3",
+        "title": "Origin Request/Response",
+        "body": "Origin events can ONLY trigger Lambda@Edge; CloudFront Functions only support Viewer events."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Network Error in CloudFront Function",
+        "body": "CloudFront Functions do NOT support network access or external HTTP calls. Use **Lambda@Edge** if your edge function requires network calls."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Network Calls at Edge Trap",
+        "body": "If an edge function needs to call an external database or third-party API, do NOT select CloudFront Functions. Select Lambda@Edge."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "CloudFront Function = Sub-ms JS (Headers/Redirects) | Lambda@Edge = Full Node/Python (APIs/Network)",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-high-availability-origin-failover-groups-006",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "High Availability & Origin Failover Groups",
+    "slug": "high-availability-origin-failover-groups",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Hard",
+    "estimatedMinutes": 45,
+    "region": "us-east-1",
+    "goal": "Goal: Ensure zero downtime for static/dynamic origins if a primary origin fails by configuring automatic CloudFront Origin Failover Groups.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Hard"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "Origin Groups & Automated Failover",
+        "body": "Combines two origins (Primary and Secondary) into a logical failover group. If the primary returns specific HTTP error codes, CloudFront automatically retries against the secondary."
+      },
+      {
+        "id": "concept-2",
+        "title": "Failover Criteria Status Codes",
+        "body": "Configurable HTTP status codes triggering failover: 500, 502, 503, 504, 403, 404."
+      },
+      {
+        "id": "concept-3",
+        "title": "Cross-Region Failover Architecture",
+        "body": "Primary origin in us-east-1 (e.g. S3 bucket or ALB) backed up by a secondary origin in eu-west-1 for high availability disaster recovery."
+      },
+      {
+        "id": "concept-4",
+        "title": "Seamless Client Recovery",
+        "body": "CloudFront handles origin failover entirely at the CDN layer; end users never see 500-series origin errors."
+      },
+      {
+        "id": "concept-5",
+        "title": "Origin Failover Group Configuration Matrix",
+        "body": "Origin RoleTarget ServiceAWS RegionFailover BehaviorPrimary OriginPrimary S3 Bucket / ALBus-east-1Handles 100% of normal trafficSecondary OriginSecondary S3 Bucket / ALBeu-west-1Receives traffic automatically if Primary returns 5xx/4xx error"
+      }
+    ],
+    "whyItMatters": "This matters because ensuring high availability and automated failover at the CDN layer is heavily tested on SAA-C03.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Primary Origin",
+        "value": "saa-primary-origin-[account-id]"
+      },
+      {
+        "label": "Secondary Origin",
+        "value": "saa-backup-origin-[account-id]"
+      },
+      {
+        "label": "Origin Group Name",
+        "value": "saa-ha-origin-group"
+      },
+      {
+        "label": "Failover Triggers",
+        "value": "500, 502, 503, 504, 403, 404"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity CloudFront permissions: cloudfront:UpdateDistribution S3 permissions: s3:CreateBucket, s3:PutObject Cleanup: cloudfront:DeleteDistribution, s3:DeleteBucket",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Prepare Primary and Secondary Failover Origins",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Create Primary S3 bucket saa-primary-origin-[account-id] in us-east-1."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Create Secondary S3 bucket saa-backup-origin-[account-id] in eu-west-1."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Upload test file index.html to both origins (primary containing text Primary Origin Active, secondary containing Backup Origin Active)."
+          }
+        ],
+        "note": "Establishes multi-region backend origins for failover testing.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Configure CloudFront Distribution with Two Origins",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open Amazon CloudFront Console -> Open your distribution -> Choose Origins tab."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Ensure Origin 1 (Primary S3) and Origin 2 (Secondary S3) are both registered."
+          }
+        ],
+        "note": "Registers both origins in the distribution configuration.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Create Origin Failover Group",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "In Origins tab, click Create origin group."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Set Name to saa-ha-origin-group."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Select Primary origin saa-primary-origin-[account-id]."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Select Secondary origin saa-backup-origin-[account-id]."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Under Failover criteria, check status codes 500, 502, 503, 504, 403, 404."
+          },
+          {
+            "id": "console-step-4-item-6",
+            "text": "Click Create origin group."
+          }
+        ],
+        "note": "Creates the automated failover group.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Attach Origin Group to Default Cache Behavior",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Choose Behaviors tab -> Select Default (*) -> Click Edit."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Change Target origin to saa-ha-origin-group."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Click Save changes."
+          }
+        ],
+        "note": "Routes viewer requests to the origin group.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Simulate Primary Origin Failure and Test Automatic Failover",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Delete index.html from primary bucket (or block primary origin) to simulate failure."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Refresh CloudFront URL -> Confirm CloudFront automatically routes request to secondary backup origin (displaying Backup Origin Active)."
+          }
+        ],
+        "note": "Validates seamless CDN-layer automated failover.",
+        "warning": null,
+        "expectedResult": "Step 6 completed successfully."
+      },
+      {
+        "id": "console-step-7",
+        "number": 7,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-7-item-1",
+            "text": "Remove origin group from behavior."
+          },
+          {
+            "id": "console-step-7-item-2",
+            "text": "Delete origin group, distribution, and test S3 buckets."
+          }
+        ],
+        "note": null,
+        "warning": "Clean up test resources after testing.",
+        "expectedResult": "Step 7 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "List CloudFront Origin Groups",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws cloudfront list-distributions --query \"DistributionList.Items[*].Origins\" --region us-east-1"
+          }
+        ],
+        "note": "Inspects origins and origin groups.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Origin Failover Groups",
+        "body": "Provides high availability by automatically retrying requests against a secondary origin when the primary returns 5xx/4xx errors."
+      },
+      {
+        "id": "cs-2",
+        "title": "Supported Failover Triggers",
+        "body": "Triggers on 500, 502, 503, 504, 403, and 404 HTTP status codes."
+      },
+      {
+        "id": "cs-3",
+        "title": "Cross-Region Origins",
+        "body": "Primary and secondary origins can reside in different AWS Regions or different services (e.g. S3 + ALB)."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Failover Not Triggering",
+        "body": "Ensure the specific HTTP status code returned by the primary origin is selected in the Origin Group failover criteria."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "DNS Failover vs Origin Failover Trap",
+        "body": "Route 53 DNS failover takes minutes for DNS TTL cache propagation. For sub-second instant HTTP origin failover behind a CDN, choose CloudFront Origin Groups."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "Origin Group = Primary + Secondary | 5xx/4xx Error = Automatic Edge Failover",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-cloudfront-custom-ssl-tls-certificates-with-acm-sni-008",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-cloudfront",
+    "title": "Custom SSL/TLS Certificates with ACM & SNI",
+    "slug": "custom-ssl-tls-certificates-with-acm-sni",
+    "service": "Amazon CloudFront",
+    "feature": "Amazon CloudFront",
+    "difficulty": "Hard",
+    "estimatedMinutes": 45,
+    "region": "us-east-1 (ACM mandatory region for CloudFront)",
+    "goal": "Goal: Attach a custom SSL/TLS domain certificate to a global distribution using AWS Certificate Manager (ACM) and SNI.",
+    "status": "published",
+    "tags": [
+      "Amazon CloudFront",
+      "Hard"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "ACM Certificate Region Requirement (us-east-1)",
+        "body": "Public SSL/TLS certificates used with CloudFront distributions MUST be requested in the `us-east-1` (N. Virginia) Region regardless of where your origins reside."
+      },
+      {
+        "id": "concept-2",
+        "title": "Server Name Indication (SNI)",
+        "body": "SNI allows multiple custom SSL certificates to be served from shared IP addresses at CloudFront edge locations without extra cost."
+      },
+      {
+        "id": "concept-3",
+        "title": "Alternate Domain Names (CNAMEs)",
+        "body": "Allows routing your custom domain (e.g. app.example.com) to CloudFront (d1111.cloudfront.net)."
+      },
+      {
+        "id": "concept-4",
+        "title": "DNS Validation & Managed Renewal",
+        "body": "ACM validates domain ownership via DNS CNAME records and automatically renews public certificates before expiration without application downtime."
+      },
+      {
+        "id": "concept-5",
+        "title": "ACM Certificate Scope & Region Matrix",
+        "body": "Target ResourceMandatory ACM Certificate RegionValidation OptionsCostAmazon CloudFront Distributionus-east-1 (N. Virginia) ONLYDNS Validation / Email ValidationFree ($0 for public ACM certs)Application Load Balancer (ALB)Same Region as the ALB (e.g., eu-west-1)DNS Validation / Email ValidationFree ($0 for public ACM certs)API Gateway Custom DomainSame Region as the API GatewayDNS Validation / Email ValidationFree ($0 for public ACM certs)"
+      }
+    ],
+    "whyItMatters": "This matters because ACM certificate region requirements (us-east-1 for edge distributions) and SNI support are heavily tested on SAA-C03.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1 (Mandatory ACM Region)"
+      },
+      {
+        "label": "Certificate Type",
+        "value": "Public ACM Certificate"
+      },
+      {
+        "label": "Custom Domain CNAME",
+        "value": "app.example.com"
+      },
+      {
+        "label": "SSL Protocol",
+        "value": "SNI (Server Name Indication)"
+      },
+      {
+        "label": "Validation Method",
+        "value": "DNS Validation (Route 53)"
+      }
+    ],
+    "costWarning": "CloudFront requests, data transfer, invalidations, logging, Origin Shield and connected-service charges may apply. Complete cleanup promptly.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity ACM permissions: acm:RequestCertificate, acm:DescribeCertificate CloudFront permissions: cloudfront:UpdateDistribution Cleanup: acm:DeleteCertificate",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Request Public ACM Certificate in us-east-1",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Open AWS Certificate Manager (ACM) Console."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Ensure Region dropdown is set to us-east-1 (N. Virginia) (mandatory for CloudFront)."
+          },
+          {
+            "id": "console-step-2-item-3",
+            "text": "Click Request certificate -> Select Request a public certificate."
+          },
+          {
+            "id": "console-step-2-item-4",
+            "text": "Enter Domain name (e.g. app.example.com or *.example.com)."
+          },
+          {
+            "id": "console-step-2-item-5",
+            "text": "Select Validation method DNS validation -> Click Request."
+          }
+        ],
+        "note": "CloudFront distributions can ONLY read ACM certificates created in us-east-1.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Validate Certificate via Route 53 / DNS CNAME Records",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open certificate details page in ACM."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Click Create records in Route 53 (or copy generated CNAME name/value into your DNS provider)."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Wait for Certificate status to transition to Issued."
+          }
+        ],
+        "note": "DNS validation allows ACM to manage automated annual certificate renewals.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Attach Alternate Domain Name (CNAME) and Custom SSL Certificate",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Open Amazon CloudFront Console -> Select your distribution -> Click Edit."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Under Alternate domain name (CNAME), click Add item -> Enter app.example.com."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Under Custom SSL certificate, select the issued ACM certificate from us-east-1."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Under Support HTTP versions, keep SNI (Server Name Indication) selected (Free)."
+          },
+          {
+            "id": "console-step-4-item-5",
+            "text": "Click Save changes."
+          }
+        ],
+        "note": "SNI allows custom SSL certificates on shared IP addresses at zero extra charge.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Verify HTTPS Custom Domain SSL Handshake",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Open terminal and test SSL handshake: curl -vI https://app.example.com."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Verify that the TLS certificate issuer displays Amazon and SNI domain matches."
+          }
+        ],
+        "note": "Validates secure TLS encryption over custom domain name.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Remove CNAME and custom certificate from CloudFront distribution."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete ACM certificate in us-east-1."
+          }
+        ],
+        "note": null,
+        "warning": "Unattach ACM certificates from CloudFront distributions before attempting deletion.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "Request Certificate in us-east-1",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws acm request-certificate --domain-name app.example.com --validation-method DNS --region us-east-1"
+          }
+        ],
+        "note": "Requests public ACM certificate in us-east-1.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "Amazon CloudFront configuration verified in Amazon CloudFront."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove any function or Lambda@Edge associations from the CloudFront distribution."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable the CloudFront distribution and wait until the status changes to Disabled."
+      },
+      {
+        "id": "cleanup-3",
+        "text": "Delete the CloudFront distribution, Origin Access Control, and test S3 bucket."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "Mandatory ACM Region",
+        "body": "ACM certificates for CloudFront distributions MUST be created in **us-east-1 (N. Virginia)**."
+      },
+      {
+        "id": "cs-2",
+        "title": "SNI (Server Name Indication)",
+        "body": "Allows serving custom SSL certificates on shared IP addresses at no extra charge. Legacy dedicated IP SSL costs $600/month."
+      },
+      {
+        "id": "cs-3",
+        "title": "DNS Validation",
+        "body": "Recommended ACM validation method enabling automatic managed annual certificate renewals."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "ACM Certificate Not Listed in CloudFront",
+        "body": "Ensure the ACM certificate was requested in **us-east-1**. Certificates created in other regions (e.g. `eu-west-1`) will not appear in CloudFront."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "ACM Region Traps",
+        "body": "If an exam question asks where to create an ACM certificate for a CloudFront distribution, do NOT select the application origin region (e.g. `eu-west-1`). Select us-east-1."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master Amazon CloudFront concepts and global edge distribution patterns in Amazon CloudFront."
+      }
+    ],
+    "memoryHook": "CloudFront Cert = MUST be in us-east-1 | SNI = Free Custom SSL",
+    "flashcardSetId": null
+  },
+  {
+    "id": "task-saa-global-accelerator-non-http-global-acceleration-with-aws-global-accelerator-007",
+    "examCode": "aws-saa-c03",
+    "topicId": "topic-global-accelerator",
+    "title": "Non-HTTP Global Acceleration with AWS Global Accelerator",
+    "slug": "non-http-global-acceleration-with-aws-global-accelerator",
+    "service": "AWS Global Accelerator",
+    "feature": "AWS Global Accelerator",
+    "difficulty": "Hard",
+    "estimatedMinutes": 45,
+    "region": "us-east-1",
+    "goal": "Goal: Optimize global TCP/UDP traffic performance using AWS's private global fiber network and two static Anycast IP addresses.",
+    "status": "published",
+    "tags": [
+      "AWS Global Accelerator",
+      "Hard"
+    ],
+    "flow": [],
+    "concepts": [
+      {
+        "id": "concept-1",
+        "title": "AWS Global Accelerator Overview",
+        "body": "Networking service that improves global application performance by routing user traffic over AWS's private global fiber network using two static Anycast IP addresses."
+      },
+      {
+        "id": "concept-2",
+        "title": "Static Anycast IP Addresses",
+        "body": "Global Accelerator provides 2 fixed Anycast IP addresses announced from all AWS edge locations globally. Clients connect to the nearest edge location automatically."
+      },
+      {
+        "id": "concept-3",
+        "title": "CloudFront vs Global Accelerator",
+        "body": "CloudFront: Caches HTTP/HTTPS web content at edge locations. Global Accelerator: Routes non-HTTP (TCP/UDP) or un-cacheable traffic over AWS private network without edge caching."
+      },
+      {
+        "id": "concept-4",
+        "title": "Sub-Second Automatic Health Check Failover",
+        "body": "Global Accelerator monitors endpoint health continuously. If an ALB fails in one Region, traffic is rerouted to a healthy endpoint in another Region in seconds."
+      },
+      {
+        "id": "concept-5",
+        "title": "CloudFront vs Global Accelerator Comparison Matrix",
+        "body": "FeatureAmazon CloudFrontAWS Global AcceleratorSupported ProtocolsHTTP, HTTPS, WebSocketTCP, UDP, HTTP, HTTPSCaching LayerYes (Caches web content at 225+ edge locations)No Caching (Pass-through network acceleration)IP Address ModelDynamic CloudFront domain names2 Static Anycast IP AddressesPrimary Use CasesStatic websites, video streaming, REST APIsGaming (UDP), VoIP, IoT, multi-region failover, static IP whitelistNetwork PathPublic internet to Edge -> Edge to OriginPublic internet to Edge -> AWS Private Network to Endpoint"
+      }
+    ],
+    "whyItMatters": "This matters because distinguishing between CloudFront (HTTP caching at edge) vs Global Accelerator (TCP/UDP non-caching global Anycast routing) is a top SAA-C03 exam scenario.",
+    "values": [
+      {
+        "label": "AWS Region",
+        "value": "us-east-1"
+      },
+      {
+        "label": "Accelerator Name",
+        "value": "saa-global-accelerator"
+      },
+      {
+        "label": "IP Address Model",
+        "value": "2 Static Anycast IPs"
+      },
+      {
+        "label": "Protocols Supported",
+        "value": "TCP & UDP"
+      },
+      {
+        "label": "Endpoints",
+        "value": "Multi-Region ALBs (us-east-1 & eu-west-1)"
+      }
+    ],
+    "costWarning": "Low cost: AWS Global Accelerator costs $0.025/hr (~$0.60/day) plus small data transfer fees. Delete the accelerator immediately after completing your practice lab.",
+    "consoleSteps": [
+      {
+        "id": "console-step-1",
+        "number": 1,
+        "title": "Set up the lab user and permissions",
+        "instructions": [
+          {
+            "id": "console-step-1-item-1",
+            "text": "Sign in to the AWS Management Console."
+          },
+          {
+            "id": "console-step-1-item-2",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-3",
+            "text": "Sign in to the AWS Management Console using an IAM user or lab role with appropriate permissions."
+          },
+          {
+            "id": "console-step-1-item-4",
+            "text": "For least privilege, use the grouped permissions below."
+          }
+        ],
+        "note": "Identity check: sts:GetCallerIdentity Global Accelerator permissions: globalaccelerator:CreateAccelerator, globalaccelerator:CreateListener, globalaccelerator:CreateEndpointGroup Cleanup: globalaccelerator:DeleteAccelerator",
+        "warning": "Do not leave broad admin access or long-term access keys in real company accounts.",
+        "expectedResult": "Step 1 completed successfully."
+      },
+      {
+        "id": "console-step-2",
+        "number": 2,
+        "title": "Create Multi-Region ALBs or EC2 Endpoints",
+        "instructions": [
+          {
+            "id": "console-step-2-item-1",
+            "text": "Deploy Primary ALB in us-east-1."
+          },
+          {
+            "id": "console-step-2-item-2",
+            "text": "Deploy Secondary ALB in eu-west-1."
+          }
+        ],
+        "note": "Provides multi-region endpoints for Global Accelerator.",
+        "warning": null,
+        "expectedResult": "Step 2 completed successfully."
+      },
+      {
+        "id": "console-step-3",
+        "number": 3,
+        "title": "Create an AWS Global Accelerator",
+        "instructions": [
+          {
+            "id": "console-step-3-item-1",
+            "text": "Open AWS Global Accelerator Console -> Click Create accelerator."
+          },
+          {
+            "id": "console-step-3-item-2",
+            "text": "Set Name to saa-global-accelerator."
+          },
+          {
+            "id": "console-step-3-item-3",
+            "text": "Select IP address type IPv4 -> Click Next."
+          }
+        ],
+        "note": "Provisions 2 static Anycast IP addresses.",
+        "warning": null,
+        "expectedResult": "Step 3 completed successfully."
+      },
+      {
+        "id": "console-step-4",
+        "number": 4,
+        "title": "Configure Listener and Multi-Region Endpoint Groups",
+        "instructions": [
+          {
+            "id": "console-step-4-item-1",
+            "text": "Add Listener: Port 80 (or 443), Protocol TCP."
+          },
+          {
+            "id": "console-step-4-item-2",
+            "text": "Add Endpoint Group 1: Region us-east-1 -> Attach Primary ALB."
+          },
+          {
+            "id": "console-step-4-item-3",
+            "text": "Add Endpoint Group 2: Region eu-west-1 -> Attach Secondary ALB."
+          },
+          {
+            "id": "console-step-4-item-4",
+            "text": "Set Traffic dial to 100% for both endpoint groups -> Click Create accelerator."
+          }
+        ],
+        "note": "Binds multi-region endpoints to static Anycast IPs with health monitoring.",
+        "warning": null,
+        "expectedResult": "Step 4 completed successfully."
+      },
+      {
+        "id": "console-step-5",
+        "number": 5,
+        "title": "Inspect Static Anycast IPs and Health Check Rerouting",
+        "instructions": [
+          {
+            "id": "console-step-5-item-1",
+            "text": "Copy the two assigned Static Anycast IP addresses (e.g. 1.2.3.4 and 5.6.7.8)."
+          },
+          {
+            "id": "console-step-5-item-2",
+            "text": "Query the Anycast IPs from different global geographical locations to test AWS private network routing."
+          },
+          {
+            "id": "console-step-5-item-3",
+            "text": "Review CloudFront vs Global Accelerator decision rules."
+          }
+        ],
+        "note": "Anycast IPs route traffic over AWS's private global fiber network.",
+        "warning": null,
+        "expectedResult": "Step 5 completed successfully."
+      },
+      {
+        "id": "console-step-6",
+        "number": 6,
+        "title": "Tear down lab resources",
+        "instructions": [
+          {
+            "id": "console-step-6-item-1",
+            "text": "Disable and delete Global Accelerator saa-global-accelerator."
+          },
+          {
+            "id": "console-step-6-item-2",
+            "text": "Delete ALBs in us-east-1 and eu-west-1."
+          }
+        ],
+        "note": null,
+        "warning": "Disable Global Accelerator before deletion.",
+        "expectedResult": "Step 6 completed successfully."
+      }
+    ],
+    "cliSteps": [
+      {
+        "id": "cli-step-1",
+        "number": 1,
+        "title": "Check your AWS identity",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-1-cmd-1",
+            "language": "bash",
+            "text": "aws sts get-caller-identity"
+          }
+        ],
+        "note": "Expected: account ID and IAM user/role ARN.",
+        "warning": null,
+        "expectedResult": "Expected: account ID and IAM user/role ARN."
+      },
+      {
+        "id": "cli-step-2",
+        "number": 2,
+        "title": "List Global Accelerators",
+        "instructions": [],
+        "commands": [
+          {
+            "id": "cli-step-2-cmd-1",
+            "language": "bash",
+            "text": "aws globalaccelerator list-accelerators --region us-east-1"
+          }
+        ],
+        "note": "Lists active accelerators.",
+        "warning": null,
+        "expectedResult": "CLI command step 2 executed successfully."
+      }
+    ],
+    "verification": [
+      {
+        "id": "verify-1",
+        "text": "AWS Global Accelerator configuration verified in AWS Global Accelerator."
+      }
+    ],
+    "cleanup": [
+      {
+        "id": "cleanup-1",
+        "text": "Remove all endpoint groups and listeners from the accelerator."
+      },
+      {
+        "id": "cleanup-2",
+        "text": "Disable and delete the AWS Global Accelerator."
+      }
+    ],
+    "cheatSheet": [
+      {
+        "id": "cs-1",
+        "title": "AWS Global Accelerator",
+        "body": "Provides 2 static Anycast IPs and routes TCP/UDP traffic over AWS's private global network. No content caching."
+      },
+      {
+        "id": "cs-2",
+        "title": "Static Anycast IPs",
+        "body": "IP addresses announced globally from edge locations. Eliminates DNS caching delay during failover."
+      },
+      {
+        "id": "cs-3",
+        "title": "TCP / UDP Protocol Support",
+        "body": "Supports non-HTTP protocols like gaming (UDP), VoIP, IoT, and custom TCP applications."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "id": "ts-1",
+        "title": "Endpoint Unhealthy in Accelerator",
+        "body": "Ensure the target ALB health check returns HTTP 200 OK and that security groups allow inbound traffic from Global Accelerator IP ranges."
+      }
+    ],
+    "examTraps": [
+      {
+        "id": "trap-1",
+        "title": "Non-HTTP & Static IP Traps",
+        "body": "If an exam question asks for UDP/TCP acceleration, static IP whitelisting, or fast multi-region failover without caching, do NOT select CloudFront. Select AWS Global Accelerator."
+      }
+    ],
+    "examTips": [
+      {
+        "id": "tip-1",
+        "text": "SAA-C03: Master AWS Global Accelerator concepts and global edge distribution patterns in AWS Global Accelerator."
+      }
+    ],
+    "memoryHook": "Global Accelerator = 2 Static Anycast IPs | TCP/UDP Non-Caching = AWS Private Fiber",
+    "flashcardSetId": null
+  }
+]

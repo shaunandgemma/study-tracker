@@ -1,0 +1,488 @@
+[
+  {
+    "sourceTaskId": 23,
+    "convertedTask": {
+      "id": "task-saa-rds-aws-database-migration-service-dms-conceptual-guide-023",
+      "examCode": "aws-saa-c03",
+      "topicId": "topic-rds",
+      "title": "AWS Database Migration Service (DMS) Conceptual Guide",
+      "slug": "aws-database-migration-service-dms-conceptual-guide",
+      "service": "Amazon RDS",
+      "feature": "Amazon RDS",
+      "difficulty": "Easy",
+      "estimatedMinutes": 20,
+      "region": "us-east-1",
+      "goal": "Goal: Step-by-step walkthrough detailing DMS Replication Instances, Source/Target Endpoints, and CDC (Change Data Capture) configuration for minimal downtime migrations.",
+      "status": "published",
+      "tags": [
+        "Amazon RDS",
+        "Easy"
+      ],
+      "flow": [],
+      "concepts": [
+        {
+          "id": "concept-1",
+          "title": "AWS DMS Replication Instance",
+          "body": "Managed EC2 instance running AWS DMS migration software that connects to source/target endpoints, extracts data, and loads records."
+        },
+        {
+          "id": "concept-2",
+          "title": "DMS Endpoints",
+          "body": "Connection definitions holding IP address, port, engine type, and credentials for source and target databases."
+        },
+        {
+          "id": "concept-3",
+          "title": "Full Load + CDC (Change Data Capture)",
+          "body": "Full Load migrates existing table records. CDC continuously streams ongoing binary log changes until application cutover."
+        },
+        {
+          "id": "concept-4",
+          "title": "Homogeneous vs Heterogeneous",
+          "body": "DMS natively migrates homogeneous databases (e.g. MySQL to RDS MySQL). Heterogeneous migrations (e.g. Oracle to Aurora) require AWS SCT for schema conversion."
+        },
+        {
+          "id": "concept-5",
+          "title": "DMS Migration Architecture Plan",
+          "body": "DMS ComponentFunctionKey RequirementReplication InstanceExecutes data extraction & loadingNeeds network connectivity to source & targetSource EndpointReads source database records & binlogsRequires binlog/CDC privileges on source DBTarget EndpointWrites records to destination DBRequires target schema tables pre-createdMigration TaskDefines task type & table mapping rulesSelect Full Load + CDC for minimal downtime"
+        }
+      ],
+      "whyItMatters": "This matters because continuous database replication with minimal application downtime is a major scenario topic on SAA-C03.",
+      "values": [
+        {
+          "label": "AWS Region",
+          "value": "us-east-1"
+        },
+        {
+          "label": "Replication Instance",
+          "value": "dms.t3.micro"
+        },
+        {
+          "label": "Migration Type",
+          "value": "Full Load + CDC"
+        },
+        {
+          "label": "Replication Lag",
+          "value": "0 seconds (at cutover)"
+        },
+        {
+          "label": "Downtime Requirement",
+          "value": "Near-zero downtime"
+        }
+      ],
+      "costWarning": "Architectural Guide: Reading this conceptual guide incurs $0 cost.",
+      "consoleSteps": [
+        {
+          "id": "console-step-1",
+          "number": 1,
+          "title": "Review AWS DMS Administration Permissions",
+          "instructions": [
+            {
+              "id": "console-step-1-item-1",
+              "text": "Ensure your identity has permissions for DMS replication instances and endpoints."
+            }
+          ],
+          "note": "Read-only access is sufficient for evaluation.",
+          "warning": null,
+          "expectedResult": "Step 1 completed successfully."
+        },
+        {
+          "id": "console-step-2",
+          "number": 2,
+          "title": "Provision DMS Replication Instance and Endpoints",
+          "instructions": [
+            {
+              "id": "console-step-2-item-1",
+              "text": "Open Database Migration Service (DMS) Console."
+            },
+            {
+              "id": "console-step-2-item-2",
+              "text": "Provision a DMS Replication Instance (e.g. dms.t3.micro)."
+            },
+            {
+              "id": "console-step-2-item-3",
+              "text": "Configure Source Database Endpoint with source DB IP, port, and credentials."
+            },
+            {
+              "id": "console-step-2-item-4",
+              "text": "Configure Target Database Endpoint pointing to Amazon RDS or Aurora."
+            },
+            {
+              "id": "console-step-2-item-5",
+              "text": "Choose Test connection to verify network connectivity between endpoints."
+            }
+          ],
+          "note": "Sets up the core DMS replication infrastructure.",
+          "warning": null,
+          "expectedResult": "Step 2 completed successfully."
+        },
+        {
+          "id": "console-step-3",
+          "number": 3,
+          "title": "Configure and Execute Full Load + CDC Migration Task",
+          "instructions": [
+            {
+              "id": "console-step-3-item-1",
+              "text": "Create a Migration Task selecting Full load + CDC (Change Data Capture)."
+            },
+            {
+              "id": "console-step-3-item-2",
+              "text": "Configure Table Mapping selection rules (Schema %, Table %)."
+            },
+            {
+              "id": "console-step-3-item-3",
+              "text": "Start task and monitor initial Full Load completion."
+            },
+            {
+              "id": "console-step-3-item-4",
+              "text": "Monitor continuous CDC binary log replication until replication latency reaches 0 seconds."
+            }
+          ],
+          "note": "Enables initial data snapshot followed by continuous change streaming.",
+          "warning": null,
+          "expectedResult": "Step 3 completed successfully."
+        },
+        {
+          "id": "console-step-4",
+          "number": 4,
+          "title": "Perform Zero-Downtime Application Cutover",
+          "instructions": [
+            {
+              "id": "console-step-4-item-1",
+              "text": "Redirect application traffic to target database."
+            },
+            {
+              "id": "console-step-4-item-2",
+              "text": "Stop and delete the DMS task and replication instance."
+            }
+          ],
+          "note": null,
+          "warning": "Delete the replication instance after cutover to stop hourly charges.",
+          "expectedResult": "Step 4 completed successfully."
+        }
+      ],
+      "cliSteps": [
+        {
+          "id": "cli-step-1",
+          "number": 1,
+          "title": "Check your AWS identity",
+          "instructions": [],
+          "commands": [
+            {
+              "id": "cli-step-1-cmd-1",
+              "language": "bash",
+              "text": "aws sts get-caller-identity"
+            }
+          ],
+          "note": "Expected: account ID and IAM user/role ARN.",
+          "warning": null,
+          "expectedResult": "Expected: account ID and IAM user/role ARN."
+        },
+        {
+          "id": "cli-step-2",
+          "number": 2,
+          "title": "Describe DMS Replication Instances",
+          "instructions": [],
+          "commands": [
+            {
+              "id": "cli-step-2-cmd-1",
+              "language": "bash",
+              "text": "aws dms describe-replication-instances --region us-east-1"
+            }
+          ],
+          "note": "Lists DMS replication instances.",
+          "warning": null,
+          "expectedResult": "CLI command step 2 executed successfully."
+        }
+      ],
+      "verification": [
+        {
+          "id": "verify-1",
+          "text": "Amazon RDS configuration verified in Amazon RDS."
+        }
+      ],
+      "cleanup": [],
+      "cheatSheet": [
+        {
+          "id": "cs-1",
+          "title": "AWS DMS",
+          "body": "Migrates databases to AWS with minimal downtime. Supports relational, NoSQL, and data warehouse targets."
+        },
+        {
+          "id": "cs-2",
+          "title": "Change Data Capture (CDC)",
+          "body": "Continuously streams ongoing binlog modifications to target database during migration."
+        },
+        {
+          "id": "cs-3",
+          "title": "Homogeneous vs Heterogeneous",
+          "body": "Homogeneous migrations use DMS alone. Heterogeneous migrations require AWS SCT for schema conversion first."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "id": "ts-1",
+          "title": "CDC Replication Failing on Source",
+          "body": "Ensure binary logging (`binlog_format=ROW`) is enabled on the source database and DMS user has replication privileges."
+        }
+      ],
+      "examTraps": [
+        {
+          "id": "trap-1",
+          "title": "DMS Schema Conversion Trap",
+          "body": "AWS DMS does NOT convert database schemas between different engines. You MUST use AWS SCT to convert schema before running DMS."
+        }
+      ],
+      "examTips": [
+        {
+          "id": "tip-1",
+          "text": "SAA-C03: Master Amazon RDS concepts and multi-AZ / replication design in Amazon RDS."
+        }
+      ],
+      "memoryHook": "DMS = Data Migration Service | CDC = Continuous Change Capture | SCT = Schema Converter",
+      "flashcardSetId": null
+    },
+    "reason": "Migration cutover / Database Migration Service task recommended for topic-dms / Migration topic batch.",
+    "recommendedTopic": "topic-dms"
+  },
+  {
+    "sourceTaskId": 24,
+    "convertedTask": {
+      "id": "task-saa-rds-homogeneous-vs-heterogeneous-database-migration-024",
+      "examCode": "aws-saa-c03",
+      "topicId": "topic-rds",
+      "title": "Homogeneous vs Heterogeneous Database Migration",
+      "slug": "homogeneous-vs-heterogeneous-database-migration",
+      "service": "Amazon RDS",
+      "feature": "Amazon RDS",
+      "difficulty": "Easy",
+      "estimatedMinutes": 20,
+      "region": "us-east-1",
+      "goal": "Goal: Operational workflow comparing same-engine migrations (DMS alone) vs. engine changes (Oracle/SQL Server to Postgres/Aurora requiring AWS Schema Conversion Tool).",
+      "status": "published",
+      "tags": [
+        "Amazon RDS",
+        "Easy"
+      ],
+      "flow": [],
+      "concepts": [
+        {
+          "id": "concept-1",
+          "title": "Homogeneous Migration",
+          "body": "Source and target database engines are identical (e.g. MySQL to RDS MySQL, Oracle to RDS Oracle). Schemas match natively; AWS SCT is NOT required."
+        },
+        {
+          "id": "concept-2",
+          "title": "Heterogeneous Migration",
+          "body": "Source and target database engines are different (e.g. Oracle to Aurora PostgreSQL, SQL Server to MySQL). Schemas and SQL dialects MUST be converted using AWS SCT."
+        },
+        {
+          "id": "concept-3",
+          "title": "AWS Schema Conversion Tool (SCT)",
+          "body": "Converts source database schemas, views, indexes, stored procedures, and DDL statements into the target engine dialect automatically."
+        },
+        {
+          "id": "concept-4",
+          "title": "SCT Assessment Report",
+          "body": "Generates a detailed report identifying code items that require manual conversion assistance (e.g., complex stored procedures or proprietary functions)."
+        },
+        {
+          "id": "concept-5",
+          "title": "Homogeneous vs Heterogeneous Decision Matrix",
+          "body": "FeatureHomogeneous MigrationHeterogeneous MigrationEngine alignmentSame source and target (e.g. Postgres -> RDS Postgres)Different source and target (e.g. SQL Server -> Aurora)Schema tool needed?No (Schemas match natively)YES — AWS SCT RequiredData migration toolAWS DMS or native backup tools (`pg_dump`/`mysqldump`)AWS DMS (Data migration after SCT schema conversion)Stored procedure conversionAutomatic (Identical dialect)AWS SCT converts or flags for manual review"
+        }
+      ],
+      "whyItMatters": "This matters because knowing exactly when AWS SCT is required alongside AWS DMS is a classic SAA-C03 exam scenario.",
+      "values": [
+        {
+          "label": "AWS Region",
+          "value": "us-east-1"
+        },
+        {
+          "label": "Homogeneous Tooling",
+          "value": "AWS DMS alone or native DB dump tools"
+        },
+        {
+          "label": "Heterogeneous Tooling",
+          "value": "AWS SCT (Schema) + AWS DMS (Data)"
+        },
+        {
+          "label": "Primary Selection Rule",
+          "value": "Source vs Target database engine alignment"
+        }
+      ],
+      "costWarning": "Architectural Guide: Reading this comparison guide incurs $0 cost.",
+      "consoleSteps": [
+        {
+          "id": "console-step-1",
+          "number": 1,
+          "title": "Review AWS DMS and AWS SCT Administration Permissions",
+          "instructions": [
+            {
+              "id": "console-step-1-item-1",
+              "text": "Ensure your identity has permissions to manage DMS resources."
+            }
+          ],
+          "note": "Read-only access is sufficient for evaluation.",
+          "warning": null,
+          "expectedResult": "Step 1 completed successfully."
+        },
+        {
+          "id": "console-step-2",
+          "number": 2,
+          "title": "Evaluate Homogeneous Migration Path (DMS Alone)",
+          "instructions": [
+            {
+              "id": "console-step-2-item-1",
+              "text": "Select Homogeneous Migration when source and target database engines are identical (e.g. MySQL to RDS MySQL)."
+            },
+            {
+              "id": "console-step-2-item-2",
+              "text": "Use native database tools (`mysqldump`, `pg_dump`) or AWS DMS alone."
+            },
+            {
+              "id": "console-step-2-item-3",
+              "text": "Note that AWS SCT is NOT required for homogeneous migrations."
+            }
+          ],
+          "note": "Schemas match natively across identical engines.",
+          "warning": null,
+          "expectedResult": "Step 2 completed successfully."
+        },
+        {
+          "id": "console-step-3",
+          "number": 3,
+          "title": "Evaluate Heterogeneous Migration Path (AWS SCT + DMS)",
+          "instructions": [
+            {
+              "id": "console-step-3-item-1",
+              "text": "Select Heterogeneous Migration when source and target database engines differ (e.g. Oracle to Aurora PostgreSQL)."
+            },
+            {
+              "id": "console-step-3-item-2",
+              "text": "Download and launch AWS Schema Conversion Tool (SCT)."
+            },
+            {
+              "id": "console-step-3-item-3",
+              "text": "Connect SCT to Source DB and Target RDS DB."
+            },
+            {
+              "id": "console-step-3-item-4",
+              "text": "Generate SCT Schema Transformation Assessment Report."
+            },
+            {
+              "id": "console-step-3-item-5",
+              "text": "Convert DDL statements, tables, views, and stored procedures to target dialect."
+            },
+            {
+              "id": "console-step-3-item-6",
+              "text": "Apply converted schema to target database."
+            },
+            {
+              "id": "console-step-3-item-7",
+              "text": "Run AWS DMS to migrate data records into target schema."
+            }
+          ],
+          "note": "SCT converts schema first; DMS migrates data records after.",
+          "warning": null,
+          "expectedResult": "Step 3 completed successfully."
+        },
+        {
+          "id": "console-step-4",
+          "number": 4,
+          "title": "Master SAA-C03 Migration Scenario Rules",
+          "instructions": [
+            {
+              "id": "console-step-4-item-1",
+              "text": "Verify your tool choice: SCT for schema conversion; DMS for data migration."
+            }
+          ],
+          "note": "Guarantees correct exam scenario responses.",
+          "warning": null,
+          "expectedResult": "Step 4 completed successfully."
+        }
+      ],
+      "cliSteps": [
+        {
+          "id": "cli-step-1",
+          "number": 1,
+          "title": "Check your AWS identity",
+          "instructions": [],
+          "commands": [
+            {
+              "id": "cli-step-1-cmd-1",
+              "language": "bash",
+              "text": "aws sts get-caller-identity"
+            }
+          ],
+          "note": "Expected: account ID and IAM user/role ARN.",
+          "warning": null,
+          "expectedResult": "Expected: account ID and IAM user/role ARN."
+        },
+        {
+          "id": "cli-step-2",
+          "number": 2,
+          "title": "List Available DMS Endpoint Types",
+          "instructions": [],
+          "commands": [
+            {
+              "id": "cli-step-2-cmd-1",
+              "language": "bash",
+              "text": "aws dms describe-endpoint-types --region us-east-1"
+            }
+          ],
+          "note": "Lists supported DMS database engines.",
+          "warning": null,
+          "expectedResult": "CLI command step 2 executed successfully."
+        }
+      ],
+      "verification": [
+        {
+          "id": "verify-1",
+          "text": "Amazon RDS configuration verified in Amazon RDS."
+        }
+      ],
+      "cleanup": [],
+      "cheatSheet": [
+        {
+          "id": "cs-1",
+          "title": "Homogeneous Migration",
+          "body": "Same engine (e.g. MySQL to RDS MySQL). Schemas match. AWS SCT is NOT required; use DMS alone."
+        },
+        {
+          "id": "cs-2",
+          "title": "Heterogeneous Migration",
+          "body": "Different engine (e.g. Oracle to Aurora Postgres). MUST use **AWS SCT** for schema conversion before running **AWS DMS** for data."
+        },
+        {
+          "id": "cs-3",
+          "title": "AWS SCT",
+          "body": "Converts source schema DDL, views, indexes, and stored procedures to target database engine dialect."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "id": "ts-1",
+          "title": "Target Table Missing for DMS",
+          "body": "DMS does not create complex schemas for heterogeneous migrations. Run AWS SCT first to create target tables before starting DMS."
+        }
+      ],
+      "examTraps": [
+        {
+          "id": "trap-1",
+          "title": "AWS SCT for Homogeneous Trap",
+          "body": "If an exam question describes a homogeneous migration (e.g. PostgreSQL to RDS PostgreSQL), do NOT select AWS SCT. SCT is only for heterogeneous migrations."
+        }
+      ],
+      "examTips": [
+        {
+          "id": "tip-1",
+          "text": "SAA-C03: Master Amazon RDS concepts and multi-AZ / replication design in Amazon RDS."
+        }
+      ],
+      "memoryHook": "Homogeneous = DMS Alone | Heterogeneous = SCT Schema + DMS Data",
+      "flashcardSetId": null
+    },
+    "reason": "Migration cutover / Database Migration Service task recommended for topic-dms / Migration topic batch.",
+    "recommendedTopic": "topic-dms"
+  }
+]

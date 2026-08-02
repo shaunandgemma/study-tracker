@@ -1,0 +1,224 @@
+[
+  {
+    "id": "q-saa-19",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A containerized application running across multiple EC2 instances in different Availability Zones requires a POSIX-compliant shared file system with concurrent read and write access. Which storage solution should be used?",
+    "options": [
+      "Use an io2 EBS volume with Multi-Attach and mount it from the instances in every Availability Zone through a clustered file system.",
+      "Use a Regional EFS file system with mount targets in the required Availability Zones, then mount the same file system from each instance.",
+      "Use Amazon FSx for Windows File Server in Multi-AZ mode and mount the same SMB share from each Linux instance.",
+      "Use an S3 bucket with Mountpoint for Amazon S3 on each instance, presenting the bucket as a shared POSIX-compliant file system."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Amazon EFS is a Regional POSIX-compliant elastic file system. Creating mount targets in subnets across Availability Zones allows EC2 instances and containers in those AZs to mount the file system for concurrent read/write file access.",
+    "topics": [
+      "topic-efs",
+      "topic-storage"
+    ]
+  },
+  {
+    "id": "q-saa-20",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An enterprise manages hundreds of AWS accounts using AWS Organizations. The Security team requires a mechanism to centrally restrict specific AWS service API actions (such as preventing member accounts from disabling CloudTrail or deleting S3 buckets) across all member accounts. Which feature enforces this guardrail?",
+    "options": [
+      "Attach IAM Permissions Boundaries to administrative IAM roles in each individual member account.",
+      "Attach Service Control Policies to the organization root or appropriate organizational units to restrict permitted API actions in member accounts.",
+      "Deploy AWS Config Conformance Packs across member accounts to automatically revoke unauthorized API calls.",
+      "Enable AWS Security Hub Standards across member accounts to enforce security configuration policies."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Service Control Policies (SCPs) specify maximum-permission guardrails for member accounts in AWS Organizations. SCPs do not grant permissions and do not restrict actions in the management account.",
+    "topics": [
+      "topic-organizations",
+      "topic-scp"
+    ]
+  },
+  {
+    "id": "q-saa-27",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A financial database on DynamoDB experiences highly variable traffic during business hours and zero traffic at night. The peak request volume is unpredictable. Which DynamoDB capacity mode optimizes cost while ensuring requests are not throttled during unexpected spikes?",
+    "options": [
+      "Configure the DynamoDB table to use Provisioned Capacity Mode with static Read/Write Capacity Units.",
+      "Configure the DynamoDB table to use On-Demand Capacity Mode to automatically scale throughput.",
+      "Configure Provisioned Capacity Mode with DynamoDB Auto Scaling set to an aggressive target utilization.",
+      "Create DynamoDB Global Tables configured with Reserved Capacity Units to absorb peak traffic surges."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "DynamoDB On-Demand Capacity Mode charges per request without requiring capacity planning. For workloads with unpredictable spikes and zero traffic periods, On-Demand avoids over-provisioning and idle charges.",
+    "topics": [
+      "topic-dynamodb"
+    ]
+  },
+  {
+    "id": "q-saa-30",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company requires an archival storage solution for regulatory compliance logs. Data must be retained for 10 years and is rarely accessed. In the event of an audit, a retrieval time of 3 to 5 hours is acceptable. Which S3 storage class meets these requirements at the lowest cost?",
+    "options": [
+      "Store compliance logs in the S3 Standard-Infrequent Access (S3 Standard-IA) storage class.",
+      "Store compliance logs in the S3 Glacier Flexible Retrieval storage class using Standard retrievals.",
+      "Store compliance logs in the S3 Glacier Deep Archive storage class using Standard retrievals.",
+      "Store compliance logs in the S3 Intelligent-Tiering storage class with automatic archive tiering enabled."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "S3 Glacier Flexible Retrieval is designed for archival data that is rarely accessed and supports Standard retrievals typically within 3 to 5 hours. S3 Glacier Deep Archive Standard retrievals take 12 hours and would not meet the 3 to 5 hour recovery window.",
+    "topics": [
+      "topic-s3",
+      "topic-glacier"
+    ]
+  },
+  {
+    "id": "q-saa-70",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A security engineer needs to capture IP traffic flowing to and from network interfaces in private subnets across multiple VPCs for security auditing and forensic investigation. The logs must be saved into an S3 bucket every 1 minute. Which feature provides this network log capture?",
+    "options": [
+      "Configure AWS CloudTrail Event Logs to capture network packet payloads across private subnets.",
+      "Enable VPC Flow Logs on the target VPC or subnets and configure log delivery to an Amazon S3 bucket.",
+      "Configure Amazon Route 53 Resolver Query Logs to record network packet headers across private instances.",
+      "Stream Amazon EC2 System Log streams to Amazon CloudWatch Logs using the CloudWatch agent."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "VPC Flow Logs capture information about IP traffic going to and from network interfaces in your VPC, streaming flow log data directly to Amazon S3 or CloudWatch Logs.",
+    "topics": [
+      "topic-vpc",
+      "topic-flow-logs"
+    ]
+  },
+  {
+    "id": "q-saa-76",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A security architect wants to grant S3 bucket access to all AWS accounts belonging to an organization in AWS Organizations (o-exampleorgid), while denying access to any AWS account outside the organization. Which condition key should be used in the S3 bucket policy?",
+    "options": [
+      "Add a Condition block using StringEquals for the global key aws:PrincipalOrgID matching the organization ID.",
+      "Add a Condition block using IpAddress for key aws:VpcSourceIp matching the organization CIDR range.",
+      "Add a Condition block using StringEquals for key aws:UserAgent matching approved organization client strings.",
+      "Add a Condition block using ArnEquals for key aws:PrincipalArn listing all member account root ARNs."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "The aws:PrincipalOrgID global condition key allows specifying the AWS Organizations ID in resource policies, automatically restricting access to any account within the organization.",
+    "topics": [
+      "topic-s3",
+      "topic-iam",
+      "topic-organizations"
+    ]
+  },
+  {
+    "id": "q-saa-106",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An Aurora MySQL database cluster experiences heavy read traffic during business hours. The database team wants read replicas to scale out automatically when read throughput increases, adding up to 15 Aurora Replicas. Which feature handles automatic replica scaling?",
+    "options": [
+      "Configure Aurora Auto Scaling to dynamically adjust the number of Aurora Replicas based on CPU utilization.",
+      "Configure RDS Multi-AZ Failover to automatically launch additional read replicas during peak load.",
+      "Migrate the database to DynamoDB On-Demand capacity to automatically scale read throughput up to 15 nodes.",
+      "Configure EC2 Auto Scaling Scheduled Actions to launch additional Aurora DB instances during business hours."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Aurora Auto Scaling automatically adjusts the number of Aurora Replicas provisioned in an Aurora DB cluster in response to changes in connectivity or workload metrics (such as CPU utilization or average connections).",
+    "topics": [
+      "topic-aurora",
+      "topic-auto-scaling"
+    ]
+  },
+  {
+    "id": "q-saa-39",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A solutions architect is configuring a disaster recovery solution for a critical relational database running on Amazon Aurora MySQL. The company mandates low RTO and RPO across a secondary AWS Region 1,000 miles away. Which TWO steps configure this solution? (Select TWO.)",
+    "options": [
+      "Create an Aurora Global Database with a primary cluster in one Region and a secondary cluster in the disaster recovery Region.",
+      "Configure S3 Cross-Region Replication of daily database snapshot exports to the secondary Region.",
+      "During an unplanned Regional outage, perform a managed failover to promote the selected secondary cluster to the new primary cluster.",
+      "Deploy an AWS Storage Gateway File Gateway in the secondary Region to sync database transaction logs.",
+      "Set up an AWS Snowball Edge Storage Optimized appliance to physically transport daily database backups."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      2
+    ],
+    "explanation": "Aurora Global Database provides low-latency asynchronous cross-Region storage replication. Unplanned failover promotes the secondary cluster in minutes with minimal RPO measured in seconds.",
+    "topics": [
+      "topic-aurora",
+      "topic-disaster-recovery"
+    ]
+  },
+  {
+    "id": "q-saa-79",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A financial API hosted on Amazon API Gateway must authenticate partner applications using Mutual TLS (mTLS) to verify client-side X.509 digital certificates. What requirement must be configured on API Gateway for mTLS support?",
+    "options": [
+      "Configure a Regional API Gateway custom domain with an ACM certificate, store the trusted CA certificate chain in an Amazon S3 truststore, and enable mutual TLS on the domain.",
+      "Configure an AWS WAF Rate-Based Rule with SSL Passthrough enabled on the API Gateway endpoint to inspect incoming client certificates.",
+      "Deploy a Network Load Balancer running in TCP mode in front of API Gateway to perform client certificate mutual TLS validation.",
+      "Configure an Amazon Cognito User Pool with OAuth 2.0 Client Credentials grant flow to authenticate client certificates."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "API Gateway supports Mutual TLS (mTLS) by configuring a custom domain name with an ACM certificate and uploading an X.509 CA certificate truststore to an S3 bucket, against which API Gateway validates client certificates.",
+    "topics": [
+      "topic-api-gateway",
+      "topic-security"
+    ]
+  },
+  {
+    "id": "q-saa-125",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A multinational mobile app uploads user telemetry files directly to S3 buckets located in AWS Regions nearest to the user. To simplify application code, the mobile app needs a single global S3 endpoint hostname that automatically routes upload traffic over the AWS global network to the bucket with the lowest latency. Which S3 feature provides this capability?",
+    "options": [
+      "Configure bidirectional S3 Cross-Region Replication among the regional buckets and use one source-bucket endpoint, expecting replication rules to route incoming uploads by proximity.",
+      "Create an S3 Multi-Region Access Point, use its global endpoint, and let it route requests over the AWS global network without replicating objects.",
+      "Enable S3 Transfer Acceleration on every regional bucket and publish one accelerated hostname, expecting S3 to select the closest bucket for each upload.",
+      "Place the regional buckets behind a CloudFront origin group and use its global hostname, expecting latency-based routing for all S3 upload requests."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Amazon S3 Multi-Region Access Points (MRAP) provide a single global endpoint hostname that uses built-in AWS Global Accelerator network routing to automatically direct requests to the closest active S3 bucket. MRAP handles request routing but does not replicate objects; S3 Cross-Region Replication (CRR) is configured separately if object synchronization is needed.",
+    "topics": [
+      "topic-s3",
+      "topic-mrap"
+    ]
+  }
+]

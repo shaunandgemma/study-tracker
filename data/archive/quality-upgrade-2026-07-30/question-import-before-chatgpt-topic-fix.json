@@ -1,0 +1,1047 @@
+[
+  {
+    "id": "q-saa-201",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A security analytics workload runs on EC2 instances in Account B by using an IAM role named AnalyticsRole. Security logs are stored in an S3 bucket in Account A and are encrypted with a customer managed KMS key in Account A. AnalyticsRole already has an identity policy allowing s3:GetObject on the required prefix and kms:Decrypt on the KMS key ARN. However, attempts to read the objects are denied. The company will not use role assumption between the accounts. Which TWO changes provide the required access with least privilege? (Select TWO.)",
+    "options": [
+      "Add an S3 bucket policy in Account A that allows AnalyticsRole to perform s3:GetObject on the required prefix.",
+      "Add a KMS key policy in Account A that allows AnalyticsRole to perform kms:Decrypt.",
+      "Add an SCP in Account B that allows s3:GetObject and kms:Decrypt.",
+      "Add the permissions to an administrative IAM role in Account A.",
+      "Add an S3 gateway endpoint policy in Account B that permits access to the bucket."
+    ],
+    "explanation": "Correct:\nThe bucket policy must trust the external role, and the KMS key policy must permit that role to use the key. The role identity policy supplies the account-side permissions.\n\nWhy the others are wrong:\nC: An SCP sets a permission ceiling and does not grant access.\nD: Permissions on an unrelated role do not authorize AnalyticsRole.\nE: An endpoint policy can limit endpoint use but cannot replace the bucket and KMS policies.\n\nExam trigger:\nCross-account access to objects encrypted with a customer managed KMS key.\n\nMemory hook:\nCross-account SSE-KMS needs S3 trust and KMS trust.",
+    "topics": [
+      "iam",
+      "s3",
+      "kms",
+      "cross-account"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-202",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "An online retailer publishes order-status changes to billing and fulfilment systems. Both systems must receive every status change independently. Updates for the same customer must remain in order. If the producer retries a request during the messaging deduplication window, the retry must not introduce a duplicate message. The company does not want to maintain custom fan-out or duplicate-suppression infrastructure. Which architecture meets these requirements with the LEAST operational overhead?",
+    "options": [
+      "Publish events to an EventBridge event bus that targets two SQS standard queues.",
+      "Publish events to an SNS FIFO topic subscribed to two SQS FIFO queues. Use the customer ID as the message group ID and use the same stable order event ID as the deduplication ID for every retry of that event.",
+      "Send events to one SQS FIFO queue that is polled by both billing and fulfilment workers.",
+      "Write events to a Kinesis data stream with separate billing and fulfilment consumers."
+    ],
+    "explanation": "Correct:\nSNS FIFO provides managed fan-out to both SQS FIFO queues. The customer ID preserves ordering within that group. Every retry of the same logical event must reuse the same stable order event ID as its deduplication ID so the retry is suppressed during the deduplication window.\n\nWhy the others are wrong:\nA: Standard queues do not provide FIFO ordering and can deliver duplicates.\nC: Competing consumers divide messages instead of giving every event to both systems.\nD: Kinesis supports ordered streams, but duplicate suppression for producer retries requires application design.\n\nExam trigger:\nIndependent fan-out plus ordered, deduplicated delivery.\n\nMemory hook:\nOrdered fan-out is SNS FIFO to SQS FIFO; retries reuse the deduplication ID.",
+    "topics": [
+      "sns",
+      "sqs",
+      "messaging"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": "q-saa-203",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A research company stores 100 TB of genomic data in Amazon S3. Each week, hundreds of EC2 instances process the data concurrently by using existing Linux applications that expect a shared file-system interface. The workload requires high-throughput parallel access. S3 must remain the long-term data repository, and processing results must be exported back to S3 after each run. Which solution meets these requirements with the LEAST operational overhead?",
+    "options": [
+      "Create an Amazon EFS file system and copy the complete S3 dataset to EFS before every processing run.",
+      "Create an Amazon FSx for Lustre file system with an S3 data repository association. Return results to S3 by using automatic export or an export data repository task.",
+      "Create an Amazon FSx for NetApp ONTAP file system and configure SnapMirror replication to S3.",
+      "Mount the S3 bucket directly on every EC2 instance by using Mountpoint for Amazon S3."
+    ],
+    "explanation": "Correct:\nFSx for Lustre provides a parallel file system for high-throughput processing. An S3 data repository association links the file system to the S3 repository, and results can be returned through automatic export or an export data repository task.\n\nWhy the others are wrong:\nA: Repeatedly copying 100 TB adds time, cost, and operational work.\nC: FSx for ONTAP is not the purpose-built S3-linked parallel file system for this HPC pattern.\nD: Mountpoint offers object access but not every shared POSIX file-system behavior expected by existing applications.\n\nExam trigger:\nParallel HPC file access while S3 remains the durable repository.\n\nMemory hook:\nS3-backed HPC file processing means FSx for Lustre with a data repository association.",
+    "topics": [
+      "fsx-lustre",
+      "s3",
+      "hpc"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": "q-saa-204",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A platform team allows developers to create IAM roles for application workloads. Developers may attach approved policies, but they must never create a role with permissions beyond a security-approved maximum. Which solution is the MOST secure with the LEAST ongoing administration?",
+    "options": [
+      "Require every developer-created role to use a specified permissions boundary and restrict role creation unless that boundary is attached.",
+      "Use IAM Access Analyzer to remove excessive permissions after deployment.",
+      "Apply an SCP that grants only the permissions developers may place in roles.",
+      "Store approved policies in AWS Resource Access Manager and share them with developer accounts."
+    ],
+    "explanation": "Correct:\nA required permissions boundary limits each role maximum effective permissions, and the creation policy can enforce attachment of that boundary.\n\nWhy the others are wrong:\nB: Access Analyzer is not a preventive maximum-permission control.\nC: An SCP limits account permissions but does not grant permissions or define each new role boundary.\nD: AWS RAM does not distribute IAM policies as permission templates.\n\nExam trigger:\nDelegated role creation without privilege escalation.\n\nMemory hook:\nPermissions boundary equals maximum role permissions.",
+    "topics": [
+      "iam",
+      "permissions-boundary"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-205",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "An organization has production and development OUs. Member-account administrators must be prevented from disabling CloudTrail, leaving the organization, or creating resources outside approved Regions. Workloads still need normal IAM permissions inside the approved boundaries. Which solution meets these requirements?",
+    "options": [
+      "Attach an SCP to the relevant OUs that denies the prohibited actions and unapproved Regions while exempting required global services.",
+      "Create permission boundaries for every IAM principal in every account.",
+      "Configure AWS Config rules that remediate prohibited actions after they occur.",
+      "Use resource-based policies on CloudTrail and regional services."
+    ],
+    "explanation": "Correct:\nAn SCP attached to OUs centrally limits member-account permissions, including specific API actions and Regions with suitable global-service exceptions.\n\nWhy the others are wrong:\nB: Boundaries require per-principal management and do not control the account root user.\nC: Config is detective and remedial rather than the strongest preventive control.\nD: Resource policies are unavailable for many required organization-wide actions.\n\nExam trigger:\nCentral preventive guardrails across many accounts.\n\nMemory hook:\nOrganization-wide permission ceiling means SCP.",
+    "topics": [
+      "organizations",
+      "scp",
+      "cloudtrail"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-206",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company must encrypt application secrets and rotate database credentials automatically. Applications run on ECS tasks and must retrieve the current value without storing long-term credentials in task definitions. Which solution has the LEAST operational overhead?",
+    "options": [
+      "Store the credentials in Secrets Manager, enable managed rotation for the database, and grant the ECS task role permission to retrieve the secret.",
+      "Store the credentials in an encrypted S3 object and rotate the object with a scheduled EC2 script.",
+      "Store the credentials in Parameter Store Standard parameters and manually update them monthly.",
+      "Place the credentials in ECS environment variables encrypted by the container image build system."
+    ],
+    "explanation": "Correct:\nSecrets Manager supports managed database-secret rotation, while the ECS task role supplies temporary authorization to retrieve the current secret.\n\nWhy the others are wrong:\nB: This requires custom rotation infrastructure and object handling.\nC: Standard Parameter Store does not provide the same managed database rotation workflow.\nD: Environment variables expose a static secret to task configuration and do not rotate it automatically.\n\nExam trigger:\nManaged secret storage plus automatic database credential rotation.\n\nMemory hook:\nRotating database passwords means Secrets Manager.",
+    "topics": [
+      "secrets-manager",
+      "ecs",
+      "iam"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-207",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A company exposes a public application through an Application Load Balancer. It needs protection against common web exploits, automated request floods from individual IP addresses, and common infrastructure-layer DDoS attacks. Which THREE services or features should the company use? (Select THREE.)",
+    "options": [
+      "Associate an AWS WAF web ACL containing managed rule groups with the ALB.",
+      "Add an AWS WAF rate-based rule to the web ACL.",
+      "Use AWS Shield Standard protections that are automatically available for supported resources.",
+      "Enable GuardDuty to block malicious HTTP requests at the ALB.",
+      "Use a Network ACL to inspect SQL injection payloads.",
+      "Place the ALB behind a gateway VPC endpoint."
+    ],
+    "explanation": "Correct:\nManaged AWS WAF rules address common application exploits, a rate-based rule limits abusive request rates, and Shield Standard provides automatic protection against common network and transport layer DDoS attacks.\n\nWhy the others are wrong:\nA: Correct. The WAF web ACL filters common application-layer exploits.\nB: Correct. The rate-based rule limits excessive requests from individual source IP addresses.\nC: Correct. Shield Standard protects supported AWS resources from common infrastructure-layer DDoS attacks.\nD: GuardDuty detects suspicious activity but is not an inline HTTP request filter.\nE: Network ACLs cannot inspect SQL injection or other HTTP payloads.\nF: A gateway VPC endpoint cannot front a public ALB or provide web filtering.\n\nExam trigger:\nCommon web exploits, per-IP request floods, and common infrastructure-layer DDoS attacks.\n\nMemory hook:\nWAF filters web requests; Shield Standard covers common DDoS attacks.",
+    "topics": [
+      "waf",
+      "shield",
+      "alb"
+    ],
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "q-saa-208",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "EC2 instances in private subnets must call a third-party SaaS service hosted behind an AWS endpoint service. The connection must stay on private IP addresses, tolerate overlapping CIDR ranges, and prevent the SaaS provider from initiating connections into the customer VPC. Which solution meets the requirements?",
+    "options": [
+      "Create a VPC peering connection to the provider VPC.",
+      "Create an interface VPC endpoint powered by AWS PrivateLink.",
+      "Attach both VPCs to the same transit gateway.",
+      "Create a Site-to-Site VPN between the VPCs."
+    ],
+    "explanation": "Correct:\nPrivateLink interface endpoints provide private consumer-initiated access to an endpoint service without routing entire VPC CIDR ranges.\n\nWhy the others are wrong:\nA: VPC peering cannot connect overlapping CIDRs and enables broader routed connectivity.\nC: Transit Gateway requires routed, non-overlapping network designs.\nD: A VPN adds routing and does not inherently solve overlapping addresses.\n\nExam trigger:\nPrivate SaaS access with overlapping CIDRs and one-way initiation.\n\nMemory hook:\nPrivate service, not private network, means PrivateLink.",
+    "topics": [
+      "private-link",
+      "vpc"
+    ],
+    "correctAnswer": 1
+  },
+  {
+    "id": "q-saa-209",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A central security account must collect findings from GuardDuty, Inspector, Macie, and AWS Config across all organization accounts and Regions. Security analysts need one standards dashboard and centralized prioritization. Which solution meets the requirements with the LEAST operational effort?",
+    "options": [
+      "Configure Security Hub with organization integration, delegated administration, and cross-Region aggregation.",
+      "Send every service log to one CloudWatch Logs group using subscription filters.",
+      "Create an organization CloudTrail and query all events with Athena.",
+      "Use Systems Manager OpsCenter as the only finding aggregator."
+    ],
+    "explanation": "Correct:\nSecurity Hub integrates findings from the listed services and supports organization administration, security standards, and cross-Region aggregation.\n\nWhy the others are wrong:\nB: CloudWatch Logs does not natively normalize all findings or provide standards scores.\nC: CloudTrail records API activity rather than aggregating service findings.\nD: OpsCenter is not the purpose-built organization-wide security posture dashboard.\n\nExam trigger:\nCentral security findings and standards across accounts and Regions.\n\nMemory hook:\nSecurity findings converge in Security Hub.",
+    "topics": [
+      "security-hub",
+      "organizations"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-210",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A mobile application needs user sign-up, social sign-in, and temporary scoped AWS credentials so authenticated users can upload files directly to S3. Which design meets these requirements?",
+    "options": [
+      "Use a Cognito user pool for authentication and a Cognito identity pool to exchange tokens for temporary IAM credentials.",
+      "Use IAM Identity Center and create one IAM user for each mobile customer.",
+      "Use only a Cognito user pool and attach an S3 bucket policy directly to each user.",
+      "Use only a Cognito identity pool with long-term IAM access keys embedded in the application."
+    ],
+    "explanation": "Correct:\nThe user pool handles registration and federation, while the identity pool exchanges the authenticated token for temporary role credentials.\n\nWhy the others are wrong:\nB: IAM users are unsuitable for large customer populations and long-term credentials.\nC: User pools issue tokens, not AWS credentials or per-user IAM principals.\nD: Embedding long-term access keys is insecure and unnecessary.\n\nExam trigger:\nCustomer authentication plus temporary direct AWS access.\n\nMemory hook:\nUser pool proves identity; identity pool gives AWS credentials.",
+    "topics": [
+      "cognito",
+      "s3",
+      "iam"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-211",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A company stores regulated records in S3. Records must use a specific customer managed KMS key, remain immutable for seven years, and reject uploads that omit the required encryption headers. Which THREE controls meet these requirements? (Select THREE.)",
+    "options": [
+      "Enable S3 Versioning on the bucket.",
+      "Enable S3 Object Lock and set default retention in Compliance mode for seven years.",
+      "Add bucket-policy Deny statements that reject PutObject requests unless SSE-KMS and the approved key are specified.",
+      "Enable S3 Transfer Acceleration to protect uploads in transit.",
+      "Use an S3 lifecycle rule to delete noncurrent versions after 30 days.",
+      "Use a KMS AWS managed key so users cannot change the key policy."
+    ],
+    "explanation": "Correct:\nVersioning is required for Object Lock, Compliance mode enforces WORM retention, and explicit Deny conditions enforce the required SSE-KMS key.\n\nWhy the others are wrong:\nD: Transfer Acceleration does not enforce encryption or immutability.\nE: Deleting retained versions conflicts with seven-year retention.\nF: An AWS managed key does not satisfy the customer managed key requirement.\n\nExam trigger:\nWORM retention plus a mandated KMS key.\n\nMemory hook:\nVersioning plus Object Lock plus bucket-policy Deny.",
+    "topics": [
+      "s3",
+      "kms",
+      "object-lock"
+    ],
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "q-saa-212",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "An S3 bucket should allow one partner role in an approved external account and all principals from the company AWS organization, but no other accounts. Which resource-policy design is MOST secure?",
+    "options": [
+      "Use separate Allow statements for the partner role and principals whose aws:PrincipalOrgID matches the organization ID, with no public principal.",
+      "Allow Principal * and rely only on an aws:SourceVpc condition.",
+      "List every current organization account root ARN and update the policy manually.",
+      "Use an SCP in the management account to grant the partner role access."
+    ],
+    "explanation": "Correct:\nThe named role is explicitly allowed, while aws:PrincipalOrgID covers current and future organization accounts without opening access publicly.\n\nWhy the others are wrong:\nB: SourceVpc limits network origin, not account ownership.\nC: Manual account lists are fragile and omit future accounts until updated.\nD: SCPs do not grant external access to a bucket.\n\nExam trigger:\nOne external role plus every account in an organization.\n\nMemory hook:\nNamed outsider plus PrincipalOrgID for insiders.",
+    "topics": [
+      "s3",
+      "organizations",
+      "resource-policy"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-213",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "Administrators need shell access to private EC2 instances without public IP addresses, inbound SSH rules, or stored SSH keys. Session commands must be logged centrally. Which solution has the LEAST operational overhead?",
+    "options": [
+      "Use Systems Manager Session Manager and send session logs to CloudWatch Logs or S3.",
+      "Deploy a bastion host in every Availability Zone.",
+      "Open SSH only from the corporate public IP range.",
+      "Create a Client VPN and continue using shared SSH keys."
+    ],
+    "explanation": "Correct:\nSession Manager provides audited shell access through the SSM channel without inbound ports, public IPs, or SSH-key management.\n\nWhy the others are wrong:\nB: Bastions require patching and key management.\nC: This still exposes SSH and needs public reachability.\nD: A VPN does not remove SSH-key administration or provide command logging by itself.\n\nExam trigger:\nPrivate instance administration without SSH.\n\nMemory hook:\nNo port 22 means Session Manager.",
+    "topics": [
+      "systems-manager",
+      "session-manager",
+      "ec2"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-214",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "An AWS Organizations organization requires central logging of management API activity from all current and future member accounts. Member-account administrators must not be able to disable or modify the central trail. After delivery, the log objects must be protected from deletion or overwrite for the required retention period. Which TWO actions meet these requirements? (Select TWO.)",
+    "options": [
+      "Create an organization trail from the management account or a CloudTrail delegated administrator and deliver the logs to a central S3 bucket.",
+      "Enable S3 Object Lock in Compliance mode on the central log bucket and configure an appropriate retention period.",
+      "Enable CloudTrail log file validation to detect whether delivered log files were modified or deleted.",
+      "Create separate trails in every member account and allow each account administrator to manage the local trail.",
+      "Send CloudTrail events only to CloudWatch Logs in the management account and configure metric filters."
+    ],
+    "explanation": "Correct:\nA: An organization trail centrally records management activity for existing and newly added organization accounts. Member accounts can view the trail but cannot modify or delete it.\nB: S3 Object Lock in Compliance mode prevents protected object versions from being overwritten or deleted during the retention period, including by the root user.\n\nWhy the others are wrong:\nC: Log file validation provides integrity verification by using digest files, but it does not stop an object from being deleted or overwritten.\nD: Separately managed member-account trails can be disabled or changed by local administrators and do not provide central governance.\nE: CloudWatch Logs and metric filters do not replace an organization trail or provide immutable S3 object retention.\n\nExam trigger:\nOrganization-wide API auditing plus immutable delivered log objects.\n\nMemory hook:\nOrganization trail collects; Object Lock protects.",
+    "topics": [
+      "cloudtrail",
+      "organizations",
+      "s3"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-215",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A workload in private subnets must access Secrets Manager without NAT gateways or public IP addresses. The security team must restrict endpoint use to specific secrets and an application role. Which design meets the requirements?",
+    "options": [
+      "Create a Secrets Manager interface VPC endpoint, enable private DNS, and apply a restrictive endpoint policy.",
+      "Create a gateway VPC endpoint for Secrets Manager.",
+      "Use an internet gateway with a security group that allows only AWS IP ranges.",
+      "Create an S3 gateway endpoint and store the secrets in S3."
+    ],
+    "explanation": "Correct:\nSecrets Manager uses an interface endpoint. Private DNS keeps normal service names private, and the endpoint policy can restrict principals and resources.\n\nWhy the others are wrong:\nB: Gateway endpoints are not available for Secrets Manager.\nC: This requires public routing and lacks endpoint-level resource controls.\nD: An S3 endpoint does not provide Secrets Manager access or managed rotation.\n\nExam trigger:\nPrivate access to an AWS service other than S3 or DynamoDB.\n\nMemory hook:\nMost AWS services use interface endpoints.",
+    "topics": [
+      "vpc-endpoint",
+      "secrets-manager",
+      "private-link"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-216",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A security team wants early detection and centralized remediation of public S3 buckets and security groups that allow unrestricted administrative ports across 40 accounts. Which TWO services should be configured? (Select TWO.)",
+    "options": [
+      "Use AWS Config organization rules to evaluate configurations and invoke Systems Manager Automation remediation.",
+      "Use Security Hub with organization integration to aggregate compliance findings and standards results.",
+      "Use GuardDuty to change noncompliant security-group rules automatically.",
+      "Use CloudTrail Lake as the only configuration-compliance engine.",
+      "Use Shield Advanced to identify public buckets."
+    ],
+    "explanation": "Correct:\nConfig organization rules evaluate configurations and can invoke remediation. Security Hub centralizes the findings and compliance posture.\n\nWhy the others are wrong:\nC: GuardDuty is not the configuration rule engine for these controls.\nD: CloudTrail Lake analyzes API events rather than continuous resource compliance.\nE: Shield protects against DDoS attacks and does not find public buckets.\n\nExam trigger:\nConfiguration compliance, remediation, and central findings.\n\nMemory hook:\nConfig evaluates; Security Hub aggregates.",
+    "topics": [
+      "config",
+      "security-hub",
+      "organizations"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-217",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company must allow an application role in Account A to publish only to one SNS topic in Account B. Which approach provides the LEAST privilege?",
+    "options": [
+      "Add sns:Publish for the topic ARN to the role policy and add a topic policy that permits the external role.",
+      "Create an IAM user in Account B and store its access keys in the application.",
+      "Allow sns:* on all resources in both accounts.",
+      "Use an SCP in Account B to grant the role permission to publish."
+    ],
+    "explanation": "Correct:\nCross-account topic access requires identity permission for the caller and a topic resource policy that permits the external principal.\n\nWhy the others are wrong:\nB: Long-term access keys add risk and administration.\nC: Wildcards violate least privilege.\nD: An SCP cannot grant the cross-account permission.\n\nExam trigger:\nDirect cross-account access to a resource with a resource policy.\n\nMemory hook:\nCaller policy plus target resource policy.",
+    "topics": [
+      "sns",
+      "iam",
+      "cross-account"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-218",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "multiple",
+    "question": "A company runs stateless web servers in two Availability Zones. Traffic changes unpredictably, and an instance or Availability Zone failure must not interrupt service. Which TWO design choices meet the requirements with the LEAST operational overhead? (Select TWO.)",
+    "options": [
+      "Place the instances in an Auto Scaling group spanning both Availability Zones and use target tracking scaling.",
+      "Place an Application Load Balancer in both Availability Zones and use load balancer health checks for the Auto Scaling group.",
+      "Run fixed instances in both Availability Zones and replace failed instances manually.",
+      "Use one large instance in each Availability Zone with DNS round robin.",
+      "Place all instances in one Availability Zone and copy AMIs to another Region."
+    ],
+    "explanation": "Correct:\nThe multi-AZ Auto Scaling group replaces and scales instances, while the ALB distributes requests to healthy targets and supplies health information for replacement.\n\nWhy the others are wrong:\nC: Manual replacement and fixed capacity do not meet the scaling requirement.\nD: DNS round robin does not provide managed replacement or target-aware balancing.\nE: A single-AZ deployment does not meet the fault-tolerance requirement.\n\nExam trigger:\nStateless multi-AZ service with changing demand.\n\nMemory hook:\nMulti-AZ Auto Scaling plus an ALB.",
+    "topics": [
+      "autoscaling",
+      "alb",
+      "high-availability"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-219",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A CloudFront distribution serves static content from an S3 bucket in one Region. The company maintains a synchronized backup bucket in another Region. For GET, HEAD, and OPTIONS requests, CloudFront must automatically use the backup when the primary origin times out or returns selected server errors. Which solution meets the requirements?",
+    "options": [
+      "Create a CloudFront origin group with the primary and secondary S3 origins and configure failover status codes.",
+      "Use Route 53 failover records for the CloudFront distribution domain.",
+      "Place the S3 buckets behind Global Accelerator.",
+      "Use Lambda@Edge to modify DNS records after every 5xx response."
+    ],
+    "explanation": "Correct:\nA CloudFront origin group performs native origin failover for supported read methods when configured errors or timeouts occur.\n\nWhy the others are wrong:\nB: Route 53 sees the distribution rather than individual origins for per-request failover.\nC: Global Accelerator does not use S3 buckets as standard endpoints for this pattern.\nD: Custom DNS mutation is slower, fragile, and unnecessary.\n\nExam trigger:\nFailover between origins inside one distribution.\n\nMemory hook:\nCloudFront origin problem means origin group.",
+    "topics": [
+      "cloudfront",
+      "s3",
+      "failover"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-220",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A global application uses Application Load Balancers in two Regions. Users should normally use the Region with the lowest network latency. If one ALB has no healthy targets, DNS must stop returning it. Which solution meets the requirements with the LEAST operational effort?",
+    "options": [
+      "Create Route 53 latency alias records for both ALBs and enable Evaluate Target Health.",
+      "Create primary and secondary Route 53 failover records.",
+      "Create equal-weight Route 53 weighted records with no health evaluation.",
+      "Use geolocation records based only on user country."
+    ],
+    "explanation": "Correct:\nLatency routing selects the Region with the best measured latency, and Evaluate Target Health excludes an unhealthy ALB.\n\nWhy the others are wrong:\nB: Failover routing always prefers the primary rather than the lowest-latency healthy Region.\nC: Equal weights do not choose the lowest latency and omit health failover.\nD: Geolocation uses configured locations rather than network latency.\n\nExam trigger:\nLowest-latency Region plus health-based exclusion.\n\nMemory hook:\nFastest healthy Region means latency alias plus target health.",
+    "topics": [
+      "route-53",
+      "alb",
+      "failover"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-221",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A payment workflow uses Step Functions Standard Workflows. A Lambda task can fail with transient service errors, but validation errors should go directly to manual review. The workflow must retry transient failures with increasing delays and capture exhausted failures without losing the original input. Which TWO state-machine features meet these requirements? (Select TWO.)",
+    "options": [
+      "Configure a Retry block for transient error names with IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "Configure a Catch block after the retriers that routes failures to review and uses ResultPath to preserve the original input.",
+      "Increase the Lambda timeout and retry every error indefinitely.",
+      "Use a Choice state before the task to predict whether Lambda will fail.",
+      "Convert the workflow to an Express Workflow because Express guarantees task success."
+    ],
+    "explanation": "Correct:\nRetry handles named transient failures with bounded backoff. Catch handles remaining failures, and ResultPath can add error details without replacing the original input.\n\nWhy the others are wrong:\nC: Longer timeouts do not resolve service errors, and unlimited retries are unsafe.\nD: A Choice state cannot predict runtime failures.\nE: Express Workflows do not guarantee task success.\n\nExam trigger:\nDifferent handling for transient and terminal workflow errors.\n\nMemory hook:\nRetry first; Catch what remains.",
+    "topics": [
+      "step-functions",
+      "lambda",
+      "resilience"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-222",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "An order service sends work to an SQS standard queue. A worker may crash after receiving a message but before deleting it. Processing is idempotent, and failed messages must not block new work indefinitely. Which design is MOST resilient?",
+    "options": [
+      "Set an appropriate visibility timeout, make processing idempotent, and configure a dead-letter queue with a maxReceiveCount.",
+      "Set the visibility timeout to zero so another worker immediately receives every message.",
+      "Use a short retention period and discard messages after the first failure.",
+      "Replace the queue with direct synchronous calls between services."
+    ],
+    "explanation": "Correct:\nThe visibility timeout gives a worker time to finish, redelivery handles crashes, idempotency tolerates repeats, and the DLQ isolates poison messages.\n\nWhy the others are wrong:\nB: A zero timeout causes concurrent duplicate processing.\nC: Discarding after one failure risks losing recoverable work.\nD: Synchronous coupling reduces resilience during downstream failures.\n\nExam trigger:\nWorker crash, at-least-once delivery, and poison messages.\n\nMemory hook:\nVisibility plus idempotency plus DLQ.",
+    "topics": [
+      "sqs",
+      "dead-letter-queue"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-223",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A company runs Aurora PostgreSQL in one Region and needs a secondary Region for disaster recovery. The target RPO is measured in seconds and recovery time is measured in minutes, but zero data loss is not required. Which solution has the LEAST operational overhead?",
+    "options": [
+      "Create an Aurora Global Database with a secondary cluster and use managed cross-Region failover when required.",
+      "Copy snapshots to the second Region once per day.",
+      "Use synchronous application writes to independent Aurora clusters in both Regions.",
+      "Create a Multi-AZ Aurora cluster only in the primary Region."
+    ],
+    "explanation": "Correct:\nAurora Global Database uses asynchronous storage-based cross-Region replication and managed failover, fitting the stated nonzero RPO and recovery target.\n\nWhy the others are wrong:\nB: Daily snapshots cannot meet an RPO measured in seconds.\nC: Custom dual writes create conflict and consistency complexity.\nD: Multi-AZ protects against AZ failures, not a full Regional outage.\n\nExam trigger:\nAurora cross-Region DR with seconds of possible data loss.\n\nMemory hook:\nRegional Aurora DR means Global Database.",
+    "topics": [
+      "aurora",
+      "disaster-recovery",
+      "multi-region"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-224",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company is designing disaster recovery in a second AWS Region. Only critical core services, such as data replication and essential supporting components, will run continuously. During recovery, the operations team will launch and scale the application servers before redirecting production traffic, and the business accepts this additional recovery step to reduce steady-state cost. Which disaster recovery strategy meets these requirements?",
+    "options": [
+      "Pilot light",
+      "Backup and restore",
+      "Warm standby",
+      "Multi-site active-active"
+    ],
+    "explanation": "Correct:\nPilot light keeps only critical core services running in the recovery Region. Application compute is launched and scaled during recovery, which the business explicitly accepts in exchange for lower steady-state cost.\n\nWhy the others are wrong:\nA: Correct. The continuously running core with application servers started during recovery describes pilot light.\nB: Backup and restore normally requires restoring data and rebuilding more of the environment rather than keeping critical core services active.\nC: Warm standby keeps a scaled-down but complete functional environment running, including application capacity.\nD: Multi-site active-active runs production workloads in multiple locations at the same time and has the highest steady-state cost.\n\nExam trigger:\nOnly the critical core runs continuously; application capacity starts during recovery.\n\nMemory hook:\nCore stays lit; servers start later: pilot light.",
+    "topics": [
+      "disaster-recovery",
+      "pilot-light"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-225",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A company runs critical EC2 workloads and RDS databases in one Region. It requires centrally managed backups, cross-account isolation from production administrators, and copies in a second Region. The solution will use cross-account and cross-Region AWS Backup copy operations only for resource types and Regions that support those operations. Which THREE actions meet the requirements? (Select THREE.)",
+    "options": [
+      "Use AWS Backup policies to protect the required resources across organization accounts.",
+      "Copy recovery points to a backup vault in a dedicated backup account.",
+      "Configure cross-Region copy to a vault in the recovery Region.",
+      "Store all backups in the production account and grant administrators full vault access.",
+      "Use EC2 instance-store snapshots as the database backup mechanism.",
+      "Rely only on Multi-AZ deployments as backups."
+    ],
+    "explanation": "Correct:\nA: AWS Backup policies can centrally apply backup plans across organization accounts.\nB: For supported resource types and Regions, copying recovery points to a vault in a dedicated backup account isolates backups from production administrators.\nC: For supported resource types and Regions, cross-Region copy places recovery points in the recovery Region for Regional disaster protection.\n\nWhy the others are wrong:\nD: Keeping all recovery points in the production account with broad administrator access weakens isolation.\nE: EC2 instance store is ephemeral and cannot serve as the backup mechanism for RDS databases.\nF: Multi-AZ improves availability but is not a retained backup or a cross-account recovery copy.\n\nExam trigger:\nCentral management combined with cross-account isolation and cross-Region recovery copies, where supported.\n\nMemory hook:\nPolicy, separate backup account, second Region.",
+    "topics": [
+      "aws-backup",
+      "organizations",
+      "disaster-recovery"
+    ],
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "q-saa-226",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A web application stores user session data on individual EC2 instance volumes. Users lose sessions when Auto Scaling replaces an instance. Which change makes the application more resilient?",
+    "options": [
+      "Move session state to a shared managed store such as ElastiCache for Redis or DynamoDB.",
+      "Enable termination protection on every Auto Scaling instance.",
+      "Use larger instance-store volumes.",
+      "Configure ALB stickiness as the only session protection."
+    ],
+    "explanation": "Correct:\nExternalizing session state allows any healthy instance to serve requests and preserves sessions when instances are replaced.\n\nWhy the others are wrong:\nB: Auto Scaling must replace unhealthy instances, and protection does not make local state durable.\nC: Larger ephemeral storage still disappears with the instance.\nD: Stickiness does not preserve state after instance failure.\n\nExam trigger:\nLocal state breaks Auto Scaling resilience.\n\nMemory hook:\nResilient web tiers are stateless.",
+    "topics": [
+      "stateless",
+      "elasticache",
+      "dynamodb"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-227",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company must process independent image jobs from an SQS queue. One malformed image can repeatedly crash a worker and delay other jobs. The company wants fault isolation with the LEAST application change. Which solution meets the requirements?",
+    "options": [
+      "Configure a dead-letter queue and redrive policy, and process each message independently with an appropriate visibility timeout.",
+      "Increase queue retention and remove the visibility timeout.",
+      "Place all image jobs in one FIFO message group.",
+      "Use one long-running worker and stop receiving messages after the first error."
+    ],
+    "explanation": "Correct:\nA DLQ isolates repeatedly failing messages, while independent processing and visibility timeouts let healthy jobs continue.\n\nWhy the others are wrong:\nB: Retention does not isolate poison messages, and visibility is needed during processing.\nC: One FIFO group can let a failing message block later work.\nD: A single worker creates a bottleneck and stopping consumption reduces availability.\n\nExam trigger:\nA poison message must not disrupt unrelated work.\n\nMemory hook:\nBad message goes to DLQ; good work continues.",
+    "topics": [
+      "sqs",
+      "fault-isolation"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-228",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "An application publishes business events to EventBridge. A faulty deployment processes events incorrectly for two hours. After the defect is fixed, the company must resend only the affected historical events to the same event bus without maintaining a custom event store. Which feature meets the requirement?",
+    "options": [
+      "EventBridge archive and replay",
+      "EventBridge schema registry",
+      "EventBridge API destinations",
+      "CloudWatch Logs metric filters"
+    ],
+    "explanation": "Correct:\nAn EventBridge archive retains matched events and can replay a selected time range back to the source event bus.\n\nWhy the others are wrong:\nB: The schema registry stores schemas, not replayable event history.\nC: API destinations deliver events to HTTP endpoints but do not retain them for replay.\nD: Metric filters do not republish original events.\n\nExam trigger:\nReprocess past EventBridge events after a fix.\n\nMemory hook:\nPast events return through archive and replay.",
+    "topics": [
+      "eventbridge",
+      "archive-replay"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-229",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A company has a primary application stack in one Region and a fully functional but scaled-down stack in another Region. The secondary continuously receives database updates and can scale to production capacity after traffic is switched. Which disaster recovery strategy is described?",
+    "options": [
+      "Warm standby",
+      "Pilot light",
+      "Backup and restore",
+      "Multi-site active-active"
+    ],
+    "explanation": "Correct:\nWarm standby keeps a complete, working but reduced-capacity copy ready to scale during failover.\n\nWhy the others are wrong:\nB: Pilot light keeps only the critical core.\nC: Backup and restore does not keep an operating secondary stack.\nD: Active-active serves production traffic from both sites normally.\n\nExam trigger:\nComplete but smaller secondary environment is already running.\n\nMemory hook:\nWarm means running, but smaller.",
+    "topics": [
+      "disaster-recovery",
+      "warm-standby"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-230",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A database workload on EC2 requires consistently high IOPS, low latency, and independent provisioning of storage capacity and IOPS beyond gp3 limits. Which EBS volume type best meets the requirement?",
+    "options": [
+      "Provisioned IOPS SSD io2",
+      "General Purpose SSD gp3",
+      "Throughput Optimized HDD st1",
+      "Cold HDD sc1"
+    ],
+    "explanation": "Correct:\nio2 is designed for I/O-intensive workloads needing provisioned IOPS and performance beyond gp3 limits.\n\nWhy the others are wrong:\nB: gp3 has lower maximum provisioned IOPS.\nC: st1 is for large sequential throughput, not low-latency high-IOPS databases.\nD: sc1 is cold HDD storage and unsuitable.\n\nExam trigger:\nDatabase needs provisioned IOPS beyond general-purpose SSD limits.\n\nMemory hook:\nHighest sustained EBS IOPS means io2.",
+    "topics": [
+      "ebs",
+      "io2"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-231",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A Windows application uses SMB shares, Microsoft Active Directory integration, Windows ACLs, and Distributed File System features. It must run across multiple Availability Zones with managed failover. Which storage service meets the requirements?",
+    "options": [
+      "Amazon FSx for Windows File Server with Multi-AZ deployment",
+      "Amazon EFS Regional",
+      "Amazon FSx for Lustre persistent deployment",
+      "S3 with Mountpoint for Amazon S3"
+    ],
+    "explanation": "Correct:\nFSx for Windows provides managed SMB, Windows permissions, AD integration, and Multi-AZ deployment options.\n\nWhy the others are wrong:\nB: EFS provides NFS rather than native Windows SMB behavior.\nC: FSx for Lustre is a Linux parallel file system.\nD: Mountpoint does not provide a managed Windows SMB server.\n\nExam trigger:\nManaged Windows SMB with AD and Windows features.\n\nMemory hook:\nWindows file shares mean FSx for Windows.",
+    "topics": [
+      "fsx-windows",
+      "smb",
+      "active-directory"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-232",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A Linux application runs on EC2 instances across three Availability Zones. All instances need concurrent access to the same elastic POSIX file system. Capacity should grow and shrink automatically. Which solution meets the requirements?",
+    "options": [
+      "Use a Regional EFS file system with mount targets in the required Availability Zones.",
+      "Attach one gp3 EBS volume to all instances across Availability Zones.",
+      "Use S3 as a fully POSIX-compliant shared block device.",
+      "Create one instance-store RAID array and share it by NFS."
+    ],
+    "explanation": "Correct:\nRegional EFS provides elastic shared NFS storage and mount targets across Availability Zones.\n\nWhy the others are wrong:\nB: EBS volumes are AZ resources and cannot attach across AZs.\nC: S3 is object storage and not a fully POSIX file system.\nD: Instance store is tied to one instance and creates a single point of failure.\n\nExam trigger:\nShared Linux file system across AZs.\n\nMemory hook:\nRegional shared POSIX storage means EFS.",
+    "topics": [
+      "efs",
+      "ec2"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-233",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A global multiplayer game uses UDP and TCP endpoints on EC2 instances in two Regions. Players need static anycast IP addresses, routing over the AWS global network, and rapid endpoint health-based rerouting without waiting for DNS cache expiry. Which TWO components meet these requirements? (Select TWO.)",
+    "options": [
+      "Use AWS Global Accelerator with endpoint groups in both Regions.",
+      "Register regional Network Load Balancers or EC2 instances as accelerator endpoints.",
+      "Use CloudFront with S3 origins.",
+      "Use Route 53 geolocation records with long TTL values.",
+      "Use an Application Load Balancer for native UDP forwarding."
+    ],
+    "explanation": "Correct:\nGlobal Accelerator supplies static anycast IPs and health-aware global routing, with supported regional endpoints such as NLBs or EC2 instances.\n\nWhy the others are wrong:\nC: CloudFront and S3 do not serve arbitrary TCP and UDP game endpoints.\nD: DNS is affected by caching and does not provide accelerator anycast IPs.\nE: ALB does not forward UDP.\n\nExam trigger:\nStatic global IPs, TCP or UDP, and fast failover.\n\nMemory hook:\nNon-HTTP global acceleration means Global Accelerator.",
+    "topics": [
+      "global-accelerator",
+      "nlb",
+      "networking"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-234",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A read-heavy DynamoDB application needs microsecond response times. The application can be changed to use a cache-aware client, and eventual consistency is acceptable for cached reads. Which solution has the LEAST operational overhead?",
+    "options": [
+      "Use DynamoDB Accelerator (DAX).",
+      "Use ElastiCache for Redis as a manually maintained write-through cache.",
+      "Add an RDS read replica.",
+      "Place CloudFront in front of the DynamoDB endpoint."
+    ],
+    "explanation": "Correct:\nDAX is a managed DynamoDB-compatible in-memory cache designed for microsecond reads.\n\nWhy the others are wrong:\nB: Redis requires custom cache population and invalidation logic.\nC: An RDS replica does not serve DynamoDB tables.\nD: CloudFront is not a transparent DynamoDB API cache.\n\nExam trigger:\nMicrosecond caching specifically for DynamoDB.\n\nMemory hook:\nDynamoDB cache equals DAX.",
+    "topics": [
+      "dynamodb",
+      "dax",
+      "caching"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-235",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A relational database is overloaded by repeated reads of product and session data. The cache must support replicas, automatic failover, persistence options, and rich data structures. Which service best meets the requirements?",
+    "options": [
+      "Amazon ElastiCache for Valkey or Redis OSS with replication enabled",
+      "Amazon ElastiCache for Memcached",
+      "DynamoDB Accelerator",
+      "Amazon OpenSearch Service"
+    ],
+    "explanation": "Correct:\nValkey or Redis OSS supports replication, Multi-AZ failover, optional persistence, and rich data structures.\n\nWhy the others are wrong:\nB: Memcached lacks replication and persistence features.\nC: DAX is purpose-built for DynamoDB.\nD: OpenSearch is a search and analytics engine, not the simplest session and query cache.\n\nExam trigger:\nCache requires failover, replicas, persistence, and rich structures.\n\nMemory hook:\nRich resilient cache means Valkey or Redis.",
+    "topics": [
+      "elasticache",
+      "redis",
+      "valkey"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-236",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A public HTTP API needs path-based routing to multiple services and TLS termination at the load balancer. Which load balancer type meets the requirements?",
+    "options": [
+      "Application Load Balancer",
+      "Network Load Balancer",
+      "Gateway Load Balancer",
+      "Classic Load Balancer"
+    ],
+    "explanation": "Correct:\nAn ALB supports HTTP and HTTPS, TLS termination, and path-based Layer 7 routing.\n\nWhy the others are wrong:\nB: NLB is Layer 4 and lacks ALB path rules.\nC: GWLB distributes traffic to virtual appliances.\nD: Classic Load Balancer lacks the modern routing features required.\n\nExam trigger:\nHTTP path or host routing.\n\nMemory hook:\nLayer 7 routing means ALB.",
+    "topics": [
+      "alb",
+      "load-balancing"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-237",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A company processes a continuous stream of click events. Multiple independent consumers need the same ordered records, and one consumer may replay older records within the retention period. Throughput must scale by partitioning. Which service meets the requirements?",
+    "options": [
+      "Amazon Kinesis Data Streams",
+      "Amazon SQS standard queue",
+      "Amazon SNS standard topic without durable subscriptions",
+      "Amazon EventBridge Scheduler"
+    ],
+    "explanation": "Correct:\nKinesis Data Streams retains ordered records by shard, supports independent consumers, replay, and partition-based scaling.\n\nWhy the others are wrong:\nB: SQS competing consumers do not independently receive the same retained stream.\nC: SNS alone does not provide a replayable retained stream.\nD: EventBridge Scheduler creates scheduled events rather than ingesting streams.\n\nExam trigger:\nOrdered retained stream with multiple replaying consumers.\n\nMemory hook:\nReplayable real-time stream means Kinesis.",
+    "topics": [
+      "kinesis",
+      "streaming"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-238",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A container platform runs latency-sensitive services on ECS. The company needs control over EC2 instance types for specialized networking and wants both task scaling and cluster-capacity scaling. Which TWO configurations meet these requirements? (Select TWO.)",
+    "options": [
+      "Run the ECS service on an EC2 capacity provider backed by an Auto Scaling group containing the required instance types.",
+      "Configure ECS service auto scaling for task count and capacity provider managed scaling for the Auto Scaling group.",
+      "Use Fargate only because Fargate lets the company select every underlying EC2 instance type.",
+      "Scale only the ALB desired capacity and keep a fixed number of tasks.",
+      "Use EKS Cluster Autoscaler to manage the ECS cluster."
+    ],
+    "explanation": "Correct:\nAn EC2 capacity provider preserves instance-type control, while service auto scaling adjusts tasks and managed scaling adjusts cluster instances.\n\nWhy the others are wrong:\nC: Fargate abstracts underlying instances.\nD: ALB scaling does not add tasks or container instances.\nE: Kubernetes Cluster Autoscaler is for Kubernetes, not ECS.\n\nExam trigger:\nECS needs task scaling and EC2 cluster scaling.\n\nMemory hook:\nService scales tasks; capacity provider scales hosts.",
+    "topics": [
+      "ecs",
+      "autoscaling",
+      "capacity-provider"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-239",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A Lambda-backed API experiences database connection exhaustion during traffic spikes. The relational database supports connection pooling, and the company wants the LEAST application and operational change. Which solution meets the requirement?",
+    "options": [
+      "Place Amazon RDS Proxy between Lambda and the database.",
+      "Increase Lambda reserved concurrency without changing connections.",
+      "Create a NAT gateway in each Availability Zone.",
+      "Store each database connection in DynamoDB."
+    ],
+    "explanation": "Correct:\nRDS Proxy pools and reuses database connections, smoothing Lambda concurrency spikes.\n\nWhy the others are wrong:\nB: Increasing concurrency can worsen connection exhaustion.\nC: NAT availability does not pool sessions.\nD: Live database connections cannot be stored in DynamoDB.\n\nExam trigger:\nServerless concurrency overwhelms relational connections.\n\nMemory hook:\nLambda connection storm means RDS Proxy.",
+    "topics": [
+      "lambda",
+      "rds-proxy",
+      "api-gateway"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-240",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A company needs a load balancer for millions of TCP connections with very low latency and a static IP address in each enabled Availability Zone. Which solution meets the requirements?",
+    "options": [
+      "Network Load Balancer",
+      "Application Load Balancer",
+      "Gateway Load Balancer",
+      "Route 53 weighted routing"
+    ],
+    "explanation": "Correct:\nAn NLB is designed for high-performance Layer 4 traffic and can provide static addresses per Availability Zone.\n\nWhy the others are wrong:\nB: ALB is Layer 7 and does not provide the same static-IP design.\nC: GWLB is for fleets of virtual appliances.\nD: Route 53 is DNS routing, not a TCP load balancer.\n\nExam trigger:\nStatic IP plus extreme TCP or UDP performance.\n\nMemory hook:\nLayer 4 and static IP means NLB.",
+    "topics": [
+      "nlb",
+      "networking"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-241",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A REST API receives large numbers of repeated identical GET requests. Each request currently invokes backend Lambda functions, EC2 services, or database queries, increasing backend execution and processing costs. Responses can be cached for several minutes. The company wants to reduce backend cost without changing backend code. Which solution meets the requirements with the LEAST operational overhead?",
+    "options": [
+      "Enable API Gateway stage caching for the applicable methods.",
+      "Add a larger Auto Scaling group behind the API.",
+      "Store responses on EBS volumes attached to Lambda.",
+      "Use Route 53 weighted records to split identical requests."
+    ],
+    "explanation": "Correct:\nA: API Gateway stage caching serves repeated matching responses from a managed cache for the configured time to live. This reduces calls to Lambda, EC2 services, and databases without requiring backend code changes.\n\nWhy the others are wrong:\nA: Correct. It directly reduces repeated backend execution and processing costs.\nB: Increasing the Auto Scaling group adds capacity and cost but still processes every request.\nC: EBS volumes cannot be attached to Lambda and do not provide a managed API response cache.\nD: Route 53 weighted routing distributes DNS responses but does not cache API responses or reduce total backend processing.\n\nExam trigger:\nRepeated identical REST API responses are increasing backend execution cost and can be cached.\n\nMemory hook:\nCache before the backend to avoid paying for repeated work.",
+    "topics": [
+      "api-gateway",
+      "caching"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-242",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company runs a predictable baseline of EC2, Fargate, and Lambda compute continuously. Instance families and Regions may change over time. Which pricing option provides the broadest commitment discount with the LEAST restriction?",
+    "options": [
+      "Compute Savings Plans",
+      "EC2 Instance Savings Plans",
+      "Standard Reserved Instances for one instance family",
+      "Spot Instances for the baseline"
+    ],
+    "explanation": "Correct:\nCompute Savings Plans apply across eligible EC2 usage and also cover Fargate and Lambda while allowing broad configuration flexibility.\n\nWhy the others are wrong:\nB: EC2 Instance Savings Plans are tied to an instance family in one Region and do not cover Fargate or Lambda.\nC: Standard RIs are more configuration-specific and do not cover Fargate or Lambda.\nD: Spot can be interrupted and is unsuitable for a required baseline.\n\nExam trigger:\nSteady compute across EC2, Fargate, and Lambda with flexibility.\n\nMemory hook:\nBroad compute commitment means Compute Savings Plans.",
+    "topics": [
+      "savings-plans",
+      "compute"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-243",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A media company runs always-on ECS services and interruptible overnight container batch jobs. The company wants the MOST cost-effective design without risking interruption of the baseline services. Which TWO strategies should it use? (Select TWO.)",
+    "options": [
+      "Purchase Compute Savings Plans for the predictable baseline container usage.",
+      "Run fault-tolerant batch tasks on Fargate Spot.",
+      "Run all baseline services on Fargate Spot.",
+      "Purchase DynamoDB reserved capacity for ECS tasks.",
+      "Use Dedicated Hosts for all container workloads."
+    ],
+    "explanation": "Correct:\nCompute Savings Plans discount predictable ECS compute, while Fargate Spot reduces the cost of interruption-tolerant batch tasks.\n\nWhy the others are wrong:\nC: Spot interruptions could affect the required baseline service.\nD: DynamoDB capacity discounts do not apply to ECS.\nE: Dedicated Hosts add cost and are not required.\n\nExam trigger:\nPredictable containers plus interruptible containers.\n\nMemory hook:\nCommit the baseline; Spot the batch.",
+    "topics": [
+      "fargate",
+      "savings-plans",
+      "spot"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-244",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company stores logs that are frequently read for 30 days, rarely read for the next 60 days, and retained for seven years with retrieval times up to 12 hours. Which lifecycle design is MOST cost-effective?",
+    "options": [
+      "Keep data in S3 Standard, transition to S3 Standard-IA after 30 days, then to S3 Glacier Deep Archive after 90 days.",
+      "Move data directly to S3 Glacier Deep Archive on creation.",
+      "Keep all data in S3 Standard for seven years.",
+      "Transition to S3 One Zone-IA after 30 days and delete it after 90 days."
+    ],
+    "explanation": "Correct:\nThe lifecycle aligns storage cost with access frequency while Deep Archive supports low-cost long-term retention and the allowed retrieval window.\n\nWhy the others are wrong:\nB: Immediate archival does not efficiently support frequent initial access.\nC: S3 Standard costs more for years of rarely accessed data.\nD: Deletion violates retention and One Zone-IA has lower resilience.\n\nExam trigger:\nKnown access phases and long archival retention.\n\nMemory hook:\nLifecycle follows the data temperature.",
+    "topics": [
+      "s3",
+      "lifecycle",
+      "glacier"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-245",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "Private-subnet applications send large amounts of traffic to S3 and DynamoDB through NAT gateways in each Availability Zone. They still need occasional IPv4 internet access for software repositories. Which TWO changes reduce cost without reducing Availability Zone resilience? (Select TWO.)",
+    "options": [
+      "Add an S3 gateway endpoint and associate it with the private route tables.",
+      "Add a DynamoDB gateway endpoint and associate it with the private route tables.",
+      "Replace all NAT gateways with one NAT gateway in one Availability Zone.",
+      "Create interface endpoints for S3 and DynamoDB in every subnet and remove all NAT gateways.",
+      "Route outbound traffic through a public Application Load Balancer."
+    ],
+    "explanation": "Correct:\nThe two gateway endpoints remove S3 and DynamoDB traffic from NAT processing without hourly endpoint charges. The per-AZ NAT gateways remain for resilient access to public repositories.\n\nWhy the others are wrong:\nC: One NAT gateway reduces Availability Zone resilience and can add cross-AZ transfer.\nD: Interface endpoints add hourly charges, and removing NAT breaks required public repository access.\nE: An ALB is not an outbound egress service.\n\nExam trigger:\nHigh NAT cost caused by S3 and DynamoDB traffic.\n\nMemory hook:\nGive S3 and DynamoDB their gateway endpoints; keep NAT for the internet.",
+    "topics": [
+      "vpc-endpoint",
+      "nat-gateway",
+      "cost-optimization"
+    ],
+    "correctAnswers": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "q-saa-246",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A company wants to identify oversized EC2 instances, inefficient EBS configurations, idle load balancers, and unattached Elastic IP addresses. Which THREE AWS services or features provide the most useful cost-optimization information? (Select THREE.)",
+    "options": [
+      "AWS Compute Optimizer recommendations",
+      "AWS Trusted Advisor cost optimization checks",
+      "AWS Cost Explorer rightsizing recommendations and usage analysis",
+      "Amazon GuardDuty findings",
+      "AWS CloudTrail event history",
+      "AWS Shield Advanced"
+    ],
+    "explanation": "Correct:\nCompute Optimizer recommends sizing, Trusted Advisor flags cost issues such as idle resources, and Cost Explorer provides cost, usage, and rightsizing analysis.\n\nWhy the others are wrong:\nD: GuardDuty detects threats rather than waste.\nE: CloudTrail records API activity but is not a rightsizing service.\nF: Shield Advanced is a DDoS protection service.\n\nExam trigger:\nRightsizing plus idle-resource and cost trend analysis.\n\nMemory hook:\nOptimizer sizes, Advisor checks, Explorer explains spend.",
+    "topics": [
+      "compute-optimizer",
+      "trusted-advisor",
+      "cost-explorer"
+    ],
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "q-saa-247",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A nightly batch job is stateless, can restart from checkpoints, and may be interrupted. Which EC2 purchasing option is MOST cost-effective?",
+    "options": [
+      "Spot Instances",
+      "On-Demand Instances",
+      "Dedicated Hosts",
+      "Standard Reserved Instances"
+    ],
+    "explanation": "Correct:\nSpot Instances use discounted spare capacity and fit fault-tolerant restartable batch work.\n\nWhy the others are wrong:\nB: On-Demand costs more when interruption is acceptable.\nC: Dedicated Hosts are for licensing or isolation needs.\nD: Reserved commitments suit baseline usage but are not normally the cheapest interruptible capacity.\n\nExam trigger:\nInterruptible and restartable compute.\n\nMemory hook:\nCan stop safely means Spot.",
+    "topics": [
+      "ec2",
+      "spot"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-248",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A DynamoDB table receives unpredictable traffic spikes and long periods with little activity. The team cannot forecast capacity and wants the LEAST capacity-management effort without paying for idle provisioned throughput. Which mode meets the requirements?",
+    "options": [
+      "DynamoDB on-demand capacity mode",
+      "Provisioned capacity with a fixed maximum",
+      "Provisioned capacity without auto scaling",
+      "A reserved EC2 instance hosting a cache"
+    ],
+    "explanation": "Correct:\nOn-demand mode scales request capacity automatically and charges for requests rather than idle provisioned throughput.\n\nWhy the others are wrong:\nB: A fixed provisioned level can waste capacity and still needs forecasting.\nC: Static provisioned capacity risks waste or throttling.\nD: An EC2 cache does not replace table capacity planning and adds management.\n\nExam trigger:\nUnpredictable DynamoDB traffic with idle periods.\n\nMemory hook:\nUnknown traffic means on-demand.",
+    "topics": [
+      "dynamodb",
+      "on-demand",
+      "cost-optimization"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-249",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company runs intermittent SQL analytics over files in S3 only a few times each month and does not want to maintain a data warehouse cluster. Which service is MOST cost-effective?",
+    "options": [
+      "Amazon Athena",
+      "Amazon Redshift provisioned cluster",
+      "Amazon EMR cluster running continuously",
+      "Amazon RDS for PostgreSQL with imported copies of the files"
+    ],
+    "explanation": "Correct:\nAthena queries S3 serverlessly and charges based on query processing, avoiding idle cluster costs.\n\nWhy the others are wrong:\nB: A provisioned Redshift cluster creates ongoing capacity costs.\nC: A continuously running EMR cluster is unnecessary for occasional SQL.\nD: Importing into RDS adds storage, loading, and database administration.\n\nExam trigger:\nOccasional SQL directly over S3 with no infrastructure.\n\nMemory hook:\nAd hoc S3 SQL means Athena.",
+    "topics": [
+      "athena",
+      "s3",
+      "serverless"
+    ],
+    "correctAnswer": 0
+  },
+  {
+    "id": "q-saa-250",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A global website serves large static files directly from S3 to internet users. Data transfer charges are high, and many users request the same files. Which change is MOST cost-effective while also reducing latency?",
+    "options": [
+      "Place a CloudFront distribution in front of the S3 origin and use effective cache-control settings.",
+      "Enable S3 Transfer Acceleration for every download.",
+      "Copy the files to EBS volumes in every Region.",
+      "Use a NAT gateway between users and S3."
+    ],
+    "explanation": "Correct:\nCloudFront caches frequently requested files near users, reduces repeated S3 origin reads, and improves delivery cost and latency for cacheable content.\n\nWhy the others are wrong:\nB: Transfer Acceleration is not a shared content cache and adds charges.\nC: Replicated EBS requires servers, synchronization, and administration.\nD: NAT gateways are not used for public users to reach S3 and would add cost.\n\nExam trigger:\nRepeated global downloads of cacheable S3 objects.\n\nMemory hook:\nCacheable global delivery means CloudFront.",
+    "topics": [
+      "cloudfront",
+      "s3",
+      "data-transfer"
+    ],
+    "correctAnswer": 0
+  }
+]

@@ -1,0 +1,222 @@
+[
+  {
+    "id": "q-saa-5",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company stores millions of images in Amazon S3. Images are accessed frequently for the first 30 days, rarely accessed between 30 and 90 days, and never accessed after 90 days (but must be retained for 7 years for compliance auditing). What is the most cost-effective storage configuration?",
+    "options": [
+      "Retain all uploaded objects in the S3 Standard storage class for 7 years with default S3 Object Lock governance mode enabled.",
+      "Configure an S3 Lifecycle rule to transition objects to S3 Standard-IA at 30 days and to S3 Glacier Deep Archive at 90 days.",
+      "Configure an S3 Lifecycle rule to transition objects directly to S3 Glacier Deep Archive immediately upon initial upload.",
+      "Configure an S3 Lifecycle rule to transition objects to S3 Glacier Flexible Retrieval at 30 days and delete objects permanently at 90 days."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "S3 Lifecycle rules automate data transitions across storage classes: S3 Standard for the initial 30 days, S3 Standard-IA for infrequent access after 30 days, and S3 Glacier Deep Archive after 90 days for the lowest-cost long-term retention of audit data.",
+    "topics": [
+      "topic-s3",
+      "topic-storage"
+    ]
+  },
+  {
+    "id": "q-saa-12",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A media application serves static video files stored in an Amazon S3 bucket to global users. Users report high latency when retrieving content from distant geographic regions. Which architecture lowers latency and reduces S3 read requests?",
+    "options": [
+      "Configure Amazon Route 53 Traffic Flow with Geolocation Routing Policies to route global client requests directly to S3 bucket endpoints.",
+      "Deploy an Amazon CloudFront CDN distribution with the S3 bucket configured as the origin to cache static content at edge locations worldwide.",
+      "Deploy AWS Global Accelerator to cache static image files at AWS edge locations and terminate client TCP handshakes.",
+      "Deploy an Amazon ElastiCache for Redis cluster in front of the S3 bucket to cache HTTP GET image responses."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Amazon CloudFront caches static objects at edge locations around the world, serving requests close to end users to significantly reduce latency and offload read operations from the Amazon S3 origin bucket.",
+    "topics": [
+      "topic-cloudfront",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-17",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An e-commerce website experiences predictable traffic increases every Monday at 08:00 AM. How should the EC2 Auto Scaling group be configured to ensure instances are pre-warmed and ready before traffic surges occur?",
+    "options": [
+      "Configure a Target Tracking Scaling Policy based on Average CPU Utilization set to an aggressive target threshold of 30%.",
+      "Configure a Scheduled Scaling Action on the Auto Scaling group set to scale out capacity prior to 08:00 AM every Monday.",
+      "Configure a Step Scaling Policy triggered by an Amazon CloudWatch metric alarm evaluating 1-minute request counts.",
+      "Configure Predictive Scaling Policies with a fixed 24-hour buffer to scale out capacity continuously throughout the weekend."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Scheduled Scaling Actions allow Auto Scaling groups to scale out capacity in advance at specific dates, times, and recurring schedules, ensuring EC2 instances are fully provisioned before expected traffic spikes.",
+    "topics": [
+      "topic-auto-scaling",
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-46",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company wants to delegate IAM policy creation to junior administrators. However, security governance mandates that junior administrators must not be able to grant full AdministratorAccess or escalate their own privileges. Which IAM feature enforces a maximum permission boundary for roles created by junior admins?",
+    "options": [
+      "Attach an AWS Organizations SCP that grants junior administrators permission to create roles with only approved permissions.",
+      "Require junior administrators to attach a specific IAM Permissions Boundary when creating new IAM roles to limit maximum permissions.",
+      "Configure IAM Access Analyzer rules to automatically revoke AdministratorAccess policies attached by junior administrators.",
+      "Use AWS Resource Access Manager (RAM) to share restricted IAM policy templates with junior administrator IAM groups."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "IAM Permissions Boundaries establish the maximum permissions an IAM role or user can possess. Mandating that junior admins attach a Permissions Boundary when creating roles prevents privilege escalation, even if over-permissive IAM policies are subsequently attached.",
+    "topics": [
+      "topic-iam",
+      "topic-security"
+    ]
+  },
+  {
+    "id": "q-saa-59",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company uses a VPC Gateway Endpoint for Amazon S3 in a private subnet. The security team wants to ensure EC2 instances in this VPC can ONLY access S3 buckets owned by the company (e.g. arn:aws:s3:::my-company-*), blocking access to any external or third-party S3 buckets. How should this access control be enforced?",
+    "options": [
+      "Attach an S3 Bucket Policy to all external third-party S3 buckets to deny access from the company VPC ID.",
+      "Attach a custom VPC Endpoint Policy to the S3 Gateway Endpoint restricting Resource access to arn:aws:s3:::my-company-*.",
+      "Configure Security Group outbound rules on private EC2 instances blocking TCP port 443 to external destinations.",
+      "Configure an egress Network ACL on private subnets denying outbound traffic to Amazon S3 public IP address ranges."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "VPC Endpoint Policies are IAM resource policies attached to VPC endpoints. A custom policy on the S3 Gateway Endpoint specifying company bucket ARNs in the Resource block allows traffic strictly to company-owned S3 buckets while blocking access to external buckets.",
+    "topics": [
+      "topic-vpc",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-63",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A media company hosts a web frontend on Amazon CloudFront backed by a standard Amazon S3 bucket origin. Direct public access to the S3 bucket objects must be completely prevented so all user requests pass exclusively through CloudFront for WAF inspection and caching. Which configuration secures the S3 origin?",
+    "options": [
+      "Enable S3 Transfer Acceleration on the origin bucket and require Multi-Factor Authentication (MFA) Delete for all HTTP GET requests.",
+      "Configure CloudFront Origin Access Control and update the S3 bucket policy to allow s3:GetObject from the CloudFront service principal only when AWS:SourceArn matches the specific distribution ARN.",
+      "Enable S3 Static Website Hosting on the bucket and configure the bucket access control list (ACL) to Public Read.",
+      "Place the Amazon S3 bucket inside a private VPC subnet and attach a VPC Gateway Endpoint to the CloudFront distribution."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "CloudFront Origin Access Control (OAC) authenticates requests from CloudFront to S3 using SigV4. The S3 bucket policy grants s3:GetObject to the CloudFront service principal (cloudfront.amazonaws.com) conditioned on aws:SourceArn matching the CloudFront distribution ARN.",
+    "topics": [
+      "topic-cloudfront",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-65",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A network engineer needs to block inbound traffic from a specific malicious IPv4 IP address (203.0.113.50) attempting brute-force attacks against servers in a public subnet. Which network control can explicitly block this specific IP address?",
+    "options": [
+      "Add an inbound Security Group rule with a DENY action for source IPv4 address 203.0.113.50 on port 22.",
+      "Add a Network ACL (NACL) inbound rule with an explicit DENY for IP 203.0.113.50 placed before matching ALLOW rules.",
+      "Attach an AWS KMS Key Policy with a Condition block denying KMS decrypt operations to IP address 203.0.113.50.",
+      "Configure an Amazon Route 53 Resolver DNS Firewall rule to block inbound TCP traffic from IP address 203.0.113.50."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Network ACLs (NACLs) are stateless subnet firewalls that support explicit DENY rules evaluated in rule number order. Security Groups only support ALLOW rules.",
+    "topics": [
+      "topic-vpc",
+      "topic-nacl"
+    ]
+  },
+  {
+    "id": "q-saa-67",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "Account A needs to grant Account B read access to an Amazon S3 bucket without requiring users in Account B to switch IAM roles via AssumeRole. Which resource-based policy configuration allows users in Account B to access Account A S3 bucket directly?",
+    "options": [
+      "Add an S3 bucket policy in Account A granting the Account B principal s3:GetObject access, and attach a matching identity policy to that principal in Account B.",
+      "Attach an IAM Group Policy in Account B with AdministratorAccess permissions to grant cross-account S3 bucket access.",
+      "Configure an AWS Organizations Service Control Policy (SCP) in the management account granting cross-account S3 access.",
+      "Attach a custom VPC Gateway Endpoint Policy to the S3 endpoint in Account B allowing access to Account A buckets."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Cross-account resource access without assuming a role requires explicit permissions granted in Account A (via S3 Bucket Policy) AND matching identity-based permissions attached to the IAM principal in Account B.",
+    "topics": [
+      "topic-s3",
+      "topic-iam"
+    ]
+  },
+  {
+    "id": "q-saa-73",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A security policy mandates that all objects uploaded to an Amazon S3 bucket must be encrypted at rest using Server-Side Encryption with AWS KMS (SSE-KMS) using a specified key. Any upload request that does not specify SSE-KMS encryption must be explicitly rejected. How should this compliance policy be enforced?",
+    "options": [
+      "Use separate bucket-policy Deny statements for PutObject: StringNotEquals requires aws:kms, while ArnNotEqualsIfExists requires the KMS key-ID header to match the approved key ARN.",
+      "Use one bucket-policy Deny statement that rejects PutObject unless the encryption header equals aws:kms, while allowing any KMS key ARN supplied in the upload request.",
+      "Set bucket default encryption to the required KMS key and deny PutObject only when a different key ARN is supplied, permitting requests that omit encryption headers.",
+      "Use one bucket-policy Deny statement for PutObject with both StringNotEquals conditions in the same block, rejecting requests only when the algorithm and key ARN both differ."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "The bucket policy must enforce both requirements. One explicit Deny rejects s3:PutObject requests when s3:x-amz-server-side-encryption is not aws:kms. A separate explicit Deny using ArnNotEqualsIfExists rejects requests when s3:x-amz-server-side-encryption-aws-kms-key-id does not match the required customer managed KMS key ARN. Using separate Deny statements applies the rejection when either requirement is not satisfied.",
+    "topics": [
+      "topic-s3",
+      "topic-kms"
+    ]
+  },
+  {
+    "id": "q-saa-77",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A banking application hosted on internal EC2 instances behind an internal Application Load Balancer requires HTTPS encryption in transit. The SSL/TLS certificates must be issued by a private internal Certificate Authority managed centrally in AWS. Which service generates and manages private certificates?",
+    "options": [
+      "Request public certificates from ACM and validate them through Route 53, then attach them to the internal Application Load Balancer.",
+      "Create an AWS Private CA hierarchy and use ACM to issue, deploy, and renew private certificates for the internal load balancer.",
+      "Issue certificates from an on-premises private CA, import them into ACM, and rely on ACM to renew them automatically.",
+      "Store a private CA key in AWS CloudHSM, sign certificates manually, and use ACM to distribute and renew them automatically."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Private Certificate Authority (AWS Private CA) allows organizations to create private Certificate Authorities to issue and manage private X.509 certificates, integrating with AWS Certificate Manager (ACM) for automated certificate deployment and renewal.",
+    "topics": [
+      "topic-acm",
+      "topic-security"
+    ]
+  }
+]

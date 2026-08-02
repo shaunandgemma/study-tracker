@@ -1,0 +1,236 @@
+[
+  {
+    "id": "q-saa-108",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A media company serves static web assets via Amazon CloudFront from an S3 bucket origin in us-east-1. To handle HTTP GET, HEAD, and OPTIONS requests during a regional S3 disruption in us-east-1, CloudFront must seamlessly fail over to a backup S3 origin bucket in us-west-2 without returning HTTP 5xx errors to users. How should the solutions architect configure this origin redundancy?",
+    "options": [
+      "Create a CloudFront Origin Group containing a primary S3 origin and a secondary S3 origin configured to fail over on HTTP 500, 502, 503, and 504 status codes.",
+      "Configure Amazon Route 53 DNS failover routing between the primary S3 website endpoint in us-east-1 and the secondary S3 website endpoint in us-west-2.",
+      "Deploy a Lambda@Edge origin-request function to intercept HTTP 5xx server error responses from the primary S3 origin and rewrite origin request host headers.",
+      "Enable S3 Cross-Region Replication between origin buckets and register an AWS Global Accelerator endpoint as the custom origin for the CloudFront distribution."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "CloudFront Origin Groups allow specifying a primary origin and a secondary failover origin for read requests (GET, HEAD, OPTIONS). When the primary S3 origin returns specified HTTP 5xx error status codes or times out, CloudFront transparently routes the request to the secondary S3 origin.",
+    "topics": [
+      "topic-cloudfront",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-120",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An enterprise is migrating an existing self-managed Apache Kafka messaging cluster to AWS. The solution must provide a managed Apache Kafka broker control plane while preserving compatibility with existing Kafka producer and consumer client APIs, custom topic partitions, and low-latency message streaming. Which AWS service fulfills these requirements?",
+    "options": [
+      "Amazon Managed Streaming for Apache Kafka (Amazon MSK) to provision managed Kafka clusters compatible with open-source Kafka client APIs.",
+      "Amazon Kinesis Data Streams utilizing the Kinesis Producer Library (KPL) to replace Kafka brokers and manage partition scaling automatically.",
+      "Amazon SQS FIFO queues with unique message group IDs to deliver strict message ordering and partition management across consumer applications.",
+      "Amazon MQ with Apache ActiveMQ message brokers configured in a multi-AZ deployment to support high-throughput message streaming workloads."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Amazon Managed Streaming for Apache Kafka (Amazon MSK) provides a fully managed service that provisions Apache Kafka clusters while maintaining full wire-protocol and API compatibility with open-source Apache Kafka applications and client libraries.",
+    "topics": [
+      "topic-msk"
+    ]
+  },
+  {
+    "id": "q-saa-135",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A conglomerate operates 20 AWS accounts across different business units. The CFO wants to consolidate billing into a single invoice, combine usage across all accounts to qualify for tiered volume pricing discounts (such as S3 storage and data transfer), and centrally enforce governance policies. Which TWO features of AWS Organizations fulfill these requirements? (Select TWO.)",
+    "options": [
+      "Consolidated Billing to aggregate usage across member accounts for single invoicing and tiered volume pricing discounts.",
+      "Service Control Policies (SCPs) to enforce centralized authorization guardrails across organizational units and member accounts.",
+      "AWS Resource Access Manager (RAM) integration to share S3 storage tiers and centralize budget enforcement across accounts.",
+      "AWS Cost Anomaly Detection enabled at the management account level to consolidate invoice line items across member accounts.",
+      "AWS Organizations Tag Policies to aggregate S3 bucket storage usage and apply automatic volume discount pricing tiers."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Consolidated Billing in AWS Organizations combines usage across all member accounts into a single bill, allowing the organization to achieve higher tiered volume pricing discounts for S3 storage and data transfer. Service Control Policies (SCPs) define central permission guardrails to govern accounts and organizational units.",
+    "topics": [
+      "topic-organizations"
+    ]
+  },
+  {
+    "id": "q-saa-146",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A media company is building a real-time data streaming analytics pipeline to process clickstream data from millions of mobile users. The pipeline must ingest streaming events continuously, transform JSON records using AWS Lambda, and buffer data into an Amazon Redshift data warehouse for BI reporting. Which THREE AWS services construct this pipeline? (Select THREE.)",
+    "options": [
+      "Amazon Kinesis Data Streams for high-throughput real-time stream ingestion.",
+      "Amazon Data Firehose to transform records via AWS Lambda and load data continuously into Amazon Redshift.",
+      "Amazon Redshift data warehouse to execute complex SQL analytics queries.",
+      "Amazon SQS Standard queues to buffer JSON clickstream records for automated batch insertion into Redshift.",
+      "AWS Glue Streaming ETL jobs to write streaming clickstream data directly into Amazon S3 Glacier Deep Archive.",
+      "Amazon EMR Serverless cluster running Apache Spark Batch jobs to continuously ingest real-time streaming data."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Amazon Kinesis Data Streams continuously ingests real-time streaming data at scale. Amazon Data Firehose receives records from Kinesis Data Streams, invokes AWS Lambda for transformation, stages the transformed data in Amazon S3, and loads it into Amazon Redshift for analytics.",
+    "topics": [
+      "topic-kinesis",
+      "topic-redshift",
+      "topic-lambda"
+    ]
+  },
+  {
+    "id": "q-saa-148",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A global e-commerce portal experiences performance bottlenecks due to database read-heavy traffic. The architecture consists of a web tier, an application tier backed by a relational database for order transactions, and Amazon DynamoDB for high-throughput product catalog reads. To achieve sub-millisecond response times, the architect plans multi-tier caching across edge, application, and database layers. Which THREE caching services fulfill this strategy? (Select THREE.)",
+    "options": [
+      "Amazon CloudFront at the edge layer for caching static web assets and dynamic content.",
+      "Amazon ElastiCache for Redis at the application tier for caching relational database queries and session state.",
+      "Amazon DynamoDB Accelerator (DAX) at the database layer for in-memory microsecond read caching of DynamoDB tables.",
+      "AWS Global Accelerator to cache application database query responses at AWS edge locations.",
+      "Amazon MemoryDB for Redis to store static web images and reduce Amazon S3 bucket read latency.",
+      "Amazon ElastiCache for Redis deployed as a transparent caching proxy in front of both DynamoDB and static S3 content without application changes."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Amazon CloudFront caches web assets at edge locations close to users. Amazon ElastiCache for Redis caches relational database queries and session state at the application tier. Amazon DynamoDB Accelerator (DAX) provides microsecond in-memory caching directly integrated with DynamoDB tables for read-heavy workloads.",
+    "topics": [
+      "topic-cloudfront",
+      "topic-elasticache",
+      "topic-dynamodb"
+    ]
+  },
+  {
+    "id": "q-saa-149",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A security operations team requires automated continuous monitoring, threat detection, and security posture management across all AWS accounts in an organization. The security solution must detect unauthorized API activity, evaluate configuration compliance against CIS benchmarks, and centralize all security findings. Which THREE services should be enabled? (Select THREE.)",
+    "options": [
+      "Amazon GuardDuty for intelligent threat detection across CloudTrail, VPC Flow Logs, and DNS logs.",
+      "AWS Config to continuously track resource configurations and evaluate compliance rules against security standards.",
+      "AWS Security Hub to aggregate and prioritize security findings across GuardDuty, Config, and Inspector.",
+      "Amazon Inspector to manage centralized IAM permission boundaries across AWS Organizations accounts.",
+      "AWS Systems Manager OpsCenter to automatically block unauthorized API calls recorded in CloudTrail logs.",
+      "AWS CloudTrail Event History to generate automated compliance scorecards and CIS benchmark dashboards."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Amazon GuardDuty analyzes AWS CloudTrail logs, VPC Flow Logs, and DNS logs to perform intelligent threat detection. AWS Config continuously records resource configuration changes and audits compliance against standard benchmarks (such as CIS AWS Foundations). AWS Security Hub aggregates findings from GuardDuty, Config, and Inspector into a single centralized dashboard.",
+    "topics": [
+      "topic-guardduty",
+      "topic-config",
+      "topic-security-hub"
+    ]
+  },
+  {
+    "id": "q-saa-105",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A SaaS application serves global users over TCP. The backend is deployed in us-east-1 and eu-west-1. To improve TCP handshake performance and provide static IP addresses, the application uses AWS Global Accelerator. How does Global Accelerator handle a regional outage?",
+    "options": [
+      "It updates Amazon Route 53 public DNS A records with a low TTL to point traffic to healthy regional endpoints.",
+      "Anycast IP addresses automatically route user traffic over the AWS global network to the nearest healthy application endpoint within seconds.",
+      "It triggers Network Load Balancer cross-zone load balancing to re-route incoming TCP connections to an available standby region.",
+      "It re-routes incoming traffic through AWS Direct Connect gateway locations to establish alternative network paths."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Global Accelerator uses static Anycast IP addresses that route client traffic to the nearest AWS edge location. It continuously monitors the health of application endpoints across AWS regions and automatically redirects traffic to the nearest healthy regional endpoint within seconds upon a failure.",
+    "topics": [
+      "topic-global-accelerator",
+      "topic-elb"
+    ]
+  },
+  {
+    "id": "q-saa-52",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company wants to inspect all outbound traffic from VPC subnets to the internet to prevent data exfiltration. The inspection device must enforce domain name filtering (SNI), stateful pattern matching, and layer 3-7 threat prevention across hundreds of VPCs connected via AWS Transit Gateway. Which service should be deployed?",
+    "options": [
+      "Configure egress Network ACLs on public subnets to enforce domain name filtering and stateful packet inspection.",
+      "Deploy AWS Network Firewall in a centralized inspection VPC connected to AWS Transit Gateway.",
+      "Associate AWS WAF web ACLs with NAT Gateways in each spoke VPC to inspect outbound internet traffic.",
+      "Enable Amazon GuardDuty Malware Protection on Transit Gateway attachments to perform inline domain blocking."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Network Firewall provides stateful layer 3-7 network inspection, TLS SNI domain filtering, and intrusion prevention capabilities. Deploying AWS Network Firewall within an inspection VPC attached to AWS Transit Gateway allows centralizing outbound internet traffic filtering for hundreds of spoke VPCs.",
+    "topics": [
+      "topic-network-firewall",
+      "topic-transit-gateway"
+    ]
+  },
+  {
+    "id": "q-saa-58",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An organization with 50 AWS accounts needs a central log archive where API calls across all accounts are logged and stored in a secure S3 bucket in a dedicated Log Archive account. Member account administrators must not be able to stop logging or modify log files. What solution achieves this governance requirement?",
+    "options": [
+      "Configure individual CloudTrail trails in each member account that deliver log files to a centralized S3 bucket in the Log Archive account.",
+      "Create an Organization Trail in the management account that automatically logs API activity across all member accounts into a central S3 bucket in the Log Archive account.",
+      "Enable VPC Flow Logs in all member accounts and stream log data via Amazon Data Firehose to the central Log Archive S3 bucket.",
+      "Configure CloudWatch Logs subscription filters in each member account with cross-account IAM roles to stream log events to the central Log Archive account."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "An Organization Trail created in the organization management account or delegated administrator account automatically applies to all member accounts. Member account administrators cannot disable, delete, or modify an Organization Trail, ensuring centralized security and compliance auditing.",
+    "topics": [
+      "topic-cloudtrail",
+      "topic-organizations"
+    ]
+  },
+  {
+    "id": "q-saa-82",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A database administrator provisions an Amazon RDS Multi-AZ DB Cluster (with two readable standby DB instances across 3 AZs) instead of a standard Multi-AZ DB instance deployment. What key architectural advantage does an RDS Multi-AZ DB Cluster provide for write-heavy workloads?",
+    "options": [
+      "Reduced commit latency versus a conventional Multi-AZ deployment, while the two replica instances can serve read-only application traffic.",
+      "Reduced commit latency through active-active writes across all three instances, while the two replica instances also serve read-only application traffic.",
+      "Reduced commit latency through synchronous replication between separate AWS Regions, while the two replica instances also serve read-only application traffic.",
+      "Reduced commit latency by keeping database storage on instance-local NVMe volumes, while the two replica instances also serve read-only application traffic."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "An RDS Multi-AZ DB cluster has one writer and two readable standby DB instances across three Availability Zones. It can provide lower write latency than a traditional Multi-AZ DB instance deployment, while the readable standbys can also serve read traffic.",
+    "topics": [
+      "topic-rds"
+    ]
+  }
+]

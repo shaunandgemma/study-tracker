@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Study Tracker Backend Infrastructure - Dedicated IAM User and Backend Verification Role.
+  Creates StudyTrackerSupabaseEdgeUser and StudyTrackerAwsValidationBackendRole for two-stage
+  cross-account STS AssumeRole validation of Hands-On Tasks without circular resource dependencies.
+
+Resources:
+  # 1. Dedicated IAM User for Supabase Edge Functions (No circular dependency)
+  StudyTrackerSupabaseEdgeUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: StudyTrackerSupabaseEdgeUser
+      Path: /
+
+  # 2. Dedicated Backend IAM Role assumed by Edge Functions User
+  StudyTrackerAwsValidationBackendRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: StudyTrackerAwsValidationBackendRole
+      Path: /
+      Description: Backend verification role assumed by StudyTrackerSupabaseEdgeUser to inspect user AWS lab resources
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowEdgeUserToAssumeBackendRole
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt StudyTrackerSupabaseEdgeUser.Arn
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AssumeUserHandsOnRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: AllowAssumeUserHandsOnRoleOnly
+                Effect: Allow
+                Action: sts:AssumeRole
+                Resource: arn:aws:iam::*:role/StudyTrackerHandsOnRole
+
+  # 3. Standalone IAM Policy breaking circular dependency
+  StudyTrackerEdgeUserAssumeRolePolicy:
+    Type: AWS::IAM::Policy
+    DependsOn:
+      - StudyTrackerSupabaseEdgeUser
+      - StudyTrackerAwsValidationBackendRole
+    Properties:
+      PolicyName: StudyTrackerEdgeUserAssumeBackendRolePolicy
+      Users:
+        - !Ref StudyTrackerSupabaseEdgeUser
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowAssumeBackendRoleOnly
+            Effect: Allow
+            Action: sts:AssumeRole
+            Resource: !GetAtt StudyTrackerAwsValidationBackendRole.Arn
+
+Outputs:
+  BackendAccountId:
+    Description: The 12-digit AWS Account ID hosting the Study Tracker backend verification service.
+    Value: !Ref 'AWS::AccountId'
+  BackendRoleArn:
+    Description: The ARN of StudyTrackerAwsValidationBackendRole. Configure as AWS_BACKEND_ROLE_ARN in Supabase Secrets.
+    Value: !GetAtt StudyTrackerAwsValidationBackendRole.Arn
+  EdgeUsername:
+    Description: The IAM Username for Supabase Edge Functions. Create access keys for this user in AWS IAM console.
+    Value: !Ref StudyTrackerSupabaseEdgeUser
+  EdgeUserArn:
+    Description: The ARN of StudyTrackerSupabaseEdgeUser.
+    Value: !GetAtt StudyTrackerSupabaseEdgeUser.Arn

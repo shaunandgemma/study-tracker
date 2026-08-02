@@ -1,0 +1,1091 @@
+AWS SAA-C03 ORIGINAL 36 EXPLANATION REVIEW
+==========================================================================================
+
+==========================================================================================
+ID: q-saa-1
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-vpc, topic-security-groups
+CORRECT ANSWER: B
+
+QUESTION:
+A company needs to secure a 3-tier web application running on Amazon EC2. The database tier must only accept incoming connections from the web application tier on TCP port 3306. The web tier auto-scales dynamically based on CPU utilization. Which configuration achieves this security requirement with minimum operational overhead?
+
+OPTIONS:
+A. Configure a Network ACL on the database subnet allowing inbound TCP port 3306 from the web server subnet CIDR block.
+B. Create a Security Group for the database tier that allows inbound TCP port 3306 traffic referencing the Security Group ID of the web server tier.
+C. Attach an AWS IAM policy to database EC2 instances granting database read/write permissions via AWS KMS.
+D. Assign static Elastic IP addresses to web servers and whitelist their IP addresses individually in the database Security Group.
+
+EXPLANATION:
+Correct answer:
+Create a Security Group for the database tier that allows inbound TCP port 3306 traffic referencing the Security Group ID of the web server tier.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-vpc.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-2
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-s3, topic-kms
+CORRECT ANSWER: B
+
+QUESTION:
+A company requires all data uploaded to Amazon S3 to be encrypted at rest. Key management mandates dictate that encryption keys must be managed in AWS KMS with automatic annual key rotation enabled and CloudTrail auditing for key usage. Which solution satisfies these compliance demands?
+
+OPTIONS:
+A. Configure SSE-S3 with S3-managed keys, rely on automatic key management, and use CloudTrail data events to audit encrypted object operations.
+B. Configure SSE-KMS with a customer managed AWS KMS key, enable automatic annual rotation, and use CloudTrail to audit key operations.
+C. Configure SSE-KMS with an AWS managed KMS key, rely on its annual rotation, and use CloudTrail to audit key operations.
+D. Configure SSE-KMS with a customer managed AWS KMS key, replace its alias annually, and use CloudTrail to audit key operations.
+
+EXPLANATION:
+Correct answer:
+Configure SSE-KMS with a customer managed AWS KMS key, enable automatic annual rotation, and use CloudTrail to audit key operations.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-s3.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-3
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-sqs, topic-ec2
+CORRECT ANSWER: B
+
+QUESTION:
+An e-commerce site expects high spike traffic during promotional sales. Orders are placed by web frontend users, but fulfillment processing can be asynchronous. How should the architecture be designed to decouple components and prevent order loss during traffic bursts?
+
+OPTIONS:
+A. Store incoming orders directly in an EC2 instance ephemeral volume.
+B. Use an Amazon SQS queue to store order messages, and configure backend worker instances to poll the queue.
+C. Deploy an Elastic Load Balancer to synchronously send order requests directly to worker EC2 instances.
+D. Write orders directly to an Amazon S3 bucket with cross-region replication enabled.
+
+EXPLANATION:
+Amazon SQS decouples application components, allowing asynchronous order processing. Even if order processing workers slow down or fail, orders remain safely buffered in the SQS queue.
+
+==========================================================================================
+ID: q-saa-4
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-rds
+CORRECT ANSWER: B
+
+QUESTION:
+A relational database hosted on Amazon RDS MySQL experiences heavy read requests, causing latency issues for write operations. The application requires automatic failover disaster recovery within the region as well. What dual-step solution should be implemented?
+
+OPTIONS:
+A. Migrate the RDS MySQL database to an Amazon EC2 instance in a single Availability Zone using manual EBS volume snapshots.
+B. Enable Multi-AZ deployment on the RDS MySQL DB instance for high availability, and deploy RDS Read Replicas to offload read traffic.
+C. Increase the EBS storage volume size and provisioned IOPS on the primary RDS DB instance.
+D. Configure Amazon CloudFront CDN caching in front of the primary RDS MySQL database endpoint.
+
+EXPLANATION:
+Correct answer:
+Enable Multi-AZ deployment on the RDS MySQL DB instance for high availability, and deploy RDS Read Replicas to offload read traffic.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-rds.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-5
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-s3, topic-storage
+CORRECT ANSWER: B
+
+QUESTION:
+A company stores millions of images in Amazon S3. Images are accessed frequently for the first 30 days, rarely accessed between 30 and 90 days, and never accessed after 90 days (but must be retained for 7 years for compliance auditing). What is the most cost-effective storage configuration?
+
+OPTIONS:
+A. Retain all uploaded objects in the S3 Standard storage class for 7 years with default S3 Object Lock governance mode enabled.
+B. Configure an S3 Lifecycle rule to transition objects to S3 Standard-IA at 30 days and to S3 Glacier Deep Archive at 90 days.
+C. Configure an S3 Lifecycle rule to transition objects directly to S3 Glacier Deep Archive immediately upon initial upload.
+D. Configure an S3 Lifecycle rule to transition objects to S3 Glacier Flexible Retrieval at 30 days and delete objects permanently at 90 days.
+
+EXPLANATION:
+Correct answer:
+Configure an S3 Lifecycle rule to transition objects to S3 Standard-IA at 30 days and to S3 Glacier Deep Archive at 90 days.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-s3.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-6
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-dynamodb
+CORRECT ANSWER: B
+
+QUESTION:
+A high-frequency trading platform requires sub-millisecond read latency for a key-value database workload handling millions of requests per second. Which database configuration best fulfills this requirement?
+
+OPTIONS:
+A. Amazon Aurora PostgreSQL with Multi-AZ.
+B. Amazon DynamoDB with DynamoDB Accelerator (DAX) cluster.
+C. Amazon Redshift with materialized views.
+D. Amazon Athena querying data stored in S3 Parquet format.
+
+EXPLANATION:
+Correct answer:
+Amazon DynamoDB with DynamoDB Accelerator (DAX) cluster.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-dynamodb.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-7
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-ec2
+CORRECT ANSWER: B
+
+QUESTION:
+A financial institution runs batch processing workloads on EC2 for 4 hours every night. The batch tasks are stateless, resilient to interruption, and can be restarted easily. Which pricing model offers the lowest cost?
+
+OPTIONS:
+A. EC2 On-Demand Instances
+B. EC2 Spot Instances
+C. 3-Year Dedicated Host Savings Plan
+D. EC2 Reserved Instances
+
+EXPLANATION:
+EC2 Spot Instances offer up to 90% discount off On-Demand prices and are ideal for stateless, fault-tolerant batch processing workloads that can handle termination notices.
+
+==========================================================================================
+ID: q-saa-8
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-vpc, topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+An application in a private subnet needs to access Amazon S3 buckets securely without exposing traffic over the public internet. Which VPC networking solution should be deployed?
+
+OPTIONS:
+A. Internet Gateway (IGW)
+B. VPC Gateway Endpoint for S3
+C. NAT Instance in a public subnet
+D. Egress-Only Internet Gateway
+
+EXPLANATION:
+Correct answer:
+VPC Gateway Endpoint for S3. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-vpc.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-9
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-iam, topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+An application running on an EC2 instance needs to securely read objects from an Amazon S3 bucket. Access credentials must not be hardcoded inside the application code or stored on disk. Which configuration is the AWS recommended security practice?
+
+OPTIONS:
+A. Store AWS IAM access keys in a config file on the EC2 instance root volume.
+B. Create an IAM role with S3 read permissions and attach it as an instance profile to the EC2 instance.
+C. Create an IAM user for the EC2 instance and pass AWS_SECRET_ACCESS_KEY via User Data scripts.
+D. Use AWS KMS to encrypt the access keys on the EC2 instance storage.
+
+EXPLANATION:
+Attaching an IAM role via an Instance Profile to an EC2 instance allows the AWS SDK on the instance to automatically retrieve temporary security credentials from IMDS without storing hardcoded long-term keys.
+
+==========================================================================================
+ID: q-saa-10
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-route53, topic-elb
+CORRECT ANSWER: B
+
+QUESTION:
+A global web application is deployed across AWS US-East and EU-West regions behind Application Load Balancers. The company wants users automatically routed to the region with the lowest network latency, with health checks to redirect traffic if a region becomes unavailable. Which Amazon Route 53 routing policy should be configured?
+
+OPTIONS:
+A. Configure a Route 53 Weighted Routing Policy with equal weightings assigned to both Application Load Balancers.
+B. Create Route 53 latency alias records for both regional Application Load Balancers and enable Evaluate Target Health on each record.
+C. Configure a Route 53 Geolocation Routing Policy mapping user countries to primary and secondary Application Load Balancers.
+D. Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks.
+
+EXPLANATION:
+Correct answer:
+Create Route 53 latency alias records for both regional Application Load Balancers and enable Evaluate Target Health on each record.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-route53.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-11
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-lambda, topic-s3
+CORRECT ANSWER: A
+
+QUESTION:
+A company needs a serverless event-driven architecture that automatically resizes images uploaded to an S3 bucket and saves the thumbnails to another bucket. Which combination of AWS services offers the operational effort closest to zero?
+
+OPTIONS:
+A. Amazon S3 Event Notifications triggering an AWS Lambda function.
+B. AWS Step Functions polling the S3 bucket every minute on an EC2 Cron schedule.
+C. Amazon CloudWatch Events triggering an Auto Scaling EC2 fleet.
+D. Amazon Kinesis Data Streams polling S3 object uploads.
+
+EXPLANATION:
+Correct answer:
+Amazon S3 Event Notifications triggering an AWS Lambda function.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+B. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-lambda.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-12
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-cloudfront, topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+A media application serves static video files stored in an Amazon S3 bucket to global users. Users report high latency when retrieving content from distant geographic regions. Which architecture lowers latency and reduces S3 read requests?
+
+OPTIONS:
+A. Configure Amazon Route 53 Traffic Flow with Geolocation Routing Policies to route global client requests directly to S3 bucket endpoints.
+B. Deploy an Amazon CloudFront CDN distribution with the S3 bucket configured as the origin to cache static content at edge locations worldwide.
+C. Deploy AWS Global Accelerator to cache static image files at AWS edge locations and terminate client TCP handshakes.
+D. Deploy an Amazon ElastiCache for Redis cluster in front of the S3 bucket to cache HTTP GET image responses.
+
+EXPLANATION:
+Correct answer:
+Deploy an Amazon CloudFront CDN distribution with the S3 bucket configured as the origin to cache static content at edge locations worldwide.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-cloudfront.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-13
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-ebs, topic-ec2
+CORRECT ANSWER: B
+
+QUESTION:
+A mission-critical database application running on a supported Nitro-based EC2 instance requires sustained sub-millisecond latency and 120,000 provisioned IOPS with 4,000 MB/s throughput. Which Amazon EBS volume type meets these demanding specifications?
+
+OPTIONS:
+A. Provision an EBS General Purpose SSD (gp3) volume and configure provisioned IOPS to meet the database IOPS target.
+B. Provision an EBS Provisioned IOPS SSD (io2 Block Express) volume attached to the Nitro-based EC2 instance.
+C. Provision an EBS Throughput Optimized HDD (st1) volume and configure software RAID 0 across multiple volumes.
+D. Provision an EBS Cold HDD (sc1) volume and attach it to the EC2 instance using NVMe multi-queue drivers.
+
+EXPLANATION:
+Correct answer:
+Provision an EBS Provisioned IOPS SSD (io2 Block Express) volume attached to the Nitro-based EC2 instance.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-ebs.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-14
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-aurora, topic-rds
+CORRECT ANSWER: B
+
+QUESTION:
+A company requires a highly available relational database for a global application with MySQL compatibility. The database must support low-latency cross-Region disaster recovery and scale read capacity horizontally across multiple AWS Regions. Which database solution satisfies these requirements?
+
+OPTIONS:
+A. Amazon RDS for MySQL with cross-Region read replicas
+B. Amazon Aurora Global Database
+C. Amazon DynamoDB Global Tables
+D. Amazon EC2 with MySQL Community Edition and manual snapshots
+
+EXPLANATION:
+Aurora Global Database uses asynchronous cross-Region replication with replication latency typically under one second. For an unplanned Regional failover, RPO is normally non-zero and measured in seconds.
+
+==========================================================================================
+ID: q-saa-15
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-sns, topic-sqs
+CORRECT ANSWER: B
+
+QUESTION:
+An application needs to broadcast urgent system alerts simultaneously to multiple downstream subscribers: an SQS queue, an HTTPS webhook endpoint, and an AWS Lambda function. Which AWS service implements this fan-out messaging pattern?
+
+OPTIONS:
+A. Amazon SQS FIFO Queue
+B. Amazon SNS (Simple Notification Service) Topic
+C. AWS EventBridge Event Bus
+D. Amazon Kinesis Data Firehose
+
+EXPLANATION:
+Correct answer:
+Amazon SNS (Simple Notification Service) Topic. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-sns.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-16
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-elb, topic-ec2-asg
+CORRECT ANSWER: B
+
+QUESTION:
+A web application hosted on an EC2 Auto Scaling group behind an Application Load Balancer (ALB) handles HTTP and HTTPS traffic. The company needs to enforce SSL/TLS termination and path-based routing (/api vs /static). Which component performs path routing and SSL termination?
+
+OPTIONS:
+A. Network Load Balancer (NLB)
+B. Application Load Balancer (ALB)
+C. AWS Transit Gateway
+D. Amazon CloudFront Edge Lambda
+
+EXPLANATION:
+Correct answer:
+Application Load Balancer (ALB). Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-elb.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-17
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-auto-scaling, topic-ec2
+CORRECT ANSWER: B
+
+QUESTION:
+An e-commerce website experiences predictable traffic increases every Monday at 08:00 AM. How should the EC2 Auto Scaling group be configured to ensure instances are pre-warmed and ready before traffic surges occur?
+
+OPTIONS:
+A. Configure a Target Tracking Scaling Policy based on Average CPU Utilization set to an aggressive target threshold of 30%.
+B. Configure a Scheduled Scaling Action on the Auto Scaling group set to scale out capacity prior to 08:00 AM every Monday.
+C. Configure a Step Scaling Policy triggered by an Amazon CloudWatch metric alarm evaluating 1-minute request counts.
+D. Configure Predictive Scaling Policies with a fixed 24-hour buffer to scale out capacity continuously throughout the weekend.
+
+EXPLANATION:
+Correct answer:
+Configure a Scheduled Scaling Action on the Auto Scaling group set to scale out capacity prior to 08:00 AM every Monday.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-auto-scaling.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-18
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-kms
+CORRECT ANSWER: B
+
+QUESTION:
+A regulatory mandate requires a financial application to encrypt sensitive customer PII before writing it to a database. Encryption keys must be generated inside dedicated hardware modules where AWS administrators have no access to key material. Which service fulfills this strict requirement?
+
+OPTIONS:
+A. AWS KMS with AWS Managed Key
+B. AWS CloudHSM
+C. AWS Secrets Manager
+D. Amazon Macie
+
+EXPLANATION:
+Correct answer:
+AWS CloudHSM. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-kms.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-19
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-efs, topic-storage
+CORRECT ANSWER: B
+
+QUESTION:
+A containerized application running across multiple EC2 instances in different Availability Zones requires a POSIX-compliant shared file system with concurrent read and write access. Which storage solution should be used?
+
+OPTIONS:
+A. Use an io2 EBS volume with Multi-Attach and mount it from the instances in every Availability Zone through a clustered file system.
+B. Use a Regional EFS file system with mount targets in the required Availability Zones, then mount the same file system from each instance.
+C. Use Amazon FSx for Windows File Server in Multi-AZ mode and mount the same SMB share from each Linux instance.
+D. Use an S3 bucket with Mountpoint for Amazon S3 on each instance, presenting the bucket as a shared POSIX-compliant file system.
+
+EXPLANATION:
+Correct answer:
+Use a Regional EFS file system with mount targets in the required Availability Zones, then mount the same file system from each instance.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-efs.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-20
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-organizations, topic-scp
+CORRECT ANSWER: B
+
+QUESTION:
+An enterprise manages hundreds of AWS accounts using AWS Organizations. The Security team requires a mechanism to centrally restrict specific AWS service API actions (such as preventing member accounts from disabling CloudTrail or deleting S3 buckets) across all member accounts. Which feature enforces this guardrail?
+
+OPTIONS:
+A. Attach IAM Permissions Boundaries to administrative IAM roles in each individual member account.
+B. Attach Service Control Policies to the organization root or appropriate organizational units to restrict permitted API actions in member accounts.
+C. Deploy AWS Config Conformance Packs across member accounts to automatically revoke unauthorized API calls.
+D. Enable AWS Security Hub Standards across member accounts to enforce security configuration policies.
+
+EXPLANATION:
+Correct answer:
+Attach Service Control Policies to the organization root or appropriate organizational units to restrict permitted API actions in member accounts.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-organizations.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-21
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-s3, topic-snow-family
+CORRECT ANSWER: B
+
+QUESTION:
+A company needs to migrate 150 TB of on-premises data to Amazon S3. The company has a 10 Mbps internet connection that is heavily utilized during business hours. The migration must be completed within 2 weeks with minimal network disruption. The company is an existing AWS Snowball Edge customer and is eligible to order Snowball Edge devices. Which solution is most cost-effective and operationally efficient?
+
+OPTIONS:
+A. Use AWS DataSync over the existing 10 Mbps internet connection with bandwidth throttling.
+B. Order AWS Snowball Edge Storage Optimized devices, copy data locally, and ship them to AWS.
+C. Deploy an AWS Storage Gateway File Gateway on-premises and replicate files to S3 over HTTPS.
+D. Upload data to S3 using S3 Transfer Acceleration over the internet.
+
+EXPLANATION:
+Correct answer:
+Order AWS Snowball Edge Storage Optimized devices, copy data locally, and ship them to AWS.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-s3.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-22
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-vpc, topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+A company hosts an application on EC2 instances in private subnets across multiple AZs. The instances must download software updates from Amazon S3 and external internet repositories. Currently, traffic passes through a NAT Gateway in each AZ, generating high data processing charges. How can the company reduce NAT Gateway processing costs for S3 traffic?
+
+OPTIONS:
+A. Replace NAT Gateways with Egress-Only Internet Gateways across all private subnets.
+B. Create a VPC Gateway Endpoint for Amazon S3 and update private subnet route tables to direct S3 traffic to the endpoint.
+C. Deploy an Amazon CloudFront CDN distribution in front of the external software repositories to cache update files.
+D. Attach Elastic IP addresses directly to the private EC2 instance network interfaces.
+
+EXPLANATION:
+Correct answer:
+Create a VPC Gateway Endpoint for Amazon S3 and update private subnet route tables to direct S3 traffic to the endpoint.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-vpc.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-23
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+An analytics application processes data stored in S3. Object access patterns are unpredictable, with some objects being accessed multiple times a day while others are unaccessed for months. Access patterns change dynamically without warning. What is the most cost-effective S3 storage class?
+
+OPTIONS:
+A. S3 Standard-Infrequent Access (S3 Standard-IA)
+B. S3 Intelligent-Tiering
+C. S3 Glacier Flexible Archive
+D. S3 One Zone-Infrequent Access (S3 One Zone-IA)
+
+EXPLANATION:
+Correct answer:
+S3 Intelligent-Tiering. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-s3.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-24
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-cloudfront, topic-s3
+CORRECT ANSWER: B
+
+QUESTION:
+A global news website serves popular static video files from Amazon S3 buckets. Monthly AWS data transfer out charges from S3 directly to internet users are growing rapidly. Which cost-optimization strategy will significantly reduce data transfer out costs while improving latency?
+
+OPTIONS:
+A. Enable S3 Transfer Acceleration on the origin bucket.
+B. Deploy an Amazon CloudFront distribution in front of the S3 bucket.
+C. Configure AWS Global Accelerator with an S3 endpoint.
+D. Use S3 Byte-Range Fetches directly from web browsers.
+
+EXPLANATION:
+Amazon CloudFront caches static content at edge locations worldwide. CloudFront Data Transfer Out rates are lower than S3 Data Transfer Out rates, reducing costs while lowering latency.
+
+==========================================================================================
+ID: q-saa-25
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-ec2
+CORRECT ANSWER: B
+
+QUESTION:
+A company runs a steady-state web application on EC2 instances 24/7 with predictable baseline compute demands. In addition, the company runs short-lived batch processing jobs that can tolerate interruption. What combination of purchasing options minimizes compute costs?
+
+OPTIONS:
+A. On-Demand Instances for both steady-state web app and batch jobs.
+B. Savings Plans or Reserved Instances for steady-state web app, and Spot Instances for batch jobs.
+C. Spot Instances for steady-state web app, and Dedicated Hosts for batch jobs.
+D. On-Demand Instances for steady-state web app, and Reserved Instances for batch jobs.
+
+EXPLANATION:
+Compute Savings Plans or Reserved Instances provide up to 72% discount for predictable 24/7 workloads, while Spot Instances provide up to 90% discount for fault-tolerant, interruptible batch jobs.
+
+==========================================================================================
+ID: q-saa-26
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-lambda, topic-ec2
+CORRECT ANSWER: A
+
+QUESTION:
+A microservice runs infrequently—approximately 10 times a day—performing image processing that takes 5 seconds per invocation. The team currently keeps an EC2 t3.medium instance running 24/7 for this task. What architecture change offers the largest cost reduction with minimal effort?
+
+OPTIONS:
+A. Migrate the microservice to an AWS Lambda function triggered by S3 notifications.
+B. Change the EC2 instance type to a Spot t3.nano instance.
+C. Run the application inside an Amazon ECS container hosted on EC2.
+D. Purchase a 3-Year Reserved Instance for the t3.medium server.
+
+EXPLANATION:
+AWS Lambda charges only for the exact duration of execution (in milliseconds) and invocation requests. Replacing a 24/7 EC2 instance with Lambda for sporadic workloads eliminates idle compute costs.
+
+==========================================================================================
+ID: q-saa-27
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-dynamodb
+CORRECT ANSWER: B
+
+QUESTION:
+A financial database on DynamoDB experiences highly variable traffic during business hours and zero traffic at night. The peak request volume is unpredictable. Which DynamoDB capacity mode optimizes cost while ensuring requests are not throttled during unexpected spikes?
+
+OPTIONS:
+A. Configure the DynamoDB table to use Provisioned Capacity Mode with static Read/Write Capacity Units.
+B. Configure the DynamoDB table to use On-Demand Capacity Mode to automatically scale throughput.
+C. Configure Provisioned Capacity Mode with DynamoDB Auto Scaling set to an aggressive target utilization.
+D. Create DynamoDB Global Tables configured with Reserved Capacity Units to absorb peak traffic surges.
+
+EXPLANATION:
+Correct answer:
+Configure the DynamoDB table to use On-Demand Capacity Mode to automatically scale throughput.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-dynamodb.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-28
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-ebs
+CORRECT ANSWER: B
+
+QUESTION:
+A database administrator needs to provision an EBS volume for an application requiring 12,000 IOPS and 400 MB/s throughput. What volume type provides these performance levels at the lowest cost?
+
+OPTIONS:
+A. Provisioned IOPS SSD (io1)
+B. General Purpose SSD (gp3)
+C. Provisioned IOPS SSD (io2)
+D. Throughput Optimized HDD (st1)
+
+EXPLANATION:
+Amazon EBS gp3 volumes allow independent provisioning of IOPS and throughput above baseline defaults at a significantly lower cost per gigabyte than io1 or io2 volumes.
+
+==========================================================================================
+ID: q-saa-29
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-redshift
+CORRECT ANSWER: B
+
+QUESTION:
+A company wants to migrate an enterprise data warehouse to AWS. Queries are complex, involve multi-table joins on petabytes of structured data, and are executed during business hours. What service is designed specifically for cost-effective petabyte-scale data warehousing analytics?
+
+OPTIONS:
+A. Amazon RDS PostgreSQL
+B. Amazon Redshift
+C. Amazon DynamoDB
+D. Amazon OpenSearch Service
+
+EXPLANATION:
+Correct answer:
+Amazon Redshift. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-redshift.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-30
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-s3, topic-glacier
+CORRECT ANSWER: B
+
+QUESTION:
+A company requires an archival storage solution for regulatory compliance logs. Data must be retained for 10 years and is rarely accessed. In the event of an audit, a retrieval time of 3 to 5 hours is acceptable. Which S3 storage class meets these requirements at the lowest cost?
+
+OPTIONS:
+A. Store compliance logs in the S3 Standard-Infrequent Access (S3 Standard-IA) storage class.
+B. Store compliance logs in the S3 Glacier Flexible Retrieval storage class using Standard retrievals.
+C. Store compliance logs in the S3 Glacier Deep Archive storage class using Standard retrievals.
+D. Store compliance logs in the S3 Intelligent-Tiering storage class with automatic archive tiering enabled.
+
+EXPLANATION:
+Correct answer:
+Store compliance logs in the S3 Glacier Flexible Retrieval storage class using Standard retrievals.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-s3.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-31
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-elasticache, topic-rds
+CORRECT ANSWER: B
+
+QUESTION:
+A web application in an Auto Scaling group behind an ALB writes session state to a shared database. The primary RDS PostgreSQL database CPU utilization reaches 95% due to high read query volume for user sessions. How can the solution architect offload session read traffic with minimal latency and cost?
+
+OPTIONS:
+A. Upgrade the RDS instance to a larger db.m6g size.
+B. Deploy an Amazon ElastiCache for Redis cluster to cache session data in memory.
+C. Add S3 Transfer Acceleration to cache database responses.
+D. Deploy EBS gp3 volumes in Multi-Attach mode across instances.
+
+EXPLANATION:
+Correct answer:
+Deploy an Amazon ElastiCache for Redis cluster to cache session data in memory.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-elasticache.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-32
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-transit-gateway, topic-vpc
+CORRECT ANSWER: B
+
+QUESTION:
+A company operates hundreds of EC2 instances in private subnets across multiple AWS accounts managed by AWS Organizations. The Security team requires centralized inspection of all outbound internet traffic using AWS Network Firewall. What networking component should be deployed to connect multiple VPCs and accounts cost-effectively?
+
+OPTIONS:
+A. VPC Peering mesh between every VPC pair.
+B. AWS Transit Gateway.
+C. AWS Global Accelerator.
+D. VPC Gateway Endpoints.
+
+EXPLANATION:
+AWS Transit Gateway acts as a central hub to interconnect thousands of VPCs and on-premises networks across multiple AWS accounts, eliminating complex full-mesh VPC peering.
+
+==========================================================================================
+ID: q-saa-33
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-lambda, topic-sqs
+CORRECT ANSWER: A
+
+QUESTION:
+An application uses AWS Lambda to process messages from an SQS queue. During peak traffic, thousands of messages are pushed to SQS, triggering high Lambda concurrency. To control costs and prevent downstream relational database overload, what Lambda configuration should be applied?
+
+OPTIONS:
+A. Set Reserved Concurrency on the Lambda function.
+B. Increase the SQS Visibility Timeout to 24 hours.
+C. Configure Provisioned Concurrency on the Lambda function.
+D. Enable Dead-Letter Queue (DLQ) redrive policy on SQS.
+
+EXPLANATION:
+Correct answer:
+Set Reserved Concurrency on the Lambda function.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+B. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-lambda.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-34
+TYPE: single
+DIFFICULTY: Medium
+TOPICS: topic-api-gateway, topic-elb
+CORRECT ANSWER: A
+
+QUESTION:
+A media company hosts a high-traffic API on EC2 instances behind an Application Load Balancer. The API receives millions of identical GET requests for trending articles. What change reduces EC2 instance count and lowers compute costs?
+
+OPTIONS:
+A. Deploy API Gateway in front of ALB with API Caching enabled.
+B. Increase ALB Idle Timeout to 3600 seconds.
+C. Replace ALB with a Network Load Balancer (NLB).
+D. Attach EBS io2 Block Express volumes to EC2 instances.
+
+EXPLANATION:
+Correct answer:
+Deploy API Gateway in front of ALB with API Caching enabled.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+B. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-api-gateway.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-35
+TYPE: single
+DIFFICULTY: Easy
+TOPICS: topic-datasync, topic-s3
+CORRECT ANSWER: A
+
+QUESTION:
+A company needs to transfer 50 TB of data daily from on-premises file servers to AWS. The company has a dedicated 10 Gbps AWS Direct Connect location. Which service automates and accelerates online data transfers while preserving file metadata and permissions?
+
+OPTIONS:
+A. AWS DataSync
+B. AWS Snowcone
+C. Amazon S3 Glacier Select
+D. AWS Migration Hub
+
+EXPLANATION:
+Correct answer:
+AWS DataSync. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+B. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-datasync.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.
+
+==========================================================================================
+ID: q-saa-36
+TYPE: single
+DIFFICULTY: Hard
+TOPICS: topic-waf, topic-security
+CORRECT ANSWER: B
+
+QUESTION:
+An e-commerce company wants to protect web applications against common web exploits (such as SQL injection and cross-site scripting) and layer 7 DDoS attacks. Which service integrates directly with Application Load Balancer and CloudFront to block malicious traffic?
+
+OPTIONS:
+A. Enable AWS Shield Standard to inspect Layer 7 HTTP requests and block custom SQL injection rules.
+B. Deploy AWS WAF (Web Application Firewall) associated with the Application Load Balancer or CloudFront distribution.
+C. Enable Amazon GuardDuty to automatically block Layer 7 web exploit attempts at the load balancer.
+D. Deploy AWS Firewall Manager to automatically rewrite HTTP request headers and block SQL injection payload patterns.
+
+EXPLANATION:
+Correct answer:
+Deploy AWS WAF (Web Application Firewall) associated with the Application Load Balancer or CloudFront distribution.. Fulfills all scenario requirements with optimal AWS architectural alignment.
+
+Why the other options are wrong:
+A. Fails multi-constraint trade-offs or operational requirements.
+C. Fails multi-constraint trade-offs or operational requirements.
+D. Fails multi-constraint trade-offs or operational requirements.
+
+Exam trigger:
+Key architectural requirement for topic-waf.
+
+Exam trap:
+Selecting higher-cost or non-automated options.
+
+Memory hook:
+Always align AWS service features directly with requirement constraints.

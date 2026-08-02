@@ -1,0 +1,222 @@
+[
+  {
+    "id": "q-saa-80",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A global enterprise runs a critical web application in primary (us-east-1) and secondary (us-west-2) AWS Regions. The architecture uses Route 53 Application Recovery Controller (ARC). During a major regional outage in us-east-1, how does Route 53 ARC execute a reliable failover to us-west-2?",
+    "options": [
+      "Execute manual Amazon Route 53 DNS A record updates using AWS CLI scripts executed from an EC2 bastion host in us-east-1.",
+      "Create an Amazon Application Recovery Controller routing control cluster, configure routing controls and safety rules, and use its five redundant Regional data-plane endpoints for highly available failover operations.",
+      "Configure Amazon S3 Cross-Region Replication event notifications to automatically trigger DNS failover hooks in Route 53.",
+      "Configure AWS Transit Gateway inter-Region peering route table updates to dynamically shift public client internet traffic."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Route 53 Application Recovery Controller (ARC) provides routing controls and safety rules hosted on five redundant Regional data-plane endpoints across separate AWS Regions, ensuring reliable failover execution even during control plane outages in a single Region.",
+    "topics": [
+      "topic-route53",
+      "topic-disaster-recovery"
+    ]
+  },
+  {
+    "id": "q-saa-83",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A banking transaction pipeline requires messages with the same Message Group ID to be processed in order. Producers may retry sends, so duplicate sends within the SQS deduplication interval must be suppressed. Which queue configuration meets these requirements?",
+    "options": [
+      "Use an Amazon SQS Standard queue with a Dead-Letter Queue (DLQ) configured with a Maximum Receives threshold of 1.",
+      "Use an Amazon SQS FIFO queue with Message Group IDs for ordered processing and Message Deduplication IDs to prevent duplicate sends within the deduplication interval.",
+      "Use an Amazon SNS Standard topic configured with message filtering policies to broadcast financial transactions directly to worker processes.",
+      "Use an Amazon EventBridge custom event bus with event pattern matching rules to process banking transactions in sequence."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Amazon SQS FIFO queues preserve strict message ordering per Message Group ID and prevent duplicate message sends using Message Deduplication IDs within a 5-minute deduplication interval. Consumers should still implement idempotent processing, and appropriate Visibility Timeout and message deletion configurations remain critical for preventing duplicate delivery during worker failures.",
+    "topics": [
+      "topic-sqs"
+    ]
+  },
+  {
+    "id": "q-saa-95",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An enterprise wants to replace on-premises tape backup infrastructure with a cloud-based solution. The backup application uses iSCSI virtual tape interfaces. Backups must be written to virtual tapes, stored in S3, and archived to S3 Glacier for long-term retention. Which AWS service provides virtual tape interfaces?",
+    "options": [
+      "Deploy AWS Storage Gateway Tape Gateway to present an iSCSI virtual tape library (VTL) interface to existing backup applications.",
+      "Deploy AWS Storage Gateway Volume Gateway in cached mode to present iSCSI block storage volumes to on-premises servers.",
+      "Deploy AWS DataSync scheduled tasks to stream on-premises backup tape drives over an encrypted AWS Site-to-Site VPN.",
+      "Deploy AWS Transfer Family for SFTP to upload virtual tape image files directly into Amazon S3 Glacier Deep Archive."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "AWS Storage Gateway Tape Gateway presents an iSCSI-based Virtual Tape Library (VTL) interface to existing backup software, storing virtual tapes in Amazon S3 and archiving them to S3 Glacier or Glacier Deep Archive.",
+    "topics": [
+      "topic-storage-gateway",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-97",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An enterprise maintains an Active-Passive disaster recovery configuration for a public web application. All DNS traffic should normally be routed to the primary AWS Region. If the primary Region ALB health check fails, Route 53 must automatically divert all DNS queries to the secondary DR Region. Which Route 53 routing policy executes this failover?",
+    "options": [
+      "Configure a Route 53 Multivalue Answer Routing Policy linked to health checks to distribute client traffic across both Regions.",
+      "Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks.",
+      "Configure a Route 53 Geolocation Routing Policy mapping all global client locations to the primary Region.",
+      "Configure a Route 53 Weighted Routing Policy with a static 50/50 traffic split between primary and secondary Regions."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Route 53 Failover Routing Policy configures Active-Passive failover, routing traffic to the primary resource when healthy and automatically diverting to the secondary resource when the primary health check fails.",
+    "topics": [
+      "topic-route53",
+      "topic-disaster-recovery"
+    ]
+  },
+  {
+    "id": "q-saa-100",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A serverless workflow built with AWS Step Functions invokes an Amazon API Gateway endpoint. The API Gateway endpoint intermittently returns HTTP 503 Service Unavailable errors due to backend throttling. How should the Step Functions Task state be configured to handle these transient failures gracefully?",
+    "options": [
+      "Add a Retry field to the Task state that matches ApiGateway.503 and configures IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "Increase the AWS Lambda execution timeout setting to 15 minutes to allow stalled HTTP requests to complete.",
+      "Configure a VPC Gateway Endpoint for S3 to bypass public internet network latency when invoking third-party APIs.",
+      "Deploy the Step Functions state machine in multiple AWS Regions using an AWS Global Accelerator endpoint."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "AWS Step Functions Task states configure error handling via a Retry block matching integration error names (such as ApiGateway.503 for API Gateway HTTP 503 responses), specifying initial interval seconds, backoff rate multipliers, and maximum retry attempts.",
+    "topics": [
+      "topic-step-functions",
+      "topic-api-gateway"
+    ]
+  },
+  {
+    "id": "q-saa-102",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A container application runs on Amazon ECS with AWS Fargate. The application requires high availability across 3 Availability Zones. If a Fargate task crashes or fails its container health check, ECS must automatically launch a replacement task in a healthy AZ. Which ECS deployment construct manages task count and availability?",
+    "options": [
+      "Create an Amazon ECS Task Definition configuring container memory limits, CPU units, and multi-AZ launch parameters.",
+      "Create an Amazon ECS Service specifying the desired task count and configuring subnets across multiple Availability Zones.",
+      "Deploy an AWS Elastic Beanstalk Worker Environment with an Auto Scaling group to manage task lifecycle states.",
+      "Create an EC2 Auto Scaling Launch Template configuring multi-AZ subnet distribution and container health check triggers."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "An Amazon ECS Service maintains the specified number of running instances of a task definition across multiple Availability Zones, automatically replacing failed tasks.",
+    "topics": [
+      "topic-ecs",
+      "topic-fargate"
+    ]
+  },
+  {
+    "id": "q-saa-107",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An SQS worker process takes 5 minutes to process a complex video rendering task from a queue. However, after 30 seconds of processing, another worker instance receives the exact same message and starts duplicate processing. How should the queue be configured to stop the message from normally becoming visible again before processing completes?",
+    "options": [
+      "Increase the SQS queue Visibility Timeout to 6 minutes so other worker instances cannot receive the message while processing.",
+      "Decrease the SQS queue Message Retention Period setting to 30 seconds to automatically expire processed messages.",
+      "Configure an SQS Dead-Letter Queue (DLQ) redrive policy with a Maximum Receives setting of 1.",
+      "Configure SQS Long Polling on worker processes with a Wait Time Seconds setting of 20 seconds."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "The SQS Visibility Timeout is the window during which SQS prevents other consumers from receiving and processing a message. Setting the visibility timeout longer than the expected processing time prevents the message from normally becoming visible to another worker before processing completes. Consumers should still use idempotent processing because SQS does not guarantee that a message will never be delivered more than once.",
+    "topics": [
+      "topic-sqs"
+    ]
+  },
+  {
+    "id": "q-saa-114",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A data analyst needs to run ad-hoc SQL queries on 10 TB of unorganized JSON log files stored in Amazon S3. To optimize query performance and reduce data scanned (lowering query cost), how should the data be converted and structured before querying with Amazon Athena?",
+    "options": [
+      "Convert JSON files to Apache Parquet or ORC columnar format and partition data in Amazon S3 by date structure (year/month/day).",
+      "Retain raw JSON files in Amazon S3 and increase the Amazon Athena service quota concurrency limit.",
+      "Import the 10 TB JSON dataset into an Amazon EC2 MySQL database instance using multi-threaded loading scripts.",
+      "Store the JSON log dataset in Amazon DynamoDB Standard-IA tables and query items using PartiQL."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Converting files to columnar formats (Parquet/ORC) and partitioning data by date allows Athena to scan only relevant columns and partitions, significantly speeding up queries and reducing scan costs.",
+    "topics": [
+      "topic-athena",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-122",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A high-throughput application writes sensor metrics to a DynamoDB table. The table uses Status (with values Active or Inactive) as the Partition Key. During peak load, the table experiences severe write throttling despite having unallocated write capacity. What is the root cause and recommended solution?",
+    "options": [
+      "Replace the low-cardinality Partition Key (Status) with a high-cardinality Partition Key such as SensorID_Timestamp to distribute write traffic evenly.",
+      "Migrate the DynamoDB table data to Amazon S3 Glacier Deep Archive when table storage size exceeds 10 GB.",
+      "Increase DynamoDB Provisioned Read Capacity Units (RCUs) by 500% to support higher metric ingestion rates.",
+      "Enable DynamoDB Time To Live (TTL) to delete expired items automatically during peak write traffic hours."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "DynamoDB partitions data based on Partition Key values. Using a low-cardinality key (like Status) directs all requests to a small subset of partitions, causing hot partition throttling. High-cardinality keys distribute traffic evenly across physical partitions.",
+    "topics": [
+      "topic-dynamodb"
+    ]
+  },
+  {
+    "id": "q-saa-131",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A company operates hundreds of EC2 instances in private subnets that transfer petabytes of data monthly to Amazon S3 and Amazon DynamoDB. The current network path routes through NAT Gateways, generating tens of thousands of dollars in NAT data processing charges. Which TWO actions eliminate NAT Gateway data processing charges for S3 and DynamoDB? (Select TWO.)",
+    "options": [
+      "Create a free VPC Gateway Endpoint for Amazon S3 and update private subnet route tables.",
+      "Create a free VPC Gateway Endpoint for Amazon DynamoDB and update private subnet route tables.",
+      "Replace NAT Gateways with Egress-Only Internet Gateways across all private subnets.",
+      "Configure AWS Direct Connect Public Virtual Interfaces (Public VIFs) for all private subnet EC2 traffic.",
+      "Enable Amazon S3 Transfer Acceleration on all company S3 buckets."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "VPC Gateway Endpoints for S3 and DynamoDB are provided free of charge by AWS and route traffic directly within the AWS network, bypassing NAT Gateways and completely eliminating NAT data processing fees for those services.",
+    "topics": [
+      "topic-vpc",
+      "topic-s3",
+      "topic-dynamodb"
+    ]
+  }
+]

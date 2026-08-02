@@ -1,0 +1,227 @@
+[
+  {
+    "id": "q-saa-84",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A worker application polling an SQS queue encounters malformed messages that crash the worker process repeatedly (a poison pill message). This causes the message to return to the queue endlessly. How should the SQS queue be configured to isolate unprocessable messages after 5 failed attempts?",
+    "options": [
+      "Increase the SQS queue Visibility Timeout setting to 12 hours to allow worker processes extra time to debug malformed messages.",
+      "Configure an SQS Dead-Letter Queue (DLQ) on the source queue with a redrive policy setting maxReceiveCount to 5.",
+      "Enable S3 Versioning on the worker EC2 EBS root volume to automatically revert state when malformed messages occur.",
+      "Configure the SQS DelaySeconds parameter to 900 seconds to delay delivery of malformed messages."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "A Dead-Letter Queue (DLQ) receives messages that fail processing after a specified number of retries (maxReceiveCount), isolating faulty messages for developer inspection without blocking queue processing.",
+    "topics": [
+      "topic-sqs"
+    ]
+  },
+  {
+    "id": "q-saa-116",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A serverless backend uses hundreds of concurrent AWS Lambda functions connecting to an Amazon RDS MySQL database. During traffic surges, database connection limits are exceeded because Lambda opens new DB connections on every cold start. What solution manages connection pooling without changing application logic?",
+    "options": [
+      "Deploy an Amazon RDS Proxy target group between the AWS Lambda functions and the Amazon RDS MySQL DB instance.",
+      "Increase the RDS DB instance parameter max_connections setting to 1,000,000 to accept all concurrent Lambda connections.",
+      "Migrate the Amazon RDS MySQL database tables to Amazon DynamoDB Global Tables to eliminate database connection limits.",
+      "Enable Amazon S3 Transfer Acceleration on the Lambda function execution environment to accelerate database queries."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Amazon RDS Proxy is a fully managed database proxy that pools and shares relational database connections, protecting databases from exhaustion caused by high-concurrency serverless applications.",
+    "topics": [
+      "topic-rds-proxy",
+      "topic-lambda",
+      "topic-rds"
+    ]
+  },
+  {
+    "id": "q-saa-13",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A mission-critical database application running on a supported Nitro-based EC2 instance requires sustained sub-millisecond latency and 120,000 provisioned IOPS with 4,000 MB/s throughput. Which Amazon EBS volume type meets these demanding specifications?",
+    "options": [
+      "Provision an EBS General Purpose SSD (gp3) volume and configure provisioned IOPS to meet the database IOPS target.",
+      "Provision an EBS Provisioned IOPS SSD (io2 Block Express) volume attached to the Nitro-based EC2 instance.",
+      "Provision an EBS Throughput Optimized HDD (st1) volume and configure software RAID 0 across multiple volumes.",
+      "Provision an EBS Cold HDD (sc1) volume and attach it to the EC2 instance using NVMe multi-queue drivers."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "EBS io2 Block Express volumes provide up to 256,000 IOPS, 4,000 MB/s throughput, 99.999% durability, and sustained sub-millisecond latency for mission-critical database workloads. EBS gp3 volumes support up to 80,000 IOPS and 2,000 MiB/s throughput, which cannot meet the required 120,000 IOPS or io2 Block Express latency/durability profile.",
+    "topics": [
+      "topic-ebs",
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-22",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company hosts an application on EC2 instances in private subnets across multiple AZs. The instances must download software updates from Amazon S3 and external internet repositories. Currently, traffic passes through a NAT Gateway in each AZ, generating high data processing charges. How can the company reduce NAT Gateway processing costs for S3 traffic?",
+    "options": [
+      "Replace NAT Gateways with Egress-Only Internet Gateways across all private subnets.",
+      "Create a VPC Gateway Endpoint for Amazon S3 and update private subnet route tables to direct S3 traffic to the endpoint.",
+      "Deploy an Amazon CloudFront CDN distribution in front of the external software repositories to cache update files.",
+      "Attach Elastic IP addresses directly to the private EC2 instance network interfaces."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "VPC Gateway Endpoints for S3 are free of charge and route traffic directly to S3 within the AWS network, bypassing NAT Gateways and eliminating NAT processing fees for S3 traffic.",
+    "topics": [
+      "topic-vpc",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-60",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An enterprise wants to grant corporate employees single sign-on (SSO) multi-account workforce access to multiple AWS accounts using their existing self-managed Active Directory credentials. Which service configuration enables this identity integration?",
+    "options": [
+      "Create IAM Users in each AWS account with long-term IAM access keys for each corporate employee.",
+      "Configure AWS IAM Identity Center and connect the corporate self-managed Active Directory through AWS Directory Service using AD Connector.",
+      "Deploy an Amazon Cognito User Pool and configure IAM policy mappings for corporate employee Active Directory accounts.",
+      "Deploy AWS Directory Service Simple AD in each AWS account and synchronize user credentials using AWS DataSync."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS IAM Identity Center provides multi-account workforce access across AWS accounts. Connecting a corporate self-managed Active Directory via AWS Directory Service AD Connector allows employees to authenticate seamlessly using their existing AD credentials.",
+    "topics": [
+      "topic-sso",
+      "topic-iam-identity-center",
+      "topic-directory-service"
+    ]
+  },
+  {
+    "id": "q-saa-87",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An e-commerce website experiences sudden unpredictable surges in web traffic due to viral flash sales. The Auto Scaling group CPU utilization rises from 20% to 90% within 1 minute. Standard Target Tracking scaling takes several minutes to add capacity. How can the scaling policy be adjusted to react more aggressively to sudden spikes?",
+    "options": [
+      "Configure a Step Scaling Policy on the Auto Scaling group with CloudWatch alarms evaluating metric breaches across aggressive thresholds.",
+      "Increase the Auto Scaling group Default Cooldown period to 600 seconds to prevent rapid instance launches.",
+      "Configure Scheduled Scaling Actions to increase Auto Scaling capacity by 500% every hour throughout the day.",
+      "Enable Amazon S3 Transfer Acceleration on EC2 instance network interfaces to accelerate web application responses."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Step Scaling Policies scale out capacity immediately based on the size of the alarm breach (steps), allowing aggressive capacity expansion during dramatic traffic spikes.",
+    "topics": [
+      "topic-auto-scaling"
+    ]
+  },
+  {
+    "id": "q-saa-113",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A high-performance computing (HPC) simulation requires ultra-low latency network communication between 50 EC2 instances located in the same Availability Zone. The application uses Message Passing Interface (MPI) protocols. Which placement group strategy and network adapter configuration delivers maximum inter-node networking performance?",
+    "options": [
+      "Deploy instances in a Spread Placement Group using standard Elastic Network Interfaces (ENIs) across distinct hardware racks.",
+      "Deploy instances in a Cluster Placement Group and configure Elastic Fabric Adapter (EFA) network interfaces on supporting EC2 instances.",
+      "Deploy instances in a Partition Placement Group and route inter-node MPI traffic through a central VPC NAT Gateway.",
+      "Deploy an Auto Scaling group across multiple Availability Zones using Elastic Load Balancers for MPI message routing."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Cluster Placement Groups pack instances close together inside a single AZ for low-latency network performance, while Elastic Fabric Adapter (EFA) provides OS-bypass hardware acceleration for HPC and MPI workloads.",
+    "topics": [
+      "topic-placement-groups",
+      "topic-efa",
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-127",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A media archive contains 1 PB of historical video files stored in S3 Standard. The files are rarely accessed (less than once a year), but when requested, a retrieval time of 12 hours is acceptable. The company wants to minimize ongoing monthly storage costs. Which TWO actions achieve maximum cost optimization? (Select TWO.)",
+    "options": [
+      "Configure an S3 Lifecycle rule to transition objects to S3 Glacier Deep Archive after 30 days.",
+      "Configure an S3 Lifecycle rule to permanently delete noncurrent object versions and abort incomplete multipart uploads.",
+      "Migrate historical video archive files to Amazon EBS gp3 volumes configured in Multi-Attach mode.",
+      "Enable Amazon S3 Transfer Acceleration on the origin bucket to automatically compress archived video files.",
+      "Deploy an Amazon CloudFront distribution in front of the S3 bucket configured with a 1-year Time-To-Live (TTL)."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "S3 Glacier Deep Archive offers the lowest-cost S3 storage tier for 12-hour retrieval windows. Aborting incomplete multipart uploads and expiring noncurrent versions eliminates hidden S3 storage charges.",
+    "topics": [
+      "topic-s3",
+      "topic-storage-lifecycle"
+    ]
+  },
+  {
+    "id": "q-saa-138",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A health provider must store regulatory compliance records in Amazon S3. Regulations mandate that objects must be protected against accidental deletion or overwrite, and object versions must be preserved. Furthermore, a strict WORM (Write Once Read Many) policy must prevent object deletion by any IAM user or AWS account root user for 7 years. Which TWO S3 features fulfill these compliance requirements? (Select TWO.)",
+    "options": [
+      "Enable S3 Versioning on the destination bucket.",
+      "Enable S3 Object Lock and configure default Compliance Mode retention for 7 years.",
+      "Enable Amazon S3 Transfer Acceleration on the S3 bucket to enforce secure object encryption.",
+      "Configure an S3 Lifecycle rule to transition compliance records to S3 Standard-IA after 30 days.",
+      "Configure Cross-Origin Resource Sharing (CORS) rules on the bucket to restrict delete requests."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "S3 Versioning preserves past object versions upon modification or deletion. S3 Object Lock in Compliance Mode enforces WORM compliance on individual object versions, preventing deletion by anyone (including root) until the retention period expires.",
+    "topics": [
+      "topic-s3",
+      "topic-object-lock"
+    ]
+  },
+  {
+    "id": "q-saa-1",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company needs to secure a 3-tier web application running on Amazon EC2. The database tier must only accept incoming connections from the web application tier on TCP port 3306. The web tier auto-scales dynamically based on CPU utilization. Which configuration achieves this security requirement with minimum operational overhead?",
+    "options": [
+      "Configure a Network ACL on the database subnet allowing inbound TCP port 3306 from the web server subnet CIDR block.",
+      "Create a Security Group for the database tier that allows inbound TCP port 3306 traffic referencing the Security Group ID of the web server tier.",
+      "Attach an AWS IAM policy to database EC2 instances granting database read/write permissions via AWS KMS.",
+      "Assign static Elastic IP addresses to web servers and whitelist their IP addresses individually in the database Security Group."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Security Group nesting (referencing a source Security Group ID) allows dynamic, IP-agnostic access control. As web instances scale out in the Auto Scaling group, they automatically inherit access without requiring CIDR or IP updates.",
+    "topics": [
+      "topic-vpc",
+      "topic-security-groups"
+    ]
+  }
+]

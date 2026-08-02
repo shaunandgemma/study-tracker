@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Study Tracker Hands-On Tasks - Restricted Read-Only IAM Validation Role.
+  This template creates an IAM role that allows the Study Tracker backend role
+  (StudyTrackerAwsValidationBackendRole) to perform read-only verification of
+  hands-on lab resources using AWS STS AssumeRole.
+
+Parameters:
+  BackendAccountId:
+    Type: String
+    Default: '406760143388'
+    Description: The trusted AWS Account ID hosting the Study Tracker backend verification service.
+  BackendRoleName:
+    Type: String
+    Default: 'StudyTrackerAwsValidationBackendRole'
+    Description: The dedicated IAM Role name of the Study Tracker backend verification service.
+  ExternalId:
+    Type: String
+    Default: '2be0971d-5d4b-4ffb-8bf2-2517fab22230'
+    Description: Unique External ID assigned to your Study Tracker user session to prevent confused deputy attacks.
+
+Resources:
+  StudyTrackerHandsOnRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: StudyTrackerHandsOnRole
+      Description: Read-only validation role for Study Tracker Hands-On AWS Labs
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${BackendAccountId}:role/${BackendRoleName}'
+            Action:
+              - sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref ExternalId
+      Policies:
+        - PolicyName: StudyTrackerReadOnlyValidationPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: S3ReadOnlyInspection
+                Effect: Allow
+                Action:
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                  - s3:GetEncryptionConfiguration
+                  - s3:GetBucketPolicyStatus
+                  - s3:ListBucket
+                Resource: '*'
+              - Sid: EC2AndVPCReadOnlyInspection
+                Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeVpcs
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeRouteTables
+                  - ec2:DescribeInternetGateways
+                  - ec2:DescribeNatGateways
+                  - ec2:DescribeLaunchTemplates
+                Resource: '*'
+              - Sid: AutoScalingReadOnlyInspection
+                Effect: Allow
+                Action:
+                  - autoscaling:DescribeAutoScalingGroups
+                Resource: '*'
+              - Sid: IAMAndCoreServicesReadOnlyInspection
+                Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:GetPolicy
+                  - iam:ListAttachedRolePolicies
+                  - rds:DescribeDBInstances
+                  - rds:DescribeDBClusters
+                  - dynamodb:DescribeTable
+                  - dynamodb:ListTables
+                  - cloudwatch:DescribeAlarms
+                  - route53:ListHealthChecks
+                  - kinesis:DescribeStream
+                  - firehose:DescribeDeliveryStream
+                Resource: '*'
+
+Outputs:
+  RoleArn:
+    Description: The ARN of the created IAM Role. Copy and paste this into the Study Tracker AWS Setup page.
+    Value: !GetAtt StudyTrackerHandsOnRole.Arn
+  ExternalIdUsed:
+    Description: The External ID configured in the role trust policy.
+    Value: !Ref ExternalId

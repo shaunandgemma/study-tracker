@@ -1,0 +1,235 @@
+[
+  {
+    "id": "q-saa-132",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A database administrator manages multiple Amazon RDS MySQL DB instances attached to General Purpose SSD (gp2) EBS storage volumes. Storage volume sizes were over-provisioned purely to obtain higher baseline IOPS. Which TWO modifications reduce storage costs while maintaining or improving IOPS performance? (Select TWO.)",
+    "options": [
+      "Modify the RDS DB instances to use gp3 storage, which provides predictable baseline performance without gp2 capacity-based IOPS scaling.",
+      "Enable RDS Storage Auto Scaling to start with smaller initial storage volumes and automatically scale storage as data grows.",
+      "Migrate active database volume files to Amazon S3 Glacier Deep Archive to reduce storage billing.",
+      "Switch DB instance classes to Dedicated Hosts to increase baseline storage throughput performance.",
+      "Convert RDS MySQL instances to Single-AZ deployments and perform daily manual EBS volume snapshots."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Modifying RDS DB instances to gp3 storage provides predictable baseline IOPS performance at lower per-GB storage costs without needing to over-provision volume size. Enabling RDS Storage Auto Scaling allows starting with smaller initial volumes that grow dynamically as needed.",
+    "topics": [
+      "topic-rds",
+      "topic-storage"
+    ]
+  },
+  {
+    "id": "q-saa-133",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A company notices high monthly S3 storage bills caused by incomplete multipart file uploads and noncurrent object versions created by enabled bucket versioning. Which TWO S3 Lifecycle configurations automate the cleanup of these hidden storage costs? (Select TWO.)",
+    "options": [
+      "Add an S3 Lifecycle rule to expire incomplete multipart uploads after a specified number of days.",
+      "Add an S3 Lifecycle rule to transition or permanently delete noncurrent object versions after a specified number of days.",
+      "Disable S3 Versioning permanently across all company S3 buckets to purge existing noncurrent object versions.",
+      "Enable Amazon S3 Transfer Acceleration on all S3 buckets to automatically compress uncompleted uploads.",
+      "Configure S3 Object Lock with MFA Delete enabled to automatically clean up noncurrent object versions."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Incomplete multipart upload parts remain stored in S3 and billed until explicitly aborted. S3 Lifecycle rules can automatically abort incomplete uploads and clean up old noncurrent object versions, reducing storage costs.",
+    "topics": [
+      "topic-s3",
+      "topic-storage"
+    ]
+  },
+  {
+    "id": "q-saa-136",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A security architect is designing a multi-account AWS environment for an enterprise using AWS Organizations. Security policy mandates enforcing central guardrails that prevent member account administrators from disabling CloudTrail or modifying security controls, while aggregating all audit logs into a central S3 bucket in a dedicated Log Archive account. Which TWO solutions fulfill this architecture? (Select TWO.)",
+    "options": [
+      "Attach a Service Control Policy (SCP) to the organization root denying cloudtrail:StopLogging and cloudtrail:DeleteTrail actions.",
+      "Create a CloudTrail organization trail in the management account that records events for all organization accounts and delivers the logs to the centralized S3 bucket in the Log Archive account.",
+      "Create IAM Users in each member account with full AdministratorAccess permissions to manage CloudTrail logging locally.",
+      "Deploy AWS Transit Gateway inter-VPC peering connections between member accounts and the Log Archive account to transfer CloudTrail logs.",
+      "Configure AWS Direct Connect Public Virtual Interfaces to route CloudTrail audit logs across member accounts."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Service Control Policies (SCPs) restrict API actions (preventing CloudTrail tampering) across member accounts, while a CloudTrail organization trail centralizes multi-account audit logging into a single S3 bucket.",
+    "topics": [
+      "topic-cloudtrail",
+      "topic-organizations"
+    ]
+  },
+  {
+    "id": "q-saa-142",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A containerized microservices application runs on Amazon ECS. The team wants to eliminate server management while achieving high availability across 3 Availability Zones behind an Application Load Balancer. Which TWO configurations meet these operational goals? (Select TWO.)",
+    "options": [
+      "Launch ECS tasks using the AWS Fargate serverless launch type to eliminate server provisioning and management.",
+      "Deploy an ECS Service configured with a desired task count distributed across subnets in 3 Availability Zones.",
+      "Host containers on single-AZ EC2 instances with Auto Scaling configured to launch replacements upon failure.",
+      "Deploy AWS Storage Gateway Volume Gateway to store container application images across Availability Zones.",
+      "Enable Amazon S3 Transfer Acceleration on ECS task network interfaces to improve inter-container communication."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "AWS Fargate removes the need to provision or manage EC2 cluster servers. Configuring an ECS Service to distribute tasks across subnets in 3 AZs ensures multi-AZ high availability.",
+    "topics": [
+      "topic-ecs",
+      "topic-fargate"
+    ]
+  },
+  {
+    "id": "q-saa-4",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A relational database hosted on Amazon RDS MySQL experiences heavy read requests, causing latency issues for write operations. The application requires automatic failover disaster recovery within the region as well. What dual-step solution should be implemented?",
+    "options": [
+      "Migrate the RDS MySQL database to an Amazon EC2 instance in a single Availability Zone using manual EBS volume snapshots.",
+      "Enable Multi-AZ deployment on the RDS MySQL DB instance for high availability, and deploy RDS Read Replicas to offload read traffic.",
+      "Increase the EBS storage volume size and provisioned IOPS on the primary RDS DB instance.",
+      "Configure Amazon CloudFront CDN caching in front of the primary RDS MySQL database endpoint."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Enabling Multi-AZ provides synchronous replication and automatic failover for high availability, while RDS Read Replicas offload heavy read traffic from the primary database.",
+    "topics": [
+      "topic-rds"
+    ]
+  },
+  {
+    "id": "q-saa-10",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A global web application is deployed across AWS US-East and EU-West regions behind Application Load Balancers. The company wants users automatically routed to the region with the lowest network latency, with health checks to redirect traffic if a region becomes unavailable. Which Amazon Route 53 routing policy should be configured?",
+    "options": [
+      "Configure a Route 53 Weighted Routing Policy with equal weightings assigned to both Application Load Balancers.",
+      "Create Route 53 latency alias records for both regional Application Load Balancers and enable Evaluate Target Health on each record.",
+      "Configure a Route 53 Geolocation Routing Policy mapping user countries to primary and secondary Application Load Balancers.",
+      "Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Route 53 latency alias records route end users to the Application Load Balancer in the AWS Region offering the lowest network latency. Enabling Evaluate Target Health allows Route 53 to use the load balancer's native health state to automatically fail over if a Region becomes unhealthy.",
+    "topics": [
+      "topic-route53",
+      "topic-elb"
+    ]
+  },
+  {
+    "id": "q-saa-36",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An e-commerce company wants to protect web applications against common web exploits (such as SQL injection and cross-site scripting) and layer 7 DDoS attacks. Which service integrates directly with Application Load Balancer and CloudFront to block malicious traffic?",
+    "options": [
+      "Enable AWS Shield Standard to inspect Layer 7 HTTP requests and block custom SQL injection rules.",
+      "Deploy AWS WAF (Web Application Firewall) associated with the Application Load Balancer or CloudFront distribution.",
+      "Enable Amazon GuardDuty to automatically block Layer 7 web exploit attempts at the load balancer.",
+      "Deploy AWS Firewall Manager to automatically rewrite HTTP request headers and block SQL injection payload patterns."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS WAF monitors web requests forwarded to Application Load Balancers, CloudFront distributions, or API Gateways, enforcing custom rules to block SQL injection, XSS, and bad bots.",
+    "topics": [
+      "topic-waf",
+      "topic-security"
+    ]
+  },
+  {
+    "id": "q-saa-41",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "A company is building an event-driven serverless order processing pipeline. Orders submitted via a web API must be buffered reliably to handle high-concurrency bursts, processed asynchronously by serverless compute without message loss, and stored in a managed NoSQL database. Which THREE AWS components build this architecture? (Select THREE.)",
+    "options": [
+      "Amazon API Gateway to receive HTTP order submissions.",
+      "Amazon SQS (Simple Queue Service) to reliably buffer order messages for asynchronous processing.",
+      "AWS Lambda to process order messages serverlessly from the queue.",
+      "Amazon EC2 Dedicated Hosts to run containerized order processing scripts.",
+      "AWS Snowball Edge Storage Optimized appliances to transport order database records offline.",
+      "Amazon EBS gp3 volumes configured in Multi-Attach mode to buffer incoming HTTP order payloads."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Amazon API Gateway receives HTTP order submissions serverlessly, Amazon SQS provides durable message buffering to decouple API ingestion from processing and absorb concurrency spikes, and AWS Lambda processes messages from the queue without server management.",
+    "topics": [
+      "topic-serverless",
+      "topic-api-gateway",
+      "topic-sqs",
+      "topic-lambda"
+    ]
+  },
+  {
+    "id": "q-saa-48",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A mobile application requires user registration, login via social identity providers (Google and Facebook), and temporary AWS credentials so authenticated users can upload photos directly to an Amazon S3 bucket. Which combination of Amazon Cognito features should be used?",
+    "options": [
+      "Use Amazon Cognito User Pools for user authentication and Cognito Identity Pools (Federated Identities) for temporary scoped AWS IAM credentials.",
+      "Use Amazon Cognito User Pools only, configured with direct IAM policy attachments for S3 bucket access.",
+      "Use Amazon Cognito Identity Pools only, backed by static IAM user access keys stored in the mobile application code.",
+      "Use AWS IAM Identity Center integrated with Amazon CloudFront to authenticate mobile users for S3 access."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Amazon Cognito User Pools handle user sign-up, sign-in, and social federation. Cognito Identity Pools exchange the user authentication token for temporary, scoped AWS IAM credentials allowing direct S3 uploads.",
+    "topics": [
+      "topic-cognito",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-54",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A central networking team manages a core VPC containing NAT Gateways and Transit Gateways. The team needs to share specific VPC subnets with application development teams operating in separate AWS accounts within the same organization, without granting admin access to the networking VPC. Which service enables subnet sharing across accounts?",
+    "options": [
+      "Configure AWS Transit Gateway Inter-Region Peering between the central networking VPC and application VPCs.",
+      "Use AWS Resource Access Manager (AWS RAM) to share specific VPC subnets with application accounts within the organization.",
+      "Establish VPC Peering connections between the central networking VPC and all application VPCs.",
+      "Deploy AWS IAM Identity Center to grant cross-account administrative access to the central networking VPC."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Resource Access Manager (AWS RAM) allows organizations to securely share AWS resources\u2014such as VPC subnets, Transit Gateways, and License Manager configurations\u2014across AWS accounts.",
+    "topics": [
+      "topic-ram",
+      "topic-vpc"
+    ]
+  }
+]

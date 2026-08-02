@@ -1,0 +1,312 @@
+/**
+ * Authoritative AWS SAA-C03 Domain Classification
+ *
+ * Official AWS Exam Domains:
+ * - Domain 1: Design Secure Architectures (30%)
+ * - Domain 2: Design Resilient Architectures (26%)
+ * - Domain 3: Design High-Performing Architectures (24%)
+ * - Domain 4: Design Cost-Optimized Architectures (20%)
+ */
+
+export const SAA_C03_DOMAINS = [
+  {
+    id: 'domain-1',
+    code: 'Domain 1',
+    title: 'Domain 1 - Design Secure Architectures',
+    weight: 30
+  },
+  {
+    id: 'domain-2',
+    code: 'Domain 2',
+    title: 'Domain 2 - Design Resilient Architectures',
+    weight: 26
+  },
+  {
+    id: 'domain-3',
+    code: 'Domain 3',
+    title: 'Domain 3 - Design High-Performing Architectures',
+    weight: 24
+  },
+  {
+    id: 'domain-4',
+    code: 'Domain 4',
+    title: 'Domain 4 - Design Cost-Optimized Architectures',
+    weight: 20
+  }
+];
+
+/**
+ * Fixed 65-question SAA-C03 Full Mock allocation.
+ */
+export const SAA_C03_FULL_MOCK_ALLOCATION = Object.freeze({
+  'domain-1': 19,
+  'domain-2': 17,
+  'domain-3': 16,
+  'domain-4': 13
+});
+
+/**
+ * Official SAA-C03 Domain Weights for Custom Exam balancing.
+ */
+export const SAA_C03_DOMAIN_WEIGHTS = Object.freeze({
+  'domain-1': 0.30,
+  'domain-2': 0.26,
+  'domain-3': 0.24,
+  'domain-4': 0.20
+});
+
+/**
+ * Question ID to SAA-C03 Domain ID Mapping for all 150 questions
+ */
+export const QUESTION_DOMAIN_MAP = {
+  "q-saa-1": "domain-3",
+  "q-saa-2": "domain-3",
+  "q-saa-3": "domain-2",
+  "q-saa-4": "domain-2",
+  "q-saa-5": "domain-4",
+  "q-saa-6": "domain-3",
+  "q-saa-7": "domain-4",
+  "q-saa-8": "domain-2",
+  "q-saa-9": "domain-1",
+  "q-saa-10": "domain-2",
+  "q-saa-11": "domain-3",
+  "q-saa-12": "domain-3",
+  "q-saa-13": "domain-3",
+  "q-saa-14": "domain-2",
+  "q-saa-15": "domain-2",
+  "q-saa-16": "domain-2",
+  "q-saa-17": "domain-2",
+  "q-saa-18": "domain-1",
+  "q-saa-19": "domain-3",
+  "q-saa-20": "domain-4",
+  "q-saa-21": "domain-3",
+  "q-saa-22": "domain-4",
+  "q-saa-23": "domain-4",
+  "q-saa-24": "domain-3",
+  "q-saa-25": "domain-4",
+  "q-saa-26": "domain-4",
+  "q-saa-27": "domain-4",
+  "q-saa-28": "domain-3",
+  "q-saa-29": "domain-3",
+  "q-saa-30": "domain-4",
+  "q-saa-31": "domain-3",
+  "q-saa-32": "domain-2",
+  "q-saa-33": "domain-3",
+  "q-saa-34": "domain-3",
+  "q-saa-35": "domain-3",
+  "q-saa-36": "domain-1",
+  "q-saa-37": "domain-2",
+  "q-saa-38": "domain-3",
+  "q-saa-39": "domain-2",
+  "q-saa-40": "domain-1",
+  "q-saa-41": "domain-3",
+  "q-saa-42": "domain-4",
+  "q-saa-43": "domain-3",
+  "q-saa-44": "domain-4",
+  "q-saa-45": "domain-4",
+  "q-saa-46": "domain-1",
+  "q-saa-47": "domain-1",
+  "q-saa-48": "domain-1",
+  "q-saa-49": "domain-1",
+  "q-saa-50": "domain-1",
+  "q-saa-51": "domain-1",
+  "q-saa-52": "domain-1",
+  "q-saa-53": "domain-1",
+  "q-saa-54": "domain-4",
+  "q-saa-55": "domain-1",
+  "q-saa-56": "domain-4",
+  "q-saa-57": "domain-3",
+  "q-saa-58": "domain-1",
+  "q-saa-59": "domain-2",
+  "q-saa-60": "domain-1",
+  "q-saa-61": "domain-4",
+  "q-saa-62": "domain-1",
+  "q-saa-63": "domain-3",
+  "q-saa-64": "domain-3",
+  "q-saa-65": "domain-2",
+  "q-saa-66": "domain-1",
+  "q-saa-67": "domain-3",
+  "q-saa-68": "domain-1",
+  "q-saa-69": "domain-1",
+  "q-saa-70": "domain-2",
+  "q-saa-71": "domain-1",
+  "q-saa-72": "domain-3",
+  "q-saa-73": "domain-3",
+  "q-saa-74": "domain-1",
+  "q-saa-75": "domain-3",
+  "q-saa-76": "domain-3",
+  "q-saa-77": "domain-2",
+  "q-saa-78": "domain-3",
+  "q-saa-79": "domain-3",
+  "q-saa-80": "domain-2",
+  "q-saa-81": "domain-3",
+  "q-saa-82": "domain-2",
+  "q-saa-83": "domain-2",
+  "q-saa-84": "domain-2",
+  "q-saa-85": "domain-2",
+  "q-saa-86": "domain-2",
+  "q-saa-87": "domain-2",
+  "q-saa-88": "domain-2",
+  "q-saa-89": "domain-3",
+  "q-saa-90": "domain-3",
+  "q-saa-91": "domain-2",
+  "q-saa-92": "domain-2",
+  "q-saa-93": "domain-2",
+  "q-saa-94": "domain-3",
+  "q-saa-95": "domain-3",
+  "q-saa-96": "domain-2",
+  "q-saa-97": "domain-2",
+  "q-saa-98": "domain-2",
+  "q-saa-99": "domain-3",
+  "q-saa-100": "domain-3",
+  "q-saa-101": "domain-2",
+  "q-saa-102": "domain-3",
+  "q-saa-103": "domain-3",
+  "q-saa-104": "domain-3",
+  "q-saa-105": "domain-3",
+  "q-saa-106": "domain-2",
+  "q-saa-107": "domain-2",
+  "q-saa-108": "domain-3",
+  "q-saa-109": "domain-2",
+  "q-saa-110": "domain-3",
+  "q-saa-111": "domain-3",
+  "q-saa-112": "domain-3",
+  "q-saa-113": "domain-3",
+  "q-saa-114": "domain-3",
+  "q-saa-115": "domain-3",
+  "q-saa-116": "domain-2",
+  "q-saa-117": "domain-3",
+  "q-saa-118": "domain-3",
+  "q-saa-119": "domain-3",
+  "q-saa-120": "domain-3",
+  "q-saa-121": "domain-3",
+  "q-saa-122": "domain-3",
+  "q-saa-123": "domain-3",
+  "q-saa-124": "domain-3",
+  "q-saa-125": "domain-3",
+  "q-saa-126": "domain-3",
+  "q-saa-127": "domain-4",
+  "q-saa-128": "domain-4",
+  "q-saa-129": "domain-4",
+  "q-saa-130": "domain-4",
+  "q-saa-131": "domain-2",
+  "q-saa-132": "domain-4",
+  "q-saa-133": "domain-4",
+  "q-saa-134": "domain-4",
+  "q-saa-135": "domain-4",
+  "q-saa-136": "domain-4",
+  "q-saa-137": "domain-3",
+  "q-saa-138": "domain-3",
+  "q-saa-139": "domain-3",
+  "q-saa-140": "domain-2",
+  "q-saa-141": "domain-3",
+  "q-saa-142": "domain-3",
+  "q-saa-143": "domain-1",
+  "q-saa-144": "domain-2",
+  "q-saa-145": "domain-2",
+  "q-saa-146": "domain-3",
+  "q-saa-147": "domain-1",
+  "q-saa-148": "domain-3",
+  "q-saa-149": "domain-1",
+  "q-saa-150": "domain-3"
+};
+
+/**
+ * Topic ID to SAA-C03 Domain ID Mapping
+ */
+export const TOPIC_DOMAIN_MAP = {
+  'topic-iam': 'domain-1',
+  'topic-iam-identity-center': 'domain-1',
+  'topic-kms': 'domain-1',
+  'topic-secrets-manager': 'domain-1',
+  'topic-waf': 'domain-1',
+  'topic-shield': 'domain-1',
+  'topic-guardduty': 'domain-1',
+  'topic-inspector': 'domain-1',
+  'topic-macie': 'domain-1',
+  'topic-security-hub': 'domain-1',
+  'topic-network-firewall': 'domain-1',
+  'topic-cognito': 'domain-1',
+  'topic-cloudtrail': 'domain-1',
+  'topic-ssm-parameter-store': 'domain-1',
+  'topic-vpc': 'domain-2',
+  'topic-elb': 'domain-2',
+  'topic-ec2-asg': 'domain-2',
+  'topic-rds': 'domain-2',
+  'topic-aurora': 'domain-2',
+  'topic-route53': 'domain-2',
+  'topic-sqs': 'domain-2',
+  'topic-sns': 'domain-2',
+  'topic-eventbridge': 'domain-2',
+  'topic-aws-backup': 'domain-2',
+  'topic-vpn': 'domain-2',
+  'topic-transit-gateway': 'domain-2',
+  'topic-ec2': 'domain-3',
+  'topic-s3': 'domain-3',
+  'topic-ebs': 'domain-3',
+  'topic-efs': 'domain-3',
+  'topic-fsx': 'domain-3',
+  'topic-dynamodb': 'domain-3',
+  'topic-elasticache': 'domain-3',
+  'topic-cloudfront': 'domain-3',
+  'topic-global-accelerator': 'domain-3',
+  'topic-api-gateway': 'domain-3',
+  'topic-lambda': 'domain-3',
+  'topic-ecs': 'domain-3',
+  'topic-eks': 'domain-3',
+  'topic-fargate': 'domain-3',
+  'topic-ecr': 'domain-3',
+  'topic-redshift': 'domain-3',
+  'topic-athena': 'domain-3',
+  'topic-glue': 'domain-3',
+  'topic-kinesis': 'domain-3',
+  'topic-msk': 'domain-3',
+  'topic-opensearch': 'domain-3',
+  'topic-datasync': 'domain-3',
+  'topic-storage-gateway': 'domain-3',
+  'topic-snow-family': 'domain-3',
+  'topic-dms': 'domain-3',
+  'topic-mgn': 'domain-3',
+  'topic-direct-connect': 'domain-3',
+  'topic-privatelink': 'domain-3',
+  'topic-step-functions': 'domain-3',
+  'topic-ssm': 'domain-3',
+  'topic-organizations': 'domain-4',
+  'topic-budgets': 'domain-4',
+  'topic-cost-explorer': 'domain-4',
+  'topic-compute-optimizer': 'domain-4',
+  'topic-trusted-advisor': 'domain-4',
+  'topic-ram': 'domain-4',
+  'topic-config': 'domain-4',
+  'topic-control-tower': 'domain-4',
+  'topic-cloudwatch': 'domain-4',
+};
+
+/**
+ * Returns the single authoritative primary domain ID used for Full Mock
+ * selection. Topic tags are deliberately ignored because a question can have
+ * several tags but must count toward exactly one exam domain.
+ */
+export function getPrimaryDomainIdForQuestion(q) {
+  if (!q?.id) return null;
+  return QUESTION_DOMAIN_MAP[q.id] || null;
+}
+
+/**
+ * Returns the domain object for results and diagnostics.
+ */
+export function getDomainForQuestion(q) {
+  if (!q) return SAA_C03_DOMAINS[0];
+  
+  let domainId = getPrimaryDomainIdForQuestion(q);
+  
+  if (!domainId && q.topicId) {
+    domainId = TOPIC_DOMAIN_MAP[q.topicId];
+  }
+  
+  if (!domainId && Array.isArray(q.topics) && q.topics.length > 0) {
+    domainId = TOPIC_DOMAIN_MAP[q.topics[0]];
+  }
+  
+  return SAA_C03_DOMAINS.find(d => d.id === domainId) || SAA_C03_DOMAINS[0];
+}

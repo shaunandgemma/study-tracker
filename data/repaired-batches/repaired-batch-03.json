@@ -1,0 +1,228 @@
+[
+  {
+    "id": "q-saa-71",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A microservice needs to retrieve API license keys stored in AWS Systems Manager Parameter Store. The keys must be encrypted at rest. Which Parameter Store parameter type should be selected?",
+    "options": [
+      "Create a Parameter Store parameter of type String with client-side base64 encoding applied to the API key value.",
+      "Create a Parameter Store parameter of type StringList with automated IAM policy encryption rules attached.",
+      "Create a Parameter Store parameter of type SecureString encrypted with a customer managed AWS KMS key.",
+      "Create an Amazon S3 object containing a plaintext JSON payload and configure default S3 server-side encryption (SSE-S3)."
+    ],
+    "correctAnswer": 2,
+    "correctAnswers": [
+      2
+    ],
+    "explanation": "SecureString parameters in SSM Parameter Store encrypt sensitive string values at rest using AWS KMS keys, integrating seamlessly with IAM policies and KMS key permissions.",
+    "topics": [
+      "topic-ssm",
+      "topic-kms"
+    ]
+  },
+  {
+    "id": "q-saa-78",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company stores sensitive patient health records in an Amazon DynamoDB table. Compliance requires encrypting data at rest using a customer managed AWS KMS key that can be audited via CloudTrail. Which DynamoDB encryption setting achieves this compliance goal?",
+    "options": [
+      "Select the AWS owned key for table encryption and rely on DynamoDB to manage its lifecycle and access controls.",
+      "Select a customer managed AWS KMS key as the table encryption key and grant DynamoDB permission to use it.",
+      "Select the AWS managed key for DynamoDB and modify its key policy to enforce organization-specific access controls.",
+      "Encrypt selected attributes with the DynamoDB Encryption Client and leave the table configured with its default encryption key."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "DynamoDB supports native encryption at rest using AWS Managed Keys or customer managed AWS KMS keys, recording all key access and usage events in AWS CloudTrail for auditing.",
+    "topics": [
+      "topic-dynamodb",
+      "topic-kms"
+    ]
+  },
+  {
+    "id": "q-saa-98",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A hybrid cloud architecture requires encrypted connectivity over the public internet between an on-premises data center router and a single Amazon VPC without using AWS Transit Gateway. The network configuration requires dual IPsec VPN tunnels with dynamic BGP routing for redundancy. Which AWS component terminates the VPN on the AWS side?",
+    "options": [
+      "Deploy an Internet Gateway (IGW) attached to the VPC to terminate the IPsec VPN tunnels directly.",
+      "Attach a Virtual Private Gateway (VGW) to the VPC to terminate the IPsec VPN tunnels on the AWS side.",
+      "Deploy an Egress-Only Internet Gateway to terminate dual-tunnel IPv4 IPsec connections.",
+      "Configure a NAT Gateway in a public subnet to terminate IPsec VPN connections and handle BGP routing."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "AWS Site-to-Site VPN connects an on-premises Customer Gateway (CGW) directly to a Virtual Private Gateway (VGW) attached to a single VPC, establishing dual encrypted IPsec VPN tunnels with BGP dynamic routing.",
+    "topics": [
+      "topic-vpn",
+      "topic-vpc"
+    ]
+  },
+  {
+    "id": "q-saa-104",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A Windows-based enterprise application requires shared file storage accessible via the SMB protocol. The file system must integrate with self-managed Active Directory, support Multi-AZ high availability with automatic failover, and support Shadow Copies for file restoration. Which storage service should be selected?",
+    "options": [
+      "Deploy Amazon EFS with Cross-Region Replication enabled and mount file shares using the SMB 3.1 protocol.",
+      "Deploy Amazon FSx for Windows File Server in a Multi-AZ configuration integrated with Active Directory.",
+      "Store application files in Amazon S3 Glacier Flexible Retrieval and mount the bucket as a local Windows drive.",
+      "Attach an Amazon EBS gp3 volume in Multi-Attach mode across EC2 instances in multiple Availability Zones."
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Amazon FSx for Windows File Server provides native SMB file storage built on Windows Server, supporting Multi-AZ high availability, Active Directory integration, and Windows Shadow Copies.",
+    "topics": [
+      "topic-fsx",
+      "topic-storage"
+    ]
+  },
+  {
+    "id": "q-saa-109",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An Auto Scaling group launches EC2 instances behind an Application Load Balancer. An EC2 instance experiences an internal web application crash, causing the ALB target group health check to return Unhealthy. However, the underlying EC2 hypervisor remains healthy. By default, Auto Scaling only monitors EC2 status. How can Auto Scaling be configured to terminate and replace instances when ALB health checks fail?",
+    "options": [
+      "Change the Auto Scaling group Health Check Type setting from EC2 to ELB so instances failing ALB health checks are replaced.",
+      "Configure an Amazon EventBridge rule to monitor ALB target health events and trigger an AWS Systems Manager Automation runbook.",
+      "Increase the Application Load Balancer Idle Timeout setting to prevent target group health check probe failures.",
+      "Configure an Amazon Route 53 failover routing policy pointing directly to the Application Load Balancer target instances."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Changing the Auto Scaling group Health Check Type to ELB instructs Auto Scaling to consider an instance unhealthy if either EC2 hypervisor status checks or Elastic Load Balancing target group health checks report a failure.",
+    "topics": [
+      "topic-auto-scaling",
+      "topic-elb"
+    ]
+  },
+  {
+    "id": "q-saa-110",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A real-time telemetry pipeline ingests streaming IoT data into an Amazon Kinesis Data Stream. Five separate microservice consumers poll the stream simultaneously. Consumers experience read throttling because total read throughput exceeds 2 MB/sec per shard. Which Kinesis feature provides dedicated read throughput of up to 2 MB/sec per shard for each registered consumer?",
+    "options": [
+      "Use enhanced fan-out, which provides dedicated read throughput of up to 2 MB/sec per shard for each registered consumer.",
+      "Configure Amazon Data Firehose buffer hints to deliver larger batches downstream and allocate independent read throughput to each stream consumer.",
+      "Increase the stream shard count so polling applications receive independent read throughput allocations from every shard they process.",
+      "Run each application with a separate Kinesis Client Library lease table to reserve independent read throughput for every consumer."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Kinesis Data Streams Enhanced Fan-Out provides registered stream consumers with dedicated read throughput of up to 2 MB/sec per shard over HTTP/2, eliminating read contention among parallel consumer applications.",
+    "topics": [
+      "topic-kinesis"
+    ]
+  },
+  {
+    "id": "q-saa-111",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "A company needs to migrate 50 physical and virtual Linux servers from an on-premises data center to EC2 with minimal downtime. The migration tool must continuously replicate block-level disk storage over the internet or Direct Connect and orchestrate non-disruptive cutover testing. Which AWS migration service should be used?",
+    "options": [
+      "Deploy AWS Application Migration Service (AWS MGN) to perform continuous block-level server replication into AWS with minimal downtime.",
+      "Use AWS DataSync to execute scheduled online file system synchronizations of physical server root drives over the internet.",
+      "Deploy AWS Database Migration Service (AWS DMS) to replicate server operating system disks and applications into EC2 instances.",
+      "Use AWS Snowball Edge Storage Optimized appliances to transport server disk images offline for manual EC2 conversion."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "AWS Application Migration Service (AWS MGN) is the primary AWS service for lift-and-shift migration, executing continuous block-level replication of physical, virtual, or cloud servers into AWS with minimal downtime.",
+    "topics": [
+      "topic-mgn",
+      "topic-migration"
+    ]
+  },
+  {
+    "id": "q-saa-121",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "single",
+    "question": "An application uploads 50 GB video files to Amazon S3 over an unstable network connection. Uploads frequently fail halfway through, requiring the application to restart the entire 50 GB transfer. How can upload performance and resiliency be optimized?",
+    "options": [
+      "Use S3 Multipart Upload, upload parts independently or in parallel, and retry failed parts without restarting the full object upload.",
+      "Enable S3 Transfer Acceleration to route uploads through edge locations and resume interrupted single-request uploads from the last transmitted byte.",
+      "Enable S3 Versioning to preserve incomplete upload segments and resume a failed single-request upload from the last successfully transferred segment.",
+      "Attach a full-object checksum to each single PUT request so Amazon S3 retains validated byte ranges and resumes after a network failure."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "The S3 Multipart Upload API splits large objects into smaller parts uploaded independently and in parallel. If a part upload fails due to network instability, only that specific part needs to be re-transmitted.",
+    "topics": [
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-128",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "An engineering manager runs stateless batch rendering workloads on EC2 Auto Scaling groups. The workload can tolerate instance terminations. The manager wants to minimize compute costs while reducing the risk of Spot capacity unavailability. Which TWO Spot configuration options should be combined? (Select TWO.)",
+    "options": [
+      "Set the Auto Scaling group Spot Allocation Strategy to price-capacity-optimized to select pools with optimal capacity and price.",
+      "Configure Attribute-Based Instance Type Selection in the Auto Scaling group to diversify across multiple instance types and families.",
+      "Purchase 3-Year EC2 Dedicated Host Reservations for all Auto Scaling group worker nodes.",
+      "Configure the Auto Scaling group to launch strictly On-Demand instances with assigned Elastic IP addresses.",
+      "Enable EC2 Termination Protection on all Spot instances within the Auto Scaling group."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Combining the price-capacity-optimized Spot allocation strategy with Attribute-Based Instance Type Selection maximizes Spot availability and cost savings by dynamically selecting optimal Spot pools across diverse instance families.",
+    "topics": [
+      "topic-ec2-spot",
+      "topic-auto-scaling"
+    ]
+  },
+  {
+    "id": "q-saa-145",
+    "exam_code": "SAA-C03",
+    "difficulty": "associate",
+    "type": "multiple",
+    "question": "An enterprise requires a robust disaster recovery and data protection architecture for core AWS workloads. The solution must automate cross-account backup copies, replicate S3 objects to a secondary AWS Region, and automatically route global web traffic to a healthy secondary Region if the primary Region fails. Which THREE components build this resilient solution? (Select THREE.)",
+    "options": [
+      "AWS Backup with scheduled backup plans executing cross-Region and cross-account copy actions into locked vaults.",
+      "Amazon S3 Cross-Region Replication (CRR) with Versioning enabled on source and destination buckets.",
+      "Amazon Route 53 failover routing with health checks to redirect client traffic from the primary Region to the secondary Region.",
+      "AWS Storage Gateway Tape Gateway deployed in a single Availability Zone to archive S3 object versions.",
+      "Amazon EC2 Instance Store volumes attached to application servers for persistent long-term backup data retention.",
+      "AWS Transit Gateway Inter-Region Peering with static route tables to automatically reroute client internet traffic."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "AWS Backup automates cross-account and cross-Region snapshot replication, S3 CRR replicates object storage to a secondary Region, and Route 53 failover routing with health checks automatically redirects client traffic upon primary Region failure.",
+    "topics": [
+      "topic-disaster-recovery",
+      "topic-route53",
+      "topic-s3",
+      "topic-backup"
+    ]
+  }
+]
