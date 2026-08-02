@@ -1,0 +1,332 @@
+{
+  "createdAt": "2026-08-02T18:32:44.330Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-141",
+    "q-saa-142",
+    "q-saa-143",
+    "q-saa-144",
+    "q-saa-145",
+    "q-saa-146",
+    "q-saa-147",
+    "q-saa-148",
+    "q-saa-149",
+    "q-saa-150"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-141",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "An enterprise cloud architecture requires a fully managed shared file system for enterprise Linux and Windows workloads. The file system must support NetApp ONTAP features (such as inline deduplication, compression, and snap-shots) and connect privately to on-premises data centers via Direct Connect. Which TWO storage components fulfill this requirement? (Select TWO.)",
+      "option_a": "Amazon FSx for NetApp ONTAP",
+      "option_b": "AWS Direct Connect connected to private subnets",
+      "option_c": "Amazon S3 Standard Bucket",
+      "option_d": "Amazon EBS gp3 Volume in Single-AZ",
+      "option_e": "AWS Storage Gateway Volume Gateway",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Amazon FSx for NetApp ONTAP provides fully managed NetApp ONTAP file storage supporting NFS, SMB, and iSCSI protocols with deduplication and compression. Direct Connect provides private enterprise connectivity."
+    },
+    {
+      "id": "q-saa-142",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A containerised application must run without customer-managed container instances. It must maintain a desired number of healthy tasks and distribute them across three Availability Zones. Which TWO configurations meet these requirements? (Select TWO.)",
+      "option_a": "Use AWS Fargate as the capacity provider for the tasks.",
+      "option_b": "Run the tasks through an ECS service configured with subnets in three Availability Zones and the required desired count.",
+      "option_c": "Launch standalone Fargate tasks manually in each Availability Zone whenever additional capacity is needed.",
+      "option_d": "Create an ECS service in one Availability Zone and increase its desired task count to tolerate an Availability Zone failure.",
+      "option_e": "Run an ECS service on an EC2 capacity provider distributed across three Availability Zones.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. Fargate removes the need to provision and manage EC2 container instances.\n\nB. An ECS service maintains the desired task count and replaces failed tasks. With suitable subnets, ECS can distribute and rebalance Fargate service tasks across Availability Zones.\n\nWhy the other options are wrong:\nC. Standalone tasks are not continuously maintained by an ECS service. Manual task launches add operational effort and do not guarantee replacement after failure.\nD. More tasks in one Availability Zone do not protect against the loss of that Availability Zone.\nE. An EC2 capacity provider could provide multi-AZ ECS availability, but it requires the company to manage EC2 container capacity and violates the server-management requirement.\n\nExam trigger:\nNo servers to manage, desired task count, replacement after failure, and multiple Availability Zones.\n\nExam trap:\nFargate removes server management. The ECS service maintains availability.\n\nMemory hook:\nFargate supplies capacity. ECS Service keeps tasks alive."
+    },
+    {
+      "id": "q-saa-143",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company uses AWS Organizations with application teams operating hundreds of Application Load Balancers and CloudFront distributions across multiple member accounts. The security team must centrally deploy an AWS WAF managed rule group, automatically include resources created in new member accounts, and identify resources that are not compliant. Which solution requires the least operational effort?",
+      "option_a": "Enable AWS Shield Advanced independently in every member account and configure automatic application-layer DDoS mitigation.",
+      "option_b": "Create an AWS Firewall Manager policy that deploys an AWS WAF web ACL to in-scope Application Load Balancers and CloudFront distributions across the organization.",
+      "option_c": "Deploy AWS Network Firewall in the inspection VPC and route all internet traffic from member accounts through its firewall endpoints.",
+      "option_d": "Deploy an AWS Config conformance pack that detects Application Load Balancers and CloudFront distributions without the required AWS WAF rules.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create an AWS Firewall Manager policy that deploys an AWS WAF web ACL to in-scope Application Load Balancers and CloudFront distributions across the organization.\n\nAWS Firewall Manager centrally deploys and manages AWS WAF policies across accounts and resources in AWS Organizations. The policy can automatically apply protection to existing and newly created resources within its organizational scope and report resources that are not compliant.\n\nWhy the other options are wrong:\nA. Shield Advanced provides enhanced DDoS protection, but enabling it independently in each account does not provide the required centralized WAF policy deployment and compliance management.\nC. Network Firewall inspects traffic routed through VPC firewall endpoints. It is not directly associated with CloudFront distributions or Application Load Balancers to apply web ACL rules.\nD. AWS Config can detect noncompliant configurations, but it is primarily detective. It does not provide the same automatic organization-wide WAF policy deployment as Firewall Manager.\n\nExam trigger:\nAWS Organizations, multiple accounts, centralized security rules, automatic coverage, and compliance reporting.\n\nExam trap:\nAWS WAF performs the request inspection. Firewall Manager deploys and governs WAF policies across accounts.\n\nMemory hook:\nOne firewall policy across many accounts means Firewall Manager."
+    },
+    {
+      "id": "q-saa-144",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A solutions architect is designing a secure, high-availability 3-tier web application architecture in a single AWS Region. The architecture must segregate tiers, protect against public internet exposure, and enforce principle of least privilege. Which THREE design choices should be implemented? (Select THREE.)",
+      "option_a": "Deploy Application Load Balancers in public subnets across multiple Availability Zones to handle ingress web traffic.",
+      "option_b": "Deploy EC2 application web servers in private subnets across multiple Availability Zones in an Auto Scaling group.",
+      "option_c": "Deploy RDS database instances in dedicated private database subnets across multiple Availability Zones with Multi-AZ enabled.",
+      "option_d": "Assign public Elastic IP addresses directly to database instances.",
+      "option_e": "Place all application servers and database instances in a single public subnet.",
+      "option_f": "Allow inbound SSH traffic from `0.0.0.0/0` on database Security Groups.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Standard 3-tier secure architecture places ALBs in public subnets to receive internet traffic, web/app servers in private subnets across multi-AZs, and database instances in isolated private database subnets with Multi-AZ enabled."
+    },
+    {
+      "id": "q-saa-145",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "An enterprise requires a robust disaster recovery and data protection architecture for core AWS workloads. The solution must automate cross-account backup copies, replicate S3 objects to a secondary AWS Region, and automatically route global web traffic to a healthy secondary Region if the primary Region fails. Which THREE components build this resilient solution? (Select THREE.)",
+      "option_a": "AWS Backup with scheduled backup plans executing cross-Region and cross-account copy actions into locked vaults.",
+      "option_b": "Amazon S3 Cross-Region Replication (CRR) with Versioning enabled on source and destination buckets.",
+      "option_c": "Amazon Route 53 failover routing with health checks to redirect client traffic from the primary Region to the secondary Region.",
+      "option_d": "AWS Storage Gateway Tape Gateway deployed in a single Availability Zone to archive S3 object versions.",
+      "option_e": "Amazon EC2 Instance Store volumes attached to application servers for persistent long-term backup data retention.",
+      "option_f": "AWS Transit Gateway Inter-Region Peering with static route tables to automatically reroute client internet traffic.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "AWS Backup automates cross-account and cross-Region snapshot replication, S3 CRR replicates object storage to a secondary Region, and Route 53 failover routing with health checks automatically redirects client traffic upon primary Region failure."
+    },
+    {
+      "id": "q-saa-146",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A media company is building a real-time data streaming analytics pipeline to process clickstream data from millions of mobile users. The pipeline must ingest streaming events continuously, transform JSON records using AWS Lambda, and buffer data into an Amazon Redshift data warehouse for BI reporting. Which THREE AWS services construct this pipeline? (Select THREE.)",
+      "option_a": "Amazon Kinesis Data Streams for high-throughput real-time stream ingestion.",
+      "option_b": "Amazon Data Firehose to transform records via AWS Lambda and load data continuously into Amazon Redshift.",
+      "option_c": "Amazon Redshift data warehouse to execute complex SQL analytics queries.",
+      "option_d": "Amazon SQS Standard queues to buffer JSON clickstream records for automated batch insertion into Redshift.",
+      "option_e": "AWS Glue Streaming ETL jobs to write streaming clickstream data directly into Amazon S3 Glacier Deep Archive.",
+      "option_f": "Amazon EMR Serverless cluster running Apache Spark Batch jobs to continuously ingest real-time streaming data.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Amazon Kinesis Data Streams continuously ingests real-time streaming data at scale. Amazon Data Firehose receives records from Kinesis Data Streams, invokes AWS Lambda for transformation, stages the transformed data in Amazon S3, and loads it into Amazon Redshift for analytics."
+    },
+    {
+      "id": "q-saa-147",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A security engineer is implementing zero-trust security controls for an enterprise application hosted on EC2 in private subnets. The application accesses S3 buckets, AWS Secrets Manager, and DynamoDB. The design must eliminate hardcoded credentials, ensure all AWS API network traffic remains on the private AWS backbone, and restrict outbound internet access. Which THREE controls enforce this security posture? (Select THREE.)",
+      "option_a": "Attach IAM Roles with Instance Profiles to EC2 instances to provide temporary AWS credentials via IMDSv2.",
+      "option_b": "Create VPC Endpoints (Gateway Endpoints for S3/DynamoDB, Interface Endpoints for Secrets Manager) in the VPC.",
+      "option_c": "Remove NAT Gateways and Internet Gateways from private subnet route tables.",
+      "option_d": "Hardcode IAM Access Keys in application source code.",
+      "option_e": "Assign public IPv4 addresses to private EC2 instances.",
+      "option_f": "Allow inbound SSH from `0.0.0.0/0` in Security Groups.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "IAM Roles eliminate hardcoded keys by serving temporary IMDSv2 credentials. VPC Endpoints keep API traffic for S3, DynamoDB, and Secrets Manager on the private AWS network, allowing removal of internet/NAT gateways."
+    },
+    {
+      "id": "q-saa-148",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A global e-commerce platform uses static web assets, an RDS relational database for orders and sessions, and DynamoDB for a read-heavy product catalogue. The company wants the most appropriate managed cache at each layer. Which THREE solutions should be used? (Select THREE.)",
+      "option_a": "Use CloudFront to cache static assets and suitable HTTP responses at edge locations.",
+      "option_b": "Use ElastiCache for Redis to cache relational-database query results and shared session state.",
+      "option_c": "Use DynamoDB Accelerator for frequently read, eventually consistent DynamoDB items.",
+      "option_d": "Use CloudFront to cache all personalised dynamic API responses without controlling the cache key or TTL.",
+      "option_e": "Use RDS Proxy as an in-memory query-result cache for the relational database.",
+      "option_f": "Replace DAX with ElastiCache for Redis to transparently accelerate DynamoDB reads without changing application data-access logic.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct answers:\nA, B, and C.\n\nA. CloudFront provides edge caching for static assets and cacheable HTTP responses.\n\nB. Redis is suitable for shared sessions and application-controlled caching of relational database results.\n\nC. DAX is an in-memory cache built specifically for DynamoDB and can provide microsecond response times for cached eventually consistent reads.\n\nWhy the other options are wrong:\nD. Dynamic content can be cached only when cache keys, TTLs, cookies, headers, query strings, and personalisation requirements are designed correctly. Caching every personalised response would risk incorrect content delivery.\nE. RDS Proxy pools and reuses database connections. It does not cache query results.\nF. Redis could be used through custom application caching logic, but it is not a transparent DynamoDB-compatible acceleration layer. DAX is designed for that DynamoDB access pattern.\n\nExam trigger:\nEdge content, relational queries or sessions, and DynamoDB reads each require a different caching layer.\n\nExam trap:\nRDS Proxy manages connections. DAX accelerates DynamoDB. Redis caches application data.\n\nMemory hook:\nCloudFront at the edge, Redis for the app, DAX for DynamoDB."
+    },
+    {
+      "id": "q-saa-149",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A security operations team requires automated continuous monitoring, threat detection, and security posture management across all AWS accounts in an organization. The security solution must detect unauthorized API activity, evaluate configuration compliance against CIS benchmarks, and centralize all security findings. Which THREE services should be enabled? (Select THREE.)",
+      "option_a": "Amazon GuardDuty for intelligent threat detection across CloudTrail, VPC Flow Logs, and DNS logs.",
+      "option_b": "AWS Config to continuously track resource configurations and evaluate compliance rules against security standards.",
+      "option_c": "AWS Security Hub to aggregate and prioritize security findings across GuardDuty, Config, and Inspector.",
+      "option_d": "Amazon Inspector to manage centralized IAM permission boundaries across AWS Organizations accounts.",
+      "option_e": "AWS Systems Manager OpsCenter to automatically block unauthorized API calls recorded in CloudTrail logs.",
+      "option_f": "AWS CloudTrail Event History to generate automated compliance scorecards and CIS benchmark dashboards.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Amazon GuardDuty analyzes AWS CloudTrail logs, VPC Flow Logs, and DNS logs to perform intelligent threat detection. AWS Config continuously records resource configuration changes and audits compliance against standard benchmarks (such as CIS AWS Foundations). AWS Security Hub aggregates findings from GuardDuty, Config, and Inspector into a single centralized dashboard."
+    },
+    {
+      "id": "q-saa-150",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "An enterprise is executing a large-scale migration of on-premises applications to AWS. The portfolio includes 100 Linux/Windows physical servers, a 20 TB Oracle database, and 50 TB of NFS file storage. The migration must minimize downtime and preserve file permissions. Which THREE AWS migration services should be deployed? (Select THREE.)",
+      "option_a": "AWS Application Migration Service (AWS MGN) for continuous server block-level replication.",
+      "option_b": "AWS Database Migration Service (AWS DMS) for continuous relational database replication to AWS.",
+      "option_c": "AWS DataSync for online transfer of NFS file storage to Amazon EFS while preserving POSIX metadata.",
+      "option_d": "AWS Transfer Family for SFTP to perform continuous live block-level replication of physical Linux and Windows servers.",
+      "option_e": "AWS Snowball Edge Storage Optimized appliances to perform continuous real-time database replication for the 20 TB Oracle database.",
+      "option_f": "AWS Storage Gateway Volume Gateway to migrate the NFS file storage while preserving local file permissions.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "AWS MGN performs continuous block-level replication for server lift-and-shift migration. AWS DMS handles continuous replication of relational databases with minimal downtime. AWS DataSync transfers NFS file systems to Amazon EFS while retaining POSIX file permissions and metadata."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-141",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-141",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-142",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-142",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-143",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-143",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-144",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-144",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-144",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-144",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-backup"
+    },
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-disaster-recovery"
+    },
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-146",
+      "topic_id": "topic-kinesis"
+    },
+    {
+      "question_id": "q-saa-146",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-146",
+      "topic_id": "topic-redshift"
+    },
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-148",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-148",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-148",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-149",
+      "topic_id": "topic-config"
+    },
+    {
+      "question_id": "q-saa-149",
+      "topic_id": "topic-guardduty"
+    },
+    {
+      "question_id": "q-saa-149",
+      "topic_id": "topic-security-hub"
+    },
+    {
+      "question_id": "q-saa-150",
+      "topic_id": "topic-datasync"
+    },
+    {
+      "question_id": "q-saa-150",
+      "topic_id": "topic-dms"
+    },
+    {
+      "question_id": "q-saa-150",
+      "topic_id": "topic-mgn"
+    }
+  ]
+}

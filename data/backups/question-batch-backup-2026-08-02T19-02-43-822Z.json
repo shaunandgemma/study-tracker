@@ -1,0 +1,290 @@
+{
+  "createdAt": "2026-08-02T19:02:43.822Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-171",
+    "q-saa-172",
+    "q-saa-173",
+    "q-saa-174",
+    "q-saa-175",
+    "q-saa-176",
+    "q-saa-177",
+    "q-saa-178",
+    "q-saa-179",
+    "q-saa-180"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-171",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A financial application processes loan requests involving multiple microservices: credit scoring, background checks, income verification, and notification. The workflow contains long-running asynchronous steps that can take several hours. If a step fails, compensating actions must run automatically to reverse prior business operations. The orchestrator must maintain a durable execution history for auditing and troubleshooting. Which AWS service should be used?",
+      "option_a": "AWS Step Functions Standard Workflows",
+      "option_b": "AWS Step Functions Express Workflows",
+      "option_c": "Amazon EventBridge custom event bus with Amazon SQS",
+      "option_d": "AWS Managed Workflows for Apache Airflow (MWAA)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAWS Step Functions Standard Workflows support durable, stateful orchestrations that can run for up to one year. They provide execution history, retries, catches, and explicit compensating steps suitable for saga-style business workflows.\n\nWhy the others are wrong:\nB: Express Workflows are designed for high-volume, short-duration workloads and have a maximum execution duration of five minutes.\nC: EventBridge and SQS provide event routing and buffering but do not provide a complete managed workflow state machine with execution history and compensation logic.\nD: MWAA is primarily intended for Apache Airflow data and batch workflow orchestration rather than this application transaction pattern.\n\nExam trigger:\nLong-running stateful orchestration with retries, catches, and compensating actions.\n\nMemory hook:\nLong-running business workflow with history means Step Functions Standard."
+    },
+    {
+      "id": "q-saa-172",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company requires a highly available and resilient hybrid network connection between its on-premises data center and an AWS VPC topology. The architecture must provide a dedicated, low-latency primary connection with high bandwidth, and an automated, cost-effective backup path over the public Internet. If the primary connection fails, traffic must automatically fail over to the backup path using BGP dynamic routing preferences. Which solution meets these requirements?",
+      "option_a": "Establish two AWS Site-to-Site VPN connections over separate Internet service providers connected to a Virtual Private Gateway (VGW).",
+      "option_b": "Deploy an AWS Direct Connect connection with a Public VIF as the primary path, and a second Direct Connect connection as the backup path.",
+      "option_c": "Establish an AWS Direct Connect connection with a Transit VIF to a Direct Connect gateway associated with an AWS Transit Gateway as the primary path, and configure an AWS Site-to-Site VPN connection to the Transit Gateway using BGP dynamic routing preference as the backup path.",
+      "option_d": "Configure an AWS Transit Gateway with ECMP enabled across two AWS Direct Connect dedicated circuits.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct answer:\nEstablishing an AWS Direct Connect connection with a Transit VIF connected to a Direct Connect gateway associated with an AWS Transit Gateway provides the dedicated, low-latency primary connection. An AWS Site-to-Site VPN connected to the same Transit Gateway with BGP dynamic routing (where BGP metrics prefer the Direct Connect path) provides an automated, cost-effective backup path over the public Internet.\n\nWhy the other options are wrong:\nA. Two Site-to-Site VPN connections rely entirely on the public Internet and do not provide a dedicated, low-latency private connection.\nB. Deploying a second Direct Connect connection is significantly more expensive than an Internet VPN backup and fails the cost-effective backup requirement.\nD. ECMP across two Direct Connect circuits provides active-active dual Direct Connect, not an Internet VPN backup path.\n\nExam trigger:\nDedicated low-latency primary connection with automated Internet VPN backup path via Transit Gateway.\n\nExam trap:\nUsing a Private VIF directly to a Transit Gateway (Transit Gateway requires a Transit VIF connected to a Direct Connect gateway).\n\nMemory hook:\nDirect Connect + Transit VIF + Direct Connect Gateway + Transit Gateway = High-Scale Hybrid Networking."
+    },
+    {
+      "id": "q-saa-173",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A corporate enterprise needs a cross-region disaster recovery (DR) solution for a tier-2 business application. The current application consists of an Auto Scaling group of EC2 instances behind an Application Load Balancer and an Amazon RDS for MySQL database. The business leadership requires an RTO of less than 15 minutes and an RPO of less than 5 minutes while MINIMIZING idle infrastructure costs in the secondary region. Which disaster recovery strategy should be recommended?",
+      "option_a": "Warm Standby: Maintain a scaled-down, functional environment in the secondary region with an active cross-region RDS Read Replica, and scale out EC2 capacity upon failover.",
+      "option_b": "Pilot Light: Maintain data replication to a secondary region RDS Read Replica, but keep the web tier EC2 AMI and infrastructure defined as CloudFormation code without running active EC2 instances until failover.",
+      "option_c": "Multi-Site Active-Active: Run full-capacity compute and database resources simultaneously in both primary and secondary regions with Route 53 latency routing.",
+      "option_d": "Backup and Restore: Take daily snapshots of the database and EC2 instances, copy them to the secondary region, and rebuild the stack upon disaster declaration.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nWarm Standby maintains a complete but scaled-down working environment in the recovery Region, including replicated data and minimal running application capacity. A tested and automated Warm Standby design is the most appropriate option for targeting an RTO below 15 minutes while costing less than a full active-active environment.\n\nWhy the others are wrong:\nB: Pilot Light keeps only the critical core running. Launching and initializing the complete application tier during recovery makes it less suitable for this aggressive RTO target.\nC: Multi-Site Active-Active provides the fastest recovery but carries substantially higher ongoing cost.\nD: Daily backup and restore cannot meet the stated RPO or the targeted RTO.\n\nExam trigger:\nAggressive recovery target with a complete but reduced-capacity secondary environment.\n\nMemory hook:\nWarm Standby is already running and scales up during recovery."
+    },
+    {
+      "id": "q-saa-174",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company operates an online gaming application backed by an Amazon Aurora PostgreSQL database in us-east-1. To meet business continuity goals, the company requires a disaster recovery strategy with cross-Region replication providing very low replication latency (typically under 1 second) and rapid cross-Region recovery. During a Regional outage in us-east-1, the secondary Region (us-west-2) must be promoted to take full read-write traffic. Which combination of actions fulfills these requirements? (Select TWO.)",
+      "option_a": "Create an Amazon Aurora Global Database with the primary cluster in us-east-1 and a secondary read-only cluster in us-west-2.",
+      "option_b": "Use AWS DMS ongoing replication from the Aurora cluster in us-east-1 to a separately managed Aurora PostgreSQL cluster in us-west-2.",
+      "option_c": "Perform a managed failover during a Regional outage to promote the secondary cluster in us-west-2 to primary read-write status.",
+      "option_d": "Deploy an Aurora Multi-AZ DB cluster across three Availability Zones in us-east-1 and use automatic failover between DB instances.",
+      "option_e": "Configure automated cross-Region Aurora database snapshots copied every 1 hour from us-east-1 to us-west-2.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        2
+      ],
+      "explanation": "Correct answer:\nAmazon Aurora Global Database uses dedicated storage-level replication across Regions with cross-Region replication latency typically under 1 second. Performing a managed failover allows promoting the secondary cluster in us-west-2 to primary read-write status for rapid disaster recovery.\n\nWhy the other options are wrong:\nB. AWS DMS ongoing replication to a separately managed Aurora cluster creates additional migration infrastructure and operational failover work compared with Aurora Global Database.\nD. An Aurora Multi-AZ DB cluster provides resilience across Availability Zones within one Region, not cross-Region disaster recovery.\nE. 1-hour snapshots result in up to 1 hour of data loss, failing the requirement for very low replication latency.\n\nNote on RPO/RTO:\nAurora Global Database cross-Region replication latency is typically under one second, but unplanned failover can have a non-zero RPO measured in seconds. Total recovery time depends on failover execution, application reconnection, DNS propagation, and operational automation.\n\nExam trigger:\nAurora database cross-Region DR with replication latency typically under 1 second and rapid recovery.\n\nExam trap:\nAssuming Aurora Global Database guarantees absolute zero data loss during unplanned regional outages, or that Multi-AZ resilience extends across Regions.\n\nMemory hook:\nAurora Global Database + Managed Failover = Rapid Cross-Region Database Recovery."
+    },
+    {
+      "id": "q-saa-175",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An enterprise company must protect its Amazon EBS snapshots, Amazon RDS backups, and DynamoDB backups against ransomware attacks and unauthorized deletion by malicious internal actors. Security policy requires that once backups are taken, no IAM user, account administrator, or AWS account root user can delete or shorten the retention period of any backup for 365 days. Which AWS solution satisfies these stringent compliance and security requirements?",
+      "option_a": "Configure AWS Backup and copy backups to a separate AWS account's Backup Vault secured with an AWS Backup Vault Lock configured in Compliance mode.",
+      "option_b": "Store backups in an S3 bucket with versioning enabled and apply an IAM policy denying s3:DeleteObject to all non-root users.",
+      "option_c": "Configure AWS Backup Vault Lock in Governance mode across all member accounts.",
+      "option_d": "Encrypt all EBS and RDS backups using AWS-managed KMS keys (aws/ebs and aws/rds).",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAWS Backup Vault Lock in Compliance mode enforces Write-Once-Read-Many (WORM) immutability. Once locked in Compliance mode after the cooling-off period expires, no user—including account root users or AWS Support—can delete backups or reduce retention periods.\n\nWhy the others are wrong:\nB: IAM policies denying s3:DeleteObject can be altered or removed by root users or account administrators with IAM permissions.\nC: Governance mode Vault Lock allows authorized users with specific IAM permissions (backup:BypassGovernanceRetention) to override or delete backup retention policies.\nD: KMS encryption protects data at rest against unauthorized reading, but does not prevent authorized IAM principals from calling DeleteSnapshot or DeleteDBInstance.\n\nExam trigger:\nRansomware-proof immutable backup protection preventing root/admin deletion.\n\nMemory hook:\nImmutable backups = AWS Backup Vault Lock in Compliance Mode."
+    },
+    {
+      "id": "q-saa-176",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A global online retailer runs regional application stacks behind Application Load Balancers in us-east-1 and eu-west-1. The public DNS name is an Amazon Route 53 alias to a CloudFront distribution. The company requires edge-level failover between the regional ALB origins for eligible read requests, and the application database must support active-active reads and writes in both Regions with sub-second replication. Which TWO configurations meet these requirements? (Select TWO.)",
+      "option_a": "Configure the CloudFront distribution with an origin group containing the regional Application Load Balancers and define failover criteria for eligible GET, HEAD, and OPTIONS requests.",
+      "option_b": "Use Amazon DynamoDB Global Tables to provide active-active multi-Region reads and writes with managed cross-Region replication.",
+      "option_c": "Configure Route 53 latency-based records that point directly to both regional Application Load Balancers while using the same hostname as the CloudFront distribution.",
+      "option_d": "Use Amazon RDS for MySQL cross-Region read replicas as active-active multi-master writers.",
+      "option_e": "Use AWS Transit Gateway inter-Region peering to route public internet viewer requests to the nearest Application Load Balancer.",
+      "option_f": "Use AWS Storage Gateway to replicate EC2 instance store volumes between the two Regions.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\n1. CloudFront origin groups provide per-request origin failover for eligible read methods when the primary regional ALB times out or returns configured errors.\n2. DynamoDB Global Tables provide managed active-active multi-Region reads and writes with typically sub-second replication.\n\nWhy the others are wrong:\nC: The public hostname already aliases to CloudFront. Pointing the same hostname directly to regional ALBs creates a contradictory request path and bypasses CloudFront origin failover.\nD: RDS for MySQL cross-Region read replicas use asynchronous replication and are not active-active multi-master writers.\nE: Transit Gateway connects private networks; it does not route public viewer traffic or provide edge failover.\nF: Storage Gateway does not replicate EC2 instance store volumes across Regions.\n\nExam trigger:\nCloudFront performs read-origin failover while DynamoDB Global Tables provide active-active regional data.\n\nMemory hook:\nCloudFront fails over origins; Global Tables keep both Regions writable."
+    },
+    {
+      "id": "q-saa-177",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A media broadcaster uploads high-resolution video assets to an Amazon S3 bucket in us-east-1. To support European operations and disaster recovery requirements, eligible new objects must be replicated to a bucket in eu-west-1 by using an S3 replication feature backed by a 15-minute SLA. The company also needs replication metrics and notifications when replication exceeds the threshold. Which solution meets the requirements?",
+      "option_a": "Configure S3 Same-Region Replication (SRR) and create a Lambda function to monitor bucket size.",
+      "option_b": "Set up an AWS DataSync task scheduled to run every 15 minutes between the primary and secondary S3 buckets.",
+      "option_c": "Configure Amazon S3 Cross-Region Replication (CRR) and enable S3 Replication Time Control (S3 RTC) on the replication rule.",
+      "option_d": "Use Amazon EventBridge to trigger an AWS Batch job whenever an object is uploaded to copy objects using the AWS CLI.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct:\nAmazon S3 Replication Time Control is used with S3 Cross-Region Replication and is backed by an SLA to replicate 99.99% of eligible new objects within 15 minutes, subject to the documented service conditions. It also provides replication metrics and event notifications.\n\nWhy the others are wrong:\nA: Same-Region Replication does not copy objects to another Region.\nB: A scheduled DataSync task is not the native continuous S3 replication feature with the required SLA.\nD: A custom Batch copy process adds operational overhead and does not provide the S3 RTC SLA.\n\nExam trigger:\nSLA-backed S3 cross-Region replication within 15 minutes.\n\nMemory hook:\nFifteen-minute S3 replication SLA means S3 RTC."
+    },
+    {
+      "id": "q-saa-178",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An application deployed across three Availability Zones behind a Multi-AZ Application Load Balancer experiences intermittent performance degradation when a single Availability Zone (az1) undergoes underlying network degradation. Automatic ALB health checks are not failing fast enough because some requests still succeed. The architecture team needs an automated capability to temporarily shift application traffic away from the impaired Availability Zone without changing DNS records manually. Which solution fulfills this requirement?",
+      "option_a": "Enable Route 53 Application Recovery Controller zonal autoshift for the Application Load Balancer.",
+      "option_b": "Update the Auto Scaling group to set az1 capacity to 0 using the AWS CLI.",
+      "option_c": "Configure AWS WAF on the ALB to block all client IP addresses originating from az1.",
+      "option_d": "Attach a Network ACL to az1 subnets with an explicit DENY rule for all inbound traffic.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nRoute 53 Application Recovery Controller zonal autoshift automatically detects when an Availability Zone experiences impairment (such as power degradation or internal network anomalies) and automatically shifts traffic away from the impacted AZ for supported resources like Application Load Balancers.\n\nWhy the others are wrong:\nB: Auto Scaling group subnet adjustments alter instance provisioning, but do not redirect ALB incoming target traffic smoothly or automatically trigger based on AWS zonal telemetry.\nC: AWS WAF inspects HTTP payloads from client IP addresses; client IPs are completely independent of AWS server Availability Zones.\nD: Applying a restrictive NACL hard-blocks all subnet traffic, causing sudden TCP connection resets and unhandled errors for active in-flight requests.\n\nExam trigger:\nAutomated shifting of traffic away from an impaired Availability Zone.\n\nMemory hook:\nAZ fault isolation = Route 53 ARC Zonal Autoshift."
+    },
+    {
+      "id": "q-saa-179",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A gaming platform hosts a real-time multiplayer backend in two AWS Regions. Client applications establish persistent TCP connections directly to regional Network Load Balancers (NLBs) that have security groups configured. The gaming servers behind the NLBs rely on client source IP addresses for session validation and geo-filtering. Players report high connection latency and packet loss caused by public internet routing fluctuations during cross-region matchmaking. A solutions architect must improve connection routing performance and maintain consistent latency while ensuring that client IP preservation remains functional with the NLB security group setup. Which solution meets these requirements?",
+      "option_a": "Deploy Amazon CloudFront in front of the regional Network Load Balancers, enabling client IP preservation in custom HTTP headers.",
+      "option_b": "Deploy AWS Global Accelerator with static Anycast IP addresses, pointing to the regional Network Load Balancers as endpoint targets with client IP preservation enabled.",
+      "option_c": "Configure Amazon Route 53 latency-based routing with a 5-second TTL to resolve DNS queries directly to the regional Network Load Balancer public IP addresses.",
+      "option_d": "Deploy Amazon API Gateway regional TCP endpoints with AWS WAF enabled to proxy incoming player connections across VPC Peering connections.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAWS Global Accelerator uses Anycast static IP addresses to route client TCP traffic over the AWS private global network, minimizing public internet congestion and latency. Global Accelerator supports client IP preservation when targeting Network Load Balancers (including NLBs with security groups enabled), ensuring the backend EC2 instances receive the original client IP address.\n\nWhy the others are wrong:\nA: CloudFront is designed for HTTP/HTTPS web acceleration and static/dynamic web content caching, not native raw TCP multiplayer gaming protocols, and header-based IP preservation does not preserve source IPs at the TCP transport layer.\nC: Route 53 latency-based routing resolves DNS to public internet endpoints, leaving traffic exposed to public internet ISP routing hops, high jitter, and client DNS caching delays.\nD: Amazon API Gateway supports HTTP, REST, and WebSocket APIs; it does not support raw TCP socket proxying.\n\nExam trigger:\nGlobal TCP traffic acceleration with client IP preservation and NLB targets.\n\nMemory hook:\nGlobal TCP optimization + static IPs = AWS Global Accelerator."
+    },
+    {
+      "id": "q-saa-180",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A high-traffic e-commerce database on Amazon RDS for MySQL is experiencing CPU utilization spikes above 90% caused by repetitive read queries for popular product catalog items. A solutions architect must improve read performance and reduce database CPU load with minimal application latency. Which AWS caching component should be added to the architecture?",
+      "option_a": "Amazon EBS Snapshot caching tier",
+      "option_b": "Amazon ElastiCache for Redis in front of the RDS database",
+      "option_c": "Amazon S3 Glacier Flexible Retrieval bucket",
+      "option_d": "AWS Storage Gateway Volume Gateway",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon ElastiCache for Redis (or Memcached) provides an in-memory caching layer that offloads frequent, repetitive SQL read queries from the relational database, delivering sub-millisecond response times and drastically lowering RDS CPU usage.\n\nWhy the others are wrong:\nA: EBS snapshots are point-in-time storage backups, not active memory query caches.\nC: S3 Glacier is an archival storage class with retrieval times ranging from minutes to hours.\nD: Storage Gateway connects on-premises SAN/NAS environments to S3 block storage.\n\nExam trigger:\nOffloading repetitive read queries from relational databases to achieve sub-millisecond latency.\n\nMemory hook:\nRelational DB read caching = Amazon ElastiCache."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-171",
+      "topic_id": "topic-step-functions"
+    },
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-transit-gateway"
+    },
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-vpn"
+    },
+    {
+      "question_id": "q-saa-173",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-173",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-173",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-174",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-174",
+      "topic_id": "topic-disaster-recovery"
+    },
+    {
+      "question_id": "q-saa-175",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-176",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-176",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-177",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-177",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-178",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-178",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-178",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-179",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-179",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-179",
+      "topic_id": "topic-global-accelerator"
+    },
+    {
+      "question_id": "q-saa-180",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-180",
+      "topic_id": "topic-rds"
+    }
+  ]
+}

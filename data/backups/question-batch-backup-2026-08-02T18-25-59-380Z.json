@@ -1,0 +1,294 @@
+{
+  "createdAt": "2026-08-02T18:25:59.381Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-131",
+    "q-saa-132",
+    "q-saa-133",
+    "q-saa-134",
+    "q-saa-135",
+    "q-saa-136",
+    "q-saa-137",
+    "q-saa-138",
+    "q-saa-139",
+    "q-saa-140"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-131",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A company operates hundreds of EC2 instances in private subnets that transfer petabytes of data monthly to Amazon S3 and Amazon DynamoDB. The current network path routes through NAT Gateways, generating tens of thousands of dollars in NAT data processing charges. Which TWO actions eliminate NAT Gateway data processing charges for S3 and DynamoDB? (Select TWO.)",
+      "option_a": "Create a free VPC Gateway Endpoint for Amazon S3 and update private subnet route tables.",
+      "option_b": "Create a free VPC Gateway Endpoint for Amazon DynamoDB and update private subnet route tables.",
+      "option_c": "Replace NAT Gateways with Egress-Only Internet Gateways across all private subnets.",
+      "option_d": "Configure AWS Direct Connect Public Virtual Interfaces (Public VIFs) for all private subnet EC2 traffic.",
+      "option_e": "Enable Amazon S3 Transfer Acceleration on all company S3 buckets.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "VPC Gateway Endpoints for S3 and DynamoDB are provided free of charge by AWS and route traffic directly within the AWS network, bypassing NAT Gateways and completely eliminating NAT data processing fees for those services."
+    },
+    {
+      "id": "q-saa-132",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A database administrator manages multiple Amazon RDS MySQL DB instances attached to General Purpose SSD (gp2) EBS storage volumes. Storage volume sizes were over-provisioned purely to obtain higher baseline IOPS. Which TWO modifications reduce storage costs while maintaining or improving IOPS performance? (Select TWO.)",
+      "option_a": "Modify the RDS DB instances to use gp3 storage, which provides predictable baseline performance without gp2 capacity-based IOPS scaling.",
+      "option_b": "Enable RDS Storage Auto Scaling to start with smaller initial storage volumes and automatically scale storage as data grows.",
+      "option_c": "Migrate active database volume files to Amazon S3 Glacier Deep Archive to reduce storage billing.",
+      "option_d": "Switch DB instance classes to Dedicated Hosts to increase baseline storage throughput performance.",
+      "option_e": "Convert RDS MySQL instances to Single-AZ deployments and perform daily manual EBS volume snapshots.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Modifying RDS DB instances to gp3 storage provides predictable baseline IOPS performance at lower per-GB storage costs without needing to over-provision volume size. Enabling RDS Storage Auto Scaling allows starting with smaller initial volumes that grow dynamically as needed."
+    },
+    {
+      "id": "q-saa-133",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "multiple",
+      "question_text": "A company notices high monthly S3 storage bills caused by incomplete multipart file uploads and noncurrent object versions created by enabled bucket versioning. Which TWO S3 Lifecycle configurations automate the cleanup of these hidden storage costs? (Select TWO.)",
+      "option_a": "Add an S3 Lifecycle rule to expire incomplete multipart uploads after a specified number of days.",
+      "option_b": "Add an S3 Lifecycle rule to transition or permanently delete noncurrent object versions after a specified number of days.",
+      "option_c": "Disable S3 Versioning permanently across all company S3 buckets to purge existing noncurrent object versions.",
+      "option_d": "Enable Amazon S3 Transfer Acceleration on all S3 buckets to automatically compress uncompleted uploads.",
+      "option_e": "Configure S3 Object Lock with MFA Delete enabled to automatically clean up noncurrent object versions.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answer:\nA. An S3 Lifecycle rule with AbortIncompleteMultipartUpload removes uploaded parts from multipart uploads that were never completed, stopping those parts from continuing to incur storage charges.\n\nB. An S3 Lifecycle rule can transition noncurrent versions to a cheaper storage class or permanently delete them after a specified time, reducing versioning-related storage costs.\n\nWhy the other options are wrong:\nC. Disabling versioning does not delete existing noncurrent versions, and permanently disabling versioning across all buckets would remove useful data-protection benefits.\n\nD. S3 Transfer Acceleration improves long-distance transfer performance. It does not compress data or clean up incomplete multipart uploads.\n\nE. S3 Object Lock and MFA Delete protect objects from deletion. They do not automatically remove noncurrent versions and could make cleanup harder.\n\nExam trigger:\n“Incomplete multipart uploads” points to AbortIncompleteMultipartUpload, while “noncurrent object versions” points to S3 Lifecycle actions for noncurrent versions.\n\nExam trap:\nDisabling versioning stops new versions from being created, but it does not remove the old noncurrent versions already consuming storage.\n\nMemory hook:\nLifecycle aborts unfinished uploads and manages old versions."
+    },
+    {
+      "id": "q-saa-134",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company runs ECS tasks using AWS Fargate. Fault-tolerant batch tasks run for several hours during unpredictable periods and can restart after interruption. A separate group of production tasks runs continuously with stable baseline usage. Which TWO purchasing strategies provide the greatest appropriate cost savings? (Select TWO.)",
+      "option_a": "Run the fault-tolerant batch tasks using Fargate Spot.",
+      "option_b": "Purchase a Compute Savings Plan covering the stable baseline Fargate usage.",
+      "option_c": "Purchase an EC2 Instance Savings Plan for the stable Fargate tasks.",
+      "option_d": "Commit to a Compute Savings Plan covering the maximum possible batch and baseline usage.",
+      "option_e": "Run all workloads using Fargate On-Demand to avoid interruption and commitment risks.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. Fargate Spot is appropriate for interruptible, fault-tolerant tasks that can restart after capacity is reclaimed.\n\nB. Compute Savings Plans apply discounted pricing to committed Fargate usage and are suitable for stable continuous workloads. Compute Savings Plans can also apply across EC2, Fargate, and Lambda usage.\n\nWhy the other options are wrong:\nC. EC2 Instance Savings Plans apply to a selected EC2 instance family in one Region. They do not cover Fargate usage.\nD. Committing to maximum unpredictable batch demand risks paying for a commitment that is frequently unused.\nE. Fargate On-Demand is appropriate when interruption is unacceptable and usage is not committed, but it does not provide the greatest savings for these two workload patterns.\n\nExam trigger:\nInterruptible Fargate batch tasks plus stable continuous Fargate usage.\n\nExam trap:\nUse Spot for flexible demand. Commit only the predictable baseline.\n\nMemory hook:\nSpot the flexible work. Save on the steady work."
+    },
+    {
+      "id": "q-saa-135",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A conglomerate operates 20 AWS accounts across different business units. The CFO wants to consolidate billing into a single invoice, combine usage across all accounts to qualify for tiered volume pricing discounts (such as S3 storage and data transfer), and centrally enforce governance policies. Which TWO features of AWS Organizations fulfill these requirements? (Select TWO.)",
+      "option_a": "Consolidated Billing to aggregate usage across member accounts for single invoicing and tiered volume pricing discounts.",
+      "option_b": "Service Control Policies (SCPs) to enforce centralized authorization guardrails across organizational units and member accounts.",
+      "option_c": "AWS Resource Access Manager (RAM) integration to share S3 storage tiers and centralize budget enforcement across accounts.",
+      "option_d": "AWS Cost Anomaly Detection enabled at the management account level to consolidate invoice line items across member accounts.",
+      "option_e": "AWS Organizations Tag Policies to aggregate S3 bucket storage usage and apply automatic volume discount pricing tiers.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Consolidated Billing in AWS Organizations combines usage across all member accounts into a single bill, allowing the organization to achieve higher tiered volume pricing discounts for S3 storage and data transfer. Service Control Policies (SCPs) define central permission guardrails to govern accounts and organizational units."
+    },
+    {
+      "id": "q-saa-136",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A security architect is designing a multi-account AWS environment for an enterprise using AWS Organizations. Security policy mandates enforcing central guardrails that prevent member account administrators from disabling CloudTrail or modifying security controls, while aggregating all audit logs into a central S3 bucket in a dedicated Log Archive account. Which TWO solutions fulfill this architecture? (Select TWO.)",
+      "option_a": "Attach a Service Control Policy (SCP) to the organization root denying cloudtrail:StopLogging and cloudtrail:DeleteTrail actions.",
+      "option_b": "Create a CloudTrail organization trail in the management account that records events for all organization accounts and delivers the logs to the centralized S3 bucket in the Log Archive account.",
+      "option_c": "Create IAM Users in each member account with full AdministratorAccess permissions to manage CloudTrail logging locally.",
+      "option_d": "Deploy AWS Transit Gateway inter-VPC peering connections between member accounts and the Log Archive account to transfer CloudTrail logs.",
+      "option_e": "Configure AWS Direct Connect Public Virtual Interfaces to route CloudTrail audit logs across member accounts.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Service Control Policies (SCPs) restrict API actions (preventing CloudTrail tampering) across member accounts, while a CloudTrail organization trail centralizes multi-account audit logging into a single S3 bucket."
+    },
+    {
+      "id": "q-saa-137",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A financial institution requires a resilient hybrid connection between its corporate data center and an AWS VPC. The primary connection must provide dedicated 10 Gbps low-latency connectivity over a private link. If the primary physical connection fails, traffic must automatically fail over to an encrypted backup tunnel over the public internet. Which TWO networking components fulfill this design? (Select TWO.)",
+      "option_a": "AWS Direct Connect Dedicated Connection with a Private Virtual Interface (Private VIF) as the primary low-latency link.",
+      "option_b": "AWS Site-to-Site VPN with IPsec encryption and BGP dynamic routing as the automated backup link over the internet.",
+      "option_c": "AWS Transit Gateway Inter-Region Peering with static route tables to route backup traffic over the AWS global backbone.",
+      "option_d": "AWS Storage Gateway Volume Gateway configured in cached mode to buffer on-premises network packets during connection outages.",
+      "option_e": "AWS Global Accelerator Anycast IP addresses associated with Transit Gateway to automatically reroute physical connection traffic.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "AWS Direct Connect Dedicated Connection with a Private VIF delivers private, high-bandwidth primary connectivity to a VPC. AWS Site-to-Site VPN with BGP dynamic routing provides an automated, IPsec-encrypted backup path over the public internet if the Direct Connect link fails."
+    },
+    {
+      "id": "q-saa-138",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A health provider must store regulatory compliance records in Amazon S3. Regulations mandate that objects must be protected against accidental deletion or overwrite, and object versions must be preserved. Furthermore, a strict WORM (Write Once Read Many) policy must prevent object deletion by any IAM user or AWS account root user for 7 years. Which TWO S3 features fulfill these compliance requirements? (Select TWO.)",
+      "option_a": "Enable S3 Versioning on the destination bucket.",
+      "option_b": "Enable S3 Object Lock and configure default Compliance Mode retention for 7 years.",
+      "option_c": "Enable Amazon S3 Transfer Acceleration on the S3 bucket to enforce secure object encryption.",
+      "option_d": "Configure an S3 Lifecycle rule to transition compliance records to S3 Standard-IA after 30 days.",
+      "option_e": "Configure Cross-Origin Resource Sharing (CORS) rules on the bucket to restrict delete requests.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answer:\nA. S3 Versioning preserves separate object versions when an object is overwritten or deleted, allowing previous versions to remain available.\n\nB. S3 Object Lock in Compliance mode provides WORM protection. A default retention period of 7 years prevents protected object versions from being deleted or overwritten, even by the AWS account root user.\n\nWhy the other options are wrong:\nC. S3 Transfer Acceleration improves long-distance data transfer performance. It does not provide encryption enforcement, version preservation, or WORM protection.\n\nD. Moving records to S3 Standard-IA may reduce storage cost, but it does not prevent deletion or overwrite.\n\nE. CORS controls which browser origins may make cross-origin requests. It does not prevent authorised users from deleting objects.\n\nExam trigger:\n“Object versions must be preserved” points to S3 Versioning, while “WORM,” “7 years,” and “root user” point to Object Lock Compliance mode.\n\nExam trap:\nVersioning alone allows recovery of deleted or overwritten objects, but it does not stop someone from permanently deleting versions.\n\nMemory hook:\nVersioning preserves versions; Compliance mode makes them undeletable."
+    },
+    {
+      "id": "q-saa-139",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A startup is building a serverless REST API that expects variable traffic with zero traffic at night. The solution must incur zero infrastructure cost when idle, scale automatically to thousands of requests per second, and persist JSON user profiles with low-latency reads and writes. Which TWO AWS serverless services should be chosen? (Select TWO.)",
+      "option_a": "Amazon API Gateway (HTTP APIs)",
+      "option_b": "Amazon DynamoDB with On-Demand Capacity Mode",
+      "option_c": "Amazon EC2 Reserved Instances",
+      "option_d": "Amazon RDS Multi-AZ PostgreSQL",
+      "option_e": "Amazon EFS File System",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "API Gateway HTTP APIs provide lightweight, low-cost serverless API endpoints that charge per request. DynamoDB On-Demand Mode scales dynamically for variable workloads with zero idle cost."
+    },
+    {
+      "id": "q-saa-140",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "An enterprise runs an Amazon Aurora MySQL database and requires cross-Region disaster recovery. The business can tolerate an RPO typically measured in seconds and an RTO measured in minutes after an unplanned outage of the primary Region. Which TWO actions or characteristics correctly implement and describe this solution? (Select TWO.)",
+      "option_a": "Create an Aurora Global Database with a secondary cluster in another Region, using low-latency asynchronous storage-based replication between Regions.",
+      "option_b": "During an unplanned outage, initiate a managed cross-Region failover to promote the chosen secondary, accepting possible seconds of data loss and recovery within minutes.",
+      "option_c": "Copy automated database snapshots to another Region and restore them after an outage to achieve an RPO of seconds and recovery within minutes.",
+      "option_d": "Create an independent cross-Region Aurora Replica outside a global database and use managed global failover to promote it during a Regional outage.",
+      "option_e": "Configure synchronous writes to both Regional clusters so every committed transaction is preserved before the secondary is promoted during an unplanned outage.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Amazon Aurora Global Database provides low-latency asynchronous storage-based replication from a primary Region to secondary Regions. During an unplanned outage, a managed cross-Region failover promotes a chosen secondary cluster to the primary role. Because replication is asynchronous, the RPO is typically non-zero and measured in seconds, while the RTO can be in the order of minutes."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-132",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-132",
+      "topic_id": "topic-storage"
+    },
+    {
+      "question_id": "q-saa-133",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-133",
+      "topic_id": "topic-storage"
+    },
+    {
+      "question_id": "q-saa-134",
+      "topic_id": "topic-cost-optimization"
+    },
+    {
+      "question_id": "q-saa-134",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-135",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-136",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-136",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-137",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-137",
+      "topic_id": "topic-vpn"
+    },
+    {
+      "question_id": "q-saa-138",
+      "topic_id": "topic-object-lock"
+    },
+    {
+      "question_id": "q-saa-138",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-139",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-139",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-139",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-140",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-140",
+      "topic_id": "topic-rds"
+    }
+  ]
+}

@@ -1,0 +1,288 @@
+{
+  "createdAt": "2026-08-02T19:09:14.998Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-181",
+    "q-saa-182",
+    "q-saa-183",
+    "q-saa-184",
+    "q-saa-185",
+    "q-saa-186",
+    "q-saa-187",
+    "q-saa-188",
+    "q-saa-189",
+    "q-saa-190"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-181",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise resource planning (ERP) application running on a Nitro-based Amazon EC2 instance requires a block storage volume that guarantees high I/O performance and consistent low latency. The workload demands 32,000 IOPS and 500 MB/s throughput continuously. The storage volume capacity requirement is 1 TiB. Which Amazon EBS volume type meets these performance requirements?",
+      "option_a": "EBS General Purpose SSD (gp3)",
+      "option_b": "EBS Provisioned IOPS SSD (io2)",
+      "option_c": "EBS General Purpose SSD (gp2)",
+      "option_d": "EBS Throughput Optimized HDD (st1)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon EBS io2 Provisioned IOPS SSD volumes attached to Nitro-based instances support up to 64,000 IOPS and 1,000 MB/s throughput per volume, meeting the continuous 32,000 IOPS requirement.\n\nWhy the others are wrong:\nA: A single EBS gp3 volume maxes out at a documented limit of 16,000 IOPS and 1,000 MB/s throughput, failing to satisfy the 32,000 IOPS demand on a single volume.\nC: EBS gp2 ties IOPS to volume size (3 IOPS per GB up to 16,000 IOPS max), making it incapable of reaching 32,000 IOPS.\nD: EBS st1 is a magnetic HDD volume type optimized for sequential throughput with a maximum limit of 500 IOPS.\n\nExam trigger:\nBlock storage performance exceeding 16,000 IOPS on a single volume.\n\nMemory hook:\nIOPS > 16,000 on single volume = EBS io2 Provisioned IOPS SSD."
+    },
+    {
+      "id": "q-saa-182",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A financial research firm runs high-performance computing (HPC) simulation jobs on a cluster of Linux EC2 instances. The simulation jobs require a POSIX-compliant distributed file system capable of delivering hundreds of gigabytes per second of throughput and sub-millisecond latencies. The dataset is currently stored in an Amazon S3 bucket. Which solution provides the highest performance access to the S3 dataset?",
+      "option_a": "Deploy Amazon FSx for Lustre linked directly to the Amazon S3 bucket.",
+      "option_b": "Mount an Amazon EFS file system configured with Bursting Throughput mode to all EC2 instances.",
+      "option_c": "Attach an Amazon EBS gp3 volume with Multi-Attach enabled across all cluster EC2 instances.",
+      "option_d": "Configure AWS Storage Gateway File Gateway to cache S3 objects locally on EC2 instance stores.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAmazon FSx for Lustre is a high-performance file system optimized for HPC, machine learning, and fast analytics workloads. It integrates natively with Amazon S3, allowing HPC clusters to process S3 datasets seamlessly with POSIX compliance, high throughput, and sub-millisecond latencies.\n\nWhy the others are wrong:\nB: Amazon EFS is optimized for general-purpose shared file storage and content management; it does not achieve the extreme hundreds-of-GB/s scale required for HPC Lustre workloads.\nC: EBS Multi-Attach is restricted to io1/io2 volumes, requires cluster-aware file systems, and cannot scale across hundreds of compute nodes natively attached to S3.\nD: Storage Gateway File Gateway is designed for hybrid on-premises SMB/NFS file caching, not massive parallel HPC compute clusters.\n\nExam trigger:\nHigh-performance compute (HPC) file system linked with Amazon S3.\n\nMemory hook:\nHPC + S3 integration = Amazon FSx for Lustre."
+    },
+    {
+      "id": "q-saa-183",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A mobile application relies on Amazon DynamoDB to serve real-time user profiles and gaming leaderboards. During peak traffic hours, hot key partition queries experience read latency spikes up to 50 milliseconds. The engineering team requires an in-memory caching solution that delivers microsecond response times for read queries without requiring complex application code rewrite or manual cache invalidation logic. Which solution should be implemented?",
+      "option_a": "Deploy an Amazon ElastiCache for Memcached cluster and write custom cache-aside logic in the application.",
+      "option_b": "Enable Amazon DynamoDB Accelerator (DAX) and update the DynamoDB client SDK endpoint in the application.",
+      "option_c": "Migrate the DynamoDB table to an Amazon Aurora PostgreSQL Global Database with Read Replicas.",
+      "option_d": "Increase the provisioned Read Capacity Units (RCUs) on the DynamoDB table by 500%.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon DynamoDB Accelerator (DAX) is a fully managed, highly available, in-memory cache specifically designed for DynamoDB. DAX delivers microsecond response times for read-heavy workloads and is API-compatible with DynamoDB, requiring only a simple SDK endpoint change without rewriting application caching logic.\n\nWhy the others are wrong:\nA: ElastiCache for Memcached requires writing custom cache-aside application logic, managing cache hydration, and handling invalidation manually.\nC: Migrating from a NoSQL key-value store (DynamoDB) to a relational database (Aurora) requires massive application refactoring and database schema migration.\nD: Increasing provisioned RCUs scales throughput capacity but does not reduce network and disk read latency from milliseconds to microseconds.\n\nExam trigger:\nMicrosecond read response times for DynamoDB without application refactoring.\n\nMemory hook:\nDynamoDB microsecond caching = DAX (DynamoDB Accelerator)."
+    },
+    {
+      "id": "q-saa-184",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "An IoT platform ingests real-time telemetry data from 50,000 smart building sensors publishing 10,000 metrics per second. The ingestion pipeline uses Amazon Kinesis Data Streams. During peak morning hours, sensor data streams suffer from throttling errors (ProvisionedThroughputExceededException). Additionally, multiple downstream analytics applications (Real-time Alerting, Data Warehouse Loading, and Machine Learning) must process the stream concurrently without impacting each other's processing latency. Which combination of actions resolves the scaling and latency bottlenecks? (Select TWO.)",
+      "option_a": "Increase the number of shards in the Kinesis Data Stream or enable Kinesis On-Demand capacity mode.",
+      "option_b": "Configure the Kinesis consumers to use Enhanced Fan-Out with dedicated HTTP/2 throughput pipes.",
+      "option_c": "Migrate Kinesis Data Streams to an Amazon SQS Standard queue with maximum visibility timeout.",
+      "option_d": "Replace Kinesis Data Streams with an AWS Glue ETL batch job scheduled to run every 15 minutes.",
+      "option_e": "Configure an Application Load Balancer to distribute telemetry packets across Kinesis consumer instances.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\n1. ProvisionedThroughputExceededException indicates shard capacity saturation (1 MB/s or 1,000 records/s per shard write limit). Adding shards or switching to On-Demand capacity mode dynamically handles stream traffic spikes.\n2. Enhanced Fan-Out provides dedicated 2 MB/s read throughput per shard for each registered consumer using HTTP/2, eliminating consumer contention and reducing latency.\n\nWhy the others are wrong:\nC: SQS queues do not support multi-consumer stream replay with partition key ordering in the same manner as Kinesis Data Streams.\nD: AWS Glue batch jobs every 15 minutes destroy real-time alert SLAs.\nE: ALBs cannot distribute internal packet streams between Kinesis Data Streams and consumers.\n\nExam trigger:\nKinesis streaming throttling and multi-consumer latency resolution.\n\nMemory hook:\nKinesis stream capacity = Add Shards / On-Demand; Multi-consumer latency = Enhanced Fan-Out."
+    },
+    {
+      "id": "q-saa-185",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A web application hosted on an Auto Scaling group of EC2 instances uses an Amazon Elastic File System (EFS) file system to share dynamic assets across instances. The workload undergoes short, intense bursts of high read/write I/O activity followed by extended periods of low inactivity. During activity bursts, application response times slow significantly because the EFS file system exhausts its accumulated Burst Credits. Which EFS throughput configuration resolves this performance degradation MOST cost-effectively?",
+      "option_a": "Configure the Amazon EFS file system to use Elastic Throughput mode.",
+      "option_b": "Configure the Amazon EFS file system to use Provisioned Throughput mode set to 10 GiB/s constantly.",
+      "option_c": "Migrate the shared assets from Amazon EFS to an Amazon S3 Standard bucket and use S3 Glacier Flexible Retrieval.",
+      "option_d": "Attach an Amazon EBS gp3 volume to one EC2 instance and share it via NFS across all instances.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAmazon EFS Elastic Throughput mode is explicitly designed for spiky, unpredictable workloads. It automatically scales throughput capacity on demand to match workload activity and charges only for the actual read/write data throughput consumed, eliminating credit exhaustion issues.\n\nWhy the others are wrong:\nB: Provisioned Throughput mode requires paying for fixed high throughput 24/7, incurring massive unneeded costs during extended inactive periods.\nC: S3 Glacier is an offline archive storage class with long retrieval delays; it cannot serve web assets to EFS applications.\nD: Managing custom NFS file servers on single EBS volumes creates single points of failure, lacks high availability, and degrades under concurrent Auto Scaling access.\n\nExam trigger:\nEFS burst credit exhaustion on unpredictable or spiky file access workloads.\n\nMemory hook:\nSpiky EFS throughput = Elastic Throughput Mode."
+    },
+    {
+      "id": "q-saa-186",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An e-commerce company manages a catalog of 10 million products stored in an Amazon DynamoDB table. Users require advanced full-text fuzzy search capabilities, faceted filtering by category, and autocomplete search suggestions on the product website. DynamoDB native query operations cannot fulfill these complex search requirements efficiently. Which architecture provides high-performing search capabilities with real-time data synchronization?",
+      "option_a": "Enable Amazon DynamoDB Streams, and invoke an AWS Lambda function to index table updates asynchronously into an Amazon OpenSearch Service cluster.",
+      "option_b": "Configure an AWS Glue crawler to run every 5 minutes to extract DynamoDB data into an Amazon Athena data lake.",
+      "option_c": "Migrate the product catalog from DynamoDB to an Amazon ElastiCache for Redis cluster with AOF persistence.",
+      "option_d": "Export DynamoDB data daily to Amazon S3, and query the dataset using Amazon Redshift Spectrum.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAmazon OpenSearch Service specializes in full-text search, fuzzy matching, and faceted filtering. Coupling DynamoDB Streams with AWS Lambda enables continuous, event-driven indexing of item inserts/updates into OpenSearch with near-zero delay.\n\nWhy the others are wrong:\nB: Amazon Athena is an interactive SQL analytics tool for S3 data lakes, not a low-latency full-text web search engine.\nC: ElastiCache for Redis supports key-value caching, but lacks native full-text inverted indexing and rich fuzzy search capabilities provided by OpenSearch.\nD: Amazon Redshift Spectrum performs complex OLAP data warehouse queries over S3 data, which is far too slow for real-time web UI search suggestions.\n\nExam trigger:\nFull-text fuzzy search engine integrated with DynamoDB.\n\nMemory hook:\nDynamoDB full-text search = DynamoDB Streams -> Lambda -> Amazon OpenSearch Service."
+    },
+    {
+      "id": "q-saa-187",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A serverless REST API built using Amazon API Gateway and AWS Lambda experiences execution delays during daily traffic bursts. Analysis indicates two distinct bottlenecks:\n1. Lambda function cold-start initialization delays when scaling up instances.\n2. Relational database connection pool exhaustion on the backend Amazon RDS for MySQL database caused by thousands of concurrent Lambda executions creating individual connections.\n\nWhich combination of architectural updates resolves both latency bottlenecks?",
+      "option_a": "Increase the AWS Lambda memory allocation to 10,240 MB, and configure RDS Read Replicas in multiple Availability Zones.",
+      "option_b": "Configure AWS Lambda Provisioned Concurrency for the function, and deploy an Amazon RDS Proxy between Lambda and the RDS database.",
+      "option_c": "Migrate the REST API from Amazon API Gateway to an Application Load Balancer, and convert the RDS database to Single-AZ.",
+      "option_d": "Deploy an Amazon ElastiCache cluster in front of API Gateway, and enable HTTP keep-alive header modifications.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\n1. Lambda Provisioned Concurrency initializes requested execution environments in advance, eliminating cold-start latency during sudden traffic bursts.\n2. Amazon RDS Proxy pools and shares database connections efficiently, preventing thousands of concurrent serverless Lambda functions from exhausting database connection limits.\n\nWhy the others are wrong:\nA: Increasing Lambda memory scales CPU linearly but does not eliminate cold-start execution delays or prevent RDS connection exhaustion.\nC: Replacing API Gateway with ALB does not eliminate Lambda cold starts or resolve RDS connection limits.\nD: ElastiCache cannot be placed in front of API Gateway endpoints directly to solve Lambda execution cold starts or database pooling.\n\nExam trigger:\nLambda cold starts + RDS database connection pool exhaustion.\n\nMemory hook:\nLambda cold starts = Provisioned Concurrency; Lambda to RDS pooling = RDS Proxy."
+    },
+    {
+      "id": "q-saa-188",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A microservices application runs containerized workloads on Amazon ECS powered by AWS Fargate behind an Application Load Balancer. The operational team needs to implement task scaling that adjusts container task counts dynamically based on incoming traffic load, and collect granular container memory and CPU utilization metrics across tasks. Which combination of components should be configured? (Select TWO.)",
+      "option_a": "Enable Amazon CloudWatch Container Insights on the Amazon ECS cluster to collect granular container metrics.",
+      "option_b": "Configure ECS Service Auto Scaling with a Target Tracking policy based on the predefined ALBRequestCountPerTarget metric.",
+      "option_c": "Set up a Step Scaling policy triggered by an EC2 CPUReservation CloudWatch alarm.",
+      "option_d": "Configure AWS App Mesh to automatically deploy new Fargate tasks via sidecar proxies.",
+      "option_e": "Deploy an AWS Systems Manager Agent inside the Fargate task definition container image.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\n1. CloudWatch Container Insights provides deep, granular metric collection (CPU, memory, disk, network) across Amazon ECS clusters and Fargate tasks.\n2. ECS Service Auto Scaling with Target Tracking policies dynamically scales task count based on predefined ALB metrics like ALBRequestCountPerTarget to handle incoming traffic load.\n\nWhy the others are wrong:\nC: CPUReservation is an EC2-backed ECS cluster metric; Fargate manages underlying infrastructure capacity seamlessly without EC2 instances.\nD: AWS App Mesh provides service mesh traffic routing and observability; it does not execute ECS task auto-scaling.\nE: Fargate is a serverless container engine where underlying host OS access is managed by AWS; SSM Agent inside containers is unnecessary for container metric autoscaling.\n\nExam trigger:\nContainer metric observability and Fargate service target tracking auto-scaling.\n\nMemory hook:\nContainer metrics = CloudWatch Container Insights; Fargate scaling = ECS Target Tracking on ALBRequestCountPerTarget."
+    },
+    {
+      "id": "q-saa-189",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A financial company is migrating a legacy enterprise file application to AWS. The application requires concurrent multi-protocol file access (both NFSv3/NFSv4 and SMB protocols) to the same shared file system, sub-millisecond latencies, and enterprise data management features such as block-level deduplication, compression, and thin provisioning. Which storage solution fulfills all these requirements?",
+      "option_a": "Amazon Elastic File System (EFS) Provisioned Throughput",
+      "option_b": "Amazon FSx for Windows File Server",
+      "option_c": "Amazon FSx for NetApp ONTAP",
+      "option_d": "Amazon S3 Glacier Instant Retrieval",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct:\nAmazon FSx for NetApp ONTAP is the only AWS file storage service that natively supports concurrent multi-protocol access (NFS, SMB, and iSCSI) to the exact same data volumes, along with NetApp ONTAP features like inline deduplication, compression, compaction, and sub-millisecond latencies.\n\nWhy the others are wrong:\nA: Amazon EFS supports Linux NFS protocols only; it does not support native Windows SMB protocol access.\nB: FSx for Windows File Server supports Windows SMB file access; it does not support concurrent NFS access to the same storage volume.\nD: S3 Glacier Instant Retrieval is an object storage class for long-term archives, not a low-latency shared NFS/SMB file system.\n\nExam trigger:\nConcurrent dual NFS and SMB file protocol access with block deduplication.\n\nMemory hook:\nDual NFS + SMB access = Amazon FSx for NetApp ONTAP."
+    },
+    {
+      "id": "q-saa-190",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company is building a serverless API in multiple AWS Regions. API processing must remain available during a regional disruption, popular GET responses must be cached at edge locations, and database writes must continue in multiple Regions without requiring database failover. Which THREE components meet these requirements? (Select THREE.)",
+      "option_a": "Place a CloudFront distribution in front of the API endpoints and configure caching for suitable GET responses.",
+      "option_b": "Deploy Regional API Gateway APIs with Lambda integrations in multiple Regions.",
+      "option_c": "Use DynamoDB Global Tables for active-active multi-Region database reads and writes.",
+      "option_d": "Use one API Gateway edge-optimised endpoint and one Lambda deployment in a single Region.",
+      "option_e": "Use an Aurora Global Database with one writer Region and read-only secondary Regions.",
+      "option_f": "Use Route 53 latency-based routing directly to the Regional API Gateway endpoints without CloudFront.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct answers:\nA, B, and C.\n\nA. CloudFront provides global edge delivery and can cache suitable API responses.\n\nB. Regional API Gateway endpoints with Lambda provide serverless API processing in each selected Region.\n\nC. DynamoDB Global Tables provide active-active multi-Region reads and writes, allowing applications to continue using another replica Region during a regional disruption.\n\nWhy the other options are wrong:\nD. An edge-optimised endpoint can improve global entry latency, but a single Regional backend remains vulnerable to a regional outage.\nE. Aurora Global Database has a primary writer Region and secondary Regions. It does not provide the same active-active multi-Region writing model as DynamoDB Global Tables.\nF. Route 53 latency routing can direct users toward Regional endpoints, but it does not provide the required CloudFront edge response cache.\n\nExam trigger:\nMulti-Region serverless compute, edge caching, and active-active database writes.\n\nExam trap:\nRoute 53 selects endpoints. CloudFront caches responses. DynamoDB Global Tables provide active-active data.\n\nMemory hook:\nGlobal serverless API means CloudFront, Regional APIs, Lambda, and Global Tables."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-181",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-181",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-182",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-182",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-183",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-184",
+      "topic_id": "topic-kinesis"
+    },
+    {
+      "question_id": "q-saa-185",
+      "topic_id": "topic-efs"
+    },
+    {
+      "question_id": "q-saa-186",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-186",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-186",
+      "topic_id": "topic-opensearch"
+    },
+    {
+      "question_id": "q-saa-187",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-187",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-187",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-188",
+      "topic_id": "topic-cloudwatch"
+    },
+    {
+      "question_id": "q-saa-188",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-188",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-189",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-190",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-190",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-190",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-190",
+      "topic_id": "topic-lambda"
+    }
+  ]
+}

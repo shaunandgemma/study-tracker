@@ -1,0 +1,317 @@
+{
+  "createdAt": "2026-08-02T18:52:06.150Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-151",
+    "q-saa-152",
+    "q-saa-153",
+    "q-saa-154",
+    "q-saa-155",
+    "q-saa-156",
+    "q-saa-157",
+    "q-saa-158",
+    "q-saa-159",
+    "q-saa-160"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-151",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An enterprise company uses AWS Organizations to manage a multi-account environment. The security team requires that account administrators in member accounts are prevented from turning off AWS CloudTrail logging, deleting AWS Config rules, or detaching security guardrail IAM policies from roles. The solution must ensure that local account administrators, including root users, cannot bypass these restrictions. Which solution meets these requirements with the LEAST operational overhead?",
+      "option_a": "Attach an IAM permissions boundary to all IAM roles in every member account that explicitly denies cloudtrail:StopLogging, config:DeleteConfigRule, and iam:DetachRolePolicy.",
+      "option_b": "Apply a Service Control Policy (SCP) at the Organization root or Organizational Unit (OU) level that explicitly denies cloudtrail:StopLogging, config:DeleteConfigRule, and iam:DetachRolePolicy.",
+      "option_c": "Deploy AWS Config rules in all member accounts to detect unauthorized policy detachments and automatically re-attach policies using an AWS Systems Manager Automation runbook.",
+      "option_d": "Use AWS CloudFormation StackSets to deploy local IAM admin groups in each member account with an explicit DENY for CloudTrail, AWS Config, and IAM policy modification actions.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nService Control Policies (SCPs) define the maximum permissions for accounts in an AWS Organization. An SCP with an explicit DENY on actions such as cloudtrail:StopLogging, config:DeleteConfigRule, and iam:DetachRolePolicy restricts all IAM principals in member accounts, including account root users and local administrators with AdministratorAccess, preventing them from overriding central guardrails with minimal operational overhead.\n\nWhy the others are wrong:\nA: Local account administrators possess permissions to detach or delete IAM permissions boundaries from roles within their own account, making permissions boundaries bypassable by account admins.\nC: AWS Config rules with automated remediation are reactive, leaving a temporary window of non-compliance where security controls are disabled before remediation completes.\nD: Local account administrators can modify or delete IAM groups, roles, and policies deployed locally by CloudFormation StackSets.\n\nExam trigger:\nPrevent local account administrators from bypassing organization-wide security guardrails.\n\nMemory hook:\nSCPs establish guardrails that local account administrators cannot override."
+    },
+    {
+      "id": "q-saa-152",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company stores reporting files in an Amazon S3 bucket in Account A. The files are encrypted at rest using an AWS Key Management Service (AWS KMS) Customer Managed Key (CMK). Analytics application servers running in Account B must be granted permissions to download and decrypt these S3 objects. Which combination of permission configurations is required to grant cross-account access?",
+      "option_a": "Update the S3 bucket policy in Account A to allow Account B access, and attach an IAM policy to the role in Account B allowing kms:Decrypt on the KMS key ARN.",
+      "option_b": "Update the AWS-managed KMS key policy in Account A to allow Account B, and attach an S3 read policy to the role in Account B.",
+      "option_c": "Update the S3 bucket policy in Account A and the KMS key policy in Account A to grant access to Account B, AND attach an IAM policy to the role in Account B granting s3:GetObject and kms:Decrypt permissions.",
+      "option_d": "Use AWS STS in Account A to issue cross-account root credentials directly to the EC2 instances in Account B.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct:\nCross-account access to KMS-encrypted S3 objects requires permission at three distinct levels:\n1. S3 bucket policy in Account A must grant s3:GetObject to Account B.\n2. KMS CMK key policy in Account A must delegate kms:Decrypt rights to Account B.\n3. IAM policy attached to the principal in Account B must explicitly permit s3:GetObject on the bucket and kms:Decrypt on the CMK ARN.\n\nWhy the others are wrong:\nA: Missing the KMS key policy update in Account A; without delegating KMS permissions in the key policy, Account B cannot decrypt objects regardless of IAM permissions.\nB: S3 encryption uses Customer Managed Keys for cross-account sharing; AWS-managed KMS keys (aws/s3) cannot be shared across accounts.\nD: STS root credential issuance across accounts violates AWS security best practices and IAM principal delegation models.\n\nExam trigger:\nCross-account S3 access with KMS CMK encryption.\n\nMemory hook:\nCross-account KMS + S3 = Bucket policy + Key policy in owner account + IAM policy in accessor account."
+    },
+    {
+      "id": "q-saa-153",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company operates a public-facing e-commerce application behind an Application Load Balancer (ALB). During peak promotional events, the web application experiences HTTP flood attacks (Layer 7 DDoS) and malicious SQL injection attempts aimed at compromising the database. A solutions architect must implement a solution that automatically inspects web requests, blocks known web application exploits, and limits request rates per client IP address. Which solution meets these requirements with the LEAST management overhead?",
+      "option_a": "Associate AWS WAF with the Application Load Balancer, and configure AWS Managed Rules for SQL database protection along with a rate-based rule statement.",
+      "option_b": "Enable AWS Shield Advanced on the Application Load Balancer and write custom Lambda@Edge code to inspect incoming POST body parameters.",
+      "option_c": "Deploy Amazon GuardDuty and configure an automated Systems Manager Automation document to block attacking IP addresses in the subnet Network ACL.",
+      "option_d": "Configure security group rules on the Application Load Balancer to drop incoming HTTP connections that exceed 100 requests per minute.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAWS WAF integrates directly with Application Load Balancers. AWS Managed Rules can block common web exploits such as SQL injection, and a rate-based rule can track and limit excessive requests from individual client IP addresses with minimal management overhead.\n\nWhy the others are wrong:\nB: AWS Shield Advanced can provide advanced network-layer and application-layer DDoS protection for protected resources, including CloudFront distributions and Application Load Balancers. However, AWS WAF already provides the required managed SQL injection inspection and native rate-based controls. Lambda@Edge cannot be attached directly to an ALB, and custom inspection code adds unnecessary operational overhead.\nC: GuardDuty is a threat-detection service. Reactive NACL changes are not the native low-overhead method for inspecting and blocking HTTP request payloads.\nD: Security groups cannot inspect HTTP request content or enforce per-client HTTP request rates.\n\nExam trigger:\nLayer 7 web application defence against SQL injection and HTTP request floods.\n\nMemory hook:\nAWS WAF inspects web requests; managed rules block exploits; rate-based rules limit floods."
+    },
+    {
+      "id": "q-saa-154",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "An enterprise application runs on Amazon EC2 instances in a VPC. The security team needs an automated detection and response system to identify compromised EC2 instances communicating with known malicious command-and-control IP addresses and immediately isolate the compromised instances from the network. Which combination of AWS services and actions will meet these requirements with the LEAST latency? (Select TWO.)",
+      "option_a": "Configure AWS Systems Manager Patch Manager to perform hourly scans on all EC2 instances for malware.",
+      "option_b": "Enable Amazon GuardDuty to continuously monitor VPC Flow Logs and DNS logs for unauthorized or malicious activity.",
+      "option_c": "Create an Amazon CloudWatch Logs metric filter that scans EC2 operating system syslog files every 24 hours.",
+      "option_d": "Configure an Amazon EventBridge rule that triggers an AWS Lambda function upon receiving GuardDuty findings to replace the instance's Security Group with an isolated quarantine Security Group.",
+      "option_e": "Configure an AWS Config rule that triggers an AWS Systems Manager Automation document to terminate the EC2 instance immediately.",
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1,
+        3
+      ],
+      "explanation": "Correct:\n1. Amazon GuardDuty uses intelligent threat detection to continuously analyze VPC Flow Logs, DNS logs, and CloudTrail events to identify C2 communication or compromised instances.\n2. Amazon EventBridge captures GuardDuty finding events instantly and invokes an AWS Lambda function to execute automated network isolation by replacing the instance's Security Groups with a restrictive quarantine group.\n\nWhy the others are wrong:\nA: SSM Patch Manager scans for missing software updates, not runtime malicious network communications.\nC: CloudWatch log filters on OS syslog files introduce parsing overhead, delay detection, and fail to detect network-level C2 traffic if syslog is disabled.\nE: Immediately terminating instances destroys volatile memory evidence needed for security forensics; isolating via Security Groups is the recommended initial response.\n\nExam trigger:\nAutomated threat detection and immediate isolation of compromised EC2 instances.\n\nMemory hook:\nGuardDuty finding -> EventBridge rule -> Lambda quarantine function."
+    },
+    {
+      "id": "q-saa-155",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An organization must securely store sensitive database credentials used by an application running on Amazon EC2 instances. The credentials must be encrypted at rest, automatically rotated every 30 days without application downtime, and access must be audited via AWS CloudTrail. Which AWS service should be used to meet these requirements with the LEAST operational overhead?",
+      "option_a": "Store the credentials in an Amazon S3 bucket with Server-Side Encryption with AWS KMS (SSE-KMS) and invoke an AWS Lambda function daily via Amazon EventBridge to update credentials.",
+      "option_b": "Store the credentials in AWS Secrets Manager and enable automatic rotation using a built-in AWS Lambda template.",
+      "option_c": "Store the credentials as encrypted SecureString parameters in AWS Systems Manager Parameter Store and write a custom application script on EC2 to rotate keys.",
+      "option_d": "Encrypt credentials using an AWS KMS Customer Managed Key (CMK) and embed the encrypted ciphertext directly in the application configuration code.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAWS Secrets Manager is natively designed for storing, managing, and automatically rotating database credentials. It integrates directly with Amazon RDS, Aurora, and custom databases using pre-built Lambda templates for automated rotation, while providing built-in KMS encryption and CloudTrail auditing.\n\nWhy the others are wrong:\nA: S3 requires building custom rotation and key-handling logic from scratch, creating high operational overhead.\nC: SSM Parameter Store supports SecureString storage, but native automated rotation requires custom automation scripts; Secrets Manager offers out-of-the-box rotation for database credentials.\nD: Hardcoding encrypted ciphertext in application code prevents seamless automated rotation without re-deploying application builds.\n\nExam trigger:\nSecrets management with built-in automated key rotation for database credentials.\n\nMemory hook:\nDatabase password rotation = AWS Secrets Manager."
+    },
+    {
+      "id": "q-saa-156",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company is deploying a two-tier web application on AWS. The web servers are located in a public subnet, and the database servers are in a private subnet. The solutions architect must ensure that the database instances accept incoming traffic ONLY on TCP port 5432 from the web servers and block all other incoming connections. Which configuration meets this requirement at the instance level with stateful traffic filtering?",
+      "option_a": "Configure a Security Group for the database instances that permits inbound TCP port 5432 with the web servers' Security Group ID as the source.",
+      "option_b": "Configure a Network ACL for the database subnet with an inbound ALLOW rule on TCP port 5432 from the public subnet CIDR and an outbound DENY rule.",
+      "option_c": "Configure an AWS WAF Web ACL attached to the private subnet to inspect traffic targeting TCP port 5432.",
+      "option_d": "Configure an Application Load Balancer in the private subnet with an HTTP listener on port 5432 pointing to the database instances.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSecurity groups operate at the instance level and are stateful. Referencing another Security Group ID as the source in an inbound rule guarantees that only instances attached to that specific web security group can connect on TCP port 5432, maintaining least-privilege security.\n\nWhy the others are wrong:\nB: Network ACLs operate at the subnet boundary, are stateless (requiring return traffic rules), and cannot reference Security Group IDs as sources.\nC: AWS WAF inspects HTTP/HTTPS application-layer traffic on CloudFront, ALB, or API Gateway; it cannot filter raw database connections at the subnet or ENI level.\nD: Application Load Balancers operate at Layer 7 (HTTP/HTTPS) and do not forward native PostgreSQL TCP connections to databases.\n\nExam trigger:\nStateful instance-level security rule referencing another tier's Security Group.\n\nMemory hook:\nSecurity Groups = Stateful, ENI-level, supports SG chaining; NACLs = Stateless, Subnet-level."
+    },
+    {
+      "id": "q-saa-157",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A fleet of Amazon EC2 instances running in private subnets processes large batches of data daily and uploads the output to Amazon S3. The current architecture routes traffic through NAT Gateways, resulting in high monthly data transfer charges. A solutions architect must modify the network design to enable private connectivity to S3 and eliminate NAT Gateway data processing charges for S3 traffic without exposing instances to the public internet. Which solution achieves this goal with the LEAST operational overhead?",
+      "option_a": "Create a Gateway Endpoint Service in AWS PrivateLink and attach it to the EC2 instances' Elastic Network Interfaces (ENIs).",
+      "option_b": "Create a Gateway VPC Endpoint for Amazon S3 in the VPC, and attach it to the route tables of the private subnets.",
+      "option_c": "Deploy an AWS Site-to-Site VPN connection between the private subnets and Amazon S3 public endpoints.",
+      "option_d": "Configure an Interface VPC Endpoint for Amazon S3 in each private subnet, and set up a custom BGP route.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nGateway VPC Endpoints for S3 (and DynamoDB) provide direct private network connectivity from VPC subnets to S3 without using NAT Gateways, internet gateways, or public IP addresses. Gateway Endpoints are free of charge and require only updating subnet route tables.\n\nWhy the others are wrong:\nA: Gateway Endpoint Service is not an AWS PrivateLink deployment mode; PrivateLink uses Interface VPC Endpoints.\nC: Site-to-Site VPN is designed for connecting on-premises networks to AWS VPCs, not for intra-AWS subnet to S3 communication.\nD: While Interface Endpoints for S3 exist (PrivateLink), they incur hourly and data processing charges per GB; Gateway VPC Endpoints are completely free and require lower maintenance for standard in-VPC S3 traffic.\n\nExam trigger:\nEliminate NAT Gateway costs for high-volume S3 or DynamoDB traffic from private subnets.\n\nMemory hook:\nGateway VPC Endpoint = FREE direct route for S3 & DynamoDB."
+    },
+    {
+      "id": "q-saa-158",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A Software-as-a-Service (SaaS) vendor hosts a centralized data processing service in a provider VPC. Multiple corporate customers need to connect their client VPCs to the SaaS provider service. Some customer VPCs have overlapping IPv4 CIDR blocks with the provider VPC. The connection must be secure, strictly unidirectionally initiated from the customer VPCs, and must not route over the public internet. Which architecture satisfies these requirements?",
+      "option_a": "Establish VPC Peering connections between each customer VPC and the provider VPC, and configure policy-based routing tables.",
+      "option_b": "Create an AWS PrivateLink endpoint service in the provider VPC backed by a Network Load Balancer (NLB), and instruct customers to create Interface VPC Endpoints in their VPCs.",
+      "option_c": "Deploy an AWS Transit Gateway in the provider account and create VPC attachments to all customer VPCs across AWS accounts.",
+      "option_d": "Set up an AWS Site-to-Site VPN between each customer VPC and an Internet Gateway attached to the provider VPC.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAWS PrivateLink uses Network Load Balancers (NLBs) and Interface VPC Endpoints to expose services privately across VPCs and AWS accounts. Because PrivateLink routes traffic using local Elastic Network Interfaces (ENIs) inside the consumer VPC, overlapping IP CIDR blocks do not conflict.\n\nWhy the others are wrong:\nA: VPC Peering strictly prohibits overlapping IP address ranges between peered VPCs.\nC: AWS Transit Gateway routing fails when VPC attachments share overlapping CIDR ranges because IP routing ambiguity occurs.\nD: Site-to-Site VPN over the internet requires non-overlapping CIDRs for IPsec routing and introduces operational overhead.\n\nExam trigger:\nPrivate cross-VPC service access with overlapping IP CIDR blocks.\n\nMemory hook:\nOverlapping VPC CIDRs + private service access = AWS PrivateLink."
+    },
+    {
+      "id": "q-saa-159",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A mobile fitness application allows users to authenticate using external social identity providers (Google and Apple) and directly upload workout video recordings to user-specific folders in an Amazon S3 bucket. The application must grant authenticated users temporary, least-privilege access credentials to upload files directly to S3 without passing credentials through application backend servers. Which AWS solution should be used?",
+      "option_a": "Create an IAM user for each registered mobile user, and generate permanent IAM access keys upon user login.",
+      "option_b": "Use an Amazon Cognito User Pool to authenticate users, and configure Amazon Cognito Identity Pools (Federated Identities) to exchange identity tokens for temporary AWS IAM credentials.",
+      "option_c": "Store an AWS KMS Customer Managed Key in the mobile app bundle and encrypt video files before uploading via a public API Gateway endpoint.",
+      "option_d": "Store a shared IAM role's secret access key in the mobile client application binary to call S3 PutObject directly.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon Cognito Identity Pools enable federated authentication with external identity providers (Google, Apple, Cognito User Pools). Upon successful authentication, Identity Pools vend temporary, constrained AWS IAM credentials directly to the client application to perform authorized S3 actions.\n\nWhy the others are wrong:\nA: Creating permanent IAM users for end users scales poorly, violates security best practices, and hits IAM service quotas.\nC: Storing KMS keys or secrets in mobile application code leads to credential leakage through app decompilation.\nD: Hardcoding shared IAM credentials in client binaries allows users to extract root/role secrets and gain unauthorized access.\n\nExam trigger:\nMobile application federated login granting temporary IAM access to S3.\n\nMemory hook:\nCognito User Pools = Authentication (user directory); Cognito Identity Pools = Authorization (IAM credentials)."
+    },
+    {
+      "id": "q-saa-160",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A healthcare provider must comply with strict data sovereignty mandates requiring that no AWS infrastructure resources (e.g., EC2, RDS, S3) can be provisioned outside the us-east-1 and us-west-2 regions across all current and future accounts in the company's AWS Organization. The enforcement must be absolute, preventive, and operationalized automatically whenever new AWS accounts are joined to the Organization. Which solution fulfills this requirement with the LEAST administrative overhead?",
+      "option_a": "Apply an AWS Organizations Service Control Policy (SCP) at the Organization root that denies all requests (*) with a condition restricting aws:RequestedRegion to NOT equal us-east-1 or us-west-2 (excluding exempt global services).",
+      "option_b": "Deploy an AWS CloudFormation StackSet that provisions IAM policies denying non-us regions in every member account.",
+      "option_c": "Configure AWS Config rules in each account to monitor resource creation events and automatically trigger Lambda functions to delete non-compliant resources.",
+      "option_d": "Use AWS Trusted Advisor regional checks to send daily email reports to the security team highlighting non-compliant regions.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nService Control Policies (SCPs) configured with an explicit DENY on aws:RequestedRegion (exempting global services such as CloudFront, IAM, Route 53, and STS) automatically apply preventive guardrails across all existing and newly created member accounts in an AWS Organization without requiring per-account deployment scripts.\n\nWhy the others are wrong:\nB: StackSet-deployed IAM policies can be detached or overridden by local account administrators in member accounts.\nC: AWS Config auto-remediation is detective and reactive; resources are created briefly in prohibited regions before deletion occurs, violating strict compliance mandates.\nD: Trusted Advisor provides detective notification reports only and cannot prevent resource creation in unauthorized regions.\n\nExam trigger:\nPrevent resource creation outside approved AWS Regions across an entire Organization.\n\nMemory hook:\nRegion restriction guardrails = SCP with aws:RequestedRegion condition."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-151",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-151",
+      "topic_id": "topic-config"
+    },
+    {
+      "question_id": "q-saa-151",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-151",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-153",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-153",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-154",
+      "topic_id": "topic-eventbridge"
+    },
+    {
+      "question_id": "q-saa-154",
+      "topic_id": "topic-guardduty"
+    },
+    {
+      "question_id": "q-saa-154",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-154",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-155",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-155",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-155",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-156",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-156",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-157",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-157",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-157",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-157",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-158",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-158",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-158",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-159",
+      "topic_id": "topic-cognito"
+    },
+    {
+      "question_id": "q-saa-159",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-159",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-160",
+      "topic_id": "topic-organizations"
+    }
+  ]
+}

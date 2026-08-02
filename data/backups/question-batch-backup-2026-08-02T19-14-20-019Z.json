@@ -1,0 +1,299 @@
+{
+  "createdAt": "2026-08-02T19:14:20.020Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-191",
+    "q-saa-192",
+    "q-saa-193",
+    "q-saa-194",
+    "q-saa-195",
+    "q-saa-196",
+    "q-saa-197",
+    "q-saa-198",
+    "q-saa-199",
+    "q-saa-200"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-191",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "An e-commerce company operates an application on AWS with three distinct workload profiles:\n1. Core API services running on AWS Fargate that maintain a predictable, steady-state baseline usage 24/7.\n2. An Amazon Aurora PostgreSQL database that experiences low baseline traffic at night but sharp, unpredictable scaling spikes during daily flash sales.\n3. Independent, fault-tolerant asynchronous image processing tasks running on containerized workers that can tolerate task interruptions and retries.\n\nA solutions architect needs to reduce infrastructure costs across all three workloads without compromising core application availability or performance. Which combination of actions will deliver the MOST cost-effective architecture? (Select THREE.)",
+      "option_a": "Purchase Compute Savings Plans to cover the predictable baseline Fargate compute usage.",
+      "option_b": "Migrate the Amazon Aurora PostgreSQL database to Aurora Serverless v2 to scale database capacity dynamically between an appropriate minimum and maximum ACU range based on real-time demand.",
+      "option_c": "Deploy the fault-tolerant asynchronous image processing container workers on AWS Fargate Spot.",
+      "option_d": "Purchase EC2 Instance Savings Plans specifically applied to AWS Fargate tasks across all regions.",
+      "option_e": "Configure the Aurora PostgreSQL database auto-scaling to set minimum capacity to 0 ACUs so it automatically pauses during night hours.",
+      "option_f": "Migrate the core API services to single-AZ EC2 Spot Instances managed by an Auto Scaling group.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\n1. Compute Savings Plans provide up to 66% savings over On-Demand pricing for steady-state Fargate usage.\n2. Aurora Serverless v2 scales CPU and memory capacity instantly in fine-grained increments (ACUs) to handle unpredictable traffic spikes cost-effectively without over-provisioning baseline capacity.\n3. Fargate Spot offers up to 70% discounts for interruptible, fault-tolerant batch/worker tasks.\n\nWhy the others are wrong:\nD: EC2 Instance Savings Plans apply only to specific EC2 instance families within a specific region; Compute Savings Plans are required to cover Fargate usage across regions.\nE: Configure an appropriate minimum ACU value based on the supported Aurora engine version, continuing connection activity, performance requirements, and acceptable resume latency. Because the scenario has continuing low-level traffic rather than complete inactivity, automatic pause at 0 ACUs cannot be assumed.\nF: Running core API services on single-AZ EC2 Spot instances introduces severe availability risks from single points of failure and Spot interruptions.\n\nExam trigger:\nCost optimizing steady-state containers, spiky relational databases, and fault-tolerant background tasks.\n\nMemory hook:\nFargate baseline = Compute Savings Plan; Spiky DB with baseline traffic = Aurora Serverless v2 (min capacity > 0); Interruptible tasks = Fargate Spot."
+    },
+    {
+      "id": "q-saa-192",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company stores millions of data files in an Amazon S3 bucket. Access patterns for these files are unpredictable; some files are accessed frequently during the first week after creation and then never accessed again, while others are accessed randomly months later. A solutions architect needs to optimize S3 storage costs automatically without operational overhead or retrieval performance penalties when accessing data. Which S3 storage class should be selected?",
+      "option_a": "Amazon S3 Standard-Infrequent Access (S3 Standard-IA)",
+      "option_b": "Amazon S3 Intelligent-Tiering",
+      "option_c": "Amazon S3 Glacier Flexible Retrieval",
+      "option_d": "Amazon S3 One Zone-Infrequent Access (S3 One Zone-IA)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon S3 Intelligent-Tiering automatically optimizes storage costs by moving objects between access tiers (Frequent, Infrequent, Archive Instant) based on changing access patterns without operational overhead, retrieval fees, or performance impact.\n\nWhy the others are wrong:\nA: S3 Standard-IA incurs data retrieval fees per GB if access patterns turn out to be frequent, making it costly for unpredictable data.\nC: S3 Glacier Flexible Retrieval requires hours for data retrieval, introducing severe latency penalties.\nD: S3 One Zone-IA stores data in a single AZ, risking data loss if that AZ fails, and incurs retrieval fees.\n\nExam trigger:\nAutomatic S3 cost optimization for unknown or changing access patterns with no retrieval fees.\n\nMemory hook:\nUnpredictable S3 access patterns = Amazon S3 Intelligent-Tiering."
+    },
+    {
+      "id": "q-saa-193",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A data analytics application runs on a fleet of Amazon EC2 instances spread across two Availability Zones (us-east-1a and us-east-1b). The application instances transfer hundreds of terabytes of data daily between nodes using public IP addresses. Cost Explorer analysis reveals high data transfer charges listed under 'Inter-Region / Inter-AZ Data Transfer'. Which architectural change will REDUCE data transfer costs MOST effectively?",
+      "option_a": "Reconfigure the application nodes to communicate with each other using their private IPv4 addresses within the same Availability Zone where possible.",
+      "option_b": "Assign Elastic IP addresses (EIPs) to all EC2 instances and route traffic via an Internet Gateway.",
+      "option_c": "Deploy a CloudFront distribution between the EC2 instances in the two Availability Zones.",
+      "option_d": "Set up an AWS Site-to-Site VPN connection between us-east-1a and us-east-1b.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nCommunicating over public IP addresses forces traffic out through public internet endpoints, incurring higher data transfer charges. Routing inter-node traffic using internal private IP addresses within the same Availability Zone eliminates cross-AZ transfer charges completely (or minimizes inter-AZ charges compared to public IP routing).\n\nWhy the others are wrong:\nB: Using Elastic IP addresses still routes traffic over public IP endpoints, incurring standard public data transfer fees.\nC: CloudFront is designed for edge distribution to external internet viewers, not intra-VPC node-to-node EC2 traffic.\nD: Site-to-Site VPN incurs hourly VPN connection charges and data processing fees without solving intra-VPC routing cost efficiency.\n\nExam trigger:\nReducing high intra-VPC EC2 data transfer charges.\n\nMemory hook:\nIntra-VPC traffic cost reduction = Private IP communication in the same AZ."
+    },
+    {
+      "id": "q-saa-194",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise company operates 200 Amazon EC2 instances attached to legacy General Purpose SSD (gp2) EBS volumes. Cost management audits indicate that many volumes are over-provisioned in storage capacity simply to achieve higher IOPS performance baseline targets. A solutions architect must implement a solution that optimizes storage costs while upgrading disk performance capabilities without requiring downtime or volume recreation. Which action fulfills this requirement?",
+      "option_a": "Migrate the EBS volumes from gp2 to General Purpose SSD (gp3) using Elastic Volumes, and provision required IOPS and throughput independently.",
+      "option_b": "Detach the gp2 volumes, attach Provisioned IOPS SSD (io2) volumes, and restore data from snapshots.",
+      "option_c": "Create an AWS DataSync task to copy data continuously from gp2 volumes to an Amazon S3 Standard bucket.",
+      "option_d": "Convert all gp2 volumes to Throughput Optimized HDD (st1) volumes using the AWS Management Console.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nEBS gp3 volumes are up to 20% cheaper per GB than gp2 volumes and allow independent provisioning of IOPS and throughput without increasing storage capacity. Amazon EBS Elastic Volumes allows modifying volume type from gp2 to gp3 dynamically without downtime or performance interruption.\n\nWhy the others are wrong:\nB: io2 volumes are significantly more expensive than gp3/gp2, and detaching/restoring causes application downtime.\nC: DataSync copies files to object storage; it does not solve block storage performance for EC2 attached root/data volumes.\nD: st1 HDD volumes cannot be used as boot volumes and offer very poor random IOPS performance compared to SSDs.\n\nExam trigger:\nCost optimizing EBS gp2 storage with zero downtime.\n\nMemory hook:\nEBS cost optimization = Modify gp2 to gp3 via Elastic Volumes (up to 20% cost savings + decoupled IOPS)."
+    },
+    {
+      "id": "q-saa-195",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A mobile application utilizes Amazon DynamoDB for user session management and order tracking. The company has two distinct traffic patterns:\n1. User sessions: Highly predictable, constant traffic 24 hours a day, 7 days a week.\n2. Product promotions: Sudden, unannounced spikes exceeding 10x normal traffic for 30 minutes, followed by complete inactivity.\n\nWhich combination of DynamoDB capacity modes minimizes costs across both workloads? (Select TWO.)",
+      "option_a": "Use Provisioned Capacity mode with Auto Scaling enabled for the predictable user session table.",
+      "option_b": "Use On-Demand Capacity mode for the unpredictable product promotion table.",
+      "option_c": "Use On-Demand Capacity mode for all tables across the entire company.",
+      "option_d": "Use Provisioned Capacity mode with fixed, high static limits for the unpredictable product promotion table.",
+      "option_e": "Purchase Reserved Instances for the product promotion table.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\n1. Provisioned Capacity mode with Auto Scaling (and optional DynamoDB Reserved Capacity) offers the lowest cost for predictable, steady-state workloads (user sessions).\n2. On-Demand Capacity mode charges strictly per request with zero idle cost, making it ideal for sudden, unpredictable traffic spikes (promotions).\n\nWhy the others are wrong:\nC: Using On-Demand for steady predictable traffic is significantly more expensive than Provisioned Capacity mode with Reserved Capacity discounts.\nD: Setting fixed high provisioned capacity for short unpredictable spikes results in paying for idle over-provisioned capacity 95% of the day.\nE: Reserved Capacity requires 1-year or 3-year commitments, which is cost-ineffective for intermittent 30-minute promo spikes.\n\nExam trigger:\nDynamoDB capacity optimization for mixed predictable vs spiky workloads.\n\nMemory hook:\nPredictable baseline = Provisioned + Auto Scaling; Unpredictable spikes = On-Demand mode."
+    },
+    {
+      "id": "q-saa-196",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A media company runs a batch data analytics pipeline on Amazon EC2 instances in private subnets. The pipeline processes files stored in Amazon S3, generating 50 TB of data processing monthly. The private subnets route all internet and S3 traffic through NAT Gateways. Cost Explorer shows that NAT Gateway data processing fees account for 60% of the monthly AWS bill. Which architectural change will ELIMINATE these NAT Gateway data processing fees for S3 traffic?",
+      "option_a": "Replace the NAT Gateways with NAT Instances running on t4g.nano EC2 instances.",
+      "option_b": "Create a free Gateway VPC Endpoint for Amazon S3 and update the private subnet route tables.",
+      "option_c": "Deploy an AWS Direct Connect location in the private subnet.",
+      "option_d": "Configure an AWS Transit Gateway with cross-region peering to route S3 traffic.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nGateway VPC Endpoints for S3 provide a direct, private route from VPC subnets to Amazon S3. Gateway Endpoints are completely free of charge (no hourly fee, no per-GB data processing fee), eliminating NAT Gateway data processing charges for S3 traffic.\n\nWhy the others are wrong:\nA: NAT Instances reduce hourly fees slightly compared to managed NAT Gateways, but still incur EC2 instance running costs and bandwidth charges without taking advantage of free S3 Gateway Endpoints.\nC: Direct Connect connects on-premises data centers to AWS; it does not optimize intra-VPC to S3 communication costs.\nD: Transit Gateway introduces hourly attachment fees and per-GB data processing charges, increasing total cost.\n\nExam trigger:\nEliminate high NAT Gateway charges for Amazon S3 traffic.\n\nMemory hook:\nS3 Gateway Endpoint = $0 per GB data processing fee."
+    },
+    {
+      "id": "q-saa-197",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A scientific simulation platform runs stateless batch processing jobs on AWS. The jobs can be paused and resumed without losing progress, and processing capacity must scale dynamically up to 500 EC2 instances during execution runs. The company wants to achieve up to 90% cost savings compared to On-Demand pricing while ensuring the Auto Scaling group minimizes Spot Instance reclamation disruptions. Which EC2 Fleet setup fulfills these requirements?",
+      "option_a": "Configure an Auto Scaling group using an EC2 Mixed Instances Group with the capacity-optimized allocation strategy across multiple Spot instance pools.",
+      "option_b": "Configure an Auto Scaling group using On-Demand Instances with EC2 Instance Savings Plans.",
+      "option_c": "Deploy a single instance type Auto Scaling group set to lowest-price Spot allocation strategy in a single Availability Zone.",
+      "option_d": "Purchase 500 Convertible Reserved Instances across all regions.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSpot Instances deliver up to 90% savings over On-Demand. Combining an EC2 Auto Scaling group with a capacity-optimized allocation strategy automatically launches Spot instances from the deepest available Spot capacity pools, significantly reducing the probability of Spot interruptions for batch workloads.\n\nWhy the others are wrong:\nB: On-Demand with Savings Plans maxes out at ~66% savings, failing to achieve up to 90% Spot discount levels.\nC: lowest-price strategy in a single AZ concentrates allocation in pools with high demand, leading to frequent concurrent Spot interruptions.\nD: Reserved Instances require 1-year or 3-year commitments, creating high fixed costs for intermittent scaling batch jobs.\n\nExam trigger:\nMaximum EC2 cost savings for stateless batch jobs with minimal Spot interruption risk.\n\nMemory hook:\nStateless batch cost optimization = EC2 Spot Fleet + Capacity-Optimized allocation strategy."
+    },
+    {
+      "id": "q-saa-198",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise uses AWS Organizations with 30 member accounts. The central Cloud Financial Management team wants to purchase Compute Savings Plans to lower compute costs across AWS Fargate, AWS Lambda, and Amazon EC2 instances across all accounts. The team needs to ensure that the baseline discounts apply automatically across all accounts in the Organization while maintaining central billing management. Which solution satisfies these billing requirements?",
+      "option_a": "Purchase Compute Savings Plans in the Organizations management account or dedicated payer account, and ensure Savings Plan discount sharing is enabled in AWS Billing.",
+      "option_b": "Purchase individual EC2 Instance Savings Plans inside each of the 30 member accounts separately.",
+      "option_c": "Create an AWS CloudFormation StackSet to distribute AWS KMS keys to lock in pricing discounts.",
+      "option_d": "Configure AWS Trusted Advisor to automatically purchase Reserved Instances when usage breaches 80%.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nCompute Savings Plans purchased in the Organizations consolidated billing payer account automatically apply discounts across all member accounts (covering EC2, Fargate, and Lambda) when discount sharing is enabled in AWS Cost Management.\n\nWhy the others are wrong:\nB: Purchasing EC2 Instance Savings Plans in individual member accounts limits flexibility, applies only to specific instance families/regions, and creates high management friction.\nC: CloudFormation StackSets deploy infrastructure templates; they have no connection to AWS pricing discounts or Savings Plans.\nD: Trusted Advisor provides optimization checks; it cannot make financial commitments or execute automated purchase contracts.\n\nExam trigger:\nCentralized multi-account compute cost reduction across EC2, Fargate, and Lambda.\n\nMemory hook:\nOrganization-wide compute savings = Compute Savings Plans in Payer Account + Discount Sharing Enabled."
+    },
+    {
+      "id": "q-saa-199",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An e-commerce company processes customer payment transactions using an asynchronous backend pipeline. Payment messages within each customer session must be processed in order, while unrelated sessions can proceed independently. Duplicate producer submissions within the five-minute deduplication interval are suppressed. Which solution fulfills these requirements?",
+      "option_a": "Use an Amazon SQS Standard queue and configure visibility timeout to 300 seconds.",
+      "option_b": "Use an Amazon SQS FIFO queue with a Message Group ID per session and Message Deduplication IDs to suppress repeat submissions during the five-minute deduplication interval.",
+      "option_c": "Use an Amazon SNS Standard topic to publish payment messages to multiple AWS Lambda worker functions.",
+      "option_d": "Deploy an Amazon Kinesis Data Stream with 10 shards and enable server-side encryption.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nAmazon SQS FIFO queues preserve message ordering within each Message Group ID. A Message Deduplication ID, or content-based deduplication, suppresses duplicate producer submissions received within the five-minute deduplication interval. Application consumers should still use idempotent processing where appropriate because deduplication does not universally guarantee duplicate-free processing.\n\nWhy the other options are wrong:\nA. SQS Standard queues do not guarantee strict message ordering or producer-side deduplication.\nC. SNS Standard topics do not guarantee strict ordering or message deduplication.\nD. Kinesis Data Streams preserve ordering within a shard, but do not provide SQS FIFO's five-minute producer deduplication interval.\n\nExam trigger:\nFIFO ordering within each customer-session Message Group ID with producer deduplication for five minutes.\n\nExam trap:\nTreating producer-side deduplication as a guarantee that consumers can never process a duplicate.\n\nMemory hook:\nSQS FIFO = Per-Group Ordering + Five-Minute Producer Deduplication; Keep Consumers Idempotent."
+    },
+    {
+      "id": "q-saa-200",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A finance software company wants to mitigate unexpected AWS cost overruns in sandbox accounts. Billing and budget data in AWS Budgets is refreshed periodically (up to three times daily). The team requires an automated cost control mechanism that triggers remediation shortly after a budget data refresh indicates spending has crossed a predefined threshold. Which solution fulfills this requirement with the LEAST operational overhead?",
+      "option_a": "Configure an AWS Budgets alert with an automated notification to an Amazon SNS topic that directly invokes an AWS Lambda function to stop non-compliant EC2 instances after budget data updates.",
+      "option_b": "Create an AWS CloudWatch Alarm on estimated billing metrics to trigger an AWS EventBridge rule every 60 seconds.",
+      "option_c": "Configure an AWS Systems Manager Automation document to poll Cost Explorer hourly via custom Python scripts.",
+      "option_d": "Review monthly AWS Cost Explorer reports manually and email account owners.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAWS Budgets updates billing data periodically (up to 3 times daily). When refreshed budget data crosses a configured threshold, AWS Budgets sends an alert notification to an Amazon SNS topic, which directly triggers an AWS Lambda function to execute automated cost control actions (e.g., stopping non-compliant instances).\n\nWhy the others are wrong:\nB: CloudWatch estimated billing metrics are updated only a few times per day, and polling every 60 seconds via EventBridge does not make billing data refresh faster.\nC: SSM Automation custom scripts polling Cost Explorer create high operational overhead and incur Cost Explorer API charges.\nD: Manual monthly reviews fail automated real-time intervention and require significant manual effort.\n\nExam trigger:\nAutomated cost control remediation triggered after periodic budget data updates.\n\nMemory hook:\nAWS Budgets (periodic refresh) -> SNS -> Lambda automated remediation."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-191",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-191",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-191",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-192",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-192",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-193",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-193",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-193",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-194",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-194",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-194",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-195",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-195",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-196",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-196",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-196",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-197",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-197",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-198",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-198",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-199",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-200",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-200",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-200",
+      "topic_id": "topic-lambda"
+    }
+  ]
+}

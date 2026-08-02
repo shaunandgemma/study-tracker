@@ -1,0 +1,295 @@
+{
+  "createdAt": "2026-08-02T19:29:07.116Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-201",
+    "q-saa-202",
+    "q-saa-203",
+    "q-saa-204",
+    "q-saa-205",
+    "q-saa-206",
+    "q-saa-207",
+    "q-saa-208",
+    "q-saa-209",
+    "q-saa-210"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-201",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A security analytics workload runs on EC2 instances in Account B by using an IAM role named AnalyticsRole. Security logs are stored in an S3 bucket in Account A and are encrypted with a customer managed KMS key in Account A. AnalyticsRole already has an identity policy allowing s3:GetObject on the required prefix and kms:Decrypt on the KMS key ARN. However, attempts to read the objects are denied. The company will not use role assumption between the accounts. Which TWO changes provide the required access with least privilege? (Select TWO.)",
+      "option_a": "Add an S3 bucket policy in Account A that allows AnalyticsRole to perform s3:GetObject on the required prefix.",
+      "option_b": "Add a KMS key policy in Account A that allows AnalyticsRole to perform kms:Decrypt.",
+      "option_c": "Add an SCP in Account B that allows s3:GetObject and kms:Decrypt.",
+      "option_d": "Add the permissions to an administrative IAM role in Account A.",
+      "option_e": "Add an S3 gateway endpoint policy in Account B that permits access to the bucket.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nThe bucket policy must trust the external role, and the KMS key policy must permit that role to use the key. The role identity policy supplies the account-side permissions.\n\nWhy the others are wrong:\nC: An SCP sets a permission ceiling and does not grant access.\nD: Permissions on an unrelated role do not authorize AnalyticsRole.\nE: An endpoint policy can limit endpoint use but cannot replace the bucket and KMS policies.\n\nExam trigger:\nCross-account access to objects encrypted with a customer managed KMS key.\n\nMemory hook:\nCross-account SSE-KMS needs S3 trust and KMS trust."
+    },
+    {
+      "id": "q-saa-202",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An online retailer publishes order-status changes to billing and fulfilment systems. Both systems must receive every status change independently. Updates for the same customer must remain in order. If the producer retries a request during the messaging deduplication window, the retry must not introduce a duplicate message. The company does not want to maintain custom fan-out or duplicate-suppression infrastructure. Which architecture meets these requirements with the LEAST operational overhead?",
+      "option_a": "Publish events to an EventBridge event bus that targets two SQS standard queues.",
+      "option_b": "Publish events to an SNS FIFO topic subscribed to two SQS FIFO queues. Use the customer ID as the message group ID and use the same stable order event ID as the deduplication ID for every retry of that event.",
+      "option_c": "Send events to one SQS FIFO queue that is polled by both billing and fulfilment workers.",
+      "option_d": "Write events to a Kinesis data stream with separate billing and fulfilment consumers.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nSNS FIFO provides managed fan-out to both SQS FIFO queues. The customer ID preserves ordering within that group. Every retry of the same logical event must reuse the same stable order event ID as its deduplication ID so the retry is suppressed during the deduplication window.\n\nWhy the others are wrong:\nA: Standard queues do not provide FIFO ordering and can deliver duplicates.\nC: Competing consumers divide messages instead of giving every event to both systems.\nD: Kinesis supports ordered streams, but duplicate suppression for producer retries requires application design.\n\nExam trigger:\nIndependent fan-out plus ordered, deduplicated delivery.\n\nMemory hook:\nOrdered fan-out is SNS FIFO to SQS FIFO; retries reuse the deduplication ID."
+    },
+    {
+      "id": "q-saa-203",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A research company stores 100 TB of genomic data in Amazon S3. Each week, hundreds of EC2 instances process the data concurrently by using existing Linux applications that expect a shared file-system interface. The workload requires high-throughput parallel access. S3 must remain the long-term data repository, and processing results must be exported back to S3 after each run. Which solution meets these requirements with the LEAST operational overhead?",
+      "option_a": "Create an Amazon EFS file system and copy the complete S3 dataset to EFS before every processing run.",
+      "option_b": "Create an Amazon FSx for Lustre file system with an S3 data repository association. Return results to S3 by using automatic export or an export data repository task.",
+      "option_c": "Create an Amazon FSx for NetApp ONTAP file system and configure SnapMirror replication to S3.",
+      "option_d": "Mount the S3 bucket directly on every EC2 instance by using Mountpoint for Amazon S3.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nFSx for Lustre provides a parallel file system for high-throughput processing. An S3 data repository association links the file system to the S3 repository, and results can be returned through automatic export or an export data repository task.\n\nWhy the others are wrong:\nA: Repeatedly copying 100 TB adds time, cost, and operational work.\nC: FSx for ONTAP is not the purpose-built S3-linked parallel file system for this HPC pattern.\nD: Mountpoint offers object access but not every shared POSIX file-system behavior expected by existing applications.\n\nExam trigger:\nParallel HPC file access while S3 remains the durable repository.\n\nMemory hook:\nS3-backed HPC file processing means FSx for Lustre with a data repository association."
+    },
+    {
+      "id": "q-saa-204",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A platform team allows developers to create IAM roles for application workloads. Developers may attach approved policies, but they must never create a role with permissions beyond a security-approved maximum. Which solution is the MOST secure with the LEAST ongoing administration?",
+      "option_a": "Require every developer-created role to use a specified permissions boundary and restrict role creation unless that boundary is attached.",
+      "option_b": "Use IAM Access Analyzer to remove excessive permissions after deployment.",
+      "option_c": "Apply an SCP that grants only the permissions developers may place in roles.",
+      "option_d": "Store approved policies in AWS Resource Access Manager and share them with developer accounts.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nA required permissions boundary limits each role maximum effective permissions, and the creation policy can enforce attachment of that boundary.\n\nWhy the others are wrong:\nB: Access Analyzer is not a preventive maximum-permission control.\nC: An SCP limits account permissions but does not grant permissions or define each new role boundary.\nD: AWS RAM does not distribute IAM policies as permission templates.\n\nExam trigger:\nDelegated role creation without privilege escalation.\n\nMemory hook:\nPermissions boundary equals maximum role permissions."
+    },
+    {
+      "id": "q-saa-205",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An organization has production and development OUs. Member-account administrators must be prevented from disabling CloudTrail, leaving the organization, or creating resources outside approved Regions. Workloads still need normal IAM permissions inside the approved boundaries. Which solution meets these requirements?",
+      "option_a": "Attach an SCP to the relevant OUs that denies the prohibited actions and unapproved Regions while exempting required global services.",
+      "option_b": "Create permission boundaries for every IAM principal in every account.",
+      "option_c": "Configure AWS Config rules that remediate prohibited actions after they occur.",
+      "option_d": "Use resource-based policies on CloudTrail and regional services.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAn SCP attached to OUs centrally limits member-account permissions, including specific API actions and Regions with suitable global-service exceptions.\n\nWhy the others are wrong:\nB: Boundaries require per-principal management and do not control the account root user.\nC: Config is detective and remedial rather than the strongest preventive control.\nD: Resource policies are unavailable for many required organization-wide actions.\n\nExam trigger:\nCentral preventive guardrails across many accounts.\n\nMemory hook:\nOrganization-wide permission ceiling means SCP."
+    },
+    {
+      "id": "q-saa-206",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company must encrypt application secrets and rotate database credentials automatically. Applications run on ECS tasks and must retrieve the current value without storing long-term credentials in task definitions. Which solution has the LEAST operational overhead?",
+      "option_a": "Store the credentials in Secrets Manager, enable managed rotation for the database, and grant the ECS task role permission to retrieve the secret.",
+      "option_b": "Store the credentials in an encrypted S3 object and rotate the object with a scheduled EC2 script.",
+      "option_c": "Store the credentials in Parameter Store Standard parameters and manually update them monthly.",
+      "option_d": "Place the credentials in ECS environment variables encrypted by the container image build system.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSecrets Manager supports managed database-secret rotation, while the ECS task role supplies temporary authorization to retrieve the current secret.\n\nWhy the others are wrong:\nB: This requires custom rotation infrastructure and object handling.\nC: Standard Parameter Store does not provide the same managed database rotation workflow.\nD: Environment variables expose a static secret to task configuration and do not rotate it automatically.\n\nExam trigger:\nManaged secret storage plus automatic database credential rotation.\n\nMemory hook:\nRotating database passwords means Secrets Manager."
+    },
+    {
+      "id": "q-saa-207",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company exposes a public application through an Application Load Balancer. It needs protection against common web exploits, automated request floods from individual IP addresses, and common infrastructure-layer DDoS attacks. Which THREE services or features should the company use? (Select THREE.)",
+      "option_a": "Associate an AWS WAF web ACL containing managed rule groups with the ALB.",
+      "option_b": "Add an AWS WAF rate-based rule to the web ACL.",
+      "option_c": "Use AWS Shield Standard protections that are automatically available for supported resources.",
+      "option_d": "Enable GuardDuty to block malicious HTTP requests at the ALB.",
+      "option_e": "Use a Network ACL to inspect SQL injection payloads.",
+      "option_f": "Place the ALB behind a gateway VPC endpoint.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\nManaged AWS WAF rules address common application exploits, a rate-based rule limits abusive request rates, and Shield Standard provides automatic protection against common network and transport layer DDoS attacks.\n\nWhy the others are wrong:\nA: Correct. The WAF web ACL filters common application-layer exploits.\nB: Correct. The rate-based rule limits excessive requests from individual source IP addresses.\nC: Correct. Shield Standard protects supported AWS resources from common infrastructure-layer DDoS attacks.\nD: GuardDuty detects suspicious activity but is not an inline HTTP request filter.\nE: Network ACLs cannot inspect SQL injection or other HTTP payloads.\nF: A gateway VPC endpoint cannot front a public ALB or provide web filtering.\n\nExam trigger:\nCommon web exploits, per-IP request floods, and common infrastructure-layer DDoS attacks.\n\nMemory hook:\nWAF filters web requests; Shield Standard covers common DDoS attacks."
+    },
+    {
+      "id": "q-saa-208",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "EC2 instances in private subnets must call a third-party SaaS service hosted behind an AWS endpoint service. The connection must stay on private IP addresses, tolerate overlapping CIDR ranges, and prevent the SaaS provider from initiating connections into the customer VPC. Which solution meets the requirements?",
+      "option_a": "Create a VPC peering connection to the provider VPC.",
+      "option_b": "Create an interface VPC endpoint powered by AWS PrivateLink.",
+      "option_c": "Attach both VPCs to the same transit gateway.",
+      "option_d": "Create a Site-to-Site VPN between the VPCs.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nPrivateLink interface endpoints provide private consumer-initiated access to an endpoint service without routing entire VPC CIDR ranges.\n\nWhy the others are wrong:\nA: VPC peering cannot connect overlapping CIDRs and enables broader routed connectivity.\nC: Transit Gateway requires routed, non-overlapping network designs.\nD: A VPN adds routing and does not inherently solve overlapping addresses.\n\nExam trigger:\nPrivate SaaS access with overlapping CIDRs and one-way initiation.\n\nMemory hook:\nPrivate service, not private network, means PrivateLink."
+    },
+    {
+      "id": "q-saa-209",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A central security account must collect findings from GuardDuty, Inspector, Macie, and AWS Config across all organization accounts and Regions. Security analysts need one standards dashboard and centralized prioritization. Which solution meets the requirements with the LEAST operational effort?",
+      "option_a": "Configure Security Hub with organization integration, delegated administration, and cross-Region aggregation.",
+      "option_b": "Send every service log to one CloudWatch Logs group using subscription filters.",
+      "option_c": "Create an organization CloudTrail and query all events with Athena.",
+      "option_d": "Use Systems Manager OpsCenter as the only finding aggregator.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSecurity Hub integrates findings from the listed services and supports organization administration, security standards, and cross-Region aggregation.\n\nWhy the others are wrong:\nB: CloudWatch Logs does not natively normalize all findings or provide standards scores.\nC: CloudTrail records API activity rather than aggregating service findings.\nD: OpsCenter is not the purpose-built organization-wide security posture dashboard.\n\nExam trigger:\nCentral security findings and standards across accounts and Regions.\n\nMemory hook:\nSecurity findings converge in Security Hub."
+    },
+    {
+      "id": "q-saa-210",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A mobile application needs user sign-up, social sign-in, and temporary scoped AWS credentials so authenticated users can upload files directly to S3. Which design meets these requirements?",
+      "option_a": "Use a Cognito user pool for authentication and a Cognito identity pool to exchange tokens for temporary IAM credentials.",
+      "option_b": "Use IAM Identity Center and create one IAM user for each mobile customer.",
+      "option_c": "Use only a Cognito user pool and attach an S3 bucket policy directly to each user.",
+      "option_d": "Use only a Cognito identity pool with long-term IAM access keys embedded in the application.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nThe user pool handles registration and federation, while the identity pool exchanges the authenticated token for temporary role credentials.\n\nWhy the others are wrong:\nB: IAM users are unsuitable for large customer populations and long-term credentials.\nC: User pools issue tokens, not AWS credentials or per-user IAM principals.\nD: Embedding long-term access keys is insecure and unnecessary.\n\nExam trigger:\nCustomer authentication plus temporary direct AWS access.\n\nMemory hook:\nUser pool proves identity; identity pool gives AWS credentials."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-201",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-201",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-201",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-202",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-202",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-203",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-203",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-204",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-205",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-205",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-206",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-206",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-206",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-207",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-207",
+      "topic_id": "topic-shield"
+    },
+    {
+      "question_id": "q-saa-207",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-208",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-208",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-209",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-209",
+      "topic_id": "topic-security-hub"
+    },
+    {
+      "question_id": "q-saa-210",
+      "topic_id": "topic-cognito"
+    },
+    {
+      "question_id": "q-saa-210",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-210",
+      "topic_id": "topic-s3"
+    }
+  ]
+}

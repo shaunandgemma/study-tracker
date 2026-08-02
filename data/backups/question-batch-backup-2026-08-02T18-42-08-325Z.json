@@ -1,0 +1,248 @@
+{
+  "createdAt": "2026-08-02T18:42:08.326Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-81",
+    "q-saa-82",
+    "q-saa-83",
+    "q-saa-84",
+    "q-saa-85",
+    "q-saa-86",
+    "q-saa-87",
+    "q-saa-88",
+    "q-saa-89",
+    "q-saa-90"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-81",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company configures bi-directional S3 Cross-Region Replication (CRR) between an S3 bucket in us-east-1 and a replica S3 bucket in eu-west-1. The security team mandates that any metadata modifications (such as Object Tags, ACLs, or Object Lock settings) applied to replica objects in the destination bucket must automatically sync back to the source objects in the primary bucket. Which S3 Replication feature fulfills this requirement?",
+      "option_a": "S3 Transfer Acceleration",
+      "option_b": "S3 Replica Modification Sync",
+      "option_c": "S3 Object Lock Governance Mode",
+      "option_d": "S3 Event Notifications with AWS Lambda",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "S3 Replica Modification Sync replicates metadata changes—such as object tags, ACLs, or Object Lock settings—made to replica objects in a destination bucket back to the source objects in the primary bucket, enabling two-way metadata synchronization."
+    },
+    {
+      "id": "q-saa-82",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A database administrator provisions an Amazon RDS Multi-AZ DB Cluster (with two readable standby DB instances across 3 AZs) instead of a standard Multi-AZ DB instance deployment. What key architectural advantage does an RDS Multi-AZ DB Cluster provide for write-heavy workloads?",
+      "option_a": "Reduced commit latency versus a conventional Multi-AZ deployment, while the two replica instances can serve read-only application traffic.",
+      "option_b": "Reduced commit latency through active-active writes across all three instances, while the two replica instances also serve read-only application traffic.",
+      "option_c": "Reduced commit latency through synchronous replication between separate AWS Regions, while the two replica instances also serve read-only application traffic.",
+      "option_d": "Reduced commit latency by keeping database storage on instance-local NVMe volumes, while the two replica instances also serve read-only application traffic.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "An RDS Multi-AZ DB cluster has one writer and two readable standby DB instances across three Availability Zones. It can provide lower write latency than a traditional Multi-AZ DB instance deployment, while the readable standbys can also serve read traffic."
+    },
+    {
+      "id": "q-saa-83",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A banking transaction pipeline requires messages with the same Message Group ID to be processed in order. Producers may retry sends, so duplicate sends within the SQS deduplication interval must be suppressed. Which queue configuration meets these requirements?",
+      "option_a": "Use an Amazon SQS Standard queue with a Dead-Letter Queue (DLQ) configured with a Maximum Receives threshold of 1.",
+      "option_b": "Use an Amazon SQS FIFO queue with Message Group IDs for ordered processing and Message Deduplication IDs to prevent duplicate sends within the deduplication interval.",
+      "option_c": "Use an Amazon SNS Standard topic configured with message filtering policies to broadcast financial transactions directly to worker processes.",
+      "option_d": "Use an Amazon EventBridge custom event bus with event pattern matching rules to process banking transactions in sequence.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon SQS FIFO queues preserve strict message ordering per Message Group ID and prevent duplicate message sends using Message Deduplication IDs within a 5-minute deduplication interval. Consumers should still implement idempotent processing, and appropriate Visibility Timeout and message deletion configurations remain critical for preventing duplicate delivery during worker failures."
+    },
+    {
+      "id": "q-saa-84",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A worker application polling an SQS queue encounters malformed messages that crash the worker process repeatedly (a poison pill message). This causes the message to return to the queue endlessly. How should the SQS queue be configured to isolate unprocessable messages after 5 failed attempts?",
+      "option_a": "Increase the SQS queue Visibility Timeout setting to 12 hours to allow worker processes extra time to debug malformed messages.",
+      "option_b": "Configure an SQS Dead-Letter Queue (DLQ) on the source queue with a redrive policy setting maxReceiveCount to 5.",
+      "option_c": "Enable S3 Versioning on the worker EC2 EBS root volume to automatically revert state when malformed messages occur.",
+      "option_d": "Configure the SQS DelaySeconds parameter to 900 seconds to delay delivery of malformed messages.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "A Dead-Letter Queue (DLQ) receives messages that fail processing after a specified number of retries (maxReceiveCount), isolating faulty messages for developer inspection without blocking queue processing."
+    },
+    {
+      "id": "q-saa-85",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company runs microservices in two separate VPCs (VPC A and VPC B) within the same AWS account, connected via VPC Peering. Microservices in VPC B need to resolve internal domain names in a Route 53 Private Hosted Zone associated with VPC A. How can private DNS resolution be enabled for VPC B?",
+      "option_a": "Create a second public hosted zone in Route 53 with matching record names and enable DNSSEC validation across both VPCs.",
+      "option_b": "Associate VPC B with the existing Route 53 Private Hosted Zone for api.internal.company.local using the Route 53 console, AWS CLI, or SDK.",
+      "option_c": "Configure an Amazon Route 53 Resolver outbound endpoint in VPC A and an inbound endpoint in VPC B connected via Transit Gateway.",
+      "option_d": "Configure a Route 53 Latency Routing Policy pointing the domain name to the private IP address of the ALB in VPC A.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Route 53 Private Hosted Zones can be associated with multiple VPCs within the same AWS account using the Route 53 console, AWS CLI, or SDK, allowing instances in both VPCs to resolve internal private DNS records over VPC Peering."
+    },
+    {
+      "id": "q-saa-86",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company centrally protects EBS volumes and RDS databases across 100 AWS accounts. Daily recovery points must be copied automatically to a backup vault in a secondary Region. The company wants one centrally managed solution with the least custom automation. Which solution should be used?",
+      "option_a": "Create an AWS Backup plan containing scheduled backup rules and cross-Region copy actions targeting the secondary-Region vault.",
+      "option_b": "Create an AWS Backup plan that stores the recovery points in a separate vault in the source Region and transitions them to cold storage.",
+      "option_c": "Configure RDS cross-Region automated backup replication and create separate EventBridge and Lambda automation to copy EBS snapshots.",
+      "option_d": "Create EventBridge schedules that invoke Lambda functions to create and copy both EBS and RDS snapshots to the secondary Region.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Create an AWS Backup plan containing scheduled backup rules and cross-Region copy actions targeting the secondary-Region vault.\n\nAWS Backup plans can automatically create scheduled backups and copy supported recovery points to backup vaults in another Region. This provides one managed policy for the EBS and RDS protection workflow and avoids separate service-specific automation.\n\nWhy the other options are wrong:\nB. A separate same-Region vault and cold-storage lifecycle do not satisfy the secondary-Region disaster-recovery requirement.\nC. The design could address parts of the requirement, but it creates separate workflows for RDS and EBS and requires more operational effort.\nD. Custom Lambda automation could perform snapshot operations but requires code, monitoring, error handling, and ongoing maintenance.\n\nExam trigger:\nMultiple resource types, central backup policies, automatic cross-Region copies, and least operational effort.\n\nExam trap:\nA backup vault is not automatically cross-Region. The backup rule needs a copy action.\n\nMemory hook:\nAutomated regional backup copies mean AWS Backup copy actions."
+    },
+    {
+      "id": "q-saa-87",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An e-commerce website experiences sudden unpredictable surges in web traffic due to viral flash sales. The Auto Scaling group CPU utilization rises from 20% to 90% within 1 minute. Standard Target Tracking scaling takes several minutes to add capacity. How can the scaling policy be adjusted to react more aggressively to sudden spikes?",
+      "option_a": "Configure a Step Scaling Policy on the Auto Scaling group with CloudWatch alarms evaluating metric breaches across aggressive thresholds.",
+      "option_b": "Increase the Auto Scaling group Default Cooldown period to 600 seconds to prevent rapid instance launches.",
+      "option_c": "Configure Scheduled Scaling Actions to increase Auto Scaling capacity by 500% every hour throughout the day.",
+      "option_d": "Enable Amazon S3 Transfer Acceleration on EC2 instance network interfaces to accelerate web application responses.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Configure a step scaling policy with CloudWatch alarms and multiple breach thresholds.\n\nStep scaling can apply larger capacity increases when a metric breaches more severe thresholds. For example, a moderate CPU increase could add a few instances, while a jump to 90 percent could trigger a much larger scaling adjustment.\n\nThis allows the Auto Scaling group to react more aggressively to sudden, unpredictable spikes.\n\nWhy the other options are wrong:\nB. Increasing the cooldown period delays further scaling activity. It would make the group react less aggressively.\nC. Scheduled scaling is suitable for predictable demand at known times. Viral flash sales are unpredictable.\nD. S3 Transfer Acceleration improves transfers to and from S3. It does not accelerate EC2 web traffic or control Auto Scaling.\n\nExam trigger:\nSudden unpredictable spike, CloudWatch thresholds, and different scaling amounts based on severity.\n\nExam trap:\nTarget tracking maintains a target. Step scaling makes different-sized changes at different thresholds.\n\nMemory hook:\nBigger metric breach, bigger scaling step."
+    },
+    {
+      "id": "q-saa-88",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An Application Load Balancer distributes web requests across 4 EC2 instances in Availability Zone A and 1 EC2 instance in Availability Zone B. Traffic arriving at AZ A is heavy, overloading the single instance in AZ B. What ELB feature ensures traffic is distributed evenly across all 5 instances regardless of their AZ?",
+      "option_a": "Cross-Zone Load Balancing",
+      "option_b": "Sticky Sessions (Session Affinity)",
+      "option_c": "Path-Based Routing Rules",
+      "option_d": "Connection Draining",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Cross-Zone Load Balancing ensures that load balancer nodes distribute incoming traffic evenly across all registered targets in all enabled Availability Zones."
+    },
+    {
+      "id": "q-saa-89",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A financial enterprise requires a disaster recovery strategy with a Recovery Time Objective (RTO) of under 10 minutes and Recovery Point Objective (RPO) under 1 minute. The primary Region runs active workloads, while a secondary Region maintains a scaled-down but fully functional copy of core infrastructure (small EC2 instances, active DB replica) ready to scale up immediately upon failover. Which DR strategy is this?",
+      "option_a": "Backup and Restore",
+      "option_b": "Pilot Light",
+      "option_c": "Warm Standby",
+      "option_d": "Multi-Site Active-Active",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Warm Standby maintains a scaled-down but fully operational version of the infrastructure running 24/7 in the secondary Region, capable of taking full production traffic quickly when scaled up."
+    },
+    {
+      "id": "q-saa-90",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A global game publisher hosts a multiplayer game with database nodes in `us-east-1`, `eu-west-1`, and `ap-northeast-1`. Players must be able to read and write player profiles locally in their closest Region with automatic multi-master conflict resolution and sub-second cross-Region database replication. Which database technology fulfills this requirement?",
+      "option_a": "Amazon RDS PostgreSQL Read Replicas",
+      "option_b": "Amazon DynamoDB Global Tables",
+      "option_c": "Amazon Redshift Multi-Region Cluster",
+      "option_d": "Amazon ElastiCache for Redis Read Replicas",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "DynamoDB Global Tables provide a fully managed, multi-region, multi-active database that automatically replicates DynamoDB tables across selected AWS Regions with fast, local read and write performance."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-81",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-82",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-83",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-84",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-85",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-85",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-86",
+      "topic_id": "topic-backup"
+    },
+    {
+      "question_id": "q-saa-87",
+      "topic_id": "topic-auto-scaling"
+    },
+    {
+      "question_id": "q-saa-88",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-89",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-89",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-90",
+      "topic_id": "topic-dynamodb"
+    }
+  ]
+}

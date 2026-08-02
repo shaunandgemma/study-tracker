@@ -1,0 +1,305 @@
+{
+  "createdAt": "2026-08-02T19:33:55.872Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-211",
+    "q-saa-212",
+    "q-saa-213",
+    "q-saa-214",
+    "q-saa-215",
+    "q-saa-216",
+    "q-saa-217",
+    "q-saa-218",
+    "q-saa-219",
+    "q-saa-220"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-211",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company stores regulated records in S3. Records must use a specific customer managed KMS key, remain immutable for seven years, and reject uploads that omit the required encryption headers. Which THREE controls meet these requirements? (Select THREE.)",
+      "option_a": "Enable S3 Versioning on the bucket.",
+      "option_b": "Enable S3 Object Lock and set default retention in Compliance mode for seven years.",
+      "option_c": "Add bucket-policy Deny statements that reject PutObject requests unless SSE-KMS and the approved key are specified.",
+      "option_d": "Enable S3 Transfer Acceleration to protect uploads in transit.",
+      "option_e": "Use an S3 lifecycle rule to delete noncurrent versions after 30 days.",
+      "option_f": "Use a KMS AWS managed key so users cannot change the key policy.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\nVersioning is required for Object Lock, Compliance mode enforces WORM retention, and explicit Deny conditions enforce the required SSE-KMS key.\n\nWhy the others are wrong:\nD: Transfer Acceleration does not enforce encryption or immutability.\nE: Deleting retained versions conflicts with seven-year retention.\nF: An AWS managed key does not satisfy the customer managed key requirement.\n\nExam trigger:\nWORM retention plus a mandated KMS key.\n\nMemory hook:\nVersioning plus Object Lock plus bucket-policy Deny."
+    },
+    {
+      "id": "q-saa-212",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An S3 bucket should allow one partner role in an approved external account and all principals from the company AWS organization, but no other accounts. Which resource-policy design is MOST secure?",
+      "option_a": "Use separate Allow statements for the partner role and principals whose aws:PrincipalOrgID matches the organization ID, with no public principal.",
+      "option_b": "Allow Principal * and rely only on an aws:SourceVpc condition.",
+      "option_c": "List every current organization account root ARN and update the policy manually.",
+      "option_d": "Use an SCP in the management account to grant the partner role access.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nThe named role is explicitly allowed, while aws:PrincipalOrgID covers current and future organization accounts without opening access publicly.\n\nWhy the others are wrong:\nB: SourceVpc limits network origin, not account ownership.\nC: Manual account lists are fragile and omit future accounts until updated.\nD: SCPs do not grant external access to a bucket.\n\nExam trigger:\nOne external role plus every account in an organization.\n\nMemory hook:\nNamed outsider plus PrincipalOrgID for insiders."
+    },
+    {
+      "id": "q-saa-213",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "Administrators need shell access to private EC2 instances without public IP addresses, inbound SSH rules, or stored SSH keys. Session commands must be logged centrally. Which solution has the LEAST operational overhead?",
+      "option_a": "Use Systems Manager Session Manager and send session logs to CloudWatch Logs or S3.",
+      "option_b": "Deploy a bastion host in every Availability Zone.",
+      "option_c": "Open SSH only from the corporate public IP range.",
+      "option_d": "Create a Client VPN and continue using shared SSH keys.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSession Manager provides audited shell access through the SSM channel without inbound ports, public IPs, or SSH-key management.\n\nWhy the others are wrong:\nB: Bastions require patching and key management.\nC: This still exposes SSH and needs public reachability.\nD: A VPN does not remove SSH-key administration or provide command logging by itself.\n\nExam trigger:\nPrivate instance administration without SSH.\n\nMemory hook:\nNo port 22 means Session Manager."
+    },
+    {
+      "id": "q-saa-214",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "An AWS Organizations organization requires central logging of management API activity from all current and future member accounts. Member-account administrators must not be able to disable or modify the central trail. After delivery, the log objects must be protected from deletion or overwrite for the required retention period. Which TWO actions meet these requirements? (Select TWO.)",
+      "option_a": "Create an organization trail from the management account or a CloudTrail delegated administrator and deliver the logs to a central S3 bucket.",
+      "option_b": "Enable S3 Object Lock in Compliance mode on the central log bucket and configure an appropriate retention period.",
+      "option_c": "Enable CloudTrail log file validation to detect whether delivered log files were modified or deleted.",
+      "option_d": "Create separate trails in every member account and allow each account administrator to manage the local trail.",
+      "option_e": "Send CloudTrail events only to CloudWatch Logs in the management account and configure metric filters.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nA: An organization trail centrally records management activity for existing and newly added organization accounts. Member accounts can view the trail but cannot modify or delete it.\nB: S3 Object Lock in Compliance mode prevents protected object versions from being overwritten or deleted during the retention period, including by the root user.\n\nWhy the others are wrong:\nC: Log file validation provides integrity verification by using digest files, but it does not stop an object from being deleted or overwritten.\nD: Separately managed member-account trails can be disabled or changed by local administrators and do not provide central governance.\nE: CloudWatch Logs and metric filters do not replace an organization trail or provide immutable S3 object retention.\n\nExam trigger:\nOrganization-wide API auditing plus immutable delivered log objects.\n\nMemory hook:\nOrganization trail collects; Object Lock protects."
+    },
+    {
+      "id": "q-saa-215",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A workload in private subnets must access Secrets Manager without NAT gateways or public IP addresses. The security team must restrict endpoint use to specific secrets and an application role. Which design meets the requirements?",
+      "option_a": "Create a Secrets Manager interface VPC endpoint, enable private DNS, and apply a restrictive endpoint policy.",
+      "option_b": "Create a gateway VPC endpoint for Secrets Manager.",
+      "option_c": "Use an internet gateway with a security group that allows only AWS IP ranges.",
+      "option_d": "Create an S3 gateway endpoint and store the secrets in S3.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSecrets Manager uses an interface endpoint. Private DNS keeps normal service names private, and the endpoint policy can restrict principals and resources.\n\nWhy the others are wrong:\nB: Gateway endpoints are not available for Secrets Manager.\nC: This requires public routing and lacks endpoint-level resource controls.\nD: An S3 endpoint does not provide Secrets Manager access or managed rotation.\n\nExam trigger:\nPrivate access to an AWS service other than S3 or DynamoDB.\n\nMemory hook:\nMost AWS services use interface endpoints."
+    },
+    {
+      "id": "q-saa-216",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A security team wants early detection and centralized remediation of public S3 buckets and security groups that allow unrestricted administrative ports across 40 accounts. Which TWO services should be configured? (Select TWO.)",
+      "option_a": "Use AWS Config organization rules to evaluate configurations and invoke Systems Manager Automation remediation.",
+      "option_b": "Use Security Hub with organization integration to aggregate compliance findings and standards results.",
+      "option_c": "Use GuardDuty to change noncompliant security-group rules automatically.",
+      "option_d": "Use CloudTrail Lake as the only configuration-compliance engine.",
+      "option_e": "Use Shield Advanced to identify public buckets.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nConfig organization rules evaluate configurations and can invoke remediation. Security Hub centralizes the findings and compliance posture.\n\nWhy the others are wrong:\nC: GuardDuty is not the configuration rule engine for these controls.\nD: CloudTrail Lake analyzes API events rather than continuous resource compliance.\nE: Shield protects against DDoS attacks and does not find public buckets.\n\nExam trigger:\nConfiguration compliance, remediation, and central findings.\n\nMemory hook:\nConfig evaluates; Security Hub aggregates."
+    },
+    {
+      "id": "q-saa-217",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company must allow an application role in Account A to publish only to one SNS topic in Account B. Which approach provides the LEAST privilege?",
+      "option_a": "Add sns:Publish for the topic ARN to the role policy and add a topic policy that permits the external role.",
+      "option_b": "Create an IAM user in Account B and store its access keys in the application.",
+      "option_c": "Allow sns:* on all resources in both accounts.",
+      "option_d": "Use an SCP in Account B to grant the role permission to publish.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nCross-account topic access requires identity permission for the caller and a topic resource policy that permits the external principal.\n\nWhy the others are wrong:\nB: Long-term access keys add risk and administration.\nC: Wildcards violate least privilege.\nD: An SCP cannot grant the cross-account permission.\n\nExam trigger:\nDirect cross-account access to a resource with a resource policy.\n\nMemory hook:\nCaller policy plus target resource policy."
+    },
+    {
+      "id": "q-saa-218",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A company runs stateless web servers in two Availability Zones. Traffic changes unpredictably, and an instance or Availability Zone failure must not interrupt service. Which TWO design choices meet the requirements with the LEAST operational overhead? (Select TWO.)",
+      "option_a": "Place the instances in an Auto Scaling group spanning both Availability Zones and use target tracking scaling.",
+      "option_b": "Place an Application Load Balancer in both Availability Zones and use load balancer health checks for the Auto Scaling group.",
+      "option_c": "Run fixed instances in both Availability Zones and replace failed instances manually.",
+      "option_d": "Use one large instance in each Availability Zone with DNS round robin.",
+      "option_e": "Place all instances in one Availability Zone and copy AMIs to another Region.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nThe multi-AZ Auto Scaling group replaces and scales instances, while the ALB distributes requests to healthy targets and supplies health information for replacement.\n\nWhy the others are wrong:\nC: Manual replacement and fixed capacity do not meet the scaling requirement.\nD: DNS round robin does not provide managed replacement or target-aware balancing.\nE: A single-AZ deployment does not meet the fault-tolerance requirement.\n\nExam trigger:\nStateless multi-AZ service with changing demand.\n\nMemory hook:\nMulti-AZ Auto Scaling plus an ALB."
+    },
+    {
+      "id": "q-saa-219",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A CloudFront distribution serves static content from an S3 bucket in one Region. The company maintains a synchronized backup bucket in another Region. For GET, HEAD, and OPTIONS requests, CloudFront must automatically use the backup when the primary origin times out or returns selected server errors. Which solution meets the requirements?",
+      "option_a": "Create a CloudFront origin group with the primary and secondary S3 origins and configure failover status codes.",
+      "option_b": "Use Route 53 failover records for the CloudFront distribution domain.",
+      "option_c": "Place the S3 buckets behind Global Accelerator.",
+      "option_d": "Use Lambda@Edge to modify DNS records after every 5xx response.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nA CloudFront origin group performs native origin failover for supported read methods when configured errors or timeouts occur.\n\nWhy the others are wrong:\nB: Route 53 sees the distribution rather than individual origins for per-request failover.\nC: Global Accelerator does not use S3 buckets as standard endpoints for this pattern.\nD: Custom DNS mutation is slower, fragile, and unnecessary.\n\nExam trigger:\nFailover between origins inside one distribution.\n\nMemory hook:\nCloudFront origin problem means origin group."
+    },
+    {
+      "id": "q-saa-220",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A global application uses Application Load Balancers in two Regions. Users should normally use the Region with the lowest network latency. If one ALB has no healthy targets, DNS must stop returning it. Which solution meets the requirements with the LEAST operational effort?",
+      "option_a": "Create Route 53 latency alias records for both ALBs and enable Evaluate Target Health.",
+      "option_b": "Create primary and secondary Route 53 failover records.",
+      "option_c": "Create equal-weight Route 53 weighted records with no health evaluation.",
+      "option_d": "Use geolocation records based only on user country.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nLatency routing selects the Region with the best measured latency, and Evaluate Target Health excludes an unhealthy ALB.\n\nWhy the others are wrong:\nB: Failover routing always prefers the primary rather than the lowest-latency healthy Region.\nC: Equal weights do not choose the lowest latency and omit health failover.\nD: Geolocation uses configured locations rather than network latency.\n\nExam trigger:\nLowest-latency Region plus health-based exclusion.\n\nMemory hook:\nFastest healthy Region means latency alias plus target health."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-211",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-211",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-212",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-212",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-212",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-213",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-213",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-215",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-215",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-215",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-216",
+      "topic_id": "topic-config"
+    },
+    {
+      "question_id": "q-saa-216",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-216",
+      "topic_id": "topic-security-hub"
+    },
+    {
+      "question_id": "q-saa-217",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-217",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-218",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-218",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-219",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-219",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-219",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-220",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-220",
+      "topic_id": "topic-route53"
+    }
+  ]
+}

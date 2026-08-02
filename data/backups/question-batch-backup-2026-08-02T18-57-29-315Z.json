@@ -1,0 +1,289 @@
+{
+  "createdAt": "2026-08-02T18:57:29.316Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-161",
+    "q-saa-162",
+    "q-saa-163",
+    "q-saa-164",
+    "q-saa-165",
+    "q-saa-166",
+    "q-saa-167",
+    "q-saa-168",
+    "q-saa-169",
+    "q-saa-170"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-161",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A bank hosts a sensitive data application on EC2 instances running inside a specific VPC (vpc-12345678). The application accesses an Amazon S3 bucket containing confidential customer records. A security policy requires that S3 bucket requests must be permitted ONLY when originating from within vpc-12345678 via a VPC Endpoint (vpce-87654321). All requests originating from outside this VPC Endpoint, including public internet IPs or other VPCs, must be explicitly denied. Which S3 bucket policy configuration satisfies these security requirements?",
+      "option_a": "Add a bucket policy with an Effect: Allow statement specifying Principal: '*' and Condition: {'StringEquals': {'aws:SourceVpc': 'vpc-12345678'}}.",
+      "option_b": "Add a bucket policy with an Effect: Deny statement specifying Principal: '*' and Condition: {'StringNotEquals': {'aws:SourceIp': '10.0.0.0/16'}}.",
+      "option_c": "Add a bucket policy with an Effect: Deny statement specifying Principal: '*' and Condition: {'StringNotEquals': {'aws:sourceVpce': 'vpce-87654321'}}.",
+      "option_d": "Attach a Network ACL to the S3 bucket endpoint allowing inbound traffic only from vpce-87654321.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct:\nTo enforce that access to an S3 bucket occurs exclusively through a designated VPC Endpoint, an explicit DENY bucket policy statement using the aws:sourceVpce condition key is required. An explicit DENY overrides all other IAM permissions if requests bypass the designated endpoint.\n\nWhy the others are wrong:\nA: Using Effect: Allow without an explicit Deny allows requests to potentially succeed from other paths if IAM permissions exist elsewhere, and checking aws:SourceVpc checks the VPC ID directly rather than forcing traffic through the VPC Endpoint interface.\nB: Filtering by aws:SourceIp using private RFC1918 IP ranges fails because S3 endpoint requests evaluate endpoint IDs or public NAT IPs, not internal VPC IPs directly in aws:SourceIp.\nD: Network ACLs apply to VPC subnets, not S3 service resources directly.\n\nExam trigger:\nRestricting S3 bucket access strictly to a specific VPC Endpoint.\n\nMemory hook:\nStrict VPC Endpoint enforcement = Bucket Policy explicit DENY with aws:sourceVpce."
+    },
+    {
+      "id": "q-saa-162",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A global enterprise is deploying a low-latency relational database application across us-east-1 and eu-west-1. The application uses client-side encryption to encrypt sensitive payload attributes before storing them in the database. The application instances in both regions must be able to encrypt and decrypt the payload attributes locally using an AWS KMS key without making cross-region network calls to KMS endpoints in the other region. Which combination of KMS configurations supports this requirement? (Select TWO.)",
+      "option_a": "Create an AWS KMS single-Region Customer Managed Key in us-east-1 and grant cross-region access permissions to IAM roles in eu-west-1.",
+      "option_b": "Create an AWS KMS Multi-Region primary key in us-east-1 and replicate it to eu-west-1 as a Multi-Region replica key.",
+      "option_c": "Configure AWS Secrets Manager to automatically synchronize KMS key material across regions every 24 hours.",
+      "option_d": "Use the Multi-Region key in both regions so that data encrypted in us-east-1 can be decrypted locally by application instances in eu-west-1.",
+      "option_e": "Export the plaintext private RSA key material from KMS and store it in an S3 bucket replicated across both regions.",
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1,
+        3
+      ],
+      "explanation": "Correct:\n1. AWS KMS Multi-Region keys share the same key ID, key material, and algorithm properties across different AWS Regions.\n2. Creating a primary key in us-east-1 and replicating it to eu-west-1 allows application servers in both regions to perform local low-latency cryptographic operations without calling remote KMS endpoints across regions.\n\nWhy the others are wrong:\nA: Single-region KMS keys require cross-region network calls from eu-west-1 back to us-east-1, introducing high latency and regional dependency.\nC: Secrets Manager stores database credentials and secrets; it does not replicate KMS asymmetric or symmetric key material.\nE: KMS HSMs (Hardware Security Modules) never allow exporting underlying symmetric key material in plaintext, violating fundamental KMS security design.\n\nExam trigger:\nMulti-region low-latency client-side encryption/decryption without cross-region KMS calls.\n\nMemory hook:\nAWS KMS Multi-Region Keys = Same key ID/material across regions for local decryption."
+    },
+    {
+      "id": "q-saa-163",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A multinational enterprise uses AWS Organizations with 50 member accounts. A regulatory compliance framework mandates that all management events and required S3 object data events across all accounts must be logged centrally into a single dedicated security AWS account. The log files must be encrypted, locked against modification or deletion for a 7-year retention period, and protected against unauthorized tampering even by root administrators. Which combination of actions should a solutions architect perform? (Select THREE.)",
+      "option_a": "Configure an Organization Trail in the AWS Organizations management account, designating a centralized Amazon S3 bucket located in the security account as the logging destination for management events.",
+      "option_b": "Configure advanced event selectors on the Organization Trail to log S3 data events for required object buckets across member accounts.",
+      "option_c": "Enable S3 Object Lock on the destination S3 bucket in Compliance mode, and set a default retention period of 7 years.",
+      "option_d": "Create individual AWS CloudTrail trails in each member account pointing to a local S3 bucket in each account.",
+      "option_e": "Configure S3 Lifecycle rules to transition CloudTrail logs to S3 Glacier Flexible Retrieval after 30 days without enabling Object Lock.",
+      "option_f": "Store CloudTrail logs in an AWS Systems Manager Parameter Store SecureString parameter across member accounts.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\n1. CloudTrail Organization Trails aggregate API audit management events automatically across all existing and newly created member accounts into a centralized destination S3 bucket in the security account.\n2. Advanced event selectors on the Organization Trail allow explicitly capturing S3 object data events (such as PutObject and GetObject) across member accounts.\n3. S3 Object Lock in Compliance mode guarantees that objects cannot be overwritten or deleted by any user, including the AWS account root user, for the duration of the 7-year retention period.\n\nWhy the others are wrong:\nD: Individual member trails create high operational management overhead and allow local member account admins to stop or alter logging.\nE: Lifecycle rules transition storage classes but do not prevent malicious deletion or overwrite of log files during the retention period.\nF: SSM Parameter Store is not an object storage service designed for multi-terabyte immutable audit log ingestion.\n\nExam trigger:\nImmutable, centralized multi-account API management and data event logging compliant with strict retention laws.\n\nMemory hook:\nOrganization Trail (Management + Advanced Event Selectors for Data Events) + S3 Object Lock (Compliance Mode) = Immutable audit security."
+    },
+    {
+      "id": "q-saa-164",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A fintech application handles mission-critical payment processing on AWS. The infrastructure team must implement a continuous threat protection solution that offers 24/7 access to the AWS Shield Response Team (SRT), automatic Layer 7 DDoS mitigation on CloudFront and Application Load Balancers, and financial protection against scaling cost spikes caused by volumetric DDoS attacks. Which AWS service meets these exact operational and business requirements?",
+      "option_a": "AWS Shield Standard",
+      "option_b": "AWS Shield Advanced",
+      "option_c": "AWS WAF Managed Rules",
+      "option_d": "Amazon GuardDuty",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAWS Shield Advanced provides comprehensive DDoS protection, including direct 24/7 engagement with the AWS Shield Response Team (SRT), automatic application layer (Layer 7) DDoS mitigation, advanced health-based detection, and DDoS cost protection against bill spikes resulting from target resource auto-scaling during attacks.\n\nWhy the others are wrong:\nA: AWS Shield Standard automatically protects all AWS customers against common Layer 3/4 network attacks at no extra charge, but does not offer 24/7 SRT access, cost protection, or advanced custom L7 mitigation.\nC: AWS WAF inspects web payloads against configured rule groups, but does not provide cost protection guarantees or direct SRT engagement.\nD: Amazon GuardDuty is a threat detection service that analyzes log sources for compromise; it does not perform inline DDoS traffic mitigation or offer cost protection.\n\nExam trigger:\n24/7 Shield Response Team access, DDoS cost protection, and automated Layer 7 DDoS mitigation.\n\nMemory hook:\nShield Advanced = SRT access + DDoS cost protection + Advanced L7 mitigation."
+    },
+    {
+      "id": "q-saa-165",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "An enterprise company contracts a third-party security auditing firm to perform read-only compliance assessments on S3 buckets in Account A. The auditing firm uses an automated tool hosted in their own AWS account (Account B). The solution must adhere to the principle of least privilege, prevent confused deputy attacks, and ensure the third-party auditors cannot escalate permissions inside Account A. Which combination of steps should the solutions architect take? (Select TWO.)",
+      "option_a": "Create an IAM role in Account A with a trust policy that permits Account B's principal and mandates an sts:ExternalId condition check.",
+      "option_b": "Attach an IAM permission policy to the role in Account A granting s3:GetObject and s3:ListBucket permissions restricted strictly to the target bucket ARNs.",
+      "option_c": "Generate permanent IAM access keys in Account A and send them securely to the auditing firm via encrypted email.",
+      "option_d": "Configure an AWS Organizations SCP in Account B granting cross-account admin access to Account A.",
+      "option_e": "Enable AWS Inspector to perform automatic cross-account IAM role creation in Account B.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\n1. Cross-account IAM role trust policies must require an sts:ExternalId condition to protect against the confused deputy problem when third parties access resources.\n2. Principle of least privilege requires explicitly attaching a permission policy listing specific s3:GetObject and s3:ListBucket actions targeting exact bucket ARNs.\n\nWhy the others are wrong:\nC: Issuing permanent IAM access keys to third parties violates AWS security best practices; temporary cross-account STS role assumption must be used.\nD: SCPs in Account B cannot grant access to resources owned by Account A.\nE: AWS Inspector is an automated vulnerability management service, not a cross-account IAM role provisioning tool.\n\nExam trigger:\nSecure third-party cross-account access with least privilege and confused deputy prevention.\n\nMemory hook:\nThird-party cross-account access = STS AssumeRole + External ID + Restricted Policy."
+    },
+    {
+      "id": "q-saa-166",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A solutions architect is designing the database tier for a critical enterprise application on Amazon RDS for PostgreSQL. The application requires high availability and automatic failover in the event of an Availability Zone outage or primary database instance failure. Which deployment configuration satisfies these availability requirements with NO manual intervention required during failover?",
+      "option_a": "Deploy the RDS PostgreSQL instance in a Single-AZ setup and configure hourly automated snapshots to Amazon S3.",
+      "option_b": "Deploy the RDS PostgreSQL instance in a Multi-AZ deployment across two Availability Zones with synchronous physical replication.",
+      "option_c": "Deploy a primary RDS PostgreSQL instance in one AZ and create an asynchronous Read Replica in another AZ.",
+      "option_d": "Deploy an Amazon EC2 instance running PostgreSQL in a private subnet and attach an EBS gp3 volume.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon RDS Multi-AZ deployments provision a standby replica in a second Availability Zone with synchronous physical replication. If the primary instance fails or the AZ suffers an outage, RDS automatically performs a seamless failover to the standby replica without manual intervention or DNS endpoint updates.\n\nWhy the others are wrong:\nA: Single-AZ with snapshots requires manual database restoration, resulting in significant RTO/RPO downtime.\nC: Standard RDS Read Replicas use asynchronous replication for read scaling; failover to a Read Replica requires manual intervention or custom scripting.\nD: Self-managed PostgreSQL on EC2 requires manual setup of cluster failover software (e.g., Pacemaker/Patroni) and incurs high operational management overhead.\n\nExam trigger:\nManaged relational database high availability with automatic non-disruptive failover.\n\nMemory hook:\nRDS Multi-AZ = Synchronous standby + Automatic failover; Read Replica = Asynchronous + Read scaling."
+    },
+    {
+      "id": "q-saa-167",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An e-commerce order processing microservice receives transaction messages from a web front end. To prevent order corruption, message processing must occur strictly in the exact first-in, first-out (FIFO) sequence in which transactions were submitted by customers. Additionally, duplicate order messages must be prevented, and unparseable messages must be isolated after 3 failed delivery attempts without stalling the queue. Which AWS queue configuration fulfills these requirements?",
+      "option_a": "Use an Amazon SQS Standard queue and configure a CloudWatch Alarm to invoke Lambda on poison messages.",
+      "option_b": "Use an Amazon SQS FIFO queue with content-based deduplication enabled, and configure a Dead-Letter Queue (DLQ) with maxReceiveCount set to 3.",
+      "option_c": "Use an Amazon SNS Standard topic paired with an Amazon Kinesis Data Stream using partition keys.",
+      "option_d": "Use an Amazon EventBridge Event Bus with a custom rule routing failed events to an S3 bucket.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct:\nAmazon SQS FIFO queues preserve message ordering within a message group. Deduplication IDs or content-based deduplication prevent duplicate messages from being introduced during the FIFO deduplication interval. A dead-letter queue with maxReceiveCount set to 3 isolates messages that repeatedly fail processing so they do not continue disrupting the main queue. Consumers should still be idempotent when business side effects must not be repeated after a worker failure.\n\nWhy the others are wrong:\nA: SQS Standard queues provide best-effort ordering and at-least-once delivery, so duplicates and out-of-order delivery can occur.\nC: SNS Standard does not provide FIFO ordering or FIFO deduplication, and combining it with Kinesis adds unnecessary complexity.\nD: EventBridge is an event router and does not provide the required FIFO queue and worker-polling behaviour.\n\nExam trigger:\nStrict message ordering, duplicate suppression, and poison-message isolation.\n\nMemory hook:\nFIFO preserves order and suppresses duplicate sends; a DLQ isolates repeated failures."
+    },
+    {
+      "id": "q-saa-168",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A logistics enterprise is decoupling its core microservices backend. When a shipping package changes status, an order management event is published. Multiple independent downstream systems (Inventory, Billing, Customer Notifications, Data Warehouse) must receive this status change event simultaneously. If one downstream system experiences an outage, it must not impact event delivery to the other systems. Which architectural pattern provides the MOST resilient, loosely coupled fan-out design?",
+      "option_a": "Publish status change events directly to an Amazon Simple Notification Service (SNS) topic that fans out messages to individual Amazon Simple Queue Service (SQS) queues dedicated to each downstream service.",
+      "option_b": "Configure the web front end to send synchronous HTTPS POST API requests directly to each downstream microservice sequentially.",
+      "option_c": "Store status changes in an Amazon ElastiCache for Redis cluster, and configure downstream services to poll Redis memory every second.",
+      "option_d": "Write order events to a single shared Amazon EBS volume mounted across all downstream EC2 worker nodes using Multi-Attach.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nThe SNS-to-SQS fan-out pattern provides asynchronous, decoupled event delivery. SNS publishes a single event to multiple subscribed SQS queues simultaneously. Each downstream microservice processes its own dedicated SQS queue independently; an outage in one service only buffers messages in its queue without affecting others.\n\nWhy the others are wrong:\nB: Synchronous HTTP calls create tight coupling; if one downstream service fails or times out, the entire publish request fails or experiences latency cascades.\nC: Polling ElastiCache creates scaling bottlenecks, lacks built-in retry mechanisms, and offers weaker durability compared to SQS.\nD: EBS Multi-Attach requires cluster-aware file systems (e.g., GFS2) and is designed for high-performance compute blocks, not event-driven microservices decoupling.\n\nExam trigger:\nPublish-subscribe fan-out pattern with independent downstream microservice queues.\n\nMemory hook:\nFan-out architecture = SNS Topic -> Multiple SQS Queues."
+    },
+    {
+      "id": "q-saa-169",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A media company hosts a news portal using an Amazon CloudFront distribution paired with an Application Load Balancer (ALB) and EC2 instances as the primary origin for dynamic application traffic. During high-traffic breaking news events, backend server overload causes occasional HTTP 502 (Bad Gateway) and 504 (Gateway Timeout) errors. The company wants to ensure that when the ALB fails or returns 5xx errors on read-only HTTP GET, HEAD, and OPTIONS requests, end users receive a friendly static fallback web page from an Amazon S3 bucket instead of an unhandled error screen. Which combination of actions should a solutions architect take to meet this requirement? (Select TWO.)",
+      "option_a": "Configure an Amazon Route 53 failover routing policy that automatically redirects traffic from the ALB to the static S3 web hosting endpoint when health checks fail.",
+      "option_b": "Create a CloudFront Origin Group containing the Application Load Balancer as the primary origin and the static fallback Amazon S3 bucket as the secondary origin.",
+      "option_c": "Configure the CloudFront Origin Group failover criteria to trigger on 502, 503, and 504 HTTP status codes for eligible read requests.",
+      "option_d": "Use AWS Lambda@Edge on viewer response events to rewrite all HTTP 5xx responses from the ALB into HTTP 200 OK responses containing static HTML body content.",
+      "option_e": "Configure the CloudFront distribution's default cache behavior to automatically convert all incoming HTTP POST requests to HTTP GET requests during origin downtime.",
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1,
+        2
+      ],
+      "explanation": "Correct:\nCloudFront Origin Groups allow setting up a primary origin (ALB) and a secondary origin (S3 bucket). When CloudFront receives designated error status codes (502, 503, 504) from the primary origin on eligible read requests (GET, HEAD, and OPTIONS), CloudFront automatically retries the secondary origin to serve the static fallback content without returning an operational error page to the user.\n\nWhy the others are wrong:\nA: Route 53 failover routes at the DNS level and cannot fail over individual HTTP GET requests based on HTTP 502/504 status codes returned by an active load balancer.\nD: Rewriting responses at Lambda@Edge on viewer response still requires processing the failed origin response manually and doesn't utilize CloudFront's built-in multi-origin failover mechanism.\nE: CloudFront Origin Groups do not fail over HTTP POST, PUT, DELETE, or PATCH methods (they only support GET, HEAD, and OPTIONS); converting HTTP methods invalidates request signatures and application logic.\n\nExam trigger:\nGraceful static read request fallback during primary origin HTTP 5xx failures.\n\nMemory hook:\nCloudFront Origin Groups = Native GET/HEAD/OPTIONS failover to secondary origin on 5xx status codes."
+    },
+    {
+      "id": "q-saa-170",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A global company operates an active-passive disaster recovery architecture across two AWS Regions (us-east-1 primary and us-west-2 secondary). During a regional disaster, the company needs a highly reliable traffic failover control that does not depend on control plane API availability in the impaired primary Region. Which solution meets these requirements?",
+      "option_a": "Configure Amazon Route 53 Application Recovery Controller (ARC) routing controls with Route 53 health checks that change DNS responses according to the routing control states.",
+      "option_b": "Write a Python script hosted on an EC2 instance in us-east-1 that updates Route 53 A records using the Route 53 control plane API upon detecting failure.",
+      "option_c": "Configure an AWS Lambda function in us-east-1 triggered by CloudWatch Alarms to modify the Application Load Balancer target group attachments.",
+      "option_d": "Deploy an AWS Transit Gateway cross-region peering connection and manage failover manually via the AWS Management Console.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nRoute 53 ARC routing controls use a highly available data plane distributed across multiple AWS Regions. Changing a routing control state updates the associated Route 53 health checks and allows traffic to be shifted without depending on the impaired Region's control plane. Readiness checks can assess whether recovery resources are prepared, but they do not perform the traffic switch.\n\nWhy the others are wrong:\nB: A script running in the impaired primary Region depends on that Region and on control plane API calls during the incident.\nC: A Lambda function in the failing Region creates the same single-Region dependency.\nD: Manual Transit Gateway changes are slow, error-prone, and still depend on management-plane access.\n\nExam trigger:\nHighly reliable multi-Region failover without relying on an impaired Region's control plane.\n\nMemory hook:\nARC routing controls switch traffic through a resilient data plane; readiness checks only assess preparedness."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-161",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-161",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-161",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-161",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-162",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-163",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-163",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-163",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-164",
+      "topic_id": "topic-shield"
+    },
+    {
+      "question_id": "q-saa-164",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-165",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-165",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-166",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-167",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-168",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-168",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-169",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-169",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-169",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-170",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-170",
+      "topic_id": "topic-route53"
+    }
+  ]
+}
