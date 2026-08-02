@@ -1,0 +1,260 @@
+{
+  "createdAt": "2026-08-02T22:48:58.526Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-94",
+    "q-saa-96",
+    "q-saa-235",
+    "q-saa-97",
+    "q-saa-98",
+    "q-saa-230",
+    "q-saa-202",
+    "q-saa-172",
+    "q-saa-175",
+    "q-saa-205"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-172",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An enterprise connects its data centre to multiple VPCs attached to an AWS Transit Gateway. It requires a dedicated high-bandwidth primary path and a lower-cost internet-based backup that takes over automatically through BGP when the primary path fails. Which design meets the requirements?",
+      "option_a": "Use two Site-to-Site VPN connections over different internet providers.",
+      "option_b": "Use one Direct Connect public VIF as primary and a second Direct Connect circuit as backup.",
+      "option_c": "Use Direct Connect with a transit VIF through a Direct Connect gateway to the Transit Gateway, plus a BGP Site-to-Site VPN attached to the same Transit Gateway as backup.",
+      "option_d": "Use two Direct Connect circuits with ECMP across both paths.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct answer:\nC. A transit VIF connects Direct Connect through a Direct Connect gateway to the Transit Gateway, providing the dedicated primary path for multiple attached VPCs. A dynamically routed Site-to-Site VPN to the same Transit Gateway provides a cost-effective internet backup, with BGP attributes keeping Direct Connect preferred during normal operation.\n\nWhy the other options are wrong:\nA. Two VPNs improve internet-path resilience but do not provide the required dedicated primary connection.\nB. A public VIF reaches public AWS services rather than providing the required Transit Gateway private connectivity, and a second circuit is not the lower-cost internet backup requested.\nD. Two Direct Connect circuits can improve resilience but do not provide an internet VPN backup and usually cost more.\n\nExam trigger:\nTransit Gateway, dedicated primary connectivity, and automatic internet backup point to Direct Connect plus Site-to-Site VPN with BGP.\n\nExam trap:\nTransit Gateway connectivity through Direct Connect requires a transit VIF and Direct Connect gateway.\n\nMemory hook:\nDirect Connect primary, VPN backup, BGP chooses the path."
+    },
+    {
+      "id": "q-saa-175",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company must protect AWS Backup recovery points for EBS, RDS, and DynamoDB against ransomware and malicious administrators. For 365 days, no IAM principal or root user may delete a recovery point or shorten its retention. Which solution provides the strongest protection?",
+      "option_a": "Copy the recovery points to a dedicated backup account and store them in an AWS Backup vault with Vault Lock in compliance mode and the required retention controls.",
+      "option_b": "Export the backups to a versioned S3 bucket with an IAM deny policy.",
+      "option_c": "Use AWS Backup Vault Lock in governance mode in each workload account.",
+      "option_d": "Encrypt all recovery points with AWS managed KMS keys.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Cross-account backup copies improve isolation from a compromised workload account. After the Vault Lock compliance-mode cooling-off period expires, protected recovery points cannot be deleted and their lifecycle cannot be shortened by users, including root, before retention expires.\n\nWhy the other options are wrong:\nB. IAM and bucket policies can be changed by sufficiently privileged administrators and do not create AWS Backup recovery-point immutability.\nC. Governance mode is designed to permit authorized override and does not satisfy the no-bypass requirement.\nD. Encryption prevents unauthorized reading but does not stop an authorized principal from deleting a recovery point.\n\nExam trigger:\nRoot-resistant immutable AWS backups and ransomware isolation point to cross-account copies plus compliance-mode Vault Lock.\n\nExam trap:\nEncryption protects confidentiality; Vault Lock protects retention and deletion.\n\nMemory hook:\nImmutable recovery points require Vault Lock compliance mode."
+    },
+    {
+      "id": "q-saa-202",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Billing and fulfilment must each receive every order-status event. Events for the same customer must remain ordered, while separate customers can progress independently. Producer retries during the deduplication interval must not create another copy of the same logical event. Which design has the least operational overhead?",
+      "option_a": "Publish to EventBridge and target two SQS standard queues.",
+      "option_b": "Publish to an SNS FIFO topic with one SQS FIFO subscription per system, using customer ID as the message group ID and a stable event ID as the deduplication ID.",
+      "option_c": "Place both systems behind one SQS FIFO queue as competing consumers.",
+      "option_d": "Publish to Kinesis Data Streams and build custom retry deduplication in each consumer.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. SNS FIFO provides managed fan-out, while each subscribed SQS FIFO queue gives the downstream system its own durable backlog. The customer ID preserves order within that customer's message group, and retries of the same logical event reuse the same deduplication ID during the deduplication interval.\n\nWhy the other options are wrong:\nA. SQS standard queues provide best-effort ordering and can deliver duplicates.\nC. Competing consumers divide the work; they do not deliver every event independently to both systems.\nD. Kinesis can preserve order within a partition, but producer-retry deduplication would require additional application logic.\n\nExam trigger:\nOrdered and deduplicated fan-out to independent consumers points to SNS FIFO and SQS FIFO.\n\nExam trap:\nThe message group ID controls ordering; the deduplication ID identifies repeated sends of one logical event.\n\nMemory hook:\nFIFO topic copies; FIFO queues isolate."
+    },
+    {
+      "id": "q-saa-205",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Member-account administrators in production and development OUs must be prevented from stopping CloudTrail, leaving the organization, and using Regional services outside approved Regions. Workload teams should continue receiving normal IAM permissions within those limits. Which control should be applied?",
+      "option_a": "Attach SCPs to the appropriate OUs with explicit denies for the prohibited actions and Region conditions, including carefully designed exceptions for required global services.",
+      "option_b": "Apply permissions boundaries separately to every IAM principal in every account.",
+      "option_c": "Use AWS Config remediation to reverse prohibited changes after they occur.",
+      "option_d": "Create resource policies for CloudTrail and every Regional AWS service.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. SCPs centrally define the maximum permissions available to principals in affected member accounts. Explicit denies can block selected organization and CloudTrail actions and restrict Regional API requests while normal IAM policies continue to grant workload permissions inside the guardrails.\n\nWhy the other options are wrong:\nB. Per-principal boundaries create more administration and do not constrain the member-account root user.\nC. Config detection and remediation are reactive, so the prohibited action can occur before remediation.\nD. Many of the required APIs are not governed by one common resource-policy mechanism.\n\nExam trigger:\nPreventive guardrails spanning accounts and OUs point to SCPs.\n\nExam trap:\nSCPs set a permission ceiling; they do not grant workload access.\n\nMemory hook:\nOU-wide guardrails belong in SCPs."
+    },
+    {
+      "id": "q-saa-230",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A latency-sensitive transactional database on a Nitro-based EC2 instance requires one EBS volume with 120,000 sustained IOPS, 3,000 MiB/s of throughput, and consistent sub-millisecond storage latency. Which EBS volume type meets the requirements?",
+      "option_a": "io2 Block Express",
+      "option_b": "gp3",
+      "option_c": "st1",
+      "option_d": "sc1",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. io2 Block Express on supported Nitro-based instances can provide up to 256,000 IOPS and 4,000 MiB/s per volume and is designed for consistent sub-millisecond latency. It meets all three requirements.\n\nWhy the other options are wrong:\nB. Current gp3 volumes can provide up to 80,000 IOPS and 2,000 MiB/s, so one gp3 volume cannot meet either stated performance figure.\nC. st1 is HDD-backed storage designed for large sequential throughput, not high-IOPS low-latency transactional databases.\nD. sc1 is low-cost cold HDD storage for infrequently accessed sequential workloads.\n\nExam trigger:\nOne volume above gp3 IOPS and throughput limits plus sub-millisecond latency points to io2 Block Express.\n\nExam trap:\nCurrent gp3 limits are higher than the old 16,000-IOPS limit, but this workload still exceeds them.\n\nMemory hook:\nBeyond gp3 with sub-millisecond latency means io2 Block Express."
+    },
+    {
+      "id": "q-saa-235",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A relational application needs a managed in-memory cache that supports replicas, Multi-AZ automatic failover, optional data persistence, and rich data structures such as sorted sets and hashes. Which service is the best fit?",
+      "option_a": "Amazon ElastiCache for Valkey or Redis OSS using a replication group",
+      "option_b": "Amazon ElastiCache for Memcached",
+      "option_c": "DynamoDB Accelerator",
+      "option_d": "Amazon OpenSearch Service",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. ElastiCache for Valkey or Redis OSS supports replication groups, read replicas, Multi-AZ automatic failover, backup and persistence-related options, and rich data structures such as lists, hashes, and sorted sets.\n\nWhy the other options are wrong:\nB. Memcached provides a distributed cache but does not offer the same native replication, automatic failover, persistence, or rich-data-structure capabilities.\nC. DAX is purpose-built as a DynamoDB-compatible cache rather than a general cache for relational application data.\nD. OpenSearch provides search and analytics indexes, not the simplest managed session and database-query cache.\n\nExam trigger:\nReplicas, failover, persistence options, and rich cache structures point to Valkey or Redis OSS.\n\nExam trap:\nMemcached is simpler and horizontally distributed; Valkey or Redis OSS provides the richer resilient feature set.\n\nMemory hook:\nRich resilient cache means Valkey or Redis."
+    },
+    {
+      "id": "q-saa-94",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A production account stores compliance logs in an S3 bucket. Every new object must be replicated automatically to a bucket owned by a separate audit account in the same AWS Region. The audit copy must remain independently owned and managed. Which S3 capability should be configured?",
+      "option_a": "S3 Cross-Region Replication",
+      "option_b": "S3 Same-Region Replication to the audit-account bucket, with S3 Object Ownership set to bucket owner enforced for the destination",
+      "option_c": "S3 Transfer Acceleration",
+      "option_d": "An S3 Lifecycle transition to Glacier Deep Archive",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. S3 Same-Region Replication automatically replicates new objects between buckets in the same Region and supports cross-account destinations. Configuring the audit destination with bucket-owner-enforced Object Ownership makes the audit account own the replicated objects and manage them independently.\n\nWhy the other options are wrong:\nA. Cross-Region Replication requires the destination bucket to be in a different Region.\nC. Transfer Acceleration improves transfer performance but does not create replicas.\nD. Lifecycle transitions change an object's storage class and do not create an independently owned cross-account copy.\n\nExam trigger:\nAutomatic cross-account replication within one Region, with the destination account owning the audit copies.\n\nExam trap:\nCross-account replication does not automatically change replica ownership unless destination ownership is configured.\n\nMemory hook:\nSame Region uses SRR; independent audit ownership needs bucket-owner-enforced ownership."
+    },
+    {
+      "id": "q-saa-96",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company exposes a latency-sensitive TCP service on EC2. External partners require static public IP addresses for firewall allow lists, and the service must scale to very high connection rates across multiple Availability Zones. Which load balancer is the best fit?",
+      "option_a": "Application Load Balancer",
+      "option_b": "Network Load Balancer with one Elastic IP address per enabled Availability Zone",
+      "option_c": "Classic Load Balancer",
+      "option_d": "Gateway Load Balancer",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. A Network Load Balancer operates at Layer 4, supports TCP, handles very high connection volumes with low latency, and can use a static Elastic IP address for each enabled Availability Zone.\n\nWhy the other options are wrong:\nA. An ALB provides Layer 7 HTTP and HTTPS routing and does not provide the same static per-AZ Elastic IP model.\nC. Classic Load Balancer is a previous-generation option and is not the preferred design for high-scale static-IP TCP workloads.\nD. Gateway Load Balancer is designed to deploy and scale virtual network appliances, not to front ordinary application servers for client TCP access.\n\nExam trigger:\nTCP, static IP allow lists, ultra-high scale, and low latency point to NLB.\n\nExam trap:\nStatic IP plus Layer 4 traffic distinguishes NLB from ALB.\n\nMemory hook:\nStatic IP TCP load balancing means NLB."
+    },
+    {
+      "id": "q-saa-97",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A public application uses an active-passive design across two AWS Regions. Clients must always use the primary Regional endpoint while it is healthy. If the primary health check fails, DNS responses must automatically direct clients to the secondary endpoint. Which Route 53 policy should be used?",
+      "option_a": "Multivalue answer routing",
+      "option_b": "Failover routing with primary and secondary records linked to health checks",
+      "option_c": "Geolocation routing",
+      "option_d": "Weighted routing with a 50/50 split",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Route 53 failover routing supports active-passive DNS. The primary record is returned while healthy, and the secondary record is returned when the primary health check fails.\n\nWhy the other options are wrong:\nA. Multivalue answer routing returns multiple healthy records and is not a strict primary-secondary design.\nC. Geolocation routing selects records according to the user's location rather than primary health status.\nD. Weighted routing divides traffic according to configured percentages and would send traffic to both Regions during normal operation.\n\nExam trigger:\nOne active primary endpoint and one passive secondary endpoint with health-based DNS failover.\n\nExam trap:\nWeighted routing distributes traffic; failover routing switches traffic.\n\nMemory hook:\nActive-passive DNS means Route 53 failover routing."
+    },
+    {
+      "id": "q-saa-98",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An on-premises router must establish an AWS Site-to-Site VPN directly to one VPC. The design uses two IPsec tunnels and dynamic BGP routing and does not use AWS Transit Gateway. Which AWS-side component terminates the VPN connection?",
+      "option_a": "Internet gateway",
+      "option_b": "Virtual private gateway attached to the VPC",
+      "option_c": "Egress-only internet gateway",
+      "option_d": "NAT gateway",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. A virtual private gateway attaches to a VPC and can terminate an AWS Site-to-Site VPN connection from an on-premises customer gateway. The managed VPN connection provides two tunnels and can use BGP for dynamic routing.\n\nWhy the other options are wrong:\nA. An internet gateway provides internet connectivity for a VPC and does not terminate Site-to-Site VPN tunnels.\nC. An egress-only internet gateway supports outbound-only IPv6 internet access and is unrelated to IPsec VPN termination.\nD. A NAT gateway translates outbound IPv4 connections and does not terminate VPNs or participate in BGP.\n\nExam trigger:\nDirect Site-to-Site VPN to one VPC without Transit Gateway points to a virtual private gateway.\n\nExam trap:\nThe customer gateway is on premises; the virtual private gateway is the VPC-side endpoint.\n\nMemory hook:\nOne VPC Site-to-Site VPN terminates on a VGW."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-transit-gateway"
+    },
+    {
+      "question_id": "q-saa-172",
+      "topic_id": "topic-vpn"
+    },
+    {
+      "question_id": "q-saa-175",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-202",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-202",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-205",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-205",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-230",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-235",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-94",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-96",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-97",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-98",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-98",
+      "topic_id": "topic-vpn"
+    }
+  ]
+}

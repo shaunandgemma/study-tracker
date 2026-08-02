@@ -2036,10 +2036,10 @@
     "type": "single",
     "question": "A production account stores compliance logs in an S3 bucket. Every new object must be replicated automatically to a bucket owned by a separate audit account in the same AWS Region. The audit copy must remain independently owned and managed. Which S3 capability should be configured?",
     "options": [
-      "S3 Cross-Region Replication",
-      "S3 Same-Region Replication to the audit-account bucket, with S3 Object Ownership set to bucket owner enforced for the destination",
-      "S3 Transfer Acceleration",
-      "An S3 Lifecycle transition to Glacier Deep Archive"
+      "Configure Cross-Region Replication to a bucket in the audit account and enable destination ownership.",
+      "Configure Same-Region Replication to the audit-account bucket and set the destination to bucket-owner-enforced ownership.",
+      "Use S3 Transfer Acceleration to copy each object into a bucket owned by the audit account.",
+      "Use an S3 Lifecycle rule to transition each object into a storage class managed by the audit account."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -2079,10 +2079,10 @@
     "type": "single",
     "question": "A company exposes a latency-sensitive TCP service on EC2. External partners require static public IP addresses for firewall allow lists, and the service must scale to very high connection rates across multiple Availability Zones. Which load balancer is the best fit?",
     "options": [
-      "Application Load Balancer",
-      "Network Load Balancer with one Elastic IP address per enabled Availability Zone",
-      "Classic Load Balancer",
-      "Gateway Load Balancer"
+      "Use an Application Load Balancer with fixed IP addresses assigned through AWS Global Accelerator.",
+      "Use a Network Load Balancer with one Elastic IP address assigned in each enabled Availability Zone.",
+      "Use a Classic Load Balancer with cross-zone load balancing and public IP address preservation.",
+      "Use a Gateway Load Balancer with appliance endpoints deployed across the required Availability Zones."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -2100,10 +2100,10 @@
     "type": "single",
     "question": "A public application uses an active-passive design across two AWS Regions. Clients must always use the primary Regional endpoint while it is healthy. If the primary health check fails, DNS responses must automatically direct clients to the secondary endpoint. Which Route 53 policy should be used?",
     "options": [
-      "Multivalue answer routing",
-      "Failover routing with primary and secondary records linked to health checks",
-      "Geolocation routing",
-      "Weighted routing with a 50/50 split"
+      "Use multivalue answer routing with both Regional endpoints and health checks.",
+      "Use failover routing with primary and secondary records associated with health checks.",
+      "Use geolocation routing and map all users to the preferred primary Region.",
+      "Use weighted routing with nearly all traffic sent to the primary endpoint."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -2121,10 +2121,10 @@
     "type": "single",
     "question": "An on-premises router must establish an AWS Site-to-Site VPN directly to one VPC. The design uses two IPsec tunnels and dynamic BGP routing and does not use AWS Transit Gateway. Which AWS-side component terminates the VPN connection?",
     "options": [
-      "Internet gateway",
-      "Virtual private gateway attached to the VPC",
-      "Egress-only internet gateway",
-      "NAT gateway"
+      "Attach an internet gateway to the VPC and terminate both IPsec tunnels on it.",
+      "Attach a virtual private gateway to the VPC and terminate the Site-to-Site VPN there.",
+      "Attach an egress-only internet gateway and use it as the BGP endpoint for the VPN.",
+      "Deploy a NAT gateway in each Availability Zone and terminate one VPN tunnel on each gateway."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -3807,10 +3807,10 @@
     "type": "single",
     "question": "An enterprise connects its data centre to multiple VPCs attached to an AWS Transit Gateway. It requires a dedicated high-bandwidth primary path and a lower-cost internet-based backup that takes over automatically through BGP when the primary path fails. Which design meets the requirements?",
     "options": [
-      "Use two Site-to-Site VPN connections over different internet providers.",
-      "Use one Direct Connect public VIF as primary and a second Direct Connect circuit as backup.",
-      "Use Direct Connect with a transit VIF through a Direct Connect gateway to the Transit Gateway, plus a BGP Site-to-Site VPN attached to the same Transit Gateway as backup.",
-      "Use two Direct Connect circuits with ECMP across both paths."
+      "Use two Site-to-Site VPN connections to the Transit Gateway and designate one as the primary route.",
+      "Use a Direct Connect public VIF and provision another Direct Connect circuit as the backup path.",
+      "Use a transit VIF through a Direct Connect gateway, plus a BGP Site-to-Site VPN to the same Transit Gateway.",
+      "Use two Direct Connect circuits and omit VPN because BGP cannot fail over between Direct Connect and VPN."
     ],
     "correctAnswer": 2,
     "correctAnswers": [
@@ -3875,10 +3875,10 @@
     "type": "single",
     "question": "A company must protect AWS Backup recovery points for EBS, RDS, and DynamoDB against ransomware and malicious administrators. For 365 days, no IAM principal or root user may delete a recovery point or shorten its retention. Which solution provides the strongest protection?",
     "options": [
-      "Copy the recovery points to a dedicated backup account and store them in an AWS Backup vault with Vault Lock in compliance mode and the required retention controls.",
-      "Export the backups to a versioned S3 bucket with an IAM deny policy.",
-      "Use AWS Backup Vault Lock in governance mode in each workload account.",
-      "Encrypt all recovery points with AWS managed KMS keys."
+      "Copy recovery points to a dedicated account and apply Backup Vault Lock in compliance mode.",
+      "Encrypt recovery points with a customer managed KMS key and deny deletion through IAM policies.",
+      "Apply Backup Vault Lock in governance mode and permit designated administrators to override retention.",
+      "Keep recovery points in the production account and copy them to another Region with encryption."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4483,10 +4483,10 @@
     "type": "single",
     "question": "Billing and fulfilment must each receive every order-status event. Events for the same customer must remain ordered, while separate customers can progress independently. Producer retries during the deduplication interval must not create another copy of the same logical event. Which design has the least operational overhead?",
     "options": [
-      "Publish to EventBridge and target two SQS standard queues.",
-      "Publish to an SNS FIFO topic with one SQS FIFO subscription per system, using customer ID as the message group ID and a stable event ID as the deduplication ID.",
-      "Place both systems behind one SQS FIFO queue as competing consumers.",
-      "Publish to Kinesis Data Streams and build custom retry deduplication in each consumer."
+      "Publish to an SQS standard queue and have billing and fulfilment compete for each message.",
+      "Use an SNS FIFO topic with separate SQS FIFO subscriptions and customer-based message groups.",
+      "Use one SQS FIFO queue and have billing and fulfilment consume from the same queue.",
+      "Publish to Kinesis Data Streams and make each consumer handle ordering and duplicate producer retries."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -4548,16 +4548,16 @@
     "type": "single",
     "question": "Member-account administrators in production and development OUs must be prevented from stopping CloudTrail, leaving the organization, and using Regional services outside approved Regions. Workload teams should continue receiving normal IAM permissions within those limits. Which control should be applied?",
     "options": [
-      "Attach SCPs to the appropriate OUs with explicit denies for the prohibited actions and Region conditions, including carefully designed exceptions for required global services.",
-      "Apply permissions boundaries separately to every IAM principal in every account.",
-      "Use AWS Config remediation to reverse prohibited changes after they occur.",
-      "Create resource policies for CloudTrail and every Regional AWS service."
+      "Use AWS Config rules and remediation actions to identify and reverse prohibited administrator activity.",
+      "Use an SCP with explicit denies to restrict the protected CloudTrail and S3 actions across the required OUs.",
+      "Use permissions boundaries on administrator roles and rely on each account to maintain the boundary assignments.",
+      "Use Security Hub findings and automated remediation to prevent administrators from completing prohibited API calls."
     ],
-    "correctAnswer": 0,
+    "correctAnswer": 1,
     "correctAnswers": [
-      0
+      1
     ],
-    "explanation": "Correct answer:\nA. SCPs centrally define the maximum permissions available to principals in affected member accounts. Explicit denies can block selected organization and CloudTrail actions and restrict Regional API requests while normal IAM policies continue to grant workload permissions inside the guardrails.\n\nWhy the other options are wrong:\nB. Per-principal boundaries create more administration and do not constrain the member-account root user.\nC. Config detection and remediation are reactive, so the prohibited action can occur before remediation.\nD. Many of the required APIs are not governed by one common resource-policy mechanism.\n\nExam trigger:\nPreventive guardrails spanning accounts and OUs point to SCPs.\n\nExam trap:\nSCPs set a permission ceiling; they do not grant workload access.\n\nMemory hook:\nOU-wide guardrails belong in SCPs.",
+    "explanation": "Correct answer:\nB. SCPs centrally define the maximum permissions available to principals in affected member accounts. An explicit deny in an applicable SCP overrides allows in identity-based policies, preventing the protected CloudTrail and Amazon S3 actions across the required organizational units.\n\nWhy the other options are wrong:\nA. AWS Config is reactive. It can detect noncompliant changes and trigger remediation after the action occurs, but it does not prevent the API request during authorization.\nC. Permissions boundaries require per-role administration and do not constrain the account root user. They are less suitable than a centrally applied organization-level guardrail.\nD. Security Hub findings are detective rather than preventive. Security Hub aggregates and prioritizes findings but does not directly block prohibited API calls.\n\nExam trigger:\nA central control must override administrator permissions across multiple member accounts.\n\nExam trap:\nSCPs restrict the maximum permissions available but do not grant permissions themselves.\n\nMemory hook:\nOrganization-wide preventive guardrails mean SCPs.",
     "topics": [
       "topic-cloudtrail",
       "topic-organizations"
@@ -5124,10 +5124,10 @@
     "type": "single",
     "question": "A latency-sensitive transactional database on a Nitro-based EC2 instance requires one EBS volume with 120,000 sustained IOPS, 3,000 MiB/s of throughput, and consistent sub-millisecond storage latency. Which EBS volume type meets the requirements?",
     "options": [
-      "io2 Block Express",
-      "gp3",
-      "st1",
-      "sc1"
+      "Use one provisioned io2 Block Express volume.",
+      "Use one provisioned gp3 volume at maximum performance.",
+      "Use one throughput-optimized st1 volume sized for the workload.",
+      "Use one cold HDD sc1 volume sized for the workload."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5232,10 +5232,10 @@
     "type": "single",
     "question": "A relational application needs a managed in-memory cache that supports replicas, Multi-AZ automatic failover, optional data persistence, and rich data structures such as sorted sets and hashes. Which service is the best fit?",
     "options": [
-      "Amazon ElastiCache for Valkey or Redis OSS using a replication group",
-      "Amazon ElastiCache for Memcached",
-      "DynamoDB Accelerator",
-      "Amazon OpenSearch Service"
+      "Use Amazon ElastiCache for Valkey or Redis OSS with a replication group.",
+      "Use Amazon ElastiCache for Memcached with multiple cache nodes.",
+      "Use DynamoDB Accelerator as a general cache for the relational database.",
+      "Use Amazon OpenSearch Service as the application session and query cache."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5576,6 +5576,453 @@
     "explanation": "Correct answer:\nA. CloudFront signed cookies are intended for cases in which a viewer needs access to multiple restricted files or existing URLs must remain unchanged. A custom policy can use a wildcard resource path and an expiration condition to grant temporary access to /premium/*.\n\nWhy the other options are wrong:\nB. Signed URLs are appropriate for individual resources, but issuing one per object adds unnecessary application work in this scenario.\nC. Origin Access Control protects the S3 origin from direct access; it does not authenticate premium viewers at CloudFront.\nD. S3 presigned URLs bypass the CloudFront private-content access design and still require a separate URL for each object.\n\nExam trigger:\nTemporary access to many private CloudFront files without changing their URLs points to signed cookies.\n\nExam trap:\nOrigin Access Control secures the origin; signed cookies or URLs authorize viewers.\n\nMemory hook:\nMany protected files under one path mean signed cookies.",
     "topics": [
       "topic-cloudfront"
+    ]
+  },
+  {
+    "id": "q-saa-251",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company purchased several All Upfront Reserved Instances and Savings Plans. The finance team wants a monthly report that distributes the upfront and recurring commitment charges across the usage periods they cover, instead of showing the full upfront payment on the purchase date. Which Cost Explorer cost metric should the team use?",
+    "options": [
+      "Unblended cost",
+      "Amortized cost",
+      "Net unblended cost",
+      "Usage quantity"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. Amortized cost spreads upfront and recurring Reserved Instance and Savings Plans fees across the period in which the commitments apply. This provides a more accurate view of the effective monthly cost of workloads that receive commitment discounts.\n\nWhy the other options are wrong:\nA. Unblended cost shows charges at their standard billing rates and does not distribute upfront commitment fees across the covered period.\nC. Net unblended cost reflects discounts and credits where applicable but still does not provide the requested commitment-fee amortization.\nD. Usage quantity reports service usage units rather than monetary cost allocation.\n\nExam trigger:\nUpfront commitment charges must be spread across the period they cover.\n\nExam trap:\nAmortized cost changes how commitment fees are allocated over time; it does not represent resource usage quantities.\n\nMemory hook:\nSpread commitment fees across time with amortized cost.",
+    "topics": [
+      "topic-cost-explorer"
+    ]
+  },
+  {
+    "id": "q-saa-252",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A management account in AWS Organizations must report monthly cloud costs by business unit. Resources already use a BusinessUnit tag, but some shared accounts must be assigned through account-based rules rather than resource tags. The categories must be available in Cost Explorer and AWS Budgets. Which TWO actions meet the requirements? (Select TWO.)",
+    "options": [
+      "Activate the BusinessUnit user-defined tag as a cost allocation tag in Billing and Cost Management.",
+      "Create AWS Cost Categories with rules that group costs by activated tag values and linked accounts.",
+      "Create CloudWatch metric filters for every BusinessUnit tag value.",
+      "Attach an SCP that assigns a billing category to each member account.",
+      "Create separate AWS Budgets without enabling any cost-allocation dimensions."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. A user-defined resource tag must be activated as a cost allocation tag before it can be used as a billing dimension in cost-management tools.\n\nB. Cost Categories can apply rules that group charges by dimensions such as cost allocation tags and linked accounts. The resulting categories can then be used in tools including Cost Explorer and AWS Budgets.\n\nWhy the other options are wrong:\nC. CloudWatch metric filters analyse log events and do not classify AWS billing line items.\nD. SCPs restrict permissions and cannot assign charges to financial categories.\nE. Budgets can monitor selected dimensions, but they do not create the underlying cost-allocation classification required by the scenario.\n\nExam trigger:\nCosts must be grouped using both resource tags and account-level business rules.\n\nExam trap:\nApplying a tag to a resource is not enough; the tag must be activated for cost allocation.\n\nMemory hook:\nActivate tags, then organise them with Cost Categories.",
+    "topics": [
+      "topic-cost-explorer",
+      "topic-budgets",
+      "topic-organizations"
+    ]
+  },
+  {
+    "id": "q-saa-253",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A project manager wants an alert before the end of the month when AWS predicts that the project's monthly cost will exceed £8,000. The notification must be delivered to an Amazon SNS topic used by the finance automation workflow. Which solution should be configured?",
+    "options": [
+      "Create an AWS cost budget filtered to the project, configure a forecasted-cost threshold, and add the SNS topic as an alert subscriber.",
+      "Create a CloudWatch billing alarm on EstimatedCharges with an eight-hour evaluation period.",
+      "Create a Cost Explorer saved report and configure it to invoke SNS when the graph crosses £8,000.",
+      "Create a usage budget that monitors the number of resources tagged to the project."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. AWS Budgets supports cost budgets with alerts based on forecasted values. The budget can be filtered to the relevant project dimension and can publish the alert to an authorised Amazon SNS topic.\n\nWhy the other options are wrong:\nB. A CloudWatch billing alarm evaluates the current estimated-charge metric, not a month-end cost forecast for a filtered project.\nC. Cost Explorer analyses cost and usage but does not turn a saved report into a threshold-triggered SNS alarm.\nD. A usage budget tracks service usage units rather than the forecasted monetary cost required here.\n\nExam trigger:\nNotify before month end based on predicted cost for a selected project.\n\nExam trap:\nActual-cost alerts report what has already happened; forecasted budget alerts estimate where the month is heading.\n\nMemory hook:\nFuture overspend warning means a forecasted AWS Budget alert.",
+    "topics": [
+      "topic-budgets"
+    ]
+  },
+  {
+    "id": "q-saa-254",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A sandbox AWS account has a monthly cost budget. When forecasted spending reaches 100% of the budget, the company wants an IAM policy attached automatically to restrict further resource creation. The finance team must not manually approve the response each month. Which configuration meets the requirement?",
+    "options": [
+      "Configure an AWS Budgets action for the forecasted threshold, select automatic execution, and provide an IAM role that permits the policy action.",
+      "Configure an AWS Cost Anomaly Detection monitor to attach the IAM policy whenever an anomaly is detected.",
+      "Create a CloudWatch composite alarm that modifies IAM policies when EstimatedCharges enters ALARM.",
+      "Create a Cost Explorer rightsizing recommendation and enable automatic remediation."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. AWS Budgets actions can respond when an actual or forecasted budget threshold is reached. The action can apply an IAM policy, and automatic execution removes the need for a person to approve each occurrence. AWS Budgets requires an appropriately trusted role with permission to perform the action.\n\nWhy the other options are wrong:\nB. Cost Anomaly Detection identifies unusual spending patterns but does not provide the described automatic IAM policy budget action.\nC. CloudWatch alarms can invoke supported alarm actions, but they do not natively edit IAM policies as a billing-control mechanism.\nD. Cost Explorer rightsizing recommendations identify potential savings and do not enforce budget thresholds or IAM restrictions.\n\nExam trigger:\nA budget threshold must automatically trigger a cost-control action.\n\nExam trap:\nAWS Budgets alerts only notify; AWS Budgets actions can apply a control automatically or after approval.\n\nMemory hook:\nAlert about spend with Budgets; enforce a response with a budget action.",
+    "topics": [
+      "topic-budgets",
+      "topic-iam"
+    ]
+  },
+  {
+    "id": "q-saa-255",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company wants a CloudWatch alarm on its worldwide estimated AWS charges. An administrator enabled billing alerts, but the EstimatedCharges metric is not visible while working in eu-west-2. What should the administrator do?",
+    "options": [
+      "Switch the CloudWatch console to US East (N. Virginia) and create the alarm from the billing metric there.",
+      "Create one EstimatedCharges metric in every Region and combine them with metric math.",
+      "Enable detailed monitoring on all billable resources in eu-west-2.",
+      "Create the alarm in the account's home Region because billing metrics are Regional."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. CloudWatch billing metric data is stored in US East (N. Virginia). After billing alerts are enabled, the administrator must use that Region to view EstimatedCharges and create the alarm. The metric represents worldwide estimated charges for the applicable account or payer context.\n\nWhy the other options are wrong:\nB. Customers do not create Regional EstimatedCharges metrics and sum them manually.\nC. Detailed monitoring changes EC2 metric frequency and is unrelated to AWS billing metrics.\nD. Billing alarm metrics are not placed in an arbitrary account home Region.\n\nExam trigger:\nEstimatedCharges is enabled but cannot be found in another Region.\n\nExam trap:\nThe monitored charges are global, but the CloudWatch billing metric is published in us-east-1.\n\nMemory hook:\nWorldwide billing metric, us-east-1 alarm.",
+    "topics": [
+      "topic-cloudwatch"
+    ]
+  },
+  {
+    "id": "q-saa-256",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "An application has separate CloudWatch alarms for high latency, elevated 5xx errors, and low request volume. During maintenance windows, one metric often enters ALARM without indicating a real outage. The operations team wants one notification only when both the latency alarm and 5xx alarm are in ALARM and the low-traffic alarm is not in ALARM. Which solution has the least operational overhead?",
+    "options": [
+      "Create a CloudWatch composite alarm with Boolean logic referencing the three existing alarms, and send notifications from the composite alarm.",
+      "Create a Lambda function that polls all three metrics every minute and publishes to SNS when the conditions match.",
+      "Replace the three alarms with one alarm that averages latency, errors, and request count into a single metric.",
+      "Create an EventBridge schedule that disables all alarms during every maintenance window."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. A CloudWatch composite alarm determines its state from other alarm states by using Boolean expressions. The rule can require the latency and 5xx alarms to be in ALARM while excluding the low-traffic alarm. Sending notifications only from the composite alarm reduces alarm noise.\n\nWhy the other options are wrong:\nB. Custom polling code adds scheduling, permissions, error handling, and maintenance when composite alarms provide the capability natively.\nC. The metrics have different units and meanings and should not be averaged into one threshold.\nD. Disabling alarms on a schedule can suppress genuine failures and does not express the required conditional relationship.\n\nExam trigger:\nNotify only for a Boolean combination of existing alarm states.\n\nExam trap:\nMetric math combines metric values; a composite alarm combines alarm states.\n\nMemory hook:\nCombine alarm decisions with a composite alarm.",
+    "topics": [
+      "topic-cloudwatch"
+    ]
+  },
+  {
+    "id": "q-saa-257",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A service has a strong daily and weekly request pattern. A fixed CloudWatch threshold either generates false alarms during busy periods or fails to detect unusual drops overnight. The company wants the alarm threshold to adapt to the service's normal historical pattern. Which configuration should be used?",
+    "options": [
+      "Create a CloudWatch anomaly detection alarm using the expected-value band for the metric.",
+      "Create a static alarm using the highest request value observed during the previous month.",
+      "Create a composite alarm containing only the existing static alarm.",
+      "Enable CloudWatch detailed monitoring to change the alarm threshold automatically."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. CloudWatch anomaly detection analyses historical metric data and builds an expected-value band that accounts for recurring hourly, daily, and weekly patterns. The alarm can enter ALARM when the metric moves outside that learned band.\n\nWhy the other options are wrong:\nB. One maximum value creates another fixed threshold and cannot adapt to normal low and high periods.\nC. A composite alarm combines alarm states but does not learn an expected metric pattern.\nD. Detailed monitoring changes metric granularity for supported services; it does not create dynamic anomaly thresholds.\n\nExam trigger:\nA metric follows recurring patterns and requires a dynamic rather than fixed threshold.\n\nExam trap:\nAnomaly detection learns expected values; it does not predict business outcomes or explain the cause of an anomaly.\n\nMemory hook:\nChanging normal patterns need an anomaly detection band.",
+    "topics": [
+      "topic-cloudwatch"
+    ]
+  },
+  {
+    "id": "q-saa-258",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "multiple",
+    "question": "A company wants to evaluate whether its Savings Plans are appropriately sized. It must identify how much eligible usage is covered by Savings Plans and whether purchased commitments are being consumed efficiently. Which TWO measurements should the finance team review? (Select TWO.)",
+    "options": [
+      "Savings Plans coverage",
+      "Savings Plans utilization",
+      "EC2 status-check failure percentage",
+      "S3 storage lens activity metrics",
+      "CloudWatch alarm evaluation frequency"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. Savings Plans coverage measures the proportion of eligible compute usage that is covered by Savings Plans rather than charged at On-Demand rates.\n\nB. Savings Plans utilization measures how much of the purchased hourly commitment is actually being used. Low utilization can indicate an oversized commitment.\n\nWhy the other options are wrong:\nC. EC2 status checks measure instance health and do not evaluate commitment economics.\nD. S3 Storage Lens analyses S3 storage and activity, not Savings Plans.\nE. Alarm evaluation frequency affects monitoring behaviour and is unrelated to commitment coverage or utilization.\n\nExam trigger:\nDetermine both whether enough usage is discounted and whether the commitment is being consumed.\n\nExam trap:\nCoverage asks how much eligible usage receives a discount; utilization asks how much purchased commitment is used.\n\nMemory hook:\nCoverage measures protected usage; utilization measures consumed commitment.",
+    "topics": [
+      "topic-cost-explorer"
+    ]
+  },
+  {
+    "id": "q-saa-259",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "An enterprise needs the most granular recurring billing dataset for custom SQL analysis in Amazon Athena. The dataset must include line-item costs, usage, resource identifiers where supported, activated cost allocation tags, Savings Plans details, and Cost Categories. Which solution should be configured?",
+    "options": [
+      "Create an AWS Data Export for Cost and Usage Report 2.0 to Amazon S3 and query the exported data with Athena.",
+      "Export a Cost Explorer chart manually as a CSV file at the end of every month.",
+      "Publish the CloudWatch EstimatedCharges metric to an S3 bucket through a metric stream.",
+      "Create an AWS Budget for each service and combine the notification emails."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Cost and Usage Report 2.0 through AWS Data Exports provides detailed recurring billing and usage data suitable for downstream analytics. The export can include resource-level information where supported, cost allocation tags, Cost Categories, and commitment-related billing details, and can be stored in S3 for Athena queries.\n\nWhy the other options are wrong:\nB. A manually exported Cost Explorer report is less granular, is not an automated billing data pipeline, and does not provide the complete line-item dataset.\nC. EstimatedCharges is an aggregated billing metric rather than detailed cost-and-usage records.\nD. Budgets monitor thresholds and send alerts; they do not produce a detailed analytical billing dataset.\n\nExam trigger:\nGranular line items, tags, resource IDs, commitment details, S3, and Athena point to CUR 2.0 through Data Exports.\n\nExam trap:\nCost Explorer is for interactive analysis; the Cost and Usage Report is the detailed billing data source.\n\nMemory hook:\nDeep billing analysis starts with CUR data in S3.",
+    "topics": [
+      "topic-cost-explorer",
+      "topic-athena",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-260",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A CloudWatch alarm monitors an application metric that is published only while jobs are processing. Missing data during an idle period should be considered healthy. During an expected processing window, missing application metrics should trigger investigation only when a separate job-state signal confirms that processing should be active. Which TWO alarm-design choices meet these requirements? (Select TWO.)",
+    "options": [
+      "Configure the application alarm's missing-data treatment as notBreaching for expected idle periods.",
+      "Publish a separate heartbeat or job-state metric and use a composite alarm to notify when processing is expected but the application metric is absent or unhealthy.",
+      "Configure every missing application datapoint to be treated as breaching.",
+      "Increase the CloudWatch billing-alert threshold during idle periods.",
+      "Disable the application alarm whenever the metric has no data."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. Treating missing application data as notBreaching prevents normal idle periods from creating false alarms when the application intentionally emits no samples.\n\nB. A separate heartbeat or job-state metric establishes whether processing is expected. A composite alarm can then notify only when the job-state signal says processing should be active and the application alarm indicates that the expected metric is absent or unhealthy.\n\nWhy the other options are wrong:\nC. Treating every missing datapoint as breaching would generate false alarms during legitimate idle periods.\nD. Billing alarm thresholds are unrelated to application metric availability.\nE. Disabling the alarm whenever data disappears can conceal real failures and removes monitoring precisely when context is needed.\n\nExam trigger:\nMissing data is healthy while idle but suspicious only when another signal confirms that work should be occurring.\n\nExam trap:\nOne missing-data setting cannot express both idle and active states; use a separate context signal and combine alarm states.\n\nMemory hook:\nTreat idle silence as healthy; use a heartbeat to detect active silence.",
+    "topics": [
+      "topic-cloudwatch"
+    ]
+  },
+  {
+    "id": "q-saa-261",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A company uses AWS Organizations with more than 100 member accounts. A central platform team must deploy the same AWS Config recorder and IAM role into every existing account in selected organizational units across three AWS Regions. The configuration must also be deployed automatically when new accounts are added to those organizational units, without manually creating execution roles in each account. Which solution should a solutions architect recommend?",
+    "options": [
+      "Create an AWS CloudFormation StackSet with service-managed permissions, enable trusted access with AWS Organizations, target the required organizational units and Regions, and enable automatic deployment.",
+      "Create an AWS CloudFormation stack in the management account and share the stack outputs with each member account through AWS Resource Access Manager.",
+      "Create a CloudFormation StackSet with self-managed permissions and manually create administration and execution roles in every current and future member account.",
+      "Create an AWS Organizations service control policy containing the AWS Config and IAM resource definitions and attach it to the required organizational units."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. A CloudFormation StackSet with service-managed permissions integrates with AWS Organizations. After trusted access is enabled, CloudFormation creates the required service-linked and execution roles and can deploy stack instances to accounts in selected organizational units across specified Regions. Automatic deployment extends the StackSet to accounts that are later added to the targeted organizational units.\n\nWhy the other options are wrong:\nB. A normal CloudFormation stack deploys resources only in the account and Region in which the stack is created. AWS RAM does not turn one stack into a multi-account deployment mechanism.\nC. Self-managed permissions can deploy across accounts, but the team must create and maintain the required IAM trust roles. That conflicts with the requirement to avoid manual role administration in every account.\nD. An SCP limits the maximum permissions available in member accounts. It cannot create AWS Config recorders, IAM roles, or other infrastructure resources.\n\nExam trigger:\nThe same infrastructure must be deployed across organizational units, Regions, and future member accounts without manually managing execution roles.\n\nExam trap:\nStackSets with self-managed permissions require customer-managed cross-account roles; service-managed permissions use Organizations trusted access.\n\nMemory hook:\nOrganizations plus automatic multi-account deployment means service-managed StackSets.",
+    "topics": [
+      "topic-cloudformation",
+      "topic-organizations",
+      "topic-config"
+    ]
+  },
+  {
+    "id": "q-saa-262",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "An engineer manually changed the security-group rules and instance type of resources managed by an AWS CloudFormation stack. Before deploying an updated template, the operations team must identify the unmanaged changes and preview the proposed update. If the update fails, CloudFormation should restore the stack rather than leave the deployment partially applied. Which TWO actions should the team take? (Select TWO.)",
+    "options": [
+      "Run CloudFormation drift detection and review the drifted resources before updating the stack.",
+      "Create and review a CloudFormation change set, then execute the change set without disabling rollback.",
+      "Import every changed resource into a new stack before running the update.",
+      "Enable AWS Config automatic remediation to overwrite the CloudFormation template.",
+      "Delete the existing stack while retaining its resources and create a replacement stack from the new template."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. CloudFormation drift detection compares supported resources with the properties expected from the stack template and identifies changes made outside CloudFormation management.\n\nB. A change set previews the resources and properties that CloudFormation intends to add, modify, or remove. Executing the change set without disabling rollback allows CloudFormation to return the stack to a stable state if the update fails.\n\nWhy the other options are wrong:\nC. Resource import is used to bring existing unmanaged resources under CloudFormation management. The resources in this scenario are already part of the stack.\nD. AWS Config can evaluate and remediate resource configurations, but it does not rewrite CloudFormation templates or replace CloudFormation drift analysis and update controls.\nE. Deleting and rebuilding the stack is disruptive and unnecessary. It can also create replacement risks for stateful resources.\n\nExam trigger:\nResources were changed outside CloudFormation, and the team needs both visibility before deployment and failure recovery during deployment.\n\nExam trap:\nDrift detection finds out-of-band changes; a change set previews the next template update. They solve different problems.\n\nMemory hook:\nDetect the drift, preview the change set, and do not disable rollback protection.",
+    "topics": [
+      "topic-cloudformation"
+    ]
+  },
+  {
+    "id": "q-saa-263",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A financial company receives daily settlement files from external partners that use standard SFTP clients. The company wants a managed public SFTP endpoint that authenticates each partner and writes uploaded files directly into designated prefixes in an Amazon S3 bucket. No file-transfer servers should be managed by the company. Which solution should be used?",
+    "options": [
+      "Create an AWS Transfer Family SFTP server backed by Amazon S3 and assign each partner an IAM role and logical home directory.",
+      "Deploy an EC2 Auto Scaling group running OpenSSH and mount the S3 bucket by using Mountpoint for Amazon S3.",
+      "Create an AWS DataSync task and require each partner to install a DataSync agent before uploading files.",
+      "Create an Amazon S3 gateway VPC endpoint and provide the partners with the endpoint DNS name for SFTP access."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. AWS Transfer Family provides fully managed SFTP server endpoints with Amazon S3 or Amazon EFS as backing storage. Partner identities can be mapped to IAM roles and restricted home directories so uploaded files are written directly to approved S3 locations without the company operating SFTP servers.\n\nWhy the other options are wrong:\nB. EC2 instances would require operating-system administration, patching, scaling, availability management, and custom integration with S3.\nC. DataSync is designed for managed data movement between storage systems. It does not provide partners with a standard public SFTP server endpoint.\nD. An S3 gateway endpoint provides private VPC routing to the S3 API. It does not implement the SFTP protocol or authenticate external SFTP users.\n\nExam trigger:\nExternal users must continue using SFTP while files land directly in S3 and no transfer server is managed.\n\nExam trap:\nDataSync moves data between configured storage locations; Transfer Family exposes managed file-transfer protocols to clients.\n\nMemory hook:\nPartner SFTP directly into S3 means Transfer Family.",
+    "topics": [
+      "topic-transfer-family",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-264",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A company is migrating 80 TB of files from an on-premises NFS server to Amazon S3 over AWS Direct Connect. The migration must preserve supported metadata, verify data integrity, copy only changed files during repeated runs, and complete as quickly as the available network permits. The source users do not need an SFTP endpoint. Which service is the best fit?",
+    "options": [
+      "AWS Transfer Family with an SFTP server backed by the destination S3 bucket",
+      "AWS DataSync with an on-premises agent and scheduled incremental transfer tasks",
+      "S3 Transfer Acceleration with a multipart-upload script running on every client workstation",
+      "AWS Storage Gateway File Gateway with the entire source dataset copied through its local cache"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. AWS DataSync is designed for high-speed online movement of file and object data between on-premises storage and AWS. It supports NFS sources, scheduled and incremental transfers, integrity verification, encryption in transit, and preservation of supported metadata.\n\nWhy the other options are wrong:\nA. Transfer Family is appropriate when users or partners require SFTP, FTPS, FTP, AS2, or browser-based file-transfer access. It is not the primary bulk NFS migration service.\nC. Transfer Acceleration optimizes internet transfers to S3 but does not crawl an NFS file system, compare changed files, or preserve file-system metadata as a managed migration workflow.\nD. File Gateway provides ongoing hybrid file access backed by S3. It is not the most direct service for a one-time or repeated high-speed bulk migration from an existing NFS server.\n\nExam trigger:\nBulk NFS migration, incremental copying, metadata preservation, verification, and an existing high-bandwidth network path point to DataSync.\n\nExam trap:\nTransfer Family serves file-transfer clients; DataSync performs managed storage-to-storage data movement.\n\nMemory hook:\nProtocols for users use Transfer Family; bulk file migration uses DataSync.",
+    "topics": [
+      "topic-datasync",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-265",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company is migrating a legacy Java application to AWS. The application uses JMS queues and topics through an Apache ActiveMQ broker and relies on existing broker semantics. The company wants to minimise application code changes while removing responsibility for broker patching, hardware provisioning, and routine maintenance. Which solution should a solutions architect recommend?",
+    "options": [
+      "Migrate the application to Amazon MQ for ActiveMQ and configure a highly available managed broker deployment.",
+      "Replace the broker with Amazon SQS and Amazon SNS without changing the application's JMS client code.",
+      "Publish all messages to Amazon EventBridge and use event-pattern rules to emulate JMS transactions.",
+      "Store messages in Amazon Kinesis Data Streams and use enhanced fan-out to reproduce ActiveMQ queues and topics."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Amazon MQ is a managed message-broker service that supports ActiveMQ and RabbitMQ engines. Amazon MQ for ActiveMQ supports JMS and familiar messaging protocols, making it suitable for migrating broker-dependent applications with fewer code changes while AWS manages the broker infrastructure and maintenance tasks.\n\nWhy the other options are wrong:\nB. SQS and SNS are cloud-native messaging services, but existing JMS applications normally require redesign or adapter changes because these services do not behave as an ActiveMQ broker endpoint.\nC. EventBridge provides event routing and filtering, not an ActiveMQ-compatible JMS broker with the same queue, topic, and transaction semantics.\nD. Kinesis Data Streams is designed for ordered streaming records and consumer applications. It is not a drop-in JMS message broker.\n\nExam trigger:\nA legacy application depends on ActiveMQ or JMS semantics and must migrate with minimal code changes.\n\nExam trap:\nSQS and SNS are often preferred for new cloud-native designs, but Amazon MQ is the migration choice when broker compatibility matters.\n\nMemory hook:\nKeep JMS and ActiveMQ behaviour with Amazon MQ.",
+    "topics": [
+      "topic-mq"
+    ]
+  },
+  {
+    "id": "q-saa-266",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company runs a self-managed MongoDB application on premises. The database stores JSON-like documents and the application uses MongoDB drivers. The company wants a highly available managed AWS database and a migration with minimal application changes. It has confirmed that all required application operations are supported by the target service's MongoDB-compatible APIs. Which solution should be selected?",
+    "options": [
+      "Migrate the database to Amazon DocumentDB with MongoDB compatibility by using AWS Database Migration Service.",
+      "Migrate the database to Amazon DynamoDB and continue using the existing MongoDB connection string and drivers.",
+      "Migrate the database to Amazon Neptune and translate each document into graph vertices automatically.",
+      "Migrate the database to Amazon Aurora PostgreSQL and enable the MongoDB wire protocol on the cluster."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Amazon DocumentDB is a fully managed document database designed for MongoDB-compatible workloads. Existing MongoDB drivers and tools can often be retained where the application's required APIs are supported. AWS DMS can migrate data from a self-managed MongoDB source to Amazon DocumentDB and can support ongoing replication for a reduced-downtime migration.\n\nWhy the other options are wrong:\nB. DynamoDB is a key-value and document database but does not expose the MongoDB wire protocol or allow an unchanged MongoDB client connection.\nC. Neptune is a graph database optimized for relationships and graph traversals, not a MongoDB-compatible document-store migration target.\nD. Aurora PostgreSQL is a relational database and does not provide a native MongoDB-compatible endpoint.\n\nExam trigger:\nA MongoDB workload needs managed document storage with minimal driver and application changes after compatibility validation.\n\nExam trap:\nMongoDB compatibility is not identical to running MongoDB; required APIs and behavioural differences must be assessed before migration.\n\nMemory hook:\nManaged MongoDB-compatible documents mean Amazon DocumentDB.",
+    "topics": [
+      "topic-documentdb",
+      "topic-dms"
+    ]
+  },
+  {
+    "id": "q-saa-267",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A fraud-detection platform must analyse relationships among customers, payment cards, devices, IP addresses, and transactions. Queries frequently traverse several relationship levels to identify connected entities and suspicious paths. Which database service is purpose-built for this workload?",
+    "options": [
+      "Amazon DocumentDB",
+      "Amazon Neptune",
+      "Amazon DynamoDB",
+      "Amazon Timestream"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. Amazon Neptune is a fully managed graph database designed for highly connected datasets. It is optimized for storing relationships and efficiently traversing paths among entities, making it suitable for fraud graphs, knowledge graphs, identity graphs, and social-network relationships.\n\nWhy the other options are wrong:\nA. DocumentDB is a document database for MongoDB-compatible workloads. It is not optimized for multi-hop graph traversal.\nC. DynamoDB provides scalable key-value and document access but would require the application to model and execute complex graph traversals manually.\nD. Timestream is a time-series database for measurements and events indexed by time, not a graph relationship engine.\n\nExam trigger:\nThe workload revolves around connected entities, multi-hop relationships, and path traversal.\n\nExam trap:\nDocument databases store nested documents; graph databases optimize relationships between records.\n\nMemory hook:\nMany connected entities and path queries mean Neptune.",
+    "topics": [
+      "topic-neptune"
+    ]
+  },
+  {
+    "id": "q-saa-268",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A company has a central data lake in Amazon S3 with tables registered in the AWS Glue Data Catalog. Analysts use Amazon Athena, and data engineers use Amazon EMR. The security team must centrally grant access at database, table, column, and row level without maintaining separate S3 bucket policies for every team and analytics engine. Which TWO configurations meet the requirements? (Select TWO.)",
+    "options": [
+      "Register the relevant Amazon S3 data locations with AWS Lake Formation.",
+      "Grant Lake Formation permissions to the analyst and engineering roles for the required catalog resources and data filters.",
+      "Create one S3 access point per Athena query and grant every EMR cluster unrestricted bucket access.",
+      "Use AWS Organizations SCPs to define row-level filters for the Glue Data Catalog tables.",
+      "Store the Glue Data Catalog database names in Systems Manager Parameter Store and reference them from IAM policies."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. Registering the S3 data locations allows Lake Formation to manage and vend access to the governed data-lake locations.\n\nB. Lake Formation provides centralized permissions for Glue Data Catalog databases and tables and supports fine-grained controls such as column-level, row-level, and cell-level access through data filters for integrated analytics services.\n\nWhy the other options are wrong:\nC. Separate access points and unrestricted cluster access create fragmented permissions and do not provide central table, column, and row governance across Athena and EMR.\nD. SCPs limit AWS API permissions at the account or organizational-unit level. They cannot define database row filters or catalog-level grants.\nE. Parameter Store can store configuration values but does not enforce permissions on S3 data or Glue Catalog resources.\n\nExam trigger:\nOne data lake is queried through several analytics engines and requires centralized fine-grained access control.\n\nExam trap:\nIAM and S3 policies control service and object access; Lake Formation adds governed catalog and fine-grained data permissions.\n\nMemory hook:\nRegister the lake, then grant the data through Lake Formation.",
+    "topics": [
+      "topic-lake-formation",
+      "topic-glue",
+      "topic-athena",
+      "topic-emr",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-269",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A data team stores several petabytes of raw logs in Amazon S3. It needs to run a custom Apache Spark application that uses third-party libraries, performs iterative transformations, and requires control over cluster instance types and runtime configuration. The job runs for several hours each night. Which service is the best fit?",
+    "options": [
+      "Amazon Athena, because it provides serverless ad hoc SQL queries directly against S3.",
+      "AWS Glue ETL, because every Spark workload must run as a fully managed Glue job.",
+      "Amazon EMR on EC2, because it provides configurable clusters for Spark and other big-data frameworks.",
+      "Amazon QuickSight SPICE, because it imports the logs into memory and runs arbitrary Spark libraries."
+    ],
+    "correctAnswer": 2,
+    "correctAnswers": [
+      2
+    ],
+    "explanation": "Correct answer:\nC. Amazon EMR on EC2 provides configurable clusters for frameworks such as Apache Spark and Hadoop. It is appropriate when a workload needs custom libraries, extended processing, control over instance types, and detailed runtime or cluster configuration.\n\nWhy the other options are wrong:\nA. Athena is best suited to serverless interactive and ad hoc SQL analysis of data in S3. It is not the normal choice for a long-running custom Spark application with cluster-level requirements.\nB. AWS Glue can run serverless Spark ETL jobs and would suit many managed transformation workloads. However, the explicit need for custom cluster configuration and instance-level control makes EMR on EC2 the stronger fit.\nD. QuickSight is a business-intelligence and visualization service. SPICE accelerates dashboard analytics but does not execute arbitrary Spark applications.\n\nExam trigger:\nCustom Spark libraries, long-running big-data processing, and control over cluster instances and runtime settings point to EMR.\n\nExam trap:\nAthena queries data with SQL; Glue runs managed ETL; EMR provides the most configurable big-data execution environment.\n\nMemory hook:\nSQL without servers is Athena; managed ETL is Glue; configurable Spark clusters are EMR.",
+    "topics": [
+      "topic-emr",
+      "topic-glue",
+      "topic-athena",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-270",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A sales organization uses Amazon QuickSight dashboards backed by a relational data source. Hundreds of users repeatedly open the same dashboards, and direct queries are placing excessive load on the source database. The data can be refreshed on a schedule and does not need to reflect every transaction immediately. Which configuration should be used?",
+    "options": [
+      "Import the dataset into QuickSight SPICE and configure an appropriate scheduled or incremental refresh.",
+      "Keep the dataset in direct-query mode and increase the database connection limit for every dashboard user.",
+      "Export each dashboard to Amazon S3 and use S3 Select to render the visuals.",
+      "Create a CloudWatch dashboard and stream the relational tables into CloudWatch custom metrics."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. SPICE is the in-memory calculation engine used by Amazon QuickSight. Importing the dataset into SPICE allows dashboard queries and calculations to run from the in-memory dataset rather than repeatedly querying the source database. Scheduled or incremental refreshes can keep the imported data sufficiently current for the stated requirement.\n\nWhy the other options are wrong:\nB. Direct query continues sending dashboard requests to the source database and does not address the repeated-query load.\nC. S3 Select retrieves subsets of object data and does not render or host QuickSight dashboards.\nD. CloudWatch dashboards visualize metrics and logs. They are not a replacement for relational business-intelligence datasets and QuickSight analyses.\n\nExam trigger:\nMany users repeatedly access dashboards, the source database is overloaded, and slightly delayed scheduled data is acceptable.\n\nExam trap:\nDirect query offers fresher source data; SPICE improves dashboard performance and reduces source-query load.\n\nMemory hook:\nFast shared dashboards with less database load use SPICE.",
+    "topics": [
+      "topic-quicksight"
     ]
   }
 ]
