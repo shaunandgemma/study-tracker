@@ -1,0 +1,284 @@
+{
+  "createdAt": "2026-08-02T19:54:01.791Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-241",
+    "q-saa-242",
+    "q-saa-243",
+    "q-saa-244",
+    "q-saa-245",
+    "q-saa-246",
+    "q-saa-247",
+    "q-saa-248",
+    "q-saa-249",
+    "q-saa-250"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-241",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A REST API receives large numbers of repeated identical GET requests. Each request currently invokes backend Lambda functions, EC2 services, or database queries, increasing backend execution and processing costs. Responses can be cached for several minutes. The company wants to reduce backend cost without changing backend code. Which solution meets the requirements with the LEAST operational overhead?",
+      "option_a": "Enable API Gateway stage caching for the applicable methods.",
+      "option_b": "Add a larger Auto Scaling group behind the API.",
+      "option_c": "Store responses on EBS volumes attached to Lambda.",
+      "option_d": "Use Route 53 weighted records to split identical requests.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nA: API Gateway stage caching serves repeated matching responses from a managed cache for the configured time to live. This reduces calls to Lambda, EC2 services, and databases without requiring backend code changes.\n\nWhy the others are wrong:\nA: Correct. It directly reduces repeated backend execution and processing costs.\nB: Increasing the Auto Scaling group adds capacity and cost but still processes every request.\nC: EBS volumes cannot be attached to Lambda and do not provide a managed API response cache.\nD: Route 53 weighted routing distributes DNS responses but does not cache API responses or reduce total backend processing.\n\nExam trigger:\nRepeated identical REST API responses are increasing backend execution cost and can be cached.\n\nMemory hook:\nCache before the backend to avoid paying for repeated work."
+    },
+    {
+      "id": "q-saa-242",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company runs a predictable baseline of EC2, Fargate, and Lambda compute continuously. Instance families and Regions may change over time. Which pricing option provides the broadest commitment discount with the LEAST restriction?",
+      "option_a": "Compute Savings Plans",
+      "option_b": "EC2 Instance Savings Plans",
+      "option_c": "Standard Reserved Instances for one instance family",
+      "option_d": "Spot Instances for the baseline",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nCompute Savings Plans apply across eligible EC2 usage and also cover Fargate and Lambda while allowing broad configuration flexibility.\n\nWhy the others are wrong:\nB: EC2 Instance Savings Plans are tied to an instance family in one Region and do not cover Fargate or Lambda.\nC: Standard RIs are more configuration-specific and do not cover Fargate or Lambda.\nD: Spot can be interrupted and is unsuitable for a required baseline.\n\nExam trigger:\nSteady compute across EC2, Fargate, and Lambda with flexibility.\n\nMemory hook:\nBroad compute commitment means Compute Savings Plans."
+    },
+    {
+      "id": "q-saa-243",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A media company runs always-on ECS services and interruptible overnight container batch jobs. The company wants the MOST cost-effective design without risking interruption of the baseline services. Which TWO strategies should it use? (Select TWO.)",
+      "option_a": "Purchase Compute Savings Plans for the predictable baseline container usage.",
+      "option_b": "Run fault-tolerant batch tasks on Fargate Spot.",
+      "option_c": "Run all baseline services on Fargate Spot.",
+      "option_d": "Purchase DynamoDB reserved capacity for ECS tasks.",
+      "option_e": "Use Dedicated Hosts for all container workloads.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nCompute Savings Plans discount predictable ECS compute, while Fargate Spot reduces the cost of interruption-tolerant batch tasks.\n\nWhy the others are wrong:\nC: Spot interruptions could affect the required baseline service.\nD: DynamoDB capacity discounts do not apply to ECS.\nE: Dedicated Hosts add cost and are not required.\n\nExam trigger:\nPredictable containers plus interruptible containers.\n\nMemory hook:\nCommit the baseline; Spot the batch."
+    },
+    {
+      "id": "q-saa-244",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company stores logs that are frequently read for 30 days, rarely read for the next 60 days, and retained for seven years with retrieval times up to 12 hours. Which lifecycle design is MOST cost-effective?",
+      "option_a": "Keep data in S3 Standard, transition to S3 Standard-IA after 30 days, then to S3 Glacier Deep Archive after 90 days.",
+      "option_b": "Move data directly to S3 Glacier Deep Archive on creation.",
+      "option_c": "Keep all data in S3 Standard for seven years.",
+      "option_d": "Transition to S3 One Zone-IA after 30 days and delete it after 90 days.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nThe lifecycle aligns storage cost with access frequency while Deep Archive supports low-cost long-term retention and the allowed retrieval window.\n\nWhy the others are wrong:\nB: Immediate archival does not efficiently support frequent initial access.\nC: S3 Standard costs more for years of rarely accessed data.\nD: Deletion violates retention and One Zone-IA has lower resilience.\n\nExam trigger:\nKnown access phases and long archival retention.\n\nMemory hook:\nLifecycle follows the data temperature."
+    },
+    {
+      "id": "q-saa-245",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "Private-subnet applications send large amounts of traffic to S3 and DynamoDB through NAT gateways in each Availability Zone. They still need occasional IPv4 internet access for software repositories. Which TWO changes reduce cost without reducing Availability Zone resilience? (Select TWO.)",
+      "option_a": "Add an S3 gateway endpoint and associate it with the private route tables.",
+      "option_b": "Add a DynamoDB gateway endpoint and associate it with the private route tables.",
+      "option_c": "Replace all NAT gateways with one NAT gateway in one Availability Zone.",
+      "option_d": "Create interface endpoints for S3 and DynamoDB in every subnet and remove all NAT gateways.",
+      "option_e": "Route outbound traffic through a public Application Load Balancer.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nThe two gateway endpoints remove S3 and DynamoDB traffic from NAT processing without hourly endpoint charges. The per-AZ NAT gateways remain for resilient access to public repositories.\n\nWhy the others are wrong:\nC: One NAT gateway reduces Availability Zone resilience and can add cross-AZ transfer.\nD: Interface endpoints add hourly charges, and removing NAT breaks required public repository access.\nE: An ALB is not an outbound egress service.\n\nExam trigger:\nHigh NAT cost caused by S3 and DynamoDB traffic.\n\nMemory hook:\nGive S3 and DynamoDB their gateway endpoints; keep NAT for the internet."
+    },
+    {
+      "id": "q-saa-246",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company wants to identify oversized EC2 instances, inefficient EBS configurations, idle load balancers, and unattached Elastic IP addresses. Which THREE AWS services or features provide the most useful cost-optimization information? (Select THREE.)",
+      "option_a": "AWS Compute Optimizer recommendations",
+      "option_b": "AWS Trusted Advisor cost optimization checks",
+      "option_c": "AWS Cost Explorer rightsizing recommendations and usage analysis",
+      "option_d": "Amazon GuardDuty findings",
+      "option_e": "AWS CloudTrail event history",
+      "option_f": "AWS Shield Advanced",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\nCompute Optimizer recommends sizing, Trusted Advisor flags cost issues such as idle resources, and Cost Explorer provides cost, usage, and rightsizing analysis.\n\nWhy the others are wrong:\nD: GuardDuty detects threats rather than waste.\nE: CloudTrail records API activity but is not a rightsizing service.\nF: Shield Advanced is a DDoS protection service.\n\nExam trigger:\nRightsizing plus idle-resource and cost trend analysis.\n\nMemory hook:\nOptimizer sizes, Advisor checks, Explorer explains spend."
+    },
+    {
+      "id": "q-saa-247",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A nightly batch job is stateless, can restart from checkpoints, and may be interrupted. Which EC2 purchasing option is MOST cost-effective?",
+      "option_a": "Spot Instances",
+      "option_b": "On-Demand Instances",
+      "option_c": "Dedicated Hosts",
+      "option_d": "Standard Reserved Instances",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nSpot Instances use discounted spare capacity and fit fault-tolerant restartable batch work.\n\nWhy the others are wrong:\nB: On-Demand costs more when interruption is acceptable.\nC: Dedicated Hosts are for licensing or isolation needs.\nD: Reserved commitments suit baseline usage but are not normally the cheapest interruptible capacity.\n\nExam trigger:\nInterruptible and restartable compute.\n\nMemory hook:\nCan stop safely means Spot."
+    },
+    {
+      "id": "q-saa-248",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A DynamoDB table receives unpredictable traffic spikes and long periods with little activity. The team cannot forecast capacity and wants the LEAST capacity-management effort without paying for idle provisioned throughput. Which mode meets the requirements?",
+      "option_a": "DynamoDB on-demand capacity mode",
+      "option_b": "Provisioned capacity with a fixed maximum",
+      "option_c": "Provisioned capacity without auto scaling",
+      "option_d": "A reserved EC2 instance hosting a cache",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nOn-demand mode scales request capacity automatically and charges for requests rather than idle provisioned throughput.\n\nWhy the others are wrong:\nB: A fixed provisioned level can waste capacity and still needs forecasting.\nC: Static provisioned capacity risks waste or throttling.\nD: An EC2 cache does not replace table capacity planning and adds management.\n\nExam trigger:\nUnpredictable DynamoDB traffic with idle periods.\n\nMemory hook:\nUnknown traffic means on-demand."
+    },
+    {
+      "id": "q-saa-249",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company runs intermittent SQL analytics over files in S3 only a few times each month and does not want to maintain a data warehouse cluster. Which service is MOST cost-effective?",
+      "option_a": "Amazon Athena",
+      "option_b": "Amazon Redshift provisioned cluster",
+      "option_c": "Amazon EMR cluster running continuously",
+      "option_d": "Amazon RDS for PostgreSQL with imported copies of the files",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAthena queries S3 serverlessly and charges based on query processing, avoiding idle cluster costs.\n\nWhy the others are wrong:\nB: A provisioned Redshift cluster creates ongoing capacity costs.\nC: A continuously running EMR cluster is unnecessary for occasional SQL.\nD: Importing into RDS adds storage, loading, and database administration.\n\nExam trigger:\nOccasional SQL directly over S3 with no infrastructure.\n\nMemory hook:\nAd hoc S3 SQL means Athena."
+    },
+    {
+      "id": "q-saa-250",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A subscription video service distributes thousands of private files through CloudFront. After a subscriber signs in, the subscriber must be able to access every file under /premium/* for two hours. The company wants to avoid generating a different authorised URL for every file and does not want to change the existing file URLs. Which solution should be used?",
+      "option_a": "Issue CloudFront signed cookies containing a policy that permits access to /premium/* for two hours.",
+      "option_b": "Generate a separate CloudFront signed URL for every premium file when the subscriber signs in.",
+      "option_c": "Configure Origin Access Control and allow all viewers to access the CloudFront distribution without additional authorisation.",
+      "option_d": "Generate S3 presigned URLs for every file and return the regional S3 URLs directly to the subscriber.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Issue CloudFront signed cookies containing a policy that permits access to /premium/* for two hours.\n\nSigned cookies are appropriate when a user needs access to multiple restricted files, such as every file under a path, while keeping the existing URLs unchanged. A policy can limit the permitted resources and expiration time.\n\nWhy the other options are wrong:\nB. Signed URLs are useful for granting access to individual files, but creating one for every file creates unnecessary application work for this scenario.\nC. Origin Access Control protects the S3 origin from direct access. It does not determine which viewers are authorised to access premium content through CloudFront.\nD. S3 presigned URLs bypass the CloudFront private-content design and require separate URLs for each object.\n\nExam trigger:\nOne user needs temporary access to many private CloudFront files without changing their URLs.\n\nExam trap:\nSigned URL means one file. Signed cookies can cover many files.\n\nMemory hook:\nMany private files means signed cookies."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-241",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-241",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-242",
+      "topic_id": "topic-compute-optimizer"
+    },
+    {
+      "question_id": "q-saa-242",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-243",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-243",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-243",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-244",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-245",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-245",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-246",
+      "topic_id": "topic-compute-optimizer"
+    },
+    {
+      "question_id": "q-saa-246",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-246",
+      "topic_id": "topic-trusted-advisor"
+    },
+    {
+      "question_id": "q-saa-247",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-248",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-248",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-249",
+      "topic_id": "topic-athena"
+    },
+    {
+      "question_id": "q-saa-249",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-249",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-250",
+      "topic_id": "topic-cloudfront"
+    }
+  ]
+}

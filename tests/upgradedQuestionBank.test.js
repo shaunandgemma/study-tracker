@@ -123,7 +123,9 @@ test('14. Six named questions were modified with structured sections', () => {
 });
 
 test('15. Between 40 and 50 early questions were upgraded', () => {
-  const candidatesPath = path.resolve('data/early-question-upgrade-candidates.json');
+  const candidatesPath = fs.existsSync(path.resolve('data/early-question-upgrade-candidates.json'))
+    ? path.resolve('data/early-question-upgrade-candidates.json')
+    : path.resolve('data/archive/quality-upgrade-2026-07-30/early-question-upgrade-candidates.json');
   const candidates = JSON.parse(fs.readFileSync(candidatesPath, 'utf-8'));
   assert.ok(candidates.length >= 40 && candidates.length <= 50, `Upgraded candidates count (${candidates.length}) must be between 40 and 50`);
 });

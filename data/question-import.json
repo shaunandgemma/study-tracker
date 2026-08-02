@@ -1,17 +1,128 @@
 [
   {
-    "id": "q-saa-211",
+    "id": "q-saa-241",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "An API Gateway REST API receives many identical GET requests. Each cache miss invokes Lambda functions or HTTP backends that query databases, but responses can be reused for several minutes. The company wants to reduce backend invocations without changing backend code. Which solution has the least operational overhead?",
+    "options": [
+      "Enable an API Gateway cache for the stage and configure caching and TTL settings for the applicable methods.",
+      "Increase the capacity of every backend Auto Scaling group.",
+      "Attach EBS volumes to the Lambda functions and store responses on the volumes.",
+      "Use Route 53 weighted records to distribute identical requests among API endpoints."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. API Gateway REST API caching stores responses in a managed stage cache. Matching requests can be served from the cache until the configured TTL expires, reducing repeated Lambda, HTTP-backend, and database work without modifying the backend implementation.\n\nWhy the other options are wrong:\nB. Additional backend capacity may increase throughput but still processes every request and can increase cost.\nC. Lambda functions cannot attach EBS volumes, and EBS is not a managed API response cache.\nD. Route 53 controls DNS routing and does not cache HTTP responses or eliminate backend requests.\n\nExam trigger:\nRepeated cacheable REST API requests are creating avoidable backend executions.\n\nExam trap:\nAPI Gateway stage caching applies to REST APIs; it is not the same feature set as an API Gateway HTTP API.\n\nMemory hook:\nCache at the API stage to avoid repeating backend work.",
+    "topics": [
+      "topic-api-gateway"
+    ]
+  },
+  {
+    "id": "q-saa-242",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A company has a predictable hourly baseline across EC2, Fargate, and Lambda. EC2 instance families, operating systems, and Regions may change during the commitment term. Which pricing option provides the broadest eligible compute discount with the greatest flexibility?",
+    "options": [
+      "Compute Savings Plans",
+      "EC2 Instance Savings Plans",
+      "Standard Reserved Instances for one EC2 configuration",
+      "Spot Instances for the entire required baseline"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Compute Savings Plans apply to eligible EC2, Fargate, and Lambda usage. They retain broad flexibility across EC2 instance families, sizes, operating systems, tenancy, and Regions while the company commits to a consistent hourly spend.\n\nWhy the other options are wrong:\nB. EC2 Instance Savings Plans are tied to an instance family in one Region and do not cover Fargate or Lambda.\nC. Standard Reserved Instances apply to qualifying EC2 usage and are more configuration-specific; they do not cover Fargate or Lambda.\nD. Spot capacity can be interrupted and is unsuitable as the only purchasing model for a mandatory baseline.\n\nExam trigger:\nOne compute commitment must follow EC2, Fargate, Lambda, and changing Regions.\n\nExam trap:\nCompute Savings Plans maximise flexibility; EC2 Instance Savings Plans can offer a different discount level but have tighter scope.\n\nMemory hook:\nA flexible commitment across compute services means Compute Savings Plans.",
+    "topics": [
+      "topic-cost-explorer"
+    ]
+  },
+  {
+    "id": "q-saa-243",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "multiple",
+    "question": "A company runs predictable, always-on services as Fargate tasks and separate overnight Fargate batch tasks that are checkpointed and can tolerate interruption. Which TWO pricing strategies reduce cost without exposing the baseline services to interruption? (Select TWO.)",
+    "options": [
+      "Purchase a Compute Savings Plan sized to the predictable Fargate baseline.",
+      "Run the fault-tolerant batch tasks on Fargate Spot.",
+      "Run all baseline services exclusively on Fargate Spot.",
+      "Purchase DynamoDB reserved capacity for the ECS services.",
+      "Move all container workloads to Dedicated Hosts."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. A Compute Savings Plan can discount predictable eligible Fargate usage while leaving the service on non-interruptible Fargate capacity.\n\nB. Fargate Spot uses spare capacity at a discount and is appropriate for checkpointed tasks that can stop and retry.\n\nWhy the other options are wrong:\nC. Fargate Spot interruptions could reduce the availability of the required baseline service.\nD. DynamoDB reserved capacity does not apply to ECS or Fargate compute.\nE. Dedicated Hosts are an EC2 licensing and isolation option and are not required for these managed Fargate workloads.\n\nExam trigger:\nStable Fargate baseline plus interruptible Fargate jobs requires a commitment for one and Spot for the other.\n\nExam trap:\nDo not apply an interruption-tolerant purchasing model to the availability-critical baseline.\n\nMemory hook:\nCommit the baseline; Spot the retryable batch.",
+    "topics": [
+      "topic-fargate"
+    ]
+  },
+  {
+    "id": "q-saa-244",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "Log objects are read frequently for their first 30 days, infrequently for the following 60 days, and then retained for seven years. Retrieval after day 90 may take up to 12 hours. Which S3 Lifecycle design best matches the access pattern?",
+    "options": [
+      "Store objects in S3 Standard, transition them to S3 Standard-IA after 30 days, and transition them to S3 Glacier Deep Archive after 90 days.",
+      "Store objects in S3 Glacier Deep Archive immediately after creation.",
+      "Keep every object in S3 Standard for all seven years.",
+      "Transition objects to S3 One Zone-IA after 30 days and delete them after 90 days."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. S3 Standard supports frequent initial access. Standard-IA fits the subsequent infrequent-access period, and transitioning after 30 days satisfies its minimum storage-duration model. Glacier Deep Archive provides low-cost long-term retention when retrieval of archived data can take hours.\n\nWhy the other options are wrong:\nB. Immediate Deep Archive storage cannot efficiently serve frequent reads during the first month.\nC. S3 Standard meets the access requirement but wastes money during years of archival retention.\nD. Deletion violates the seven-year requirement, and One Zone-IA provides less resilience than the multi-AZ storage classes.\n\nExam trigger:\nKnown hot, cool, and deep-archive phases point to an S3 Lifecycle policy.\n\nExam trap:\nAccount for storage-class minimum durations when choosing transition dates.\n\nMemory hook:\nMove data as its temperature falls.",
+    "topics": [
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-245",
     "exam_code": "aws-saa-c03",
     "difficulty": "Hard",
     "type": "multiple",
-    "question": "A regulated S3 bucket must accept uploads only when they use SSE-KMS with one approved customer managed key. Every object version must then remain immutable for seven years. Which THREE controls are required? (Select THREE.)",
+    "question": "Private subnets in multiple Availability Zones send large volumes of traffic to S3 and DynamoDB through one NAT gateway per Availability Zone. The workloads still require occasional IPv4 internet access to public software repositories, and the design must retain zonal egress resilience. Which TWO changes reduce recurring data-processing cost? (Select TWO.)",
     "options": [
-      "Enable S3 Versioning on the bucket.",
-      "Enable S3 Object Lock with a default seven-year retention period in Compliance mode.",
-      "Add bucket-policy Deny statements for PutObject requests that do not specify aws:kms encryption with the approved KMS key.",
-      "Enable S3 Transfer Acceleration for all uploads.",
-      "Expire noncurrent object versions after 30 days.",
-      "Replace the customer managed key with the AWS managed aws/s3 key."
+      "Create an S3 gateway VPC endpoint and associate it with the private-subnet route tables.",
+      "Create a DynamoDB gateway VPC endpoint and associate it with the private-subnet route tables.",
+      "Replace all NAT gateways with one NAT gateway in a single Availability Zone.",
+      "Create charged interface endpoints for S3 and DynamoDB in every subnet and remove all NAT gateways.",
+      "Route outbound repository traffic through a public Application Load Balancer."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. An S3 gateway endpoint adds private route-table entries for S3 and avoids NAT gateway processing for matching S3 traffic without hourly or endpoint data-processing charges.\n\nB. A DynamoDB gateway endpoint provides the equivalent direct private route for DynamoDB traffic. The existing per-AZ NAT gateways can remain for resilient access to public repositories.\n\nWhy the other options are wrong:\nC. One NAT gateway creates a zonal dependency and can add cross-AZ data-transfer cost for subnets in other Availability Zones.\nD. Removing NAT gateways would break the required public IPv4 access, and interface endpoints introduce endpoint charges when free gateway endpoints satisfy the AWS-service traffic.\nE. An ALB accepts inbound application traffic and is not a general outbound NAT service.\n\nExam trigger:\nNAT cost is dominated by S3 and DynamoDB while internet egress is still required.\n\nExam trap:\nGateway endpoints remove AWS-service traffic from NAT; they do not replace NAT for arbitrary internet destinations.\n\nMemory hook:\nGive S3 and DynamoDB free gateway routes; keep zonal NAT for the internet.",
+    "topics": [
+      "topic-dynamodb",
+      "topic-s3",
+      "topic-vpc"
+    ]
+  },
+  {
+    "id": "q-saa-246",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "multiple",
+    "question": "A cloud-financial-management team needs recommendations for oversized EC2 instances and EBS volumes, checks for idle load balancers and unattached Elastic IP addresses, and historical cost and usage analysis. Which THREE services provide these capabilities? (Select THREE.)",
+    "options": [
+      "AWS Compute Optimizer",
+      "AWS Trusted Advisor",
+      "AWS Cost Explorer",
+      "Amazon GuardDuty",
+      "AWS CloudTrail event history",
+      "AWS Shield Advanced"
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -19,219 +130,96 @@
       1,
       2
     ],
-    "explanation": "Correct answers:\nA, B, and C.\n\nA. S3 Object Lock protects object versions, so bucket versioning is part of the immutable-retention design.\n\nB. Compliance mode prevents protected object versions from being overwritten or deleted until retention expires, including by the root user.\n\nC. Explicit bucket-policy denies can reject uploads unless the request uses SSE-KMS and names the approved customer managed key.\n\nWhy the other options are wrong:\nD. Transfer Acceleration improves upload routing and does not enforce encryption or retention.\nE. Expiring noncurrent versions after 30 days conflicts with seven-year immutability.\nF. The scenario explicitly requires a customer managed key, and an AWS managed key cannot satisfy that policy requirement.\n\nExam trigger:\nMandated KMS key plus root-resistant WORM retention requires bucket-policy enforcement and Object Lock.\n\nExam trap:\nEncryption controls confidentiality; Object Lock controls deletion and overwrite.\n\nMemory hook:\nVersion, lock, and deny the wrong key.",
+    "explanation": "Correct answers:\nA, B, and C.\n\nA. Compute Optimizer analyses utilisation and configuration data to produce rightsizing recommendations for supported resources, including EC2 instances and EBS volumes.\n\nB. Trusted Advisor cost-optimisation checks can identify waste patterns such as underutilised resources, idle load balancers, and unattached Elastic IP addresses, depending on the account's support and service configuration.\n\nC. Cost Explorer provides historical cost and usage analysis and supported rightsizing and commitment views.\n\nWhy the other options are wrong:\nD. GuardDuty identifies threats rather than resource waste.\nE. CloudTrail records API activity but is not a cost-rightsizing recommendation engine.\nF. Shield Advanced provides enhanced DDoS protection.\n\nExam trigger:\nRightsizing recommendations, idle-resource checks, and spending analysis require complementary optimisation tools.\n\nExam trap:\nNo single listed service supplies every requested view.\n\nMemory hook:\nOptimizer sizes, Advisor checks, Explorer analyses spend.",
     "topics": [
-      "topic-kms",
+      "topic-compute-optimizer",
+      "topic-cost-explorer",
+      "topic-trusted-advisor"
+    ]
+  },
+  {
+    "id": "q-saa-247",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Easy",
+    "type": "single",
+    "question": "A stateless nightly batch job saves checkpoints and can restart after an interruption. Which EC2 purchasing option is normally the most cost-effective?",
+    "options": [
+      "Spot Instances",
+      "On-Demand Instances",
+      "Dedicated Hosts",
+      "Standard Reserved Instances"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Spot Instances use spare EC2 capacity at a discount and are well suited to fault-tolerant, checkpointed workloads that can stop and resume.\n\nWhy the other options are wrong:\nB. On-Demand avoids commitments but normally costs more when interruption is acceptable.\nC. Dedicated Hosts are selected for host-level licensing, compliance, or isolation requirements rather than low-cost interruptible batch capacity.\nD. Reserved Instances suit predictable EC2 baselines and require a commitment; they are not generally the lowest-cost choice for an interruption-tolerant intermittent job.\n\nExam trigger:\nThe job is restartable, checkpointed, and interruption tolerant.\n\nExam trap:\nSpot saves cost only when the workload handles interruption correctly.\n\nMemory hook:\nSafe to interrupt means Spot.",
+    "topics": [
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-248",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A DynamoDB table is idle for long periods and receives irregular traffic bursts. The team cannot forecast capacity and wants minimal capacity administration without paying continuously for provisioned throughput. The expected bursts remain within the table's prepared on-demand scaling characteristics and quotas. Which capacity mode is the best fit?",
+    "options": [
+      "On-demand capacity mode",
+      "Provisioned capacity fixed at the largest possible peak",
+      "Provisioned capacity without auto scaling",
+      "A reserved EC2 instance running an application cache"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. On-demand mode charges per request rather than for idle provisioned capacity and automatically manages throughput for variable workloads, subject to previous-peak behaviour, warm throughput, configured maximum throughput, and account quotas.\n\nWhy the other options are wrong:\nB. Fixed peak provisioning incurs cost throughout long idle periods and still requires capacity forecasting.\nC. Static provisioned capacity risks either persistent waste or throttling during bursts.\nD. An EC2 cache does not replace DynamoDB write-capacity planning and adds infrastructure management.\n\nExam trigger:\nLong idle periods, irregular demand, and minimal capacity management point to on-demand mode.\n\nExam trap:\nOn-demand is automatic but not an unlimited promise for an unprepared instantaneous increase far above prior demand.\n\nMemory hook:\nIrregular DynamoDB demand means on-demand.",
+    "topics": [
+      "topic-dynamodb"
+    ]
+  },
+  {
+    "id": "q-saa-249",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "Analysts run ad hoc SQL queries directly against files in S3 only a few times each month. The company does not want to provision or maintain a database or analytics cluster between query sessions. Which service is the most cost-effective fit?",
+    "options": [
+      "Amazon Athena",
+      "An Amazon Redshift provisioned cluster",
+      "An Amazon EMR cluster that runs continuously",
+      "Amazon RDS for PostgreSQL with imported copies of the files"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. Athena is a serverless interactive query service that runs SQL directly against data in S3. The company pays for query processing rather than keeping a database or analytics cluster running between occasional sessions.\n\nWhy the other options are wrong:\nB. A provisioned Redshift cluster creates ongoing capacity cost for an intermittent workload.\nC. A continuously running EMR cluster is unnecessary for occasional ad hoc SQL.\nD. Importing files into RDS adds data loading, storage, database sizing, patching, and administration.\n\nExam trigger:\nOccasional serverless SQL directly over S3 points to Athena.\n\nExam trap:\nRedshift is appropriate for sustained warehouse workloads; Athena is a strong fit for intermittent S3 queries.\n\nMemory hook:\nAd hoc S3 SQL means Athena.",
+    "topics": [
+      "topic-athena",
       "topic-s3"
     ]
   },
   {
-    "id": "q-saa-212",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "An S3 bucket must allow one named role in an external partner account and principals that belong to the company's AWS Organization. Access from every other AWS account must remain denied. Which bucket-policy design is the most maintainable and least permissive?",
-    "options": [
-      "Use one Allow statement for the partner role and another that requires aws:PrincipalOrgID to match the company organization ID.",
-      "Allow Principal '*' and restrict requests only by aws:SourceVpc.",
-      "List every current organization account root ARN and update the policy manually whenever accounts change.",
-      "Use an SCP in the management account to grant the external partner role access."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. The partner role is granted explicitly, while an aws:PrincipalOrgID condition covers principals from current and future member accounts in the company organization without granting public access.\n\nWhy the other options are wrong:\nB. SourceVpc limits the network path and does not prove that the caller belongs to an approved account.\nC. Manual account lists are fragile and require policy updates whenever organization membership changes.\nD. SCPs set permission ceilings for organization accounts and cannot grant an external principal access to an S3 bucket.\n\nExam trigger:\nOne approved external principal plus every account in one organization points to a named principal and PrincipalOrgID.\n\nExam trap:\nNetwork origin and account ownership are different authorization dimensions.\n\nMemory hook:\nName the outsider; use PrincipalOrgID for insiders.",
-    "topics": [
-      "topic-iam",
-      "topic-organizations",
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-213",
+    "id": "q-saa-250",
     "exam_code": "aws-saa-c03",
     "difficulty": "Medium",
     "type": "single",
-    "question": "Administrators need interactive shell access to EC2 instances in private subnets. The instances must have no public IP addresses, no inbound SSH rule, and no stored SSH keys. Session activity must be logged centrally. Which solution has the least operational overhead?",
+    "question": "After authentication, one subscriber needs two hours of access to every private CloudFront object under /premium/*. Existing object URLs must remain unchanged, and the application should not generate an authorization token for every individual file. Which solution meets the requirements?",
     "options": [
-      "Use Systems Manager Session Manager and configure session logging to CloudWatch Logs or S3.",
-      "Deploy a hardened bastion host in every Availability Zone.",
-      "Allow SSH only from the corporate public IP range.",
-      "Use Client VPN and continue distributing shared SSH keys."
+      "Issue CloudFront signed cookies with a custom policy that permits /premium/* until the expiration time.",
+      "Generate a separate CloudFront signed URL for every premium object.",
+      "Configure Origin Access Control and permit every viewer to access the distribution.",
+      "Return a separate regional S3 presigned URL for every object."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. Session Manager provides shell access through the Systems Manager control channel without opening inbound ports or managing SSH keys. Session logs can be delivered centrally to CloudWatch Logs or S3 when logging is configured.\n\nWhy the other options are wrong:\nB. Bastion hosts require patching, scaling, monitoring, and key management.\nC. This still requires public reachability and an inbound SSH rule.\nD. Client VPN provides network connectivity but does not remove SSH-key administration or supply session-command logging by itself.\n\nExam trigger:\nPrivate-instance administration without port 22 or SSH keys points to Session Manager.\n\nExam trap:\nSession Manager still requires the instance to be managed by Systems Manager and to reach the required service endpoints.\n\nMemory hook:\nNo SSH port means Session Manager.",
+    "explanation": "Correct answer:\nA. CloudFront signed cookies are intended for cases in which a viewer needs access to multiple restricted files or existing URLs must remain unchanged. A custom policy can use a wildcard resource path and an expiration condition to grant temporary access to /premium/*.\n\nWhy the other options are wrong:\nB. Signed URLs are appropriate for individual resources, but issuing one per object adds unnecessary application work in this scenario.\nC. Origin Access Control protects the S3 origin from direct access; it does not authenticate premium viewers at CloudFront.\nD. S3 presigned URLs bypass the CloudFront private-content access design and still require a separate URL for each object.\n\nExam trigger:\nTemporary access to many private CloudFront files without changing their URLs points to signed cookies.\n\nExam trap:\nOrigin Access Control secures the origin; signed cookies or URLs authorize viewers.\n\nMemory hook:\nMany protected files under one path mean signed cookies.",
     "topics": [
-      "topic-ec2",
-      "topic-ssm"
-    ]
-  },
-  {
-    "id": "q-saa-214",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "multiple",
-    "question": "A company must centrally record management API activity from every current and future AWS Organizations member account. Member-account administrators must not control the trail, and delivered log objects must remain undeletable and unmodifiable for the retention period. Which TWO actions meet the requirements? (Select TWO.)",
-    "options": [
-      "Create a CloudTrail organization trail from the management account or delegated administrator and deliver it to a central S3 bucket.",
-      "Enable S3 Object Lock in Compliance mode on the destination bucket and configure the required retention.",
-      "Enable CloudTrail log-file validation only.",
-      "Create separately managed trails and buckets in each member account.",
-      "Send events only to CloudWatch Logs and retain them with metric filters."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0,
-      1
-    ],
-    "explanation": "Correct answers:\nA and B.\n\nA. An organization trail centrally covers current and future member accounts. Member accounts can view the trail but cannot modify or delete the organization trail created by the management account or delegated administrator.\n\nB. Object Lock Compliance mode prevents protected S3 object versions from being overwritten or deleted until retention expires, including by root.\n\nWhy the other options are wrong:\nC. Log-file validation helps detect modification or deletion by verifying digest files, but it does not prevent either action.\nD. Local trails increase administration and allow configuration drift or disablement by member-account administrators.\nE. CloudWatch Logs does not replace an organization trail or provide S3 WORM retention.\n\nExam trigger:\nOrganization-wide audit collection plus immutable delivered objects requires an organization trail and Object Lock.\n\nExam trap:\nValidation detects tampering; Object Lock prevents it.\n\nMemory hook:\nOrganization trail collects; Compliance mode preserves.",
-    "topics": [
-      "topic-cloudtrail",
-      "topic-organizations",
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-215",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "Applications in private subnets must call Secrets Manager without NAT gateways, public IP addresses, or public internet routing. The security team also wants the network endpoint to permit only an approved application role and selected secrets. Which design meets the requirements?",
-    "options": [
-      "Create a Secrets Manager interface VPC endpoint, enable private DNS, and attach a restrictive endpoint policy.",
-      "Create a Secrets Manager gateway VPC endpoint.",
-      "Use an internet gateway and restrict the security group to published AWS IP ranges.",
-      "Store the secret in S3 and use an S3 gateway endpoint."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. Secrets Manager supports interface VPC endpoints powered by PrivateLink. Private DNS allows the standard service hostname to resolve to private endpoint addresses, and the endpoint policy can restrict permitted principals and secret resources.\n\nWhy the other options are wrong:\nB. Gateway endpoints are available for S3 and DynamoDB, not Secrets Manager.\nC. This requires public routing and does not provide the requested endpoint-level principal and resource policy.\nD. S3 storage does not provide the Secrets Manager API, managed rotation, or secret-specific access model.\n\nExam trigger:\nPrivate access to Secrets Manager with endpoint-level restrictions points to an interface endpoint.\n\nExam trap:\nAn endpoint policy adds a network access boundary; IAM and secret policies still participate in authorization.\n\nMemory hook:\nSecrets Manager stays private through an interface endpoint.",
-    "topics": [
-      "topic-privatelink",
-      "topic-secrets-manager",
-      "topic-vpc"
-    ]
-  },
-  {
-    "id": "q-saa-216",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "multiple",
-    "question": "A security team needs organization-wide detection of publicly accessible S3 buckets and security groups that expose administrative ports to the internet. Noncompliant resources should be remediated centrally, and analysts need one consolidated security-posture view. Which TWO services should be configured? (Select TWO.)",
-    "options": [
-      "AWS Config organization rules with Systems Manager Automation remediation",
-      "AWS Security Hub with Organizations integration and delegated administration",
-      "Amazon GuardDuty with automatic security-group modification",
-      "CloudTrail Lake as the configuration-compliance engine",
-      "AWS Shield Advanced for public-bucket discovery"
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0,
-      1
-    ],
-    "explanation": "Correct answers:\nA and B.\n\nA. Config organization rules evaluate resource configurations across accounts. Supported remediation can invoke Systems Manager Automation documents to correct noncompliant resources.\n\nB. Security Hub centralizes security findings and standards results across organization accounts for prioritization and reporting.\n\nWhy the other options are wrong:\nC. GuardDuty detects threats from telemetry and is not the configuration-rule engine for public buckets or unrestricted security groups.\nD. CloudTrail Lake analyzes API activity and is not a continuous desired-configuration compliance service.\nE. Shield Advanced provides enhanced DDoS protection and does not detect public S3 buckets.\n\nExam trigger:\nConfiguration compliance plus automated remediation and centralized posture point to Config and Security Hub.\n\nExam trap:\nConfig evaluates resource state; Security Hub aggregates security posture.\n\nMemory hook:\nConfig fixes; Security Hub focuses.",
-    "topics": [
-      "topic-config",
-      "topic-organizations",
-      "topic-security-hub",
-      "topic-ssm"
-    ]
-  },
-  {
-    "id": "q-saa-217",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "An application role in Account A must publish only to one SNS topic in Account B without assuming a role in Account B. Which permission model provides least privilege?",
-    "options": [
-      "Allow sns:Publish on the topic ARN in the role's IAM policy and allow that role in the SNS topic policy.",
-      "Create an IAM user in Account B and embed its access keys in the application.",
-      "Allow sns:* on all resources in both accounts.",
-      "Use an SCP in Account B to grant the role access to the topic."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. Direct cross-account publishing requires an identity policy on the caller and a resource policy on the SNS topic that trusts the external role. Both can be restricted to sns:Publish and the exact topic ARN.\n\nWhy the other options are wrong:\nB. Long-term credentials increase risk and operational overhead.\nC. Wildcard permissions violate least privilege.\nD. An SCP cannot grant resource access; it only limits permissions available in organization accounts.\n\nExam trigger:\nDirect cross-account access to a resource that supports a resource policy requires permission on both sides.\n\nExam trap:\nThe caller policy authorizes the request; the topic policy trusts the external caller.\n\nMemory hook:\nCaller allows, topic trusts.",
-    "topics": [
-      "topic-iam",
-      "topic-sns"
-    ]
-  },
-  {
-    "id": "q-saa-218",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "multiple",
-    "question": "A stateless web tier must run across two Availability Zones, replace unhealthy instances automatically, and scale with unpredictable traffic. Which TWO configurations provide the least operational overhead? (Select TWO.)",
-    "options": [
-      "Place the instances in an Auto Scaling group spanning both Availability Zones and use target tracking scaling.",
-      "Use an Application Load Balancer across both Availability Zones and enable ELB health checks for the Auto Scaling group.",
-      "Run a fixed number of instances and replace failures manually.",
-      "Use DNS round robin between one large instance in each Availability Zone.",
-      "Run in one Availability Zone and copy AMIs to another Region."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0,
-      1
-    ],
-    "explanation": "Correct answers:\nA and B.\n\nA. A multi-AZ Auto Scaling group maintains desired capacity, replaces unhealthy instances, and adjusts capacity through target tracking.\n\nB. An ALB distributes requests across healthy targets in both Availability Zones. When ELB health checks are enabled for the Auto Scaling group, failed targets can be replaced automatically.\n\nWhy the other options are wrong:\nC. Fixed capacity and manual replacement do not meet the scaling or self-healing requirements.\nD. DNS round robin lacks target-aware health routing, managed scaling, and automated replacement.\nE. A single-AZ deployment does not tolerate an Availability Zone failure.\n\nExam trigger:\nStateless, variable demand, and multi-AZ self-healing point to Auto Scaling and an ALB.\n\nExam trap:\nThe ALB routes around unhealthy targets; the Auto Scaling group replaces them.\n\nMemory hook:\nALB balances; Auto Scaling heals and grows.",
-    "topics": [
-      "topic-ec2-asg",
-      "topic-elb"
-    ]
-  },
-  {
-    "id": "q-saa-219",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "A CloudFront distribution has synchronized S3 origins in two Regions. For GET, HEAD, and OPTIONS requests, CloudFront must retry the secondary S3 origin when the primary times out or returns selected server-error responses. Which configuration provides the native behaviour?",
-    "options": [
-      "Create a CloudFront origin group with the primary and secondary S3 origins and configure the failover criteria.",
-      "Create Route 53 failover records for the CloudFront distribution domain.",
-      "Use Global Accelerator with both S3 buckets as endpoints.",
-      "Use Lambda@Edge to update DNS after each 5xx response."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. A CloudFront origin group defines a primary and secondary origin. For supported read methods, CloudFront can retry the secondary origin when the primary has a connection failure, timeout, or configured HTTP status response.\n\nWhy the other options are wrong:\nB. Route 53 sees the CloudFront distribution endpoint and does not perform per-request failover between the distribution's internal origins.\nC. S3 buckets are not standard Global Accelerator endpoints for this design.\nD. DNS mutation is slower, custom, and unnecessary because CloudFront already provides native origin failover.\n\nExam trigger:\nPer-request failover between origins inside one CloudFront distribution points to an origin group.\n\nExam trap:\nRoute 53 fails over DNS endpoints; CloudFront origin groups retry origins for a request.\n\nMemory hook:\nOrigin failure inside CloudFront means origin group.",
-    "topics": [
-      "topic-cloudfront",
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-220",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "A global application uses internet-facing ALBs in two Regions. DNS should normally return the healthy Region with the lowest measured network latency, and it must stop returning an ALB when that load balancer has no healthy targets. Which Route 53 configuration is the best fit?",
-    "options": [
-      "Latency-based alias records for both ALBs with Evaluate Target Health enabled",
-      "Primary and secondary failover records",
-      "Equal-weight weighted records without health evaluation",
-      "Geolocation records based only on user country"
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. Latency-based routing selects the AWS Region expected to provide the lowest network latency for the resolver's location. Alias records can evaluate the health of their ALB targets so unhealthy load balancers are excluded from DNS responses.\n\nWhy the other options are wrong:\nB. Failover routing always prefers the designated primary while healthy rather than selecting the lowest-latency Region.\nC. Equal weights do not consider latency and, without health evaluation, can return an unhealthy target.\nD. Geolocation routing follows configured geographic rules, not measured latency.\n\nExam trigger:\nLowest-latency healthy Regional endpoint points to latency alias records with target-health evaluation.\n\nExam trap:\nLatency routing optimizes network performance; geolocation routing follows business-defined location rules.\n\nMemory hook:\nFastest healthy Region means latency alias plus target health.",
-    "topics": [
-      "topic-elb",
-      "topic-route53"
+      "topic-cloudfront"
     ]
   }
 ]

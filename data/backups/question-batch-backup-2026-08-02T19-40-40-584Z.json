@@ -1,0 +1,267 @@
+{
+  "createdAt": "2026-08-02T19:40:40.584Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-221",
+    "q-saa-222",
+    "q-saa-223",
+    "q-saa-224",
+    "q-saa-225",
+    "q-saa-226",
+    "q-saa-227",
+    "q-saa-228",
+    "q-saa-229",
+    "q-saa-230"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-221",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A payment workflow uses Step Functions Standard Workflows. A Lambda task can fail with transient service errors, but validation errors should go directly to manual review. The workflow must retry transient failures with increasing delays and capture exhausted failures without losing the original input. Which TWO state-machine features meet these requirements? (Select TWO.)",
+      "option_a": "Configure a Retry block for transient error names with IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "option_b": "Configure a Catch block after the retriers that routes failures to review and uses ResultPath to preserve the original input.",
+      "option_c": "Increase the Lambda timeout and retry every error indefinitely.",
+      "option_d": "Use a Choice state before the task to predict whether Lambda will fail.",
+      "option_e": "Convert the workflow to an Express Workflow because Express guarantees task success.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nRetry handles named transient failures with bounded backoff. Catch handles remaining failures, and ResultPath can add error details without replacing the original input.\n\nWhy the others are wrong:\nC: Longer timeouts do not resolve service errors, and unlimited retries are unsafe.\nD: A Choice state cannot predict runtime failures.\nE: Express Workflows do not guarantee task success.\n\nExam trigger:\nDifferent handling for transient and terminal workflow errors.\n\nMemory hook:\nRetry first; Catch what remains."
+    },
+    {
+      "id": "q-saa-222",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An order service sends work to an SQS standard queue. A worker may crash after receiving a message but before deleting it. Processing is idempotent, and failed messages must not block new work indefinitely. Which design is MOST resilient?",
+      "option_a": "Set an appropriate visibility timeout, make processing idempotent, and configure a dead-letter queue with a maxReceiveCount.",
+      "option_b": "Set the visibility timeout to zero so another worker immediately receives every message.",
+      "option_c": "Use a short retention period and discard messages after the first failure.",
+      "option_d": "Replace the queue with direct synchronous calls between services.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nThe visibility timeout gives a worker time to finish, redelivery handles crashes, idempotency tolerates repeats, and the DLQ isolates poison messages.\n\nWhy the others are wrong:\nB: A zero timeout causes concurrent duplicate processing.\nC: Discarding after one failure risks losing recoverable work.\nD: Synchronous coupling reduces resilience during downstream failures.\n\nExam trigger:\nWorker crash, at-least-once delivery, and poison messages.\n\nMemory hook:\nVisibility plus idempotency plus DLQ."
+    },
+    {
+      "id": "q-saa-223",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company runs Aurora PostgreSQL in one Region and needs a secondary Region for disaster recovery. The target RPO is measured in seconds and recovery time is measured in minutes, but zero data loss is not required. Which solution has the LEAST operational overhead?",
+      "option_a": "Create an Aurora Global Database with a secondary cluster and use managed cross-Region failover when required.",
+      "option_b": "Copy snapshots to the second Region once per day.",
+      "option_c": "Use synchronous application writes to independent Aurora clusters in both Regions.",
+      "option_d": "Create a Multi-AZ Aurora cluster only in the primary Region.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAurora Global Database uses asynchronous storage-based cross-Region replication and managed failover, fitting the stated nonzero RPO and recovery target.\n\nWhy the others are wrong:\nB: Daily snapshots cannot meet an RPO measured in seconds.\nC: Custom dual writes create conflict and consistency complexity.\nD: Multi-AZ protects against AZ failures, not a full Regional outage.\n\nExam trigger:\nAurora cross-Region DR with seconds of possible data loss.\n\nMemory hook:\nRegional Aurora DR means Global Database."
+    },
+    {
+      "id": "q-saa-224",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company is designing disaster recovery in a second AWS Region. Only critical core services, such as data replication and essential supporting components, will run continuously. During recovery, the operations team will launch and scale the application servers before redirecting production traffic, and the business accepts this additional recovery step to reduce steady-state cost. Which disaster recovery strategy meets these requirements?",
+      "option_a": "Pilot light",
+      "option_b": "Backup and restore",
+      "option_c": "Warm standby",
+      "option_d": "Multi-site active-active",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nPilot light keeps only critical core services running in the recovery Region. Application compute is launched and scaled during recovery, which the business explicitly accepts in exchange for lower steady-state cost.\n\nWhy the others are wrong:\nA: Correct. The continuously running core with application servers started during recovery describes pilot light.\nB: Backup and restore normally requires restoring data and rebuilding more of the environment rather than keeping critical core services active.\nC: Warm standby keeps a scaled-down but complete functional environment running, including application capacity.\nD: Multi-site active-active runs production workloads in multiple locations at the same time and has the highest steady-state cost.\n\nExam trigger:\nOnly the critical core runs continuously; application capacity starts during recovery.\n\nMemory hook:\nCore stays lit; servers start later: pilot light."
+    },
+    {
+      "id": "q-saa-225",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company runs critical EC2 workloads and RDS databases in one Region. It requires centrally managed backups, cross-account isolation from production administrators, and copies in a second Region. The solution will use cross-account and cross-Region AWS Backup copy operations only for resource types and Regions that support those operations. Which THREE actions meet the requirements? (Select THREE.)",
+      "option_a": "Use AWS Backup policies to protect the required resources across organization accounts.",
+      "option_b": "Copy recovery points to a backup vault in a dedicated backup account.",
+      "option_c": "Configure cross-Region copy to a vault in the recovery Region.",
+      "option_d": "Store all backups in the production account and grant administrators full vault access.",
+      "option_e": "Use EC2 instance-store snapshots as the database backup mechanism.",
+      "option_f": "Rely only on Multi-AZ deployments as backups.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct:\nA: AWS Backup policies can centrally apply backup plans across organization accounts.\nB: For supported resource types and Regions, copying recovery points to a vault in a dedicated backup account isolates backups from production administrators.\nC: For supported resource types and Regions, cross-Region copy places recovery points in the recovery Region for Regional disaster protection.\n\nWhy the others are wrong:\nD: Keeping all recovery points in the production account with broad administrator access weakens isolation.\nE: EC2 instance store is ephemeral and cannot serve as the backup mechanism for RDS databases.\nF: Multi-AZ improves availability but is not a retained backup or a cross-account recovery copy.\n\nExam trigger:\nCentral management combined with cross-account isolation and cross-Region recovery copies, where supported.\n\nMemory hook:\nPolicy, separate backup account, second Region."
+    },
+    {
+      "id": "q-saa-226",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A web application stores user session data on individual EC2 instance volumes. Users lose sessions when Auto Scaling replaces an instance. Which change makes the application more resilient?",
+      "option_a": "Move session state to a shared managed store such as ElastiCache for Redis or DynamoDB.",
+      "option_b": "Enable termination protection on every Auto Scaling instance.",
+      "option_c": "Use larger instance-store volumes.",
+      "option_d": "Configure ALB stickiness as the only session protection.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nExternalizing session state allows any healthy instance to serve requests and preserves sessions when instances are replaced.\n\nWhy the others are wrong:\nB: Auto Scaling must replace unhealthy instances, and protection does not make local state durable.\nC: Larger ephemeral storage still disappears with the instance.\nD: Stickiness does not preserve state after instance failure.\n\nExam trigger:\nLocal state breaks Auto Scaling resilience.\n\nMemory hook:\nResilient web tiers are stateless."
+    },
+    {
+      "id": "q-saa-227",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company must process independent image jobs from an SQS queue. One malformed image can repeatedly crash a worker and delay other jobs. The company wants fault isolation with the LEAST application change. Which solution meets the requirements?",
+      "option_a": "Configure a dead-letter queue and redrive policy, and process each message independently with an appropriate visibility timeout.",
+      "option_b": "Increase queue retention and remove the visibility timeout.",
+      "option_c": "Place all image jobs in one FIFO message group.",
+      "option_d": "Use one long-running worker and stop receiving messages after the first error.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nA DLQ isolates repeatedly failing messages, while independent processing and visibility timeouts let healthy jobs continue.\n\nWhy the others are wrong:\nB: Retention does not isolate poison messages, and visibility is needed during processing.\nC: One FIFO group can let a failing message block later work.\nD: A single worker creates a bottleneck and stopping consumption reduces availability.\n\nExam trigger:\nA poison message must not disrupt unrelated work.\n\nMemory hook:\nBad message goes to DLQ; good work continues."
+    },
+    {
+      "id": "q-saa-228",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An application publishes business events to EventBridge. A faulty deployment processes events incorrectly for two hours. After the defect is fixed, the company must resend only the affected historical events to the same event bus without maintaining a custom event store. Which feature meets the requirement?",
+      "option_a": "EventBridge archive and replay",
+      "option_b": "EventBridge schema registry",
+      "option_c": "EventBridge API destinations",
+      "option_d": "CloudWatch Logs metric filters",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAn EventBridge archive retains matched events and can replay a selected time range back to the source event bus.\n\nWhy the others are wrong:\nB: The schema registry stores schemas, not replayable event history.\nC: API destinations deliver events to HTTP endpoints but do not retain them for replay.\nD: Metric filters do not republish original events.\n\nExam trigger:\nReprocess past EventBridge events after a fix.\n\nMemory hook:\nPast events return through archive and replay."
+    },
+    {
+      "id": "q-saa-229",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company has a primary application stack in one Region and a fully functional but scaled-down stack in another Region. The secondary continuously receives database updates and can scale to production capacity after traffic is switched. Which disaster recovery strategy is described?",
+      "option_a": "Warm standby",
+      "option_b": "Pilot light",
+      "option_c": "Backup and restore",
+      "option_d": "Multi-site active-active",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nWarm standby keeps a complete, working but reduced-capacity copy ready to scale during failover.\n\nWhy the others are wrong:\nB: Pilot light keeps only the critical core.\nC: Backup and restore does not keep an operating secondary stack.\nD: Active-active serves production traffic from both sites normally.\n\nExam trigger:\nComplete but smaller secondary environment is already running.\n\nMemory hook:\nWarm means running, but smaller."
+    },
+    {
+      "id": "q-saa-230",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A database workload on EC2 requires consistently high IOPS, low latency, and independent provisioning of storage capacity and IOPS beyond gp3 limits. Which EBS volume type best meets the requirement?",
+      "option_a": "Provisioned IOPS SSD io2",
+      "option_b": "General Purpose SSD gp3",
+      "option_c": "Throughput Optimized HDD st1",
+      "option_d": "Cold HDD sc1",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nio2 is designed for I/O-intensive workloads needing provisioned IOPS and performance beyond gp3 limits.\n\nWhy the others are wrong:\nB: gp3 has lower maximum provisioned IOPS.\nC: st1 is for large sequential throughput, not low-latency high-IOPS databases.\nD: sc1 is cold HDD storage and unsuitable.\n\nExam trigger:\nDatabase needs provisioned IOPS beyond general-purpose SSD limits.\n\nMemory hook:\nHighest sustained EBS IOPS means io2."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-221",
+      "topic_id": "topic-step-functions"
+    },
+    {
+      "question_id": "q-saa-221",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-221",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-222",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-223",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-223",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-224",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-225",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-225",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-226",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-226",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-226",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-227",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-228",
+      "topic_id": "topic-eventbridge"
+    },
+    {
+      "question_id": "q-saa-229",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-230",
+      "topic_id": "topic-ebs"
+    }
+  ]
+}

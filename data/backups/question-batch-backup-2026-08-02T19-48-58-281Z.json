@@ -1,0 +1,274 @@
+{
+  "createdAt": "2026-08-02T19:48:58.281Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-231",
+    "q-saa-232",
+    "q-saa-233",
+    "q-saa-234",
+    "q-saa-235",
+    "q-saa-236",
+    "q-saa-237",
+    "q-saa-238",
+    "q-saa-239",
+    "q-saa-240"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-231",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A Windows application uses SMB shares, Microsoft Active Directory integration, Windows ACLs, and Distributed File System features. It must run across multiple Availability Zones with managed failover. Which storage service meets the requirements?",
+      "option_a": "Amazon FSx for Windows File Server with Multi-AZ deployment",
+      "option_b": "Amazon EFS Regional",
+      "option_c": "Amazon FSx for Lustre persistent deployment",
+      "option_d": "S3 with Mountpoint for Amazon S3",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nFSx for Windows provides managed SMB, Windows permissions, AD integration, and Multi-AZ deployment options.\n\nWhy the others are wrong:\nB: EFS provides NFS rather than native Windows SMB behavior.\nC: FSx for Lustre is a Linux parallel file system.\nD: Mountpoint does not provide a managed Windows SMB server.\n\nExam trigger:\nManaged Windows SMB with AD and Windows features.\n\nMemory hook:\nWindows file shares mean FSx for Windows."
+    },
+    {
+      "id": "q-saa-232",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A Linux application runs on EC2 instances across three Availability Zones. All instances need concurrent access to the same elastic POSIX file system. Capacity should grow and shrink automatically. Which solution meets the requirements?",
+      "option_a": "Use a Regional EFS file system with mount targets in the required Availability Zones.",
+      "option_b": "Attach one gp3 EBS volume to all instances across Availability Zones.",
+      "option_c": "Use S3 as a fully POSIX-compliant shared block device.",
+      "option_d": "Create one instance-store RAID array and share it by NFS.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nRegional EFS provides elastic shared NFS storage and mount targets across Availability Zones.\n\nWhy the others are wrong:\nB: EBS volumes are AZ resources and cannot attach across AZs.\nC: S3 is object storage and not a fully POSIX file system.\nD: Instance store is tied to one instance and creates a single point of failure.\n\nExam trigger:\nShared Linux file system across AZs.\n\nMemory hook:\nRegional shared POSIX storage means EFS."
+    },
+    {
+      "id": "q-saa-233",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A multiplayer game exposes TCP and UDP services from two AWS Regions. Players require static anycast IP addresses, routing over the AWS global network, and rapid health-based rerouting that is not dependent on DNS cache expiration. Which TWO components should be used? (Select TWO.)",
+      "option_a": "Create a standard AWS Global Accelerator with endpoint groups in both Regions.",
+      "option_b": "Register Regional Network Load Balancers or EC2 instances as accelerator endpoints.",
+      "option_c": "Configure Route 53 latency-based records for Regional Network Load Balancers with a TTL of 60 seconds.",
+      "option_d": "Assign Elastic IP addresses to Network Load Balancers in each Region and publish all addresses to game clients.",
+      "option_e": "Deploy CloudFront in front of Regional Application Load Balancers and enable origin failover.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. Global Accelerator provides static anycast IP addresses and directs users to healthy Regional endpoint groups based on factors including client location and endpoint health.\n\nB. Network Load Balancers and EC2 instances are supported Regional endpoint types and can support the game's TCP and UDP traffic architecture. Traffic enters through the AWS edge and travels across the AWS global network.\n\nWhy the other options are wrong:\nC. Route 53 latency routing is a valid global DNS architecture, but failover remains subject to DNS resolution and cached records. It does not provide Global Accelerator's static anycast IPs.\nD. Publishing separate Regional addresses forces the client to implement endpoint selection and health handling. It does not provide one anycast entry point.\nE. CloudFront and Application Load Balancers are designed for HTTP and HTTPS application delivery. An ALB does not provide native UDP forwarding.\n\nExam trigger:\nStatic global IP addresses, TCP or UDP, AWS backbone routing, and failover without DNS delay.\n\nExam trap:\nRoute 53 performs DNS routing. Global Accelerator provides an anycast network entry point.\n\nMemory hook:\nStatic IPs plus TCP or UDP means Global Accelerator."
+    },
+    {
+      "id": "q-saa-234",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A read-heavy DynamoDB application needs microsecond response times. The application can be changed to use a cache-aware client, and eventual consistency is acceptable for cached reads. Which solution has the LEAST operational overhead?",
+      "option_a": "Use DynamoDB Accelerator (DAX).",
+      "option_b": "Use ElastiCache for Redis as a manually maintained write-through cache.",
+      "option_c": "Add an RDS read replica.",
+      "option_d": "Place CloudFront in front of the DynamoDB endpoint.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nDAX is a managed DynamoDB-compatible in-memory cache designed for microsecond reads.\n\nWhy the others are wrong:\nB: Redis requires custom cache population and invalidation logic.\nC: An RDS replica does not serve DynamoDB tables.\nD: CloudFront is not a transparent DynamoDB API cache.\n\nExam trigger:\nMicrosecond caching specifically for DynamoDB.\n\nMemory hook:\nDynamoDB cache equals DAX."
+    },
+    {
+      "id": "q-saa-235",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A relational database is overloaded by repeated reads of product and session data. The cache must support replicas, automatic failover, persistence options, and rich data structures. Which service best meets the requirements?",
+      "option_a": "Amazon ElastiCache for Valkey or Redis OSS with replication enabled",
+      "option_b": "Amazon ElastiCache for Memcached",
+      "option_c": "DynamoDB Accelerator",
+      "option_d": "Amazon OpenSearch Service",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nValkey or Redis OSS supports replication, Multi-AZ failover, optional persistence, and rich data structures.\n\nWhy the others are wrong:\nB: Memcached lacks replication and persistence features.\nC: DAX is purpose-built for DynamoDB.\nD: OpenSearch is a search and analytics engine, not the simplest session and query cache.\n\nExam trigger:\nCache requires failover, replicas, persistence, and rich structures.\n\nMemory hook:\nRich resilient cache means Valkey or Redis."
+    },
+    {
+      "id": "q-saa-236",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A public HTTP API needs path-based routing to multiple services and TLS termination at the load balancer. Which load balancer type meets the requirements?",
+      "option_a": "Application Load Balancer",
+      "option_b": "Network Load Balancer",
+      "option_c": "Gateway Load Balancer",
+      "option_d": "Classic Load Balancer",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAn ALB supports HTTP and HTTPS, TLS termination, and path-based Layer 7 routing.\n\nWhy the others are wrong:\nB: NLB is Layer 4 and lacks ALB path rules.\nC: GWLB distributes traffic to virtual appliances.\nD: Classic Load Balancer lacks the modern routing features required.\n\nExam trigger:\nHTTP path or host routing.\n\nMemory hook:\nLayer 7 routing means ALB."
+    },
+    {
+      "id": "q-saa-237",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company processes a continuous stream of click events. Multiple independent consumers need the same ordered records, and one consumer may replay older records within the retention period. Throughput must scale by partitioning. Which service meets the requirements?",
+      "option_a": "Amazon Kinesis Data Streams",
+      "option_b": "Amazon SQS standard queue",
+      "option_c": "Amazon SNS standard topic without durable subscriptions",
+      "option_d": "Amazon EventBridge Scheduler",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nKinesis Data Streams retains ordered records by shard, supports independent consumers, replay, and partition-based scaling.\n\nWhy the others are wrong:\nB: SQS competing consumers do not independently receive the same retained stream.\nC: SNS alone does not provide a replayable retained stream.\nD: EventBridge Scheduler creates scheduled events rather than ingesting streams.\n\nExam trigger:\nOrdered retained stream with multiple replaying consumers.\n\nMemory hook:\nReplayable real-time stream means Kinesis."
+    },
+    {
+      "id": "q-saa-238",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A container platform runs latency-sensitive services on ECS. The company needs control over EC2 instance types for specialized networking and wants both task scaling and cluster-capacity scaling. Which TWO configurations meet these requirements? (Select TWO.)",
+      "option_a": "Run the ECS service on an EC2 capacity provider backed by an Auto Scaling group containing the required instance types.",
+      "option_b": "Configure ECS service auto scaling for task count and capacity provider managed scaling for the Auto Scaling group.",
+      "option_c": "Use Fargate only because Fargate lets the company select every underlying EC2 instance type.",
+      "option_d": "Scale only the ALB desired capacity and keep a fixed number of tasks.",
+      "option_e": "Use EKS Cluster Autoscaler to manage the ECS cluster.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct:\nAn EC2 capacity provider preserves instance-type control, while service auto scaling adjusts tasks and managed scaling adjusts cluster instances.\n\nWhy the others are wrong:\nC: Fargate abstracts underlying instances.\nD: ALB scaling does not add tasks or container instances.\nE: Kubernetes Cluster Autoscaler is for Kubernetes, not ECS.\n\nExam trigger:\nECS needs task scaling and EC2 cluster scaling.\n\nMemory hook:\nService scales tasks; capacity provider scales hosts."
+    },
+    {
+      "id": "q-saa-239",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A Lambda-backed API experiences database connection exhaustion during traffic spikes. The relational database supports connection pooling, and the company wants the LEAST application and operational change. Which solution meets the requirement?",
+      "option_a": "Place Amazon RDS Proxy between Lambda and the database.",
+      "option_b": "Increase Lambda reserved concurrency without changing connections.",
+      "option_c": "Create a NAT gateway in each Availability Zone.",
+      "option_d": "Store each database connection in DynamoDB.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nRDS Proxy pools and reuses database connections, smoothing Lambda concurrency spikes.\n\nWhy the others are wrong:\nB: Increasing concurrency can worsen connection exhaustion.\nC: NAT availability does not pool sessions.\nD: Live database connections cannot be stored in DynamoDB.\n\nExam trigger:\nServerless concurrency overwhelms relational connections.\n\nMemory hook:\nLambda connection storm means RDS Proxy."
+    },
+    {
+      "id": "q-saa-240",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company needs a load balancer for millions of TCP connections with very low latency and a static IP address in each enabled Availability Zone. Which solution meets the requirements?",
+      "option_a": "Network Load Balancer",
+      "option_b": "Application Load Balancer",
+      "option_c": "Gateway Load Balancer",
+      "option_d": "Route 53 weighted routing",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct:\nAn NLB is designed for high-performance Layer 4 traffic and can provide static addresses per Availability Zone.\n\nWhy the others are wrong:\nB: ALB is Layer 7 and does not provide the same static-IP design.\nC: GWLB is for fleets of virtual appliances.\nD: Route 53 is DNS routing, not a TCP load balancer.\n\nExam trigger:\nStatic IP plus extreme TCP or UDP performance.\n\nMemory hook:\nLayer 4 and static IP means NLB."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-231",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-232",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-232",
+      "topic_id": "topic-efs"
+    },
+    {
+      "question_id": "q-saa-233",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-233",
+      "topic_id": "topic-global-accelerator"
+    },
+    {
+      "question_id": "q-saa-233",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-234",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-234",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-235",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-236",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-237",
+      "topic_id": "topic-kinesis"
+    },
+    {
+      "question_id": "q-saa-238",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-238",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-239",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-239",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-239",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-240",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-240",
+      "topic_id": "topic-vpc"
+    }
+  ]
+}
