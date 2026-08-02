@@ -1,0 +1,268 @@
+{
+  "createdAt": "2026-08-02T18:06:52.849Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-101",
+    "q-saa-102",
+    "q-saa-103",
+    "q-saa-104",
+    "q-saa-105",
+    "q-saa-106",
+    "q-saa-107",
+    "q-saa-108",
+    "q-saa-109",
+    "q-saa-110"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-101",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A database administrator needs to prevent users from accidentally deleting a production Amazon RDS DB instance via the AWS Management Console, AWS CLI, or API. Which RDS safety feature enforces this protection?",
+      "option_a": "Enable RDS Deletion Protection on the DB instance.",
+      "option_b": "Enable S3 Versioning on the underlying storage.",
+      "option_c": "Deploy an RDS Multi-AZ standby instance.",
+      "option_d": "Attach an EC2 Auto Scaling Termination Policy.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "RDS Deletion Protection prevents an RDS DB instance from being deleted by any user via the Console, CLI, or API. To delete an instance with Deletion Protection enabled, the protection setting must first be explicitly disabled."
+    },
+    {
+      "id": "q-saa-102",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A container application runs on Amazon ECS with AWS Fargate. The application requires high availability across 3 Availability Zones. If a Fargate task crashes or fails its container health check, ECS must automatically launch a replacement task in a healthy AZ. Which ECS deployment construct manages task count and availability?",
+      "option_a": "Create an Amazon ECS Task Definition configuring container memory limits, CPU units, and multi-AZ launch parameters.",
+      "option_b": "Create an Amazon ECS Service specifying the desired task count and configuring subnets across multiple Availability Zones.",
+      "option_c": "Deploy an AWS Elastic Beanstalk Worker Environment with an Auto Scaling group to manage task lifecycle states.",
+      "option_d": "Create an EC2 Auto Scaling Launch Template configuring multi-AZ subnet distribution and container health check triggers.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create an ECS service with the required desired task count and configure its networking across subnets in three Availability Zones.\n\nThe ECS service scheduler maintains the desired number of running tasks. If a task stops or becomes unhealthy, the service launches a replacement task. With subnets across multiple Availability Zones, ECS can distribute the Fargate tasks for higher availability.\n\nWhy the other options are wrong:\nA. A task definition describes how an individual task runs, including its containers, CPU, memory, ports, and image. It does not continuously maintain a desired task count.\nC. Elastic Beanstalk Worker Environments are not required to manage the lifecycle of ECS Fargate tasks.\nD. EC2 Auto Scaling manages EC2 instances. Fargate does not require the customer to operate an EC2 Auto Scaling group.\n\nExam trigger:\nECS, Fargate, desired task count, task replacement, health checks, and multiple Availability Zones.\n\nExam trap:\nA task definition describes the task. An ECS service keeps tasks running.\n\nMemory hook:\nTask definition defines. ECS service maintains."
+    },
+    {
+      "id": "q-saa-103",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A Kubernetes cluster on Amazon EKS runs worker nodes across multiple Availability Zones using EC2 Auto Scaling groups. During peak traffic, pods enter a Pending state due to insufficient CPU and memory capacity across existing nodes. Which component automatically scales out the underlying EC2 Auto Scaling groups to add worker nodes for pending pods?",
+      "option_a": "EC2 Target Tracking Scaling Policy on CPU utilization alone",
+      "option_b": "Kubernetes Cluster Autoscaler",
+      "option_c": "AWS Application Auto Scaling on Fargate",
+      "option_d": "Amazon Route 53 Traffic Flow",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Kubernetes Cluster Autoscaler monitors the EKS cluster for pods that cannot be scheduled due to resource constraints (Pending state) and automatically adjusts the desired capacity of the corresponding AWS EC2 Auto Scaling groups to launch additional worker nodes."
+    },
+    {
+      "id": "q-saa-104",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A Windows-based enterprise application requires shared file storage accessible via the SMB protocol. The file system must integrate with self-managed Active Directory, support Multi-AZ high availability with automatic failover, and support Shadow Copies for file restoration. Which storage service should be selected?",
+      "option_a": "Deploy Amazon EFS with Cross-Region Replication enabled and mount file shares using the SMB 3.1 protocol.",
+      "option_b": "Deploy Amazon FSx for Windows File Server in a Multi-AZ configuration integrated with Active Directory.",
+      "option_c": "Store application files in Amazon S3 Glacier Flexible Retrieval and mount the bucket as a local Windows drive.",
+      "option_d": "Attach an Amazon EBS gp3 volume in Multi-Attach mode across EC2 instances in multiple Availability Zones.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon FSx for Windows File Server provides native SMB file storage built on Windows Server, supporting Multi-AZ high availability, Active Directory integration, and Windows Shadow Copies."
+    },
+    {
+      "id": "q-saa-105",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A SaaS application serves global users over TCP. The backend is deployed in us-east-1 and eu-west-1. To improve TCP handshake performance and provide static IP addresses, the application uses AWS Global Accelerator. How does Global Accelerator handle a regional outage?",
+      "option_a": "It updates Amazon Route 53 public DNS A records with a low TTL to point traffic to healthy regional endpoints.",
+      "option_b": "Anycast IP addresses automatically route user traffic over the AWS global network to the nearest healthy application endpoint within seconds.",
+      "option_c": "It triggers Network Load Balancer cross-zone load balancing to re-route incoming TCP connections to an available standby region.",
+      "option_d": "It re-routes incoming traffic through AWS Direct Connect gateway locations to establish alternative network paths.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Global Accelerator uses static Anycast IP addresses that route client traffic to the nearest AWS edge location. It continuously monitors the health of application endpoints across AWS regions and automatically redirects traffic to the nearest healthy regional endpoint within seconds upon a failure."
+    },
+    {
+      "id": "q-saa-106",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An Aurora MySQL database cluster experiences heavy read traffic during business hours. The database team wants read replicas to scale out automatically when read throughput increases, adding up to 15 Aurora Replicas. Which feature handles automatic replica scaling?",
+      "option_a": "Configure Aurora Auto Scaling to dynamically adjust the number of Aurora Replicas based on CPU utilization.",
+      "option_b": "Configure RDS Multi-AZ Failover to automatically launch additional read replicas during peak load.",
+      "option_c": "Migrate the database to DynamoDB On-Demand capacity to automatically scale read throughput up to 15 nodes.",
+      "option_d": "Configure EC2 Auto Scaling Scheduled Actions to launch additional Aurora DB instances during business hours.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Aurora Auto Scaling automatically adjusts the number of Aurora Replicas provisioned in an Aurora DB cluster in response to changes in connectivity or workload metrics (such as CPU utilization or average connections)."
+    },
+    {
+      "id": "q-saa-107",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An SQS worker process takes 5 minutes to process a complex video rendering task from a queue. However, after 30 seconds of processing, another worker instance receives the exact same message and starts duplicate processing. How should the queue be configured to stop the message from normally becoming visible again before processing completes?",
+      "option_a": "Increase the SQS queue Visibility Timeout to 6 minutes so other worker instances cannot receive the message while processing.",
+      "option_b": "Decrease the SQS queue Message Retention Period setting to 30 seconds to automatically expire processed messages.",
+      "option_c": "Configure an SQS Dead-Letter Queue (DLQ) redrive policy with a Maximum Receives setting of 1.",
+      "option_d": "Configure SQS Long Polling on worker processes with a Wait Time Seconds setting of 20 seconds.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "The SQS Visibility Timeout is the window during which SQS prevents other consumers from receiving and processing a message. Setting the visibility timeout longer than the expected processing time prevents the message from normally becoming visible to another worker before processing completes. Consumers should still use idempotent processing because SQS does not guarantee that a message will never be delivered more than once."
+    },
+    {
+      "id": "q-saa-108",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A media company serves static web assets via Amazon CloudFront from an S3 bucket origin in us-east-1. To handle HTTP GET, HEAD, and OPTIONS requests during a regional S3 disruption in us-east-1, CloudFront must seamlessly fail over to a backup S3 origin bucket in us-west-2 without returning HTTP 5xx errors to users. How should the solutions architect configure this origin redundancy?",
+      "option_a": "Create a CloudFront Origin Group containing a primary S3 origin and a secondary S3 origin configured to fail over on HTTP 500, 502, 503, and 504 status codes.",
+      "option_b": "Configure Amazon Route 53 DNS failover routing between the primary S3 website endpoint in us-east-1 and the secondary S3 website endpoint in us-west-2.",
+      "option_c": "Deploy a Lambda@Edge origin-request function to intercept HTTP 5xx server error responses from the primary S3 origin and rewrite origin request host headers.",
+      "option_d": "Enable S3 Cross-Region Replication between origin buckets and register an AWS Global Accelerator endpoint as the custom origin for the CloudFront distribution.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "CloudFront Origin Groups allow specifying a primary origin and a secondary failover origin for read requests (GET, HEAD, OPTIONS). When the primary S3 origin returns specified HTTP 5xx error status codes or times out, CloudFront transparently routes the request to the secondary S3 origin."
+    },
+    {
+      "id": "q-saa-109",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An Auto Scaling group launches EC2 instances behind an Application Load Balancer. An EC2 instance experiences an internal web application crash, causing the ALB target group health check to return Unhealthy. However, the underlying EC2 hypervisor remains healthy. By default, Auto Scaling only monitors EC2 status. How can Auto Scaling be configured to terminate and replace instances when ALB health checks fail?",
+      "option_a": "Change the Auto Scaling group Health Check Type setting from EC2 to ELB so instances failing ALB health checks are replaced.",
+      "option_b": "Configure an Amazon EventBridge rule to monitor ALB target health events and trigger an AWS Systems Manager Automation runbook.",
+      "option_c": "Increase the Application Load Balancer Idle Timeout setting to prevent target group health check probe failures.",
+      "option_d": "Configure an Amazon Route 53 failover routing policy pointing directly to the Application Load Balancer target instances.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Changing the Auto Scaling group Health Check Type to ELB instructs Auto Scaling to consider an instance unhealthy if either EC2 hypervisor status checks or Elastic Load Balancing target group health checks report a failure."
+    },
+    {
+      "id": "q-saa-110",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A real-time telemetry pipeline ingests streaming IoT data into an Amazon Kinesis Data Stream. Five separate microservice consumers poll the stream simultaneously. Consumers experience read throttling because total read throughput exceeds 2 MB/sec per shard. Which Kinesis feature provides dedicated read throughput of up to 2 MB/sec per shard for each registered consumer?",
+      "option_a": "Use enhanced fan-out, which provides dedicated read throughput of up to 2 MB/sec per shard for each registered consumer.",
+      "option_b": "Configure Amazon Data Firehose buffer hints to deliver larger batches downstream and allocate independent read throughput to each stream consumer.",
+      "option_c": "Increase the stream shard count so polling applications receive independent read throughput allocations from every shard they process.",
+      "option_d": "Run each application with a separate Kinesis Client Library lease table to reserve independent read throughput for every consumer.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Kinesis Data Streams Enhanced Fan-Out provides registered stream consumers with dedicated read throughput of up to 2 MB/sec per shard over HTTP/2, eliminating read contention among parallel consumer applications."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-101",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-102",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-102",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-103",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-103",
+      "topic_id": "topic-eks"
+    },
+    {
+      "question_id": "q-saa-104",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-104",
+      "topic_id": "topic-storage"
+    },
+    {
+      "question_id": "q-saa-105",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-105",
+      "topic_id": "topic-global-accelerator"
+    },
+    {
+      "question_id": "q-saa-106",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-106",
+      "topic_id": "topic-auto-scaling"
+    },
+    {
+      "question_id": "q-saa-107",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-108",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-108",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-109",
+      "topic_id": "topic-auto-scaling"
+    },
+    {
+      "question_id": "q-saa-109",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-110",
+      "topic_id": "topic-kinesis"
+    }
+  ]
+}

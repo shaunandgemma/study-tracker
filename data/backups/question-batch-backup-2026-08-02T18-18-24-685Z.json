@@ -1,0 +1,272 @@
+{
+  "createdAt": "2026-08-02T18:18:24.685Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-121",
+    "q-saa-122",
+    "q-saa-123",
+    "q-saa-124",
+    "q-saa-125",
+    "q-saa-126",
+    "q-saa-127",
+    "q-saa-128",
+    "q-saa-129",
+    "q-saa-130"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-121",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An application uploads 50 GB video files to Amazon S3 over an unstable network connection. Uploads frequently fail halfway through, requiring the application to restart the entire 50 GB transfer. How can upload performance and resiliency be optimized?",
+      "option_a": "Use S3 Multipart Upload, upload parts independently or in parallel, and retry failed parts without restarting the full object upload.",
+      "option_b": "Enable S3 Transfer Acceleration to route uploads through edge locations and resume interrupted single-request uploads from the last transmitted byte.",
+      "option_c": "Enable S3 Versioning to preserve incomplete upload segments and resume a failed single-request upload from the last successfully transferred segment.",
+      "option_d": "Attach a full-object checksum to each single PUT request so Amazon S3 retains validated byte ranges and resumes after a network failure.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Use S3 Multipart Upload and divide the 50 GB object into smaller parts.\n\nThe application can upload parts independently and can upload several parts in parallel. When a network failure occurs, only the failed parts need to be retried. The completed parts do not need to be uploaded again.\n\nAfter every part succeeds, the application sends a request to complete the multipart upload and S3 assembles the final object.\n\nWhy the other options are wrong:\nB. Transfer Acceleration can improve long-distance transfer performance, but it does not automatically make one interrupted single-request upload resumable from the last byte.\nC. Versioning preserves complete versions of objects. It does not store incomplete portions of a failed single PUT request.\nD. Checksums verify data integrity. They do not cause S3 to retain successful byte ranges from a failed single PUT request.\n\nExam trigger:\nLarge object, unstable connection, parallel upload, and retry only failed sections.\n\nExam trap:\nTransfer Acceleration improves the route. Multipart Upload provides part-level retries.\n\nMemory hook:\nLarge unstable upload means multipart."
+    },
+    {
+      "id": "q-saa-122",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A high-throughput application writes sensor metrics to a DynamoDB table. The table uses Status (with values Active or Inactive) as the Partition Key. During peak load, the table experiences severe write throttling despite having unallocated write capacity. What is the root cause and recommended solution?",
+      "option_a": "Replace the low-cardinality Partition Key (Status) with a high-cardinality Partition Key such as SensorID_Timestamp to distribute write traffic evenly.",
+      "option_b": "Migrate the DynamoDB table data to Amazon S3 Glacier Deep Archive when table storage size exceeds 10 GB.",
+      "option_c": "Increase DynamoDB Provisioned Read Capacity Units (RCUs) by 500% to support higher metric ingestion rates.",
+      "option_d": "Enable DynamoDB Time To Live (TTL) to delete expired items automatically during peak write traffic hours.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "DynamoDB partitions data based on Partition Key values. Using a low-cardinality key (like Status) directs all requests to a small subset of partitions, causing hot partition throttling. High-cardinality keys distribute traffic evenly across physical partitions."
+    },
+    {
+      "id": "q-saa-123",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A web development team needs an in-memory caching layer for a high-traffic site. The cache must support multi-threaded performance, simple key-value string caching, and horizontal scale-out by adding or removing nodes. Data persistence is not required. Which ElastiCache engine fits best?",
+      "option_a": "Amazon ElastiCache for Redis",
+      "option_b": "Amazon ElastiCache for Memcached",
+      "option_c": "Amazon MemoryDB for Redis",
+      "option_d": "Amazon DynamoDB DAX",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "ElastiCache for Memcached is a multi-threaded, purely in-memory key-value cache engine designed for simple caching models where persistence, replication, and complex data structures (supported by Redis) are not needed."
+    },
+    {
+      "id": "q-saa-124",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A business intelligence team runs complex analytical queries on data stored in an AWS data lake. Analytics queries run intermittently throughout the week without predictable schedules. The team wants to avoid paying for idle database cluster infrastructure when queries are not running. Which Redshift deployment option automates compute scaling and pauses billing when idle?",
+      "option_a": "Amazon Redshift Provisioned RA3 Clusters",
+      "option_b": "Amazon Redshift Serverless",
+      "option_c": "Amazon Redshift Spectrum on EC2 On-Demand",
+      "option_d": "Amazon Athena Federated Queries",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon Redshift Serverless automatically provisions and scales data warehouse capacity in Redshift Processing Units (RPUs) based on query demand, automatically shutting down and stopping charges when idle."
+    },
+    {
+      "id": "q-saa-125",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A multinational mobile app uploads user telemetry files directly to S3 buckets located in AWS Regions nearest to the user. To simplify application code, the mobile app needs a single global S3 endpoint hostname that automatically routes upload traffic over the AWS global network to the bucket with the lowest latency. Which S3 feature provides this capability?",
+      "option_a": "Configure bidirectional S3 Cross-Region Replication among the regional buckets and use one source-bucket endpoint, expecting replication rules to route incoming uploads by proximity.",
+      "option_b": "Create an S3 Multi-Region Access Point, use its global endpoint, and let it route requests over the AWS global network without replicating objects.",
+      "option_c": "Enable S3 Transfer Acceleration on every regional bucket and publish one accelerated hostname, expecting S3 to select the closest bucket for each upload.",
+      "option_d": "Place the regional buckets behind a CloudFront origin group and use its global hostname, expecting latency-based routing for all S3 upload requests.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create an S3 Multi-Region Access Point and configure the regional buckets as its members.\n\nThe application uses one global endpoint instead of choosing a regional bucket endpoint itself. In an active-active configuration, the Multi-Region Access Point routes requests over the AWS global network to the closest-proximity active AWS Region.\n\nMulti-Region Access Points route requests but do not replicate objects automatically. S3 Cross-Region Replication must be configured separately when the buckets require consistent copies of the same objects.\n\nWhy the other options are wrong:\nA. Cross-Region Replication copies objects between buckets. It does not make one source-bucket endpoint route new uploads to the closest bucket.\nC. Each Transfer Acceleration endpoint is associated with a specific bucket. It does not provide one hostname that selects among multiple regional buckets.\nD. CloudFront is primarily a content-delivery cache. An origin group provides origin failover, not general active-active S3 upload routing based on proximity.\n\nExam trigger:\nMultiple regional S3 buckets, one global endpoint, proximity routing, and the AWS global network.\n\nExam trap:\nMulti-Region Access Points route requests. Replication is a separate configuration.\n\nMemory hook:\nOne global endpoint for many regional buckets means MRAP."
+    },
+    {
+      "id": "q-saa-126",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An engineering team runs weather forecasting simulation software across a cluster of EC2 instances. The nodes require inter-node communication bypassing the OS kernel (OS bypass) to achieve ultra-low latency and high message rates. What specialized network adapter must be attached to the EC2 instances?",
+      "option_a": "Elastic Network Adapter (ENA)",
+      "option_b": "Elastic Fabric Adapter (EFA)",
+      "option_c": "Elastic IP Address",
+      "option_d": "AWS Direct Connect Virtual Interface",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Elastic Fabric Adapter (EFA) is a specialized network interface for EC2 instances that provides OS bypass capability, enabling HPC applications (such as MPI simulations) to achieve low latency inter-node communication."
+    },
+    {
+      "id": "q-saa-127",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A versioned S3 bucket stores 1 PB of historical video files. Current objects are rarely accessed, and retrieval within 12 hours is acceptable. The bucket also contains large numbers of obsolete noncurrent versions and incomplete multipart uploads. Which TWO Lifecycle actions provide the greatest ongoing storage-cost reduction? (Select TWO.)",
+      "option_a": "Transition current object versions to S3 Glacier Deep Archive.",
+      "option_b": "Expire unneeded noncurrent versions and abort incomplete multipart uploads after an appropriate retention period.",
+      "option_c": "Move all objects to S3 Intelligent-Tiering and wait for the optional Deep Archive Access tier to move objects only after they satisfy its inactivity period.",
+      "option_d": "Transition current versions to S3 Glacier Flexible Retrieval to provide faster archive retrieval.",
+      "option_e": "Use S3 Storage Lens recommendations without creating Lifecycle transition or expiration rules.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. Glacier Deep Archive is appropriate for long-term data with infrequent access and retrieval times measured in hours. It provides lower archive-storage pricing than Glacier Flexible Retrieval.\n\nB. Noncurrent versions and incomplete multipart-upload parts continue consuming storage. Lifecycle expiration and AbortIncompleteMultipartUpload remove this hidden storage waste.\n\nWhy the other options are wrong:\nC. Intelligent-Tiering archive tiers are valuable when access patterns are uncertain and objects may move between tiers. Here, the archive pattern and acceptable retrieval time are already known, making a direct Deep Archive transition more targeted.\nD. Glacier Flexible Retrieval would meet many archive requirements, but it costs more than Deep Archive and offers faster retrieval than this scenario requires.\nE. Storage Lens can identify optimisation opportunities, but recommendations alone do not transition or delete any stored data.\n\nExam trigger:\nRarely accessed petabyte archive, 12-hour retrieval, versioning waste, and incomplete uploads.\n\nExam trap:\nChoose both a cheaper current-version storage class and cleanup of hidden storage.\n\nMemory hook:\nDeep Archive stores cheaply. Lifecycle cleanup removes waste."
+    },
+    {
+      "id": "q-saa-128",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "An engineering manager runs stateless batch rendering workloads on EC2 Auto Scaling groups. The workload can tolerate instance terminations. The manager wants to minimize compute costs while reducing the risk of Spot capacity unavailability. Which TWO Spot configuration options should be combined? (Select TWO.)",
+      "option_a": "Set the Auto Scaling group Spot Allocation Strategy to price-capacity-optimized to select pools with optimal capacity and price.",
+      "option_b": "Configure Attribute-Based Instance Type Selection in the Auto Scaling group to diversify across multiple instance types and families.",
+      "option_c": "Purchase 3-Year EC2 Dedicated Host Reservations for all Auto Scaling group worker nodes.",
+      "option_d": "Configure the Auto Scaling group to launch strictly On-Demand instances with assigned Elastic IP addresses.",
+      "option_e": "Enable EC2 Termination Protection on all Spot instances within the Auto Scaling group.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Combining the price-capacity-optimized Spot allocation strategy with Attribute-Based Instance Type Selection maximizes Spot availability and cost savings by dynamically selecting optimal Spot pools across diverse instance families."
+    },
+    {
+      "id": "q-saa-129",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A Finance team needs to prevent unexpected AWS cloud cost overruns. The team wants to set custom cost thresholds that trigger email alerts when monthly forecast spend exceeds $50,000, and automatically identify anomalous cost spikes across services. Which TWO AWS Cost Management tools should be configured? (Select TWO.)",
+      "option_a": "AWS Budgets (with Forecasted Cost Alerts)",
+      "option_b": "AWS Cost Anomaly Detection",
+      "option_c": "AWS Trusted Advisor Performance Checks",
+      "option_d": "AWS Config Compliance Packs",
+      "option_e": "AWS Compute Optimizer",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "AWS Budgets allows setting custom spend limits and sending alerts when actual or forecasted costs exceed thresholds. AWS Cost Anomaly Detection uses machine learning to continuously monitor spend and detect unexpected cost spikes."
+    },
+    {
+      "id": "q-saa-130",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A Cloud Financial Operations (FinOps) team wants to audit an existing AWS infrastructure footprint to identify over-provisioned EC2 instances, unattached Elastic IP addresses, and idle EBS volumes. Which TWO services/features provide actionable resource rightsizing and cost optimization recommendations? (Select TWO.)",
+      "option_a": "AWS Compute Optimizer",
+      "option_b": "AWS Trusted Advisor (Cost Optimization Pillar)",
+      "option_c": "AWS GuardDuty",
+      "option_d": "AWS CloudTrail Insights",
+      "option_e": "AWS Systems Manager Patch Manager",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "AWS Compute Optimizer analyzes historical CloudWatch metrics to recommend optimal EC2 instance types, EBS volumes, and Lambda memory sizes. AWS Trusted Advisor identifies idle resources such as unattached EIPs and idle EBS volumes."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-121",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-122",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-123",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-124",
+      "topic_id": "topic-athena"
+    },
+    {
+      "question_id": "q-saa-124",
+      "topic_id": "topic-redshift"
+    },
+    {
+      "question_id": "q-saa-125",
+      "topic_id": "topic-mrap"
+    },
+    {
+      "question_id": "q-saa-125",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-126",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-126",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-127",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-127",
+      "topic_id": "topic-storage-lifecycle"
+    },
+    {
+      "question_id": "q-saa-128",
+      "topic_id": "topic-auto-scaling"
+    },
+    {
+      "question_id": "q-saa-128",
+      "topic_id": "topic-ec2-spot"
+    },
+    {
+      "question_id": "q-saa-129",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-129",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-130",
+      "topic_id": "topic-compute-optimizer"
+    },
+    {
+      "question_id": "q-saa-130",
+      "topic_id": "topic-trusted-advisor"
+    }
+  ]
+}

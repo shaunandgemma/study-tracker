@@ -1,0 +1,256 @@
+{
+  "createdAt": "2026-08-02T16:21:09.221Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-21",
+    "q-saa-22",
+    "q-saa-23",
+    "q-saa-24",
+    "q-saa-25",
+    "q-saa-26",
+    "q-saa-27",
+    "q-saa-28",
+    "q-saa-29",
+    "q-saa-30"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-21",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company needs to migrate 150 TB of on-premises data to Amazon S3. The company has a 10 Mbps internet connection that is heavily utilized during business hours. The migration must be completed within 2 weeks with minimal network disruption. The company is an existing AWS Snowball Edge customer and is eligible to order Snowball Edge devices. Which solution is most cost-effective and operationally efficient?",
+      "option_a": "Use AWS DataSync over the existing 10 Mbps internet connection with bandwidth throttling.",
+      "option_b": "Order AWS Snowball Edge Storage Optimized devices, copy data locally, and ship them to AWS.",
+      "option_c": "Deploy an AWS Storage Gateway File Gateway on-premises and replicate files to S3 over HTTPS.",
+      "option_d": "Upload data to S3 using S3 Transfer Acceleration over the internet.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Order Snowball Edge Storage Optimized devices, copy the 150 TB of data to the devices locally, and return them to AWS. AWS imports the data into Amazon S3.\n\nThe 10 Mbps connection is far too slow for a 150 TB migration within two weeks. Snowball Edge performs the bulk transfer offline and avoids disrupting the company's heavily used internet connection. The question confirms that the company is an existing customer eligible to order the devices.\n\nWhy the other options are wrong:\nA. DataSync would still be restricted by the 10 Mbps connection. Bandwidth throttling would reduce disruption but make the transfer even slower.\nC. File Gateway provides ongoing hybrid access to S3. It would still upload the 150 TB through the limited internet connection.\nD. S3 Transfer Acceleration can improve long-distance internet transfers, but it cannot overcome such a severe bandwidth limitation.\n\nExam trigger:\nHundreds of terabytes, weak network connection, short migration deadline, and minimal network disruption.\n\nExam trap:\nDo not choose an online transfer service when the available bandwidth cannot meet the deadline.\n\nMemory hook:\nToo much data for the network means Snowball."
+    },
+    {
+      "id": "q-saa-22",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company hosts an application on EC2 instances in private subnets across multiple AZs. The instances must download software updates from Amazon S3 and external internet repositories. Currently, traffic passes through a NAT Gateway in each AZ, generating high data processing charges. How can the company reduce NAT Gateway processing costs for S3 traffic?",
+      "option_a": "Replace NAT Gateways with Egress-Only Internet Gateways across all private subnets.",
+      "option_b": "Create a VPC Gateway Endpoint for Amazon S3 and update private subnet route tables to direct S3 traffic to the endpoint.",
+      "option_c": "Deploy an Amazon CloudFront CDN distribution in front of the external software repositories to cache update files.",
+      "option_d": "Attach Elastic IP addresses directly to the private EC2 instance network interfaces.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create an S3 gateway endpoint and associate it with the private subnet route tables. The route tables direct S3 traffic through the endpoint instead of the NAT gateways.\n\nGateway endpoints for S3 do not require a NAT gateway or internet gateway and have no additional hourly endpoint charge. External repository traffic can continue through the NAT gateways, while S3 traffic avoids NAT data-processing charges.\n\nWhy the other options are wrong:\nA. An egress-only internet gateway supports outbound IPv6 internet traffic. It does not replace an S3 gateway endpoint and does not provide IPv4 NAT functionality.\nC. CloudFront cannot redirect the EC2 instances' S3 API traffic away from the NAT gateways.\nD. Assigning Elastic IP addresses would require the instances to use public connectivity. It would not provide the required private-subnet design or eliminate the need for suitable internet routing.\n\nExam trigger:\nPrivate subnets, S3 traffic, NAT Gateway charges, and route-table optimization.\n\nExam trap:\nKeep NAT for external internet access, but move S3 traffic to a gateway endpoint.\n\nMemory hook:\nS3 through NAT adds NAT processing charges. An S3 gateway endpoint avoids them."
+    },
+    {
+      "id": "q-saa-23",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An analytics application processes data stored in S3. Object access patterns are unpredictable, with some objects being accessed multiple times a day while others are unaccessed for months. Access patterns change dynamically without warning. What is the most cost-effective S3 storage class?",
+      "option_a": "S3 Standard-Infrequent Access (S3 Standard-IA)",
+      "option_b": "S3 Intelligent-Tiering",
+      "option_c": "S3 Glacier Flexible Archive",
+      "option_d": "S3 One Zone-Infrequent Access (S3 One Zone-IA)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Use S3 Intelligent-Tiering. It monitors object access patterns and automatically moves objects between access tiers when their usage changes.\n\nIt is designed for unknown, changing, or unpredictable access patterns. Frequently accessed objects remain in an appropriate frequent-access tier, while objects that become inactive can move to lower-cost tiers without manual lifecycle predictions.\n\nWhy the other options are wrong:\nA. Standard-IA is suitable when infrequent access is already known. Retrieval charges could become expensive for objects that suddenly become frequently accessed.\nC. Glacier Flexible Retrieval is archival storage. Objects must be restored before normal access and are unsuitable for data that might suddenly be accessed several times per day.\nD. One Zone-IA stores data in one Availability Zone and is intended for recreatable, infrequently accessed data. It does not automatically adapt to changing access patterns.\n\nExam trigger:\nAccess patterns are unknown, unpredictable, or continuously changing.\n\nExam trap:\nDo not guess a fixed storage class when Intelligent-Tiering can monitor the pattern automatically.\n\nMemory hook:\nUnpredictable access means Intelligent-Tiering."
+    },
+    {
+      "id": "q-saa-24",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A CloudFront distribution serves identical product images to global users. Viewer requests contain unique tracking query strings and different User-Agent headers. The origin does not use these values when generating the images, but the distribution currently includes them in the cache key. The cache-hit ratio is low, and origin requests are increasing. Which configuration will improve caching without changing the content returned to users?",
+      "option_a": "Create a cache policy that excludes the tracking query strings and User-Agent header from the cache key.",
+      "option_b": "Create a cache policy that includes every query string, header, and cookie in the cache key and forwards those values to the origin.",
+      "option_c": "Enable Origin Shield while continuing to include every tracking query string and viewer header in the cache key.",
+      "option_d": "Reduce the CloudFront minimum TTL to zero so that CloudFront validates every request with the origin.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Create a cache policy that excludes the tracking query strings and User-Agent header from the cache key.\n\nThe cache policy defines which query strings, headers, and cookies form the CloudFront cache key. Excluding values that do not change the response allows more viewer requests to reuse the same cached object, improving the cache-hit ratio and reducing origin requests.\n\nWhy the other options are wrong:\nB. Including every viewer value in the cache key creates many separate cache entries for identical content and reduces the cache-hit ratio.\nC. Origin Shield can reduce duplicate origin requests across CloudFront caching layers, but unnecessary cache-key variation would still produce avoidable cache misses.\nD. A zero minimum TTL increases revalidation and origin traffic rather than improving cache reuse.\n\nExam trigger:\nLow cache-hit ratio, identical responses, and unnecessary query strings, cookies, or headers in the cache key.\n\nExam trap:\nForwarding a value to the origin and including it in the cache key are related but separate design decisions.\n\nMemory hook:\nOnly response-changing values belong in the cache key."
+    },
+    {
+      "id": "q-saa-25",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company runs a steady-state web application on EC2 instances 24/7 with predictable baseline compute demands. In addition, the company runs short-lived batch processing jobs that can tolerate interruption. What combination of purchasing options minimizes compute costs?",
+      "option_a": "On-Demand Instances for both steady-state web app and batch jobs.",
+      "option_b": "Savings Plans or Reserved Instances for steady-state web app, and Spot Instances for batch jobs.",
+      "option_c": "Spot Instances for steady-state web app, and Dedicated Hosts for batch jobs.",
+      "option_d": "On-Demand Instances for steady-state web app, and Reserved Instances for batch jobs.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Savings Plans or Reserved Instances reduce costs for predictable baseline EC2 usage that runs continuously. Spot Instances reduce costs for flexible batch jobs that can tolerate interruption. This combination matches each workload with the purchasing option that best fits its usage pattern.\n\nWhy the other options are wrong:\nA. On-Demand Instances provide flexibility but do not provide the largest discount for either predictable baseline usage or interruption-tolerant batch processing.\nC. Spot Instances are risky for the continuously required web tier because AWS can interrupt them. Dedicated Hosts are expensive and unnecessary for ordinary batch jobs.\nD. The purchasing models are reversed. The steady workload should receive the commitment discount, while the interruptible workload should use Spot.\n\nExam trigger:\nPredictable continuous usage plus interruptible batch work normally means commitment pricing plus Spot.\n\nExam trap:\nDo not apply one purchasing model to every workload. Match each capacity type to its operational requirements.\n\nMemory hook:\nSteady means commit. Flexible means Spot."
+    },
+    {
+      "id": "q-saa-26",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A microservice runs infrequently—approximately 10 times a day—performing image processing that takes 5 seconds per invocation. The team currently keeps an EC2 t3.medium instance running 24/7 for this task. What architecture change offers the largest cost reduction with minimal effort?",
+      "option_a": "Migrate the microservice to an AWS Lambda function triggered by S3 notifications.",
+      "option_b": "Change the EC2 instance type to a Spot t3.nano instance.",
+      "option_c": "Run the application inside an Amazon ECS container hosted on EC2.",
+      "option_d": "Purchase a 3-Year Reserved Instance for the t3.medium server.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS Lambda is a better fit for a task that runs only a few times per day and completes in seconds. Amazon S3 can invoke Lambda when an object is created. The company no longer needs to keep an EC2 instance running while idle or manage the underlying server. S3 event notifications use at-least-once delivery and can arrive more than once, so the function should process events idempotently.\n\nWhy the other options are wrong:\nB. Spot reduces the EC2 price but the server would still need lifecycle management and could be interrupted. A t3.nano might also be unsuitable for image-processing requirements.\nC. ECS on EC2 still requires running and managing EC2 capacity. It does not eliminate idle server costs.\nD. A Reserved Instance reduces the price of the continuously running server but locks the company into paying for capacity that is idle most of the day.\n\nExam trigger:\nShort, infrequent, event-driven processing with minimal administration points to Lambda.\n\nExam trap:\nA smaller or discounted server still creates idle cost. Serverless removes the always-running server.\n\nMemory hook:\nRare event plus short task equals Lambda."
+    },
+    {
+      "id": "q-saa-27",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A financial database on DynamoDB experiences highly variable traffic during business hours and zero traffic at night. The peak request volume is unpredictable. Which DynamoDB capacity mode optimizes cost while automatically adapting to unexpected traffic spikes?",
+      "option_a": "Configure the DynamoDB table to use Provisioned Capacity Mode with static Read/Write Capacity Units.",
+      "option_b": "Configure the DynamoDB table to use On-Demand Capacity Mode to automatically scale throughput.",
+      "option_c": "Configure Provisioned Capacity Mode with DynamoDB Auto Scaling set to an aggressive target utilization.",
+      "option_d": "Create DynamoDB Global Tables configured with Reserved Capacity Units to absorb peak traffic surges.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Use DynamoDB on-demand capacity mode. It automatically manages capacity and is designed for unpredictable traffic without requiring provisioned read and write capacity units.\n\nOn-demand tables can instantly support up to twice their previous peak traffic. Exceptionally rapid increases beyond that level should still be ramped gradually to reduce the risk of throttling. The mode is well suited to sudden peaks and extended periods with little or no activity.\n\nWhy the other options are wrong:\nA. Static provisioned capacity could throttle unexpected peaks or waste money during the zero-traffic period.\nC. DynamoDB Auto Scaling adjusts provisioned capacity in response to observed utilization. It is less suitable than on-demand mode when traffic peaks are highly unpredictable and may rise suddenly.\nD. Global Tables provide multi-Region replication. They do not provide reserved capacity units or solve unpredictable capacity requirements by themselves.\n\nExam trigger:\nUnpredictable peaks, variable traffic, no capacity planning, and pay-per-request pricing.\n\nExam trap:\nAuto Scaling is still provisioned capacity. On-demand mode is built for unpredictable workloads.\n\nMemory hook:\nUnpredictable DynamoDB traffic means on-demand."
+    },
+    {
+      "id": "q-saa-28",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A database administrator needs to provision an EBS volume for an application requiring 12,000 IOPS and 400 MB/s throughput. What volume type provides these performance levels at the lowest cost?",
+      "option_a": "Provisioned IOPS SSD (io1)",
+      "option_b": "General Purpose SSD (gp3)",
+      "option_c": "Provisioned IOPS SSD (io2)",
+      "option_d": "Throughput Optimized HDD (st1)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. A gp3 volume can provide the required 12,000 IOPS and 400 MiB/s throughput. Its IOPS and throughput can be provisioned independently of storage capacity, making it the lowest-cost option listed when the workload does not require the lower latency or higher durability characteristics of io2. The selected EC2 instance type must also support the required EBS bandwidth and performance.\n\nWhy the other options are wrong:\nA. io1 can meet the performance requirement, but it is an older and more expensive Provisioned IOPS option.\nC. io2 provides higher durability, more consistent performance, and sub-millisecond latency capabilities, but the question does not require those features. It would cost more than gp3.\nD. st1 is an HDD-backed volume designed for large sequential workloads. It is not suitable for a database requiring 12,000 IOPS.\n\nExam trigger:\nModerate SSD performance, independent IOPS and throughput configuration, and lowest cost point to gp3.\n\nExam trap:\nHigh IOPS does not automatically mean io2. First check whether gp3 and the EC2 instance can meet the stated figures.\n\nMemory hook:\ngp3 for cost-effective configurable SSD performance. io2 for extreme latency, durability, or IOPS."
+    },
+    {
+      "id": "q-saa-29",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company wants to migrate an enterprise data warehouse to AWS. Queries are complex, involve multi-table joins on petabytes of structured data, and are executed during business hours. What service is designed specifically for cost-effective petabyte-scale data warehousing analytics?",
+      "option_a": "Amazon RDS PostgreSQL",
+      "option_b": "Amazon Redshift",
+      "option_c": "Amazon DynamoDB",
+      "option_d": "Amazon OpenSearch Service",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Amazon Redshift is a fully managed, petabyte-scale data warehouse designed for analytical workloads.\n\nIt uses columnar storage and massively parallel processing to execute complex analytical SQL queries across large datasets. This makes it suitable for multi-table joins, aggregations, and enterprise reporting over petabytes of structured data.\n\nWhy the other options are wrong:\nA. RDS PostgreSQL is a relational database designed primarily for transactional and general-purpose relational workloads. It is not the preferred petabyte-scale analytical warehouse.\nC. DynamoDB is a NoSQL key-value and document database designed for low-latency operational workloads, not complex relational joins.\nD. OpenSearch Service is designed for search, log analytics, and document analysis. It is not a traditional relational data warehouse.\n\nExam trigger:\nPetabytes, structured data, business intelligence, aggregations, and complex multi-table joins.\n\nExam trap:\nTransactional relational database means RDS. Large-scale analytical warehouse means Redshift.\n\nMemory hook:\nPetabyte SQL analytics means Redshift."
+    },
+    {
+      "id": "q-saa-30",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company requires an archival storage solution for regulatory compliance logs. Data must be retained for 10 years and is rarely accessed. In the event of an audit, a retrieval time of 3 to 5 hours is acceptable. Which S3 storage class meets these requirements at the lowest cost?",
+      "option_a": "Store compliance logs in the S3 Standard-Infrequent Access (S3 Standard-IA) storage class.",
+      "option_b": "Store compliance logs in the S3 Glacier Flexible Retrieval storage class using Standard retrievals.",
+      "option_c": "Store compliance logs in the S3 Glacier Deep Archive storage class using Standard retrievals.",
+      "option_d": "Store compliance logs in the S3 Intelligent-Tiering storage class with automatic archive tiering enabled.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Store the logs in S3 Glacier Flexible Retrieval and use Standard retrievals when an audit occurs.\n\nGlacier Flexible Retrieval is designed for rarely accessed archive data. Its Standard retrieval option typically restores objects within three to five hours, which meets the stated audit requirement.\n\nWhy the other options are wrong:\nA. Standard-IA provides immediate access but costs more for data that is retained for 10 years and rarely retrieved.\nC. Glacier Deep Archive has lower storage pricing, but Standard retrievals typically take about 12 hours. It does not meet the required three-to-five-hour retrieval window.\nD. Intelligent-Tiering is useful when access patterns are unknown or changing. The access pattern here is already known: long-term archive data that is rarely accessed.\n\nExam trigger:\nLong-term archive, rare access, and a retrieval requirement of three to five hours.\n\nExam trap:\nDeep Archive is cheaper, but it is too slow for this recovery-time requirement.\n\nMemory hook:\nThree to five hours means Glacier Flexible Retrieval Standard."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-21",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-21",
+      "topic_id": "topic-snow-family"
+    },
+    {
+      "question_id": "q-saa-22",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-22",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-23",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-24",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-25",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-26",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-26",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-27",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-28",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-29",
+      "topic_id": "topic-redshift"
+    },
+    {
+      "question_id": "q-saa-30",
+      "topic_id": "topic-glacier"
+    },
+    {
+      "question_id": "q-saa-30",
+      "topic_id": "topic-s3"
+    }
+  ]
+}

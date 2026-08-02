@@ -1,220 +1,222 @@
 [
   {
-    "id": "q-saa-1",
+    "id": "q-saa-121",
     "exam_code": "aws-saa-c03",
     "difficulty": "Medium",
     "type": "single",
-    "question": "A company runs a three-tier application on Amazon EC2. The web tier automatically scales across multiple subnets. The database tier must accept MySQL connections on TCP port 3306 only from instances belonging to the web tier. Which solution provides the most precise access control with the least ongoing administration?",
+    "question": "An application uploads 50 GB video files to Amazon S3 over an unreliable network. Failed transfers currently require the entire object to be uploaded again. The company wants parallel transfer capability and the ability to retry only failed portions of an upload. Which approach should be used?",
     "options": [
-      "Allow TCP port 3306 in the database security group from the CIDR blocks of every web-tier subnet.",
-      "Allow TCP port 3306 in the database security group with the web-tier security group as the source.",
-      "Add a network ACL rule to the database subnets that allows TCP port 3306 from the web-tier subnet CIDR blocks.",
-      "Create an automation function that updates the database security group whenever the Auto Scaling group launches or terminates an instance."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. Allow TCP port 3306 in the database security group with the web-tier security group as the source.\n\nA security-group rule can reference another security group as its source. Any web instance associated with the referenced security group can connect to the database on port 3306, including new instances launched by Auto Scaling. This avoids maintaining IP addresses or subnet ranges.\n\nWhy the other options are wrong:\nA. Subnet CIDR rules would also trust other resources using those subnets. They are less precise than identifying the web tier by security-group membership.\nC. A network ACL can control subnet traffic, but it is stateless and applies to every resource in the associated subnets. It is not the most precise instance-level control.\nD. Automated IP-rule updates could work, but they add code, permissions, failure handling, and unnecessary operational overhead.\n\nExam trigger:\nA dynamically scaling tier must be trusted by another tier.\n\nExam trap:\nA subnet CIDR may work, but it trusts the entire subnet rather than only the intended application tier.\n\nMemory hook:\nTrust the tier's security group, not its changing addresses.",
-    "topics": [
-      "topic-vpc"
-    ]
-  },
-  {
-    "id": "q-saa-2",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A company requires all data uploaded to Amazon S3 to be encrypted at rest. Key management mandates dictate that encryption keys must be managed in AWS KMS with automatic annual key rotation enabled and CloudTrail auditing for key usage. Which solution satisfies these compliance demands?",
-    "options": [
-      "Configure SSE-S3 with S3-managed keys, rely on automatic key management, and use CloudTrail data events to audit encrypted object operations.",
-      "Configure SSE-KMS with a customer managed AWS KMS key, enable automatic annual rotation, and use CloudTrail to audit key operations.",
-      "Configure SSE-CMK with an AWS managed KMS key, rely on its annual rotation, and use CloudTrail to audit key operations.",
-      "Configure SSE-KMS with a customer managed AWS KMS key, replace its alias annually, and use CloudTrail to audit key operations."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. SSE-KMS encrypts S3 objects using an AWS KMS key. A customer managed KMS key gives the company control over the key policy, permissions, and automatic rotation settings. AWS KMS supports automatic rotation for customer managed keys, and KMS key usage can be audited through AWS CloudTrail.\n\nWhy the other options are wrong:\nA. SSE-S3 uses keys managed entirely by Amazon S3. It does not meet the requirement for the encryption keys to be managed through AWS KMS.\nC. SSE-CMK is not a valid S3 encryption option.\nD. Changing a KMS alias does not rotate the cryptographic key material. An alias is only a friendly name that points to a KMS key.\n\nExam trigger:\nS3 encryption, KMS-controlled permissions, configurable rotation, and CloudTrail auditing point to SSE-KMS with a customer managed key.\n\nExam trap:\nChanging a key alias is not key rotation.\n\nMemory hook:\nCustomer managed KMS key means customer-controlled policy, rotation, and auditing.",
-    "topics": [
-      "topic-kms",
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-3",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "An e-commerce site expects high spike traffic during promotional sales. Orders are placed by web frontend users, but fulfillment processing can be asynchronous. How should the architecture be designed to decouple components and prevent order loss during traffic bursts?",
-    "options": [
-      "Publish each order to an Amazon SNS topic and subscribe the fulfilment workers directly to the topic.",
-      "Use an Amazon SQS queue to store order messages, and configure backend worker instances to poll the queue.",
-      "Invoke an AWS Lambda function synchronously from the web frontend for each order.",
-      "Send orders to an Amazon Kinesis Data Stream and have fulfilment workers consume the records."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. Amazon SQS stores order messages durably between the web frontend and backend workers. The frontend can continue accepting orders during traffic spikes even when fulfilment workers cannot process them immediately. Workers poll the queue and process messages at their own rate.\n\nWhy the other options are wrong:\nA. Amazon SNS is designed for push-based fan-out to subscribers. Directly subscribing workers does not provide the same durable pull-based queue that lets workers process messages at their own pace during a backlog.\nC. A synchronous Lambda invocation keeps the frontend tied to the processing result. It does not provide durable buffering if the downstream processing is slow, throttled, or temporarily unavailable.\nD. Amazon Kinesis Data Streams can buffer ordered streaming records, but it is better suited to continuous high-throughput stream processing. It adds shard and consumer management that is unnecessary for a straightforward asynchronous work queue.\n\nExam trigger:\nTraffic spikes, asynchronous processing, decoupling, durable buffering, and workers processing at their own rate point to Amazon SQS.\n\nExam trap:\nSNS broadcasts, Lambda executes, and Kinesis streams. SQS provides the durable worker queue.\n\nMemory hook:\nSQS absorbs the spike while workers process at their own speed.",
-    "topics": [
-      "topic-sqs",
-      "topic-ec2"
-    ]
-  },
-  {
-    "id": "q-saa-4",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "An RDS for MySQL database experiences heavy read traffic that is affecting write performance. The application also requires automatic database failover to another Availability Zone. Which solution meets both requirements?",
-    "options": [
-      "Create RDS Read Replicas and direct read traffic to them, but keep the primary database as a Single-AZ deployment.",
-      "Convert the primary database to a Multi-AZ DB instance deployment and create Read Replicas for read traffic.",
-      "Convert the database to a Multi-AZ DB instance deployment and direct application read traffic to the standby instance.",
-      "Add ElastiCache for Redis for selected queries while keeping the RDS database in a Single-AZ deployment."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. Convert the primary database to a Multi-AZ DB instance deployment and create Read Replicas for read traffic.\n\nA traditional Multi-AZ DB instance deployment provides synchronous standby replication and automatic failover. Read Replicas use asynchronous replication and allow read traffic to be offloaded from the primary database. Together, they address both availability and read scaling.\n\nWhy the other options are wrong:\nA. Read Replicas improve read scalability, but a Single-AZ primary does not provide the required automatic Multi-AZ failover.\nC. A traditional Multi-AZ standby provides failover but cannot serve normal application read traffic.\nD. Redis could reduce some reads, but the Single-AZ RDS database would still lack automatic failover.\n\nExam trigger:\nThe scenario separately requires read scaling and high availability.\n\nExam trap:\nMulti-AZ is not the same as a Read Replica.\n\nMemory hook:\nMulti-AZ protects writes. Read Replicas handle reads.",
-    "topics": [
-      "topic-rds"
-    ]
-  },
-  {
-    "id": "q-saa-5",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A company stores millions of images in Amazon S3. The images are accessed frequently during the first 30 days and occasionally from day 30 through day 90. During the first 90 days, users must be able to retrieve an image immediately. After 90 days, access is not expected, retrieval can take up to 12 hours, and the images must be retained for seven years. The access pattern is predictable. Which storage configuration is most cost-effective?",
-    "options": [
-      "Keep the images in S3 Standard for 30 days, transition them to S3 Glacier Instant Retrieval at day 30, and transition them to S3 Glacier Deep Archive at day 90.",
-      "Keep the images in S3 Standard for 30 days, transition them to S3 Standard-IA at day 30, and transition them to S3 Glacier Deep Archive at day 90.",
-      "Store the images in S3 Intelligent-Tiering from upload and enable the Archive Access and Deep Archive Access tiers.",
-      "Keep the images in S3 Standard for 30 days, transition them to S3 Standard-IA at day 30, and transition them to S3 Glacier Flexible Retrieval at day 90."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. S3 Standard is appropriate while the images are accessed frequently. At day 30, S3 Standard-IA provides immediate retrieval at a lower storage cost for objects that are accessed less often. At day 90, S3 Glacier Deep Archive provides the lowest-cost long-term archival storage because access is no longer expected and retrieval can take several hours. An S3 Lifecycle policy can automate both transitions while retaining the objects for seven years.\n\nWhy the other options are wrong:\nA. S3 Glacier Instant Retrieval provides millisecond access, but it is intended for archive data that is accessed very rarely. The images are still accessed occasionally between days 30 and 90, making S3 Standard-IA the more appropriate storage class for that period.\nC. S3 Intelligent-Tiering is useful when access patterns are unknown or change unpredictably. This workload has a known lifecycle, so explicit transitions avoid per-object monitoring charges and move the images into the required archive class at the known time.\nD. S3 Glacier Flexible Retrieval would satisfy the retention and retrieval-time requirements after day 90, but it has a higher storage cost than S3 Glacier Deep Archive. Its faster retrieval options provide no benefit because the company permits retrieval to take up to 12 hours.\n\nExam trigger:\nA known access pattern, immediate retrieval during an infrequent-access period, and multi-year retention with slow retrieval permitted point to Standard, then Standard-IA, then Glacier Deep Archive.\n\nExam trap:\nDo not choose Intelligent-Tiering when the access phases are already predictable. Also distinguish Glacier Instant Retrieval, Flexible Retrieval, and Deep Archive by retrieval requirements and storage cost.\n\nMemory hook:\nKnown lifecycle: Standard while hot, Standard-IA while occasional, Deep Archive when dormant.",
-    "topics": [
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-6",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A financial trading application requires a managed key-value database capable of handling millions of requests per second. Frequently accessed items must be returned with microsecond latency, and eventually consistent reads are acceptable. Which database configuration best meets these requirements?",
-    "options": [
-      "Use Amazon Aurora PostgreSQL with Aurora Replicas and an ElastiCache for Redis cluster for read scaling.",
-      "Use Amazon DynamoDB with a DynamoDB Accelerator (DAX) cluster for cached reads.",
-      "Use Amazon MemoryDB for Redis as the primary database and archive transaction history to Amazon S3.",
-      "Use Amazon OpenSearch Service with UltraWarm storage and query-result caching."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. Amazon DynamoDB is a managed key-value database designed for very large request volumes. DynamoDB Accelerator (DAX) provides an in-memory cache for DynamoDB and can return frequently accessed, eventually consistent items with microsecond latency.\n\nWhy the other options are wrong:\nA. Aurora PostgreSQL with Redis can provide relational storage and application-level caching, but it adds more components and does not provide the same native DynamoDB-compatible microsecond read path.\nC. MemoryDB for Redis can provide durable in-memory storage, but it is not the best fit for a massively scalable managed key-value workload requiring DynamoDB-style capacity and DAX caching.\nD. OpenSearch Service is designed for search and analytics workloads. UltraWarm storage is intended for lower-cost infrequently accessed data and cannot provide the required transactional microsecond read performance.\n\nExam trigger:\nManaged key-value database, millions of requests per second, eventually consistent reads, and microsecond latency point to DynamoDB with DAX.\n\nExam trap:\nRedis-based services can provide fast access, but DAX is the purpose-built cache for DynamoDB and supports DynamoDB-compatible application access.\n\nMemory hook:\nKey-value scale plus microsecond cached reads equals DynamoDB with DAX.",
-    "topics": [
-      "topic-dynamodb"
-    ]
-  },
-  {
-    "id": "q-saa-7",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "A financial institution runs nightly batch workloads on EC2. The jobs are stateless, save checkpoints to Amazon S3, can restart after interruption, and require several hundred instances for only a few hours. The company wants the lowest cost while reducing the risk that many instances are interrupted at the same time. Which solution best meets these requirements?",
-    "options": [
-      "Run the workload on On-Demand Instances and purchase a Compute Savings Plan covering the maximum nightly capacity.",
-      "Use an Auto Scaling group with a mixed instances policy, multiple instance types, and the price-capacity-optimized Spot allocation strategy.",
-      "Purchase Standard Reserved Instances for a single instance family and deploy them across one Availability Zone.",
-      "Use a Spot Auto Scaling group with one instance type and the lowest-price allocation strategy in one Availability Zone."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. A mixed instances policy allows the Auto Scaling group to use several suitable instance types and Spot capacity pools. The price-capacity-optimized allocation strategy balances cost with available capacity, reducing the chance of large simultaneous interruptions while still providing substantial Spot savings.\n\nWhy the other options are wrong:\nA. On-Demand capacity with a Savings Plan would reduce price compared with pure On-Demand usage, but committing to the maximum short-lived nightly capacity risks paying for unused capacity and would usually cost more than Spot.\nC. Reserved Instances suit predictable baseline usage, but this workload only runs for a few hours and can tolerate interruption. Restricting it to one instance family and one Availability Zone also reduces flexibility and resilience.\nD. Spot is appropriate, but using one instance type, one Availability Zone, and the lowest-price strategy concentrates the workload in fewer capacity pools and increases interruption risk.\n\nExam trigger:\nLarge fault-tolerant batch workload, checkpointing, short execution window, and a requirement to reduce Spot interruption risk.\n\nExam trap:\nChoosing Spot is not enough. Diversify instance types and capacity pools, and use a capacity-aware allocation strategy.\n\nMemory hook:\nDiversify Spot capacity to reduce interruptions.",
-    "topics": [
-      "topic-ec2",
-      "topic-ec2-asg"
-    ]
-  },
-  {
-    "id": "q-saa-8",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "EC2 instances in private subnets must access Amazon S3 without using a NAT gateway or internet gateway. The company wants the lowest-cost solution and does not require private DNS names, security-group controls, or access from on-premises networks. Which solution best meets these requirements?",
-    "options": [
-      "Create an S3 interface VPC endpoint in each Availability Zone and associate security groups with the endpoint network interfaces.",
-      "Create an S3 gateway VPC endpoint and associate it with the route tables used by the private subnets.",
-      "Route S3 traffic through a NAT gateway and restrict access by using an S3 bucket policy with the NAT gateway public IP address.",
-      "Create an AWS PrivateLink endpoint service backed by a Network Load Balancer and use it to proxy requests to Amazon S3."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. An S3 gateway VPC endpoint provides private access to Amazon S3 without requiring a NAT gateway or internet gateway. The endpoint adds routes for the S3 service prefix list to the selected route tables. Gateway endpoints for S3 do not have an hourly endpoint charge, making this the lowest-cost option for private VPC access when the additional features of an interface endpoint are not required.\n\nWhy the other options are wrong:\nA. An S3 interface endpoint can provide private access and supports features such as private DNS, security groups, and access from connected networks. However, it incurs hourly and data-processing charges and is unnecessary for the stated requirements.\nC. A NAT gateway can provide access to the public S3 endpoint, but traffic would incur NAT gateway processing charges and would not use the lowest-cost private path.\nD. AWS PrivateLink endpoint services are used to expose applications behind Network Load Balancers. A company does not create its own endpoint service to proxy the managed Amazon S3 service.\n\nExam trigger:\nPrivate-subnet access to S3, no NAT gateway, no internet gateway, and lowest cost point to an S3 gateway endpoint.\n\nExam trap:\nAn S3 interface endpoint also provides private access, but it costs more and is chosen only when its extra networking features are required.\n\nMemory hook:\nSimple, low-cost private S3 access means gateway endpoint.",
-    "topics": [
-      "topic-s3",
-      "topic-vpc",
-      "topic-privatelink"
-    ]
-  },
-  {
-    "id": "q-saa-9",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "An application running on Amazon EC2 must read objects from a specific Amazon S3 bucket. The company requires temporary credentials, automatic credential rotation, least-privilege access, and protection against applications retrieving credentials through unauthenticated instance metadata requests. Which solution best meets these requirements?",
-    "options": [
-      "Attach an IAM role to the EC2 instance through an instance profile, grant the role read access to the required S3 bucket, and require IMDSv2 on the instance.",
-      "Create an IAM user with read access to the S3 bucket, store its access keys in AWS Secrets Manager, and allow the EC2 instance to retrieve the secret at startup.",
-      "Add an S3 bucket policy that allows the EC2 instance's private IP address to read objects, and require HTTPS for all requests.",
-      "Use IAM Roles Anywhere to issue temporary credentials to the application and store the trust anchor certificate on the EC2 instance."
+      "Use S3 Multipart Upload and upload the object as independently retryable parts.",
+      "Enable S3 Transfer Acceleration and continue using a single PUT request for each object.",
+      "Enable S3 Versioning so incomplete byte ranges are retained after a failed upload.",
+      "Add a checksum to each single PUT request so S3 can resume from the last verified byte."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. An IAM role attached through an EC2 instance profile provides temporary credentials that AWS SDKs can retrieve and rotate automatically. Restricting the role to the required S3 bucket enforces least privilege. Requiring IMDSv2 adds session-oriented metadata requests and helps reduce the risk of credentials being obtained through unauthenticated metadata access.\n\nWhy the other options are wrong:\nB. Secrets Manager can protect stored credentials, but this design still uses long-term IAM user access keys that require lifecycle management. An EC2 instance role avoids storing static AWS credentials entirely.\nC. An S3 bucket policy based on a private IP address does not provide AWS credentials or authenticate the application. Private IP addresses can also change and are not the recommended identity control for EC2 access to S3.\nD. IAM Roles Anywhere is designed primarily for workloads running outside AWS that need temporary AWS credentials. An EC2 workload should use an attached IAM role and instance profile instead.\n\nExam trigger:\nEC2 workload, temporary credentials, automatic rotation, least privilege, and secured metadata access point to an instance profile with IMDSv2.\n\nExam trap:\nStoring IAM user credentials securely is still weaker than eliminating long-term credentials. IAM Roles Anywhere is for external workloads, not standard EC2 access.\n\nMemory hook:\nEC2 uses an instance role; secure the credential path with IMDSv2.",
+    "explanation": "Correct answer:\nA. S3 Multipart Upload divides a large object into parts that can be uploaded independently and in parallel. If a network failure affects one part, only that part needs to be retried before the completed parts are assembled into the final object.\n\nWhy the other options are wrong:\nB. Transfer Acceleration can improve long-distance upload performance, but it does not make a failed single PUT request resumable from the last byte.\nC. Versioning preserves completed object versions. It does not retain partial data from an incomplete single-request upload.\nD. Checksums validate integrity but do not provide resumable byte-range uploads for a failed single PUT.\n\nExam trigger:\nVery large object, unreliable network, parallel transfer, and retry only failed sections point to Multipart Upload.\n\nExam trap:\nTransfer Acceleration improves the route; Multipart Upload improves retry granularity.\n\nMemory hook:\nLarge unstable upload means multipart.",
     "topics": [
-      "topic-iam",
-      "topic-s3",
-      "topic-ec2"
+      "topic-s3"
     ]
   },
   {
-    "id": "q-saa-10",
+    "id": "q-saa-122",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A high-throughput application writes sensor events to DynamoDB. The partition key is Status, which has only the values Active and Inactive. During traffic spikes, writes are throttled even though the table still has unused overall capacity. Which change most directly addresses the problem?",
+    "options": [
+      "Redesign the partition key to use a high-cardinality value such as SensorID or a composite write-sharding key.",
+      "Increase provisioned read capacity because write throttling can be caused by insufficient RCUs.",
+      "Enable TTL so expired items are deleted more quickly during traffic spikes.",
+      "Move older items to S3 Glacier Deep Archive after the table reaches 10 GB."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. A partition key with only two values concentrates writes on a very small number of logical partitions, creating hot partitions. A high-cardinality key or write-sharding design distributes writes across more partitions and allows the table's available capacity to be used more evenly.\n\nWhy the other options are wrong:\nB. Read capacity does not solve write throttling caused by uneven partition-key distribution.\nC. TTL removes expired items asynchronously and does not rebalance current write traffic.\nD. Archiving data changes storage location but does not fix hot-key distribution for new writes.\n\nExam trigger:\nThrottling despite spare table capacity usually indicates a hot partition.\n\nExam trap:\nMore total capacity does not help if one partition key receives nearly all requests.\n\nMemory hook:\nLow-cardinality key creates a hot partition.",
+    "topics": [
+      "topic-dynamodb"
+    ]
+  },
+  {
+    "id": "q-saa-123",
     "exam_code": "aws-saa-c03",
     "difficulty": "Medium",
     "type": "single",
-    "question": "A global web application is deployed across AWS US-East and EU-West regions behind Application Load Balancers. The company wants users automatically routed to the region with the lowest network latency, with health checks to redirect traffic if a region becomes unavailable. Which Amazon Route 53 routing policy should be configured?",
+    "question": "A web platform needs a simple distributed in-memory cache for string key-value data. The workload benefits from multi-threaded processing and horizontal scaling by adding or removing nodes. Persistence, replication, and advanced data structures are not required. Which service is the best fit?",
     "options": [
-      "Configure a Route 53 Weighted Routing Policy with equal weightings assigned to both Application Load Balancers.",
-      "Create Route 53 latency alias records for both regional Application Load Balancers and enable Evaluate Target Health on each record.",
-      "Configure a Route 53 Geolocation Routing Policy mapping user countries to primary and secondary Application Load Balancers.",
-      "Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks."
+      "Amazon ElastiCache for Redis",
+      "Amazon ElastiCache for Memcached",
+      "Amazon MemoryDB for Redis",
+      "Amazon DynamoDB Accelerator"
     ],
     "correctAnswer": 1,
     "correctAnswers": [
       1
     ],
-    "explanation": "Correct answer:\nB. Create latency alias records for both regional Application Load Balancers. Route 53 latency-based routing sends users to the AWS Region that provides the lowest network latency.\n\nEnabling Evaluate Target Health allows Route 53 to stop returning an alias target when the associated load balancer has no healthy targets. Traffic can then be directed to the healthy regional endpoint.\n\nWhy the other options are wrong:\nA. Weighted routing divides traffic according to configured weights. It does not automatically choose the Region with the lowest latency.\nC. Geolocation routing uses the user's geographic location. Geography does not always identify the AWS Region with the lowest network latency.\nD. Failover routing creates an active-passive design. It sends traffic to the secondary endpoint only when the primary becomes unhealthy. It does not actively select the lowest-latency Region.\n\nExam trigger:\nGlobal application, multiple Regions, lowest latency, and health-aware routing.\n\nExam trap:\nDo not confuse latency routing with geolocation routing.\n\nMemory hook:\nLowest network delay means latency routing.",
+    "explanation": "Correct answer:\nB. ElastiCache for Memcached is a multi-threaded, distributed in-memory cache designed for simple key-value caching. It scales horizontally by adding or removing nodes and does not provide persistence or replication features that are unnecessary in this scenario.\n\nWhy the other options are wrong:\nA. ElastiCache for Redis supports richer data structures, replication, persistence options, and single-threaded command execution for most operations.\nC. MemoryDB is a durable Redis-compatible database rather than a disposable cache-only service.\nD. DAX is an in-memory cache specifically for DynamoDB workloads.\n\nExam trigger:\nSimple cache, multi-threaded engine, horizontal node scaling, and no persistence point to Memcached.\n\nExam trap:\nRedis offers more features, but Memcached is the simpler multi-threaded cache.\n\nMemory hook:\nSimple, disposable, multi-threaded cache means Memcached.",
     "topics": [
-      "topic-elb",
-      "topic-route53"
+      "topic-elasticache"
+    ]
+  },
+  {
+    "id": "q-saa-124",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A business-intelligence team runs complex warehouse queries at unpredictable times during the week. The company wants Redshift SQL capabilities without maintaining a provisioned cluster or paying for idle compute between query periods. Which deployment option should be selected?",
+    "options": [
+      "A provisioned Redshift RA3 cluster with elastic resize enabled",
+      "Amazon Redshift Serverless",
+      "Amazon Redshift Spectrum running on an EC2 analytics cluster",
+      "Amazon Athena federated query"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. Amazon Redshift Serverless automatically provisions and scales warehouse capacity for query demand. Compute charges are based on usage rather than a continuously running provisioned cluster, making it suitable for intermittent and unpredictable workloads.\n\nWhy the other options are wrong:\nA. A provisioned RA3 cluster incurs compute cost while running even when query demand is low.\nC. Spectrum is a Redshift capability for querying external data and does not create a serverless Redshift warehouse on EC2.\nD. Athena is serverless SQL over data sources such as S3 but does not provide the same Redshift warehouse environment requested.\n\nExam trigger:\nRedshift analytics, unpredictable usage, and no idle-cluster cost point to Redshift Serverless.\n\nExam trap:\nSpectrum expands Redshift data access; Serverless removes cluster management.\n\nMemory hook:\nIntermittent Redshift workload means Redshift Serverless.",
+    "topics": [
+      "topic-redshift"
+    ]
+  },
+  {
+    "id": "q-saa-125",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "single",
+    "question": "A mobile application uploads telemetry to S3 buckets in several AWS Regions. The application must use one global hostname, and requests should traverse the AWS global network to an active bucket in the closest-proximity Region. Object replication will be configured separately. Which feature provides the global request-routing layer?",
+    "options": [
+      "Bidirectional S3 Cross-Region Replication using one source-bucket endpoint",
+      "An S3 Multi-Region Access Point containing the Regional buckets",
+      "S3 Transfer Acceleration enabled independently on each bucket",
+      "A CloudFront origin group containing all Regional bucket origins"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. An S3 Multi-Region Access Point provides one global endpoint for buckets in multiple Regions. It routes requests over the AWS global network to an active bucket in the closest-proximity Region according to the configured routing state.\n\nWhy the other options are wrong:\nA. Cross-Region Replication copies objects between buckets but does not create a global endpoint that routes new requests by proximity.\nC. Transfer Acceleration improves access to one specific bucket endpoint and does not select among multiple Regional buckets.\nD. CloudFront origin groups provide primary-secondary origin failover, not general active-active S3 request routing among multiple Regions.\n\nExam trigger:\nOne S3 endpoint, many Regions, and global-network proximity routing point to an MRAP.\n\nExam trap:\nMRAP routes requests; replication copies objects.\n\nMemory hook:\nOne global endpoint for Regional buckets means MRAP.",
+    "topics": [
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-126",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A tightly coupled HPC simulation runs on supported EC2 instances and requires OS-bypass networking for low-latency MPI communication between nodes. Which network interface should be attached to the instances?",
+    "options": [
+      "Elastic Network Adapter",
+      "Elastic Fabric Adapter",
+      "Elastic IP address",
+      "Direct Connect virtual interface"
+    ],
+    "correctAnswer": 1,
+    "correctAnswers": [
+      1
+    ],
+    "explanation": "Correct answer:\nB. Elastic Fabric Adapter provides enhanced networking plus OS-bypass capabilities for supported HPC and MPI workloads, reducing communication latency between EC2 instances.\n\nWhy the other options are wrong:\nA. ENA provides enhanced networking but not the specialised OS-bypass capability required for tightly coupled HPC communication.\nC. An Elastic IP is a public IPv4 address and is unrelated to inter-node HPC networking.\nD. A Direct Connect virtual interface provides hybrid connectivity between on-premises networks and AWS, not an EC2 network adapter.\n\nExam trigger:\nMPI and OS-bypass networking point to EFA.\n\nExam trap:\nENA is high-performance networking; EFA adds HPC OS bypass.\n\nMemory hook:\nMPI plus OS bypass means EFA.",
+    "topics": [
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-127",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A versioned S3 bucket stores 1 PB of video archives. Current versions are rarely accessed, and retrieval within 12 hours is acceptable. The bucket also contains many obsolete noncurrent versions and abandoned multipart-upload parts. Which TWO Lifecycle actions produce the greatest ongoing storage-cost reduction? (Select TWO.)",
+    "options": [
+      "Transition current object versions to S3 Glacier Deep Archive.",
+      "Expire unneeded noncurrent versions and abort incomplete multipart uploads after an appropriate retention period.",
+      "Move all objects to S3 Intelligent-Tiering and rely on automatic movement to optional archive tiers.",
+      "Transition current versions to S3 Glacier Flexible Retrieval.",
+      "Enable S3 Storage Lens recommendations without creating Lifecycle rules."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. Glacier Deep Archive provides the lowest-cost S3 archive tier for data that is rarely accessed and can tolerate retrieval measured in hours.\n\nB. Noncurrent versions and abandoned multipart-upload parts continue to consume storage. Lifecycle expiration and AbortIncompleteMultipartUpload remove this hidden waste.\n\nWhy the other options are wrong:\nC. Intelligent-Tiering is useful when access patterns are uncertain. Here, the archive pattern and acceptable retrieval time are already known, so a direct Deep Archive transition is more targeted.\nD. Glacier Flexible Retrieval offers faster retrieval but generally costs more than Deep Archive and is unnecessary for a 12-hour retrieval requirement.\nE. Storage Lens identifies opportunities but does not transition or delete objects by itself.\n\nExam trigger:\nKnown archive access pattern plus versioning and incomplete-upload waste requires both transition and cleanup.\n\nExam trap:\nDo not choose two storage classes. One answer reduces current-version cost; the other removes wasted storage.\n\nMemory hook:\nDeep Archive stores cheaply; Lifecycle cleanup deletes waste.",
+    "topics": [
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-128",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A stateless EC2 batch workload can tolerate Spot interruptions. The Auto Scaling group must minimise cost while reducing the chance that launches fail because one Spot pool lacks capacity. Which TWO configurations should be combined? (Select TWO.)",
+    "options": [
+      "Use the price-capacity-optimized Spot allocation strategy.",
+      "Use attribute-based instance type selection to diversify across compatible instance types and families.",
+      "Purchase three-year Dedicated Host Reservations for every worker.",
+      "Configure the group to use only On-Demand Instances with fixed Elastic IP addresses.",
+      "Enable instance termination protection on all Spot Instances."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. The price-capacity-optimized allocation strategy selects Spot pools using both available capacity and price, reducing interruption and launch-failure risk while controlling cost.\n\nB. Attribute-based instance type selection lets the Auto Scaling group consider many compatible instance types and families, increasing the number of usable Spot pools.\n\nWhy the other options are wrong:\nC. Dedicated Host Reservations are expensive and do not provide Spot savings or pool diversification.\nD. On-Demand-only capacity avoids Spot interruptions but does not meet the goal of minimising compute cost with Spot.\nE. Termination protection does not prevent AWS from interrupting Spot capacity.\n\nExam trigger:\nSpot cost savings plus capacity availability requires both a capacity-aware allocation strategy and broad instance diversification.\n\nExam trap:\nA better allocation strategy cannot help if the group is restricted to one instance type.\n\nMemory hook:\nChoose healthy Spot pools and diversify the instance menu.",
+    "topics": [
+      "topic-ec2"
+    ]
+  },
+  {
+    "id": "q-saa-129",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "multiple",
+    "question": "A finance team wants an email alert when forecast monthly AWS spend exceeds $50,000 and separate automated detection of unusual service-level cost spikes. Which TWO AWS Cost Management capabilities should be configured? (Select TWO.)",
+    "options": [
+      "AWS Budgets with a forecasted-cost alert",
+      "AWS Cost Anomaly Detection",
+      "AWS Trusted Advisor performance checks",
+      "AWS Config conformance packs",
+      "AWS Compute Optimizer"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. AWS Budgets can compare forecasted monthly spend with a custom threshold and send notifications when the forecast exceeds that amount.\n\nB. AWS Cost Anomaly Detection uses machine learning to identify unusual spending patterns and can alert on anomalous increases across services or accounts.\n\nWhy the other options are wrong:\nC. Trusted Advisor performance checks focus on service performance and configuration rather than forecast-budget alerts and anomaly detection.\nD. Config conformance packs evaluate resource configuration compliance, not cloud-spend behaviour.\nE. Compute Optimizer recommends resource sizing but does not provide the required monthly forecast threshold or anomaly monitoring.\n\nExam trigger:\nFixed forecast threshold plus automatic abnormal-spend detection requires two different tools.\n\nExam trap:\nBudgets checks a threshold; Cost Anomaly Detection finds unexpected patterns.\n\nMemory hook:\nBudget threshold plus anomaly detector.",
+    "topics": [
+      "topic-budgets",
+      "topic-cost-explorer"
+    ]
+  },
+  {
+    "id": "q-saa-130",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Hard",
+    "type": "multiple",
+    "question": "A FinOps team must identify oversized EC2 instances and EBS volumes as well as idle resources such as unattached Elastic IP addresses and underused volumes. Which TWO AWS capabilities provide the most directly actionable optimisation findings? (Select TWO.)",
+    "options": [
+      "AWS Compute Optimizer",
+      "AWS Trusted Advisor cost-optimization checks",
+      "Amazon GuardDuty",
+      "AWS CloudTrail Insights",
+      "AWS Systems Manager Patch Manager"
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0,
+      1
+    ],
+    "explanation": "Correct answers:\nA and B.\n\nA. AWS Compute Optimizer analyses utilisation metrics and configuration data to recommend rightsized EC2 instances, EBS volumes, and other supported resources.\n\nB. Trusted Advisor cost-optimization checks identify waste and idle-resource conditions such as unassociated Elastic IP addresses and underutilised resources.\n\nWhy the other options are wrong:\nC. GuardDuty detects threats and suspicious activity rather than cost inefficiency.\nD. CloudTrail Insights identifies unusual API activity and does not perform resource rightsizing.\nE. Patch Manager automates operating-system patching and does not generate FinOps recommendations.\n\nExam trigger:\nRightsizing plus idle-resource discovery requires Compute Optimizer and Trusted Advisor.\n\nExam trap:\nCompute Optimizer focuses on sizing; Trusted Advisor adds broader idle-resource checks.\n\nMemory hook:\nRightsize with Compute Optimizer; find waste with Trusted Advisor.",
+    "topics": [
+      "topic-compute-optimizer",
+      "topic-trusted-advisor"
     ]
   }
 ]

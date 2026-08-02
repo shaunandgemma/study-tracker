@@ -1,0 +1,280 @@
+{
+  "createdAt": "2026-08-02T16:39:45.597Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-51",
+    "q-saa-52",
+    "q-saa-53",
+    "q-saa-54",
+    "q-saa-55",
+    "q-saa-56",
+    "q-saa-57",
+    "q-saa-58",
+    "q-saa-59",
+    "q-saa-60"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-51",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A multinational company processes sensitive financial data in US-East (N. Virginia) and EU-West (Frankfurt). Data encrypted in US-East must be decrypted in EU-West during disaster recovery failover without making client-side API calls to re-encrypt data under a separate Regional key. Which AWS KMS key type supports this cross-Region decryption requirement?",
+      "option_a": "AWS Managed Key for S3",
+      "option_b": "AWS KMS Multi-Region Key",
+      "option_c": "AWS KMS Asymmetric Key with RSA 4096",
+      "option_d": "AWS CloudHSM Cluster with Local Peering",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS KMS Multi-Region Keys are primary keys in one Region that can be replicated into secondary Regions. They share the same key ID and key material, allowing data encrypted in one Region to be decrypted in another without re-encryption."
+    },
+    {
+      "id": "q-saa-52",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company wants to inspect all outbound traffic from VPC subnets to the internet to prevent data exfiltration. The inspection device must enforce domain name filtering (SNI), stateful pattern matching, and layer 3-7 threat prevention across hundreds of VPCs connected via AWS Transit Gateway. Which service should be deployed?",
+      "option_a": "Configure egress Network ACLs on public subnets to enforce domain name filtering and stateful packet inspection.",
+      "option_b": "Deploy AWS Network Firewall in a centralized inspection VPC connected to AWS Transit Gateway.",
+      "option_c": "Associate AWS WAF web ACLs with NAT Gateways in each spoke VPC to inspect outbound internet traffic.",
+      "option_d": "Enable Amazon GuardDuty Malware Protection on Transit Gateway attachments to perform inline domain blocking.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Network Firewall provides stateful layer 3-7 network inspection, TLS SNI domain filtering, and intrusion prevention capabilities. Deploying AWS Network Firewall within an inspection VPC attached to AWS Transit Gateway allows centralizing outbound internet traffic filtering for hundreds of spoke VPCs."
+    },
+    {
+      "id": "q-saa-53",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A security manager needs a single dashboard that aggregates security alerts and compliance statuses from Amazon GuardDuty, Amazon Inspector, Amazon Macie, and AWS IAM Access Analyzer across all accounts in AWS Organizations. Which service provides this centralized security posture visibility?",
+      "option_a": "AWS Systems Manager Compliance",
+      "option_b": "AWS Security Hub",
+      "option_c": "AWS Config Conformance Packs",
+      "option_d": "Amazon CloudWatch ServiceLens",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Security Hub gives a comprehensive view of security posture across AWS accounts by aggregating and prioritizing security findings from GuardDuty, Inspector, Macie, IAM Access Analyzer, and AWS Firewall Manager."
+    },
+    {
+      "id": "q-saa-54",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A central networking team manages a core VPC containing NAT Gateways and Transit Gateways. The team needs to share specific VPC subnets with application development teams operating in separate AWS accounts within the same organization, without granting admin access to the networking VPC. Which service enables subnet sharing across accounts?",
+      "option_a": "Configure AWS Transit Gateway Inter-Region Peering between the central networking VPC and application VPCs.",
+      "option_b": "Use AWS Resource Access Manager (AWS RAM) to share specific VPC subnets with application accounts within the organization.",
+      "option_c": "Establish VPC Peering connections between the central networking VPC and all application VPCs.",
+      "option_d": "Deploy AWS IAM Identity Center to grant cross-account administrative access to the central networking VPC.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Use AWS Resource Access Manager to share selected subnets from the centrally managed VPC with application accounts in the same AWS Organization.\n\nThe networking account remains the VPC owner and controls resources such as subnets, route tables, NAT gateways, and network architecture. Participant accounts can launch supported application resources into the shared subnets without receiving administrator access to the networking account.\n\nWhy the other options are wrong:\nA. Transit Gateway peering connects transit gateways across Regions. It does not allow another account to launch resources into shared subnets.\nC. VPC peering connects separate VPCs. It does not share ownership or usage of specific subnets.\nD. IAM Identity Center provides workforce access and cross-account permission sets. It does not share VPC subnets.\n\nExam trigger:\nCentral networking account, shared VPC, application accounts, and centrally controlled subnets.\n\nExam trap:\nVPC peering connects VPCs. AWS RAM shares subnets.\n\nMemory hook:\nShare AWS resources across accounts with RAM."
+    },
+    {
+      "id": "q-saa-55",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A DevSecOps team wants to automatically scan EC2 instances and ECR container images for software vulnerabilities and unintended network exposure. Scans must occur automatically whenever container images are pushed to ECR. Which service performs automated vulnerability management for EC2 and ECR?",
+      "option_a": "Amazon GuardDuty",
+      "option_b": "Amazon Inspector",
+      "option_c": "AWS WAF",
+      "option_d": "AWS Security Hub",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon Inspector is an automated vulnerability management service that scans EC2 instances for software vulnerabilities and network exposure, and automatically scans container images pushed to Amazon ECR."
+    },
+    {
+      "id": "q-saa-56",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise requires continuous tracking of configuration changes made to AWS infrastructure resources. If an unencrypted S3 bucket or open Security Group is detected, an automated notification must be sent and an automated remediation script must execute. Which service tracks resource configurations and evaluates compliance rules?",
+      "option_a": "AWS CloudTrail",
+      "option_b": "AWS Config",
+      "option_c": "Amazon CloudWatch Logs",
+      "option_d": "AWS Systems Manager Change Manager",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Config continuously monitors and records AWS resource configurations, evaluating recorded configurations against desired rules. It supports automated remediation via Systems Manager Automation documents."
+    },
+    {
+      "id": "q-saa-57",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A financial archive mandates strict Write Once, Read Many (WORM) storage for compliance auditing. Once written to S3, objects must not be deleted or overwritten by any user—including the AWS root user—for a mandatory 5-year retention period. Which S3 feature enforces this immutable retention model?",
+      "option_a": "S3 Object Lock in Governance Mode",
+      "option_b": "S3 Object Lock in Compliance Mode",
+      "option_c": "S3 Bucket Policy with Deny DeleteObject",
+      "option_d": "S3 Versioning with MFA Delete enabled",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "S3 Object Lock in Compliance Mode prevents an object version from being deleted or overwritten by any user, including the root user in your AWS account, until the retention period expires."
+    },
+    {
+      "id": "q-saa-58",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise with 50 member accounts in AWS Organizations requires a centralized log archive. API activity across all member accounts must be automatically logged into an S3 bucket in a dedicated Log Archive account. Member account administrators must be unable to disable the trail, and the delivered log files must be protected from deletion or overwrite by any user, including account root users. Which solution meets these requirements?",
+      "option_a": "Configure individual CloudTrail trails in each member account delivering logs to an S3 bucket with CloudTrail log-file validation enabled.",
+      "option_b": "Create a CloudTrail organization trail in the Organizations management account delivering logs to a central S3 bucket, and enable S3 Object Lock in Compliance mode on the bucket.",
+      "option_c": "Enable VPC Flow Logs in all member accounts and stream log data via Amazon Data Firehose to an S3 bucket with S3 Versioning enabled.",
+      "option_d": "Configure CloudWatch Logs subscription filters in each member account with cross-account IAM roles to stream log events.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nA CloudTrail organization trail created in the management account automatically logs API activity for all member accounts and prevents member admins from disabling logging. Enabling S3 Object Lock in Compliance mode on the log bucket prevents any user (including root users) from deleting or overwriting log objects during the retention period.\n\nWhy the other options are wrong:\nA. CloudTrail log-file validation verifies log integrity against tampering, but does NOT prevent file deletion or bucket object deletion. S3 Object Lock in Compliance mode is required for immutability against deletion.\nC. VPC Flow Logs capture network IP traffic, not AWS API management calls.\nD. CloudWatch subscription filters require individual per-account setup and member admins can disable local logging.\n\nExam trigger:\nAWS Organizations audit trail with member admin tampering prevention AND immutability against deletion.\n\nExam trap:\nAssuming CloudTrail log-file validation prevents file deletion (it only detects tampering; S3 Object Lock prevents deletion).\n\nMemory hook:\nOrganization Trail + S3 Object Lock Compliance Mode = Immutable Governance Logging."
+    },
+    {
+      "id": "q-saa-59",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company uses a VPC Gateway Endpoint for Amazon S3 in a private subnet. The security team wants to ensure EC2 instances in this VPC can ONLY access S3 buckets owned by the company (e.g. arn:aws:s3:::my-company-*), blocking access to any external or third-party S3 buckets. How should this access control be enforced?",
+      "option_a": "Attach an S3 Bucket Policy to all external third-party S3 buckets to deny access from the company VPC ID.",
+      "option_b": "Attach a custom VPC Endpoint Policy to the S3 Gateway Endpoint restricting Resource access to arn:aws:s3:::my-company-*.",
+      "option_c": "Configure Security Group outbound rules on private EC2 instances blocking TCP port 443 to external destinations.",
+      "option_d": "Configure an egress Network ACL on private subnets denying outbound traffic to Amazon S3 public IP address ranges.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "VPC Endpoint Policies are IAM resource policies attached to VPC endpoints. A custom policy on the S3 Gateway Endpoint specifying company bucket ARNs in the Resource block allows traffic strictly to company-owned S3 buckets while blocking access to external buckets."
+    },
+    {
+      "id": "q-saa-60",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise wants to grant corporate employees single sign-on (SSO) multi-account workforce access to multiple AWS accounts using their existing self-managed Active Directory credentials. Which service configuration enables this identity integration?",
+      "option_a": "Create IAM Users in each AWS account with long-term IAM access keys for each corporate employee.",
+      "option_b": "Configure AWS IAM Identity Center and connect the corporate self-managed Active Directory through AWS Directory Service using AD Connector.",
+      "option_c": "Deploy an Amazon Cognito User Pool and configure IAM policy mappings for corporate employee Active Directory accounts.",
+      "option_d": "Deploy AWS Directory Service Simple AD in each AWS account and synchronize user credentials using AWS DataSync.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS IAM Identity Center provides multi-account workforce access across AWS accounts. Connecting a corporate self-managed Active Directory via AWS Directory Service AD Connector allows employees to authenticate seamlessly using their existing AD credentials."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-51",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-52",
+      "topic_id": "topic-network-firewall"
+    },
+    {
+      "question_id": "q-saa-52",
+      "topic_id": "topic-transit-gateway"
+    },
+    {
+      "question_id": "q-saa-53",
+      "topic_id": "topic-guardduty"
+    },
+    {
+      "question_id": "q-saa-53",
+      "topic_id": "topic-security-hub"
+    },
+    {
+      "question_id": "q-saa-54",
+      "topic_id": "topic-ram"
+    },
+    {
+      "question_id": "q-saa-54",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-55",
+      "topic_id": "topic-ecr"
+    },
+    {
+      "question_id": "q-saa-55",
+      "topic_id": "topic-inspector"
+    },
+    {
+      "question_id": "q-saa-56",
+      "topic_id": "topic-config"
+    },
+    {
+      "question_id": "q-saa-57",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-57",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-58",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-58",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-58",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-59",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-59",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-60",
+      "topic_id": "topic-directory-service"
+    },
+    {
+      "question_id": "q-saa-60",
+      "topic_id": "topic-iam-identity-center"
+    },
+    {
+      "question_id": "q-saa-60",
+      "topic_id": "topic-sso"
+    }
+  ]
+}

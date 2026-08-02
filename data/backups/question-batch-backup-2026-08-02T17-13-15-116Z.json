@@ -1,0 +1,284 @@
+{
+  "createdAt": "2026-08-02T17:13:15.116Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-71",
+    "q-saa-72",
+    "q-saa-73",
+    "q-saa-74",
+    "q-saa-75",
+    "q-saa-76",
+    "q-saa-77",
+    "q-saa-78",
+    "q-saa-79",
+    "q-saa-80"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-71",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A microservice needs to retrieve API license keys stored in AWS Systems Manager Parameter Store. The keys must be encrypted at rest. Which Parameter Store parameter type should be selected?",
+      "option_a": "Create a Parameter Store parameter of type String with client-side base64 encoding applied to the API key value.",
+      "option_b": "Create a Parameter Store parameter of type StringList with automated IAM policy encryption rules attached.",
+      "option_c": "Create a Parameter Store parameter of type SecureString encrypted with a customer managed AWS KMS key.",
+      "option_d": "Create an Amazon S3 object containing a plaintext JSON payload and configure default S3 server-side encryption (SSE-S3).",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "SecureString parameters in SSM Parameter Store encrypt sensitive string values at rest using AWS KMS keys, integrating seamlessly with IAM policies and KMS key permissions."
+    },
+    {
+      "id": "q-saa-72",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company wants to manage EC2 instances in private subnets without opening inbound SSH port 22 in Security Groups or assigning public IP addresses to instances. Audit logs of all shell commands executed by admins must be recorded in CloudWatch Logs. Which AWS Systems Manager capability replaces traditional SSH access?",
+      "option_a": "SSM Patch Manager",
+      "option_b": "SSM Session Manager",
+      "option_c": "SSM State Manager",
+      "option_d": "SSM Automation",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Systems Manager Session Manager provides secure, one-click instance management via browser or CLI without opening inbound ports, managing SSH keys, or requiring public IP addresses."
+    },
+    {
+      "id": "q-saa-73",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A security policy mandates that all objects uploaded to an Amazon S3 bucket must be encrypted at rest using Server-Side Encryption with AWS KMS (SSE-KMS) using a specified key. Any upload request that does not specify SSE-KMS encryption must be explicitly rejected. How should this compliance policy be enforced?",
+      "option_a": "Use separate bucket-policy Deny statements for PutObject: StringNotEquals requires aws:kms, while ArnNotEqualsIfExists requires the KMS key-ID header to match the approved key ARN.",
+      "option_b": "Use one bucket-policy Deny statement that rejects PutObject unless the encryption header equals aws:kms, while allowing any KMS key ARN supplied in the upload request.",
+      "option_c": "Set bucket default encryption to the required KMS key and deny PutObject only when a different key ARN is supplied, permitting requests that omit encryption headers.",
+      "option_d": "Use one bucket-policy Deny statement for PutObject with both StringNotEquals conditions in the same block, rejecting requests only when the algorithm and key ARN both differ.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Use separate explicit-deny statements in the bucket policy.\n\nThe first deny statement uses StringNotEquals to reject PutObject requests when the encryption algorithm header is not aws:kms, including requests that omit the required SSE-KMS setting.\n\nThe second deny statement uses ArnNotEqualsIfExists to reject requests that omit the KMS key header or specify a key other than the approved key ARN. Separating the checks ensures that a request cannot escape the policy merely because only one condition is different or missing.\n\nWhy the other options are wrong:\nB. Requiring only the aws:kms algorithm would allow uploaders to choose an unauthorized KMS key.\nC. Default bucket encryption encrypts objects when encryption headers are omitted, but the requirement says requests that do not explicitly specify the approved SSE-KMS configuration must be rejected.\nD. Conditions within the same condition block use logical AND across different condition operators. The deny might apply only when both values are wrong, allowing a request where only one requirement is violated.\n\nExam trigger:\nUploads must explicitly use SSE-KMS and one specific approved KMS key.\n\nExam trap:\nDefault encryption protects stored data, but it does not necessarily reject a noncompliant upload request.\n\nMemory hook:\nRequire the KMS algorithm and the approved key."
+    },
+    {
+      "id": "q-saa-74",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A cloud security team needs to identify all S3 buckets, KMS keys, and IAM roles across their AWS accounts that have been shared with external AWS accounts or public internet principals. Which IAM tool analyzes resource-based policies to identify unintended external access paths?",
+      "option_a": "IAM Policy Simulator",
+      "option_b": "AWS IAM Access Analyzer",
+      "option_c": "AWS Trusted Advisor Security Checks",
+      "option_d": "AWS Config Rules",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS IAM Access Analyzer uses mathematical logic and automated reasoning to analyze resource-based policies, identifying resources shared outside your AWS account or organization."
+    },
+    {
+      "id": "q-saa-75",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company needs to connect its VPC to a third-party SaaS provider hosted on AWS. The network connection must be private, unidirectional (preventing SaaS provider from initiating connections into the company VPC), and avoid overlapping IP CIDR range conflicts. Which technology satisfies this design?",
+      "option_a": "VPC Peering Connection",
+      "option_b": "AWS PrivateLink (VPC Interface Endpoint)",
+      "option_c": "AWS Transit Gateway Peering",
+      "option_d": "AWS Site-to-Site VPN",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS PrivateLink establishes private, unidirectional connectivity between VPCs via Endpoint Services and Interface Endpoints, eliminating IP address overlap issues associated with VPC Peering."
+    },
+    {
+      "id": "q-saa-76",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A security architect wants to grant S3 bucket access to all AWS accounts belonging to an organization in AWS Organizations (o-exampleorgid), while denying access to any AWS account outside the organization. Which condition key should be used in the S3 bucket policy?",
+      "option_a": "Add a Condition block using StringEquals for the global key aws:PrincipalOrgID matching the organization ID.",
+      "option_b": "Add a Condition block using IpAddress for key aws:VpcSourceIp matching the organization CIDR range.",
+      "option_c": "Add a Condition block using StringEquals for key aws:UserAgent matching approved organization client strings.",
+      "option_d": "Add a Condition block using ArnEquals for key aws:PrincipalArn listing all member account root ARNs.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Use the global condition key aws:PrincipalOrgID and compare it with the AWS Organizations ID.\n\nThis condition allows the bucket policy to trust principals belonging to accounts in the specified organization without listing every account individually. New accounts added to the organization can also satisfy the condition automatically.\n\nWhy the other options are wrong:\nB. Organization membership is not represented by a single VPC CIDR range. aws:VpcSourceIp checks a network source, not an AWS Organizations identity.\nC. User-agent strings can be changed by clients and do not securely prove organization membership.\nD. Listing every account root ARN creates unnecessary maintenance and does not automatically include future organization accounts.\n\nExam trigger:\nGrant access to every account in one AWS Organization.\n\nExam trap:\nDo not manually list accounts when aws:PrincipalOrgID can identify the organization.\n\nMemory hook:\nOrganization membership means PrincipalOrgID."
+    },
+    {
+      "id": "q-saa-77",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A banking application hosted on internal EC2 instances behind an internal Application Load Balancer requires HTTPS encryption in transit. The SSL/TLS certificates must be issued by a private internal Certificate Authority managed centrally in AWS. Which service generates and manages private certificates?",
+      "option_a": "Request public certificates from ACM and validate them through Route 53, then attach them to the internal Application Load Balancer.",
+      "option_b": "Create an AWS Private CA hierarchy and use ACM to issue, deploy, and renew private certificates for the internal load balancer.",
+      "option_c": "Issue certificates from an on-premises private CA, import them into ACM, and rely on ACM to renew them automatically.",
+      "option_d": "Store a private CA key in AWS CloudHSM, sign certificates manually, and use ACM to distribute and renew them automatically.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Private Certificate Authority (AWS Private CA) allows organizations to create private Certificate Authorities to issue and manage private X.509 certificates, integrating with AWS Certificate Manager (ACM) for automated certificate deployment and renewal."
+    },
+    {
+      "id": "q-saa-78",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company stores sensitive patient health records in an Amazon DynamoDB table. Compliance requires encrypting data at rest using a customer managed AWS KMS key that can be audited via CloudTrail. Which DynamoDB encryption setting achieves this compliance goal?",
+      "option_a": "Select the AWS owned key for table encryption and rely on DynamoDB to manage its lifecycle and access controls.",
+      "option_b": "Select a customer managed AWS KMS key as the table encryption key and grant DynamoDB permission to use it.",
+      "option_c": "Select the AWS managed key for DynamoDB and modify its key policy to enforce organization-specific access controls.",
+      "option_d": "Encrypt selected attributes with the DynamoDB Encryption Client and leave the table configured with its default encryption key.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "DynamoDB supports native encryption at rest using AWS Managed Keys or customer managed AWS KMS keys, recording all key access and usage events in AWS CloudTrail for auditing."
+    },
+    {
+      "id": "q-saa-79",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A financial API hosted on Amazon API Gateway must authenticate partner applications using Mutual TLS (mTLS) to verify client-side X.509 digital certificates. What requirement must be configured on API Gateway for mTLS support?",
+      "option_a": "Configure a Regional API Gateway custom domain with an ACM certificate, store the trusted CA certificate chain in an Amazon S3 truststore, and enable mutual TLS on the domain.",
+      "option_b": "Configure an AWS WAF Rate-Based Rule with SSL Passthrough enabled on the API Gateway endpoint to inspect incoming client certificates.",
+      "option_c": "Deploy a Network Load Balancer running in TCP mode in front of API Gateway to perform client certificate mutual TLS validation.",
+      "option_d": "Configure an Amazon Cognito User Pool with OAuth 2.0 Client Credentials grant flow to authenticate client certificates.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "API Gateway supports Mutual TLS (mTLS) by configuring a custom domain name with an ACM certificate and uploading an X.509 CA certificate truststore to an S3 bucket, against which API Gateway validates client certificates."
+    },
+    {
+      "id": "q-saa-80",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A global enterprise runs a critical web application in primary (us-east-1) and secondary (us-west-2) AWS Regions. The architecture uses Route 53 Application Recovery Controller (ARC). During a major regional outage in us-east-1, how does Route 53 ARC execute a reliable failover to us-west-2?",
+      "option_a": "Execute manual Amazon Route 53 DNS A record updates using AWS CLI scripts executed from an EC2 bastion host in us-east-1.",
+      "option_b": "Create an Amazon Application Recovery Controller routing control cluster, configure routing controls and safety rules, and use its five redundant Regional data-plane endpoints for highly available failover operations.",
+      "option_c": "Configure Amazon S3 Cross-Region Replication event notifications to automatically trigger DNS failover hooks in Route 53.",
+      "option_d": "Configure AWS Transit Gateway inter-Region peering route table updates to dynamically shift public client internet traffic.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Route 53 Application Recovery Controller (ARC) provides routing controls and safety rules hosted on five redundant Regional data-plane endpoints across separate AWS Regions, ensuring reliable failover execution even during control plane outages in a single Region."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-71",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-71",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-72",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-72",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-73",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-73",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-74",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-74",
+      "topic_id": "topic-security-hub"
+    },
+    {
+      "question_id": "q-saa-75",
+      "topic_id": "topic-privatelink"
+    },
+    {
+      "question_id": "q-saa-75",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-76",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-76",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-76",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-77",
+      "topic_id": "topic-acm"
+    },
+    {
+      "question_id": "q-saa-77",
+      "topic_id": "topic-security"
+    },
+    {
+      "question_id": "q-saa-78",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-78",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-79",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-79",
+      "topic_id": "topic-security"
+    },
+    {
+      "question_id": "q-saa-80",
+      "topic_id": "topic-disaster-recovery"
+    },
+    {
+      "question_id": "q-saa-80",
+      "topic_id": "topic-route53"
+    }
+  ]
+}

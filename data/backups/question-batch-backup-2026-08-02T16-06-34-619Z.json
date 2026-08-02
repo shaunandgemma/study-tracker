@@ -1,0 +1,276 @@
+{
+  "createdAt": "2026-08-02T16:06:34.619Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-11",
+    "q-saa-12",
+    "q-saa-13",
+    "q-saa-14",
+    "q-saa-15",
+    "q-saa-16",
+    "q-saa-17",
+    "q-saa-18",
+    "q-saa-19",
+    "q-saa-20"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-11",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company needs a serverless event-driven architecture that automatically resizes images uploaded to an S3 bucket and saves the thumbnails to another bucket. Which combination of AWS services offers the operational effort closest to zero?",
+      "option_a": "Amazon S3 Event Notifications triggering an AWS Lambda function.",
+      "option_b": "AWS Step Functions polling the S3 bucket every minute on an EC2 Cron schedule.",
+      "option_c": "Amazon CloudWatch Events triggering an Auto Scaling EC2 fleet.",
+      "option_d": "Amazon Kinesis Data Streams polling S3 object uploads.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Configure an S3 Event Notification to invoke a Lambda function when a new image is uploaded. The Lambda function retrieves the image, creates the thumbnail, and writes it to the destination S3 bucket.\n\nBoth services are serverless. There are no servers, polling processes, or Auto Scaling groups to manage.\n\nWhy the other options are wrong:\nB. Polling S3 from an EC2 cron job creates unnecessary servers, scheduled polling, and operational overhead. Step Functions also does not need to poll the bucket.\nC. An EC2 Auto Scaling fleet is unnecessary for a simple event-driven image-processing workload.\nD. Kinesis Data Streams processes streaming records. It does not poll S3 for object uploads.\n\nExam trigger:\nAn S3 upload must automatically start short-lived processing with almost no administration.\n\nExam trap:\nDo not introduce polling when S3 can send an event directly.\n\nMemory hook:\nS3 upload, then Lambda processing."
+    },
+    {
+      "id": "q-saa-12",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A media application stores static video files in one Amazon S3 bucket. Global users repeatedly download the same popular files and experience high latency. The company wants to reduce S3 origin requests and deliver cached copies closer to users. Which architecture meets these requirements?",
+      "option_a": "Enable S3 Transfer Acceleration and require every viewer to use the bucket's accelerate endpoint.",
+      "option_b": "Create a CloudFront distribution with the S3 bucket configured as its origin.",
+      "option_c": "Create S3 buckets in several Regions, configure replication, and expose them through an S3 Multi-Region Access Point.",
+      "option_d": "Deploy AWS Global Accelerator with Regional Application Load Balancers that redirect users to the S3 object URLs.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create a CloudFront distribution with the S3 bucket configured as its origin.\n\nCloudFront caches the popular video files at edge locations. Cache hits are returned without repeatedly retrieving the same files from the S3 origin.\n\nWhy the other options are wrong:\nA. Transfer Acceleration improves transfers between clients and one S3 bucket by using edge locations and the AWS network. It does not provide a shared viewer cache.\nC. A Multi-Region Access Point routes requests to a closest-proximity active bucket. It does not cache objects, and replication must be configured separately.\nD. Global Accelerator supports endpoints such as load balancers and EC2 instances but does not cache S3 content.\n\nExam trigger:\nThe same static objects are repeatedly requested by global users, and origin requests must decrease.\n\nExam trap:\nTransfer Acceleration and Multi-Region Access Points improve routing. CloudFront caches content.\n\nMemory hook:\nRepeated global downloads mean CloudFront."
+    },
+    {
+      "id": "q-saa-13",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A mission-critical database application running on a supported Nitro-based EC2 instance requires sustained sub-millisecond latency and 120,000 provisioned IOPS with 4,000 MB/s throughput. Which Amazon EBS volume type meets these demanding specifications?",
+      "option_a": "Provision an EBS General Purpose SSD (gp3) volume and configure provisioned IOPS to meet the database IOPS target.",
+      "option_b": "Provision an EBS Provisioned IOPS SSD (io2 Block Express) volume attached to the Nitro-based EC2 instance.",
+      "option_c": "Provision an EBS Throughput Optimized HDD (st1) volume and configure software RAID 0 across multiple volumes.",
+      "option_d": "Provision an EBS Cold HDD (sc1) volume and attach it to the EC2 instance using NVMe multi-queue drivers.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Use an io2 Block Express volume attached to a supported Nitro-based EC2 instance. io2 Block Express is designed for mission-critical workloads that require very high provisioned IOPS, high throughput, durability, and consistent sub-millisecond latency.\n\nIt can support the required 120,000 IOPS and up to 4,000 MiB/s of throughput. The EC2 instance type must also provide enough EBS bandwidth to support the provisioned performance. io2 Block Express is designed to deliver average latency below 500 microseconds for 16 KiB I/O operations.\n\nWhy the other options are wrong:\nA. A gp3 volume supports substantially lower maximum IOPS than the required 120,000 IOPS.\nC. st1 is an HDD volume intended for throughput-intensive sequential workloads. It does not provide sustained sub-millisecond latency or the required provisioned IOPS.\nD. sc1 is low-cost HDD storage for infrequently accessed workloads. NVMe drivers do not convert it into a high-performance SSD volume.\n\nExam trigger:\nMission-critical database, Nitro instance, sub-millisecond latency, more than 64,000 IOPS, and extremely high throughput.\n\nExam trap:\ngp3 allows independent IOPS and throughput configuration, but its maximum IOPS is far below this requirement.\n\nMemory hook:\nExtreme database performance means io2 Block Express."
+    },
+    {
+      "id": "q-saa-14",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company requires a highly available relational database for a global application with MySQL compatibility. The database must support low-latency cross-Region disaster recovery and scale read capacity horizontally across multiple AWS Regions. Which database solution satisfies these requirements?",
+      "option_a": "Amazon RDS for MySQL with cross-Region read replicas",
+      "option_b": "Amazon Aurora Global Database",
+      "option_c": "Amazon DynamoDB Global Tables",
+      "option_d": "Amazon EC2 with MySQL Community Edition and manual snapshots",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Aurora Global Database provides a primary Aurora cluster in one Region and secondary clusters in other Regions. It supports low-latency global reads and cross-Region disaster recovery. Aurora uses dedicated infrastructure for asynchronous replication, with replication latency typically under one second. Cross-Region failover must be initiated or managed. During an unplanned Regional failure, the recovery point objective is normally non-zero and measured in seconds.\n\nWhy the other options are wrong:\nA. RDS for MySQL cross-Region read replicas can provide remote reads and disaster recovery, but Aurora Global Database is purpose-built for faster global replication and managed global database recovery.\nC. DynamoDB Global Tables provide multi-Region NoSQL replication. They are not a MySQL-compatible relational database.\nD. Self-managed MySQL on EC2 requires the company to manage replication, backups, patching, monitoring, and failover.\n\nExam trigger:\nMySQL compatibility, global reads, and low-latency cross-Region disaster recovery point to Aurora Global Database.\n\nExam trap:\nAsynchronous replication means an unplanned failover does not guarantee zero data loss.\n\nMemory hook:\nAurora Global Database means one global relational database with Regional clusters."
+    },
+    {
+      "id": "q-saa-15",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An application needs to broadcast urgent system alerts simultaneously to multiple downstream subscribers: an SQS queue, an HTTPS webhook endpoint, and an AWS Lambda function. Which AWS service implements this fan-out messaging pattern?",
+      "option_a": "Amazon SQS FIFO Queue",
+      "option_b": "Amazon SNS (Simple Notification Service) Topic",
+      "option_c": "AWS EventBridge Event Bus",
+      "option_d": "Amazon Kinesis Data Firehose",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Publish each alert to an Amazon SNS topic. The SQS queue, HTTPS webhook, and Lambda function can each subscribe to that topic.\n\nSNS pushes a copy of the published message to every matching subscriber. This provides the required one-to-many fan-out architecture.\n\nWhy the other options are wrong:\nA. An SQS queue stores messages for consumers. It does not natively broadcast one message to an SQS queue, HTTPS endpoint, and Lambda function.\nC. EventBridge can route events to multiple targets and supports more advanced event filtering. However, SNS is the direct publish-subscribe service for broadcasting urgent messages to the subscriber types listed.\nD. Amazon Data Firehose delivers streaming data to destinations such as S3, Redshift, and OpenSearch Service. It is not a general alert fan-out service.\n\nExam trigger:\nOne message must be pushed simultaneously to multiple subscribers.\n\nExam trap:\nSQS is a queue. SNS is a broadcast service.\n\nMemory hook:\nOne publisher, many subscribers, use SNS."
+    },
+    {
+      "id": "q-saa-16",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A web application hosted on an EC2 Auto Scaling group behind an Application Load Balancer (ALB) handles HTTP and HTTPS traffic. The company needs to enforce SSL/TLS termination and path-based routing (/api vs /static). Which component performs path routing and SSL termination?",
+      "option_a": "Network Load Balancer (NLB)",
+      "option_b": "Application Load Balancer (ALB)",
+      "option_c": "AWS Transit Gateway",
+      "option_d": "Amazon CloudFront Edge Lambda",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. An Application Load Balancer operates at the HTTP and HTTPS application layer. Its listener rules can inspect the URL path and forward requests such as /api and /static to different target groups.\n\nAn HTTPS listener uses an SSL or TLS certificate to terminate the client connection and decrypt the request before forwarding it to the targets.\n\nWhy the other options are wrong:\nA. A Network Load Balancer operates at Layer 4 and supports TCP, TLS, UDP, and TCP_UDP listeners. It does not inspect URL paths or provide HTTP path-based routing.\nC. Transit Gateway connects VPCs and on-premises networks. It does not process HTTP requests or terminate TLS for a web application.\nD. Lambda at the edge can modify CloudFront requests and responses. It is not the component responsible for the ALB's path routing and TLS termination.\n\nExam trigger:\nHTTP or HTTPS, URL paths, listener rules, certificates, and target groups.\n\nExam trap:\nBoth ALB and NLB can terminate encrypted connections, but only ALB provides HTTP path-based routing.\n\nMemory hook:\nPaths and web rules mean ALB."
+    },
+    {
+      "id": "q-saa-17",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An e-commerce website experiences predictable traffic increases every Monday at 08:00 AM. How should the EC2 Auto Scaling group be configured to ensure instances are pre-warmed and ready before traffic surges occur?",
+      "option_a": "Configure a Target Tracking Scaling Policy based on Average CPU Utilization set to an aggressive target threshold of 30%.",
+      "option_b": "Configure a Scheduled Scaling Action on the Auto Scaling group set to scale out capacity prior to 08:00 AM every Monday.",
+      "option_c": "Configure a Step Scaling Policy triggered by an Amazon CloudWatch metric alarm evaluating 1-minute request counts.",
+      "option_d": "Configure Predictive Scaling Policies with a fixed 24-hour buffer to scale out capacity continuously throughout the weekend.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create a recurring scheduled scaling action that increases the Auto Scaling group's minimum, maximum, or desired capacity before 08:00 every Monday.\n\nThe traffic increase occurs at a known and predictable time. Scheduled scaling allows the instances to start and become ready before the demand arrives.\n\nWhy the other options are wrong:\nA. Target tracking reacts when the selected metric moves away from its target. It might not launch and prepare instances early enough for the sudden increase.\nC. Step scaling also reacts after a CloudWatch alarm is triggered. It does not guarantee that capacity will be ready before the known surge.\nD. Predictive scaling can forecast recurring patterns from historical data. However, a fixed scheduled action is simpler and more precise when the exact weekly time is already known. Continuously scaling throughout the weekend would also waste capacity.\n\nExam trigger:\nThe traffic increase happens at the same known time every week.\n\nExam trap:\nUse reactive scaling for unexpected changes. Use scheduled scaling for exact known changes.\n\nMemory hook:\nKnown time means scheduled scaling."
+    },
+    {
+      "id": "q-saa-18",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A regulatory mandate requires a financial application to encrypt sensitive customer PII before writing it to a database. Encryption keys must be generated inside dedicated hardware modules where AWS administrators have no access to key material. Which service fulfills this strict requirement?",
+      "option_a": "AWS KMS with AWS Managed Key",
+      "option_b": "AWS CloudHSM",
+      "option_c": "AWS Secrets Manager",
+      "option_d": "Amazon Macie",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. AWS CloudHSM provides dedicated, single-tenant hardware security modules. The company controls the HSM users and cryptographic keys.\n\nThe application can use CloudHSM client libraries to perform cryptographic operations using keys generated and retained inside the HSM cluster. This meets strict requirements for dedicated hardware and customer control of the key material.\n\nWhy the other options are wrong:\nA. AWS KMS uses managed HSM infrastructure and is suitable for most encryption requirements. An AWS managed key does not provide the dedicated, single-tenant HSM control required by the scenario.\nC. Secrets Manager stores and rotates secrets such as passwords, tokens, and database credentials. It is not a dedicated hardware cryptographic module.\nD. Amazon Macie discovers and classifies sensitive information in S3. It does not generate or store database encryption keys.\n\nExam trigger:\nDedicated HSM, single tenant, customer-controlled cryptographic users, and strict regulatory control.\n\nExam trap:\nKMS is the normal choice. CloudHSM is selected when dedicated HSM control is specifically required.\n\nMemory hook:\nDedicated hardware keys mean CloudHSM."
+    },
+    {
+      "id": "q-saa-19",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A containerized application running across multiple EC2 instances in different Availability Zones requires a POSIX-compliant shared file system with concurrent read and write access. Which storage solution should be used?",
+      "option_a": "Use an io2 EBS volume with Multi-Attach and mount it from the instances in every Availability Zone through a clustered file system.",
+      "option_b": "Use a Regional EFS file system with mount targets in the required Availability Zones, then mount the same file system from each instance.",
+      "option_c": "Use Amazon FSx for Windows File Server in Multi-AZ mode and mount the same SMB share from each Linux instance.",
+      "option_d": "Use an S3 bucket with Mountpoint for Amazon S3 on each instance, presenting the bucket as a shared POSIX-compliant file system.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create a Regional EFS file system with mount targets in the Availability Zones used by the EC2 instances. Every instance can mount the same EFS file system and concurrently read and write shared files through NFS.\n\nRegional EFS stores data across multiple Availability Zones and provides shared file access across the Region.\n\nWhy the other options are wrong:\nA. EBS volumes are Availability Zone resources. EBS Multi-Attach does not allow one volume to be attached to instances across different Availability Zones.\nC. FSx for Windows File Server provides SMB storage for Windows-based workloads. It is not the normal POSIX and NFS shared-file solution for Linux containers.\nD. Mountpoint for Amazon S3 provides high-throughput access to S3 objects through a file-system-style interface. It does not provide full POSIX file-system semantics.\n\nExam trigger:\nLinux or containers, shared files, concurrent access, POSIX requirements, and multiple Availability Zones.\n\nExam trap:\nEBS is normally attached storage. EFS is shared Regional file storage.\n\nMemory hook:\nMany Linux instances sharing files means EFS."
+    },
+    {
+      "id": "q-saa-20",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise manages hundreds of AWS accounts using AWS Organizations. The Security team requires a mechanism to centrally restrict specific AWS service API actions (such as preventing member accounts from disabling CloudTrail or deleting S3 buckets) across all member accounts. Which feature enforces this guardrail?",
+      "option_a": "Attach IAM Permissions Boundaries to administrative IAM roles in each individual member account.",
+      "option_b": "Attach Service Control Policies to the organization root or appropriate organizational units to restrict permitted API actions in member accounts.",
+      "option_c": "Deploy AWS Config Conformance Packs across member accounts to automatically revoke unauthorized API calls.",
+      "option_d": "Enable AWS Security Hub Standards across member accounts to enforce security configuration policies.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Attach Service Control Policies to the organization root or the required organizational units. SCPs establish the maximum permissions available to IAM users and roles in affected member accounts.\n\nAn explicit deny in an SCP can prevent member-account principals, including the root user, from performing restricted actions even when an IAM policy would otherwise allow them.\n\nSCPs do not grant permissions. They create organization-wide permission guardrails. The organization must have all features enabled.\n\nWhy the other options are wrong:\nA. Permission boundaries must be attached to individual IAM users or roles. They are not a reliable centralized control for every principal across hundreds of accounts.\nC. AWS Config detects configuration compliance and can initiate remediation. It does not intercept and reject API calls as they occur.\nD. Security Hub collects and correlates security findings. It does not define the maximum permissions available in member accounts.\n\nExam trigger:\nAWS Organizations, many accounts, centralized restrictions, and API guardrails.\n\nExam trap:\nSCPs restrict the maximum available permissions. They do not grant permissions.\n\nMemory hook:\nOrganization-wide permission ceiling means SCP."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-11",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-11",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-12",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-12",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-13",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-13",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-14",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-14",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-15",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-15",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-16",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-16",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-17",
+      "topic_id": "topic-auto-scaling"
+    },
+    {
+      "question_id": "q-saa-17",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-18",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-19",
+      "topic_id": "topic-efs"
+    },
+    {
+      "question_id": "q-saa-19",
+      "topic_id": "topic-storage"
+    },
+    {
+      "question_id": "q-saa-20",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-20",
+      "topic_id": "topic-scp"
+    }
+  ]
+}

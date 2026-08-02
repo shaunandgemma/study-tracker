@@ -1,0 +1,268 @@
+{
+  "createdAt": "2026-08-02T17:58:04.800Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-91",
+    "q-saa-92",
+    "q-saa-93",
+    "q-saa-94",
+    "q-saa-95",
+    "q-saa-96",
+    "q-saa-97",
+    "q-saa-98",
+    "q-saa-99",
+    "q-saa-100"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-100",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A serverless workflow built with AWS Step Functions invokes an Amazon API Gateway endpoint. The API Gateway endpoint intermittently returns HTTP 503 Service Unavailable errors due to backend throttling. How should the Step Functions Task state be configured to handle these transient failures gracefully?",
+      "option_a": "Add a Retry field to the Task state that matches ApiGateway.503 and configures IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "option_b": "Increase the AWS Lambda execution timeout setting to 15 minutes to allow stalled HTTP requests to complete.",
+      "option_c": "Configure a VPC Gateway Endpoint for S3 to bypass public internet network latency when invoking third-party APIs.",
+      "option_d": "Deploy the Step Functions state machine in multiple AWS Regions using an AWS Global Accelerator endpoint.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "AWS Step Functions Task states configure error handling via a Retry block matching integration error names (such as ApiGateway.503 for API Gateway HTTP 503 responses), specifying initial interval seconds, backoff rate multipliers, and maximum retry attempts."
+    },
+    {
+      "id": "q-saa-91",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company stores shared document repositories on Amazon EFS file systems. To protect against accidental file deletion or corruption by employees, the solution architect needs automated daily file system backups retained for 30 days. Which service provides automated management of EFS backups?",
+      "option_a": "EFS Lifecycle Management",
+      "option_b": "AWS Backup",
+      "option_c": "AWS Storage Gateway Snapshot Scheduler",
+      "option_d": "Amazon S3 Versioning",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Backup centrally automates data protection across AWS services including Amazon EFS, EBS, RDS, DynamoDB, and S3."
+    },
+    {
+      "id": "q-saa-92",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An operations team needs to update the EC2 instance type and AMI ID used by an existing Auto Scaling group without re-creating the Auto Scaling group itself. The solution must support instance parameter versioning. Which feature should be used?",
+      "option_a": "EC2 Launch Configurations",
+      "option_b": "EC2 Launch Templates",
+      "option_c": "AWS CloudFormation Parameter Store",
+      "option_d": "EC2 Elastic Block Store Snapshots",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "EC2 Launch Templates provide versioned configuration parameters for Auto Scaling groups, supporting advanced features like T2/T3 Unlimited, Spot Fleet specifications, and IMDSv2 enforcement (unlike legacy Launch Configurations)."
+    },
+    {
+      "id": "q-saa-93",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An event-driven microservices order application processes events via Amazon EventBridge. A bug in a deployment caused processed order events to be dropped for 2 hours. After deploying a code fix, the team needs to re-process the exact events that occurred during those 2 hours. Which EventBridge feature enables re-processing past events?",
+      "option_a": "EventBridge Event Bus Rules",
+      "option_b": "EventBridge Event Archive and Replay",
+      "option_c": "EventBridge Schema Registry",
+      "option_d": "EventBridge API Destinations",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "EventBridge Archive and Replay allows recording past events sent to an event bus into an archive and replaying them at a later time to recover from application errors."
+    },
+    {
+      "id": "q-saa-94",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A security requirement mandates storing an exact duplicate copy of all objects uploaded to an S3 bucket into a separate log compliance S3 bucket located in the SAME AWS Region but owned by a separate AWS audit account. Which feature automates object replication within the same Region?",
+      "option_a": "S3 Cross-Region Replication (CRR)",
+      "option_b": "S3 Same-Region Replication (SRR)",
+      "option_c": "S3 Transfer Acceleration",
+      "option_d": "S3 Lifecycle Expiration Rules",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "S3 Same-Region Replication (SRR) automatically replicates new S3 objects across buckets in the same AWS Region, useful for log aggregation into a separate security account."
+    },
+    {
+      "id": "q-saa-95",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise wants to replace on-premises tape backup infrastructure with a cloud-based solution. The backup application uses iSCSI virtual tape interfaces. Backups must be written to virtual tapes, stored in S3, and archived to S3 Glacier for long-term retention. Which AWS service provides virtual tape interfaces?",
+      "option_a": "Deploy AWS Storage Gateway Tape Gateway to present an iSCSI virtual tape library (VTL) interface to existing backup applications.",
+      "option_b": "Deploy AWS Storage Gateway Volume Gateway in cached mode to present iSCSI block storage volumes to on-premises servers.",
+      "option_c": "Deploy AWS DataSync scheduled tasks to stream on-premises backup tape drives over an encrypted AWS Site-to-Site VPN.",
+      "option_d": "Deploy AWS Transfer Family for SFTP to upload virtual tape image files directly into Amazon S3 Glacier Deep Archive.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "AWS Storage Gateway Tape Gateway presents an iSCSI-based Virtual Tape Library (VTL) interface to existing backup software, storing virtual tapes in Amazon S3 and archiving them to S3 Glacier or Glacier Deep Archive."
+    },
+    {
+      "id": "q-saa-96",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company hosts legacy TCP servers on EC2. External client firewalls require whitelisting static public IP addresses for inbound connections. The solution architect needs a high-availability load balancer that provides a static Elastic IP address per Availability Zone and handles millions of TCP requests per second with ultra-low latency. Which load balancer should be deployed?",
+      "option_a": "Application Load Balancer (ALB)",
+      "option_b": "Network Load Balancer (NLB)",
+      "option_c": "Classic Load Balancer (CLB)",
+      "option_d": "AWS Gateway Load Balancer (GWLB)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Network Load Balancers (NLBs) operate at Layer 4 (TCP/UDP/TLS), handle sudden ultra-high traffic volume with microsecond latency, and provide a fixed static Elastic IP address per Availability Zone."
+    },
+    {
+      "id": "q-saa-97",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise maintains an Active-Passive disaster recovery configuration for a public web application. All DNS traffic should normally be routed to the primary AWS Region. If the primary Region ALB health check fails, Route 53 must automatically divert all DNS queries to the secondary DR Region. Which Route 53 routing policy executes this failover?",
+      "option_a": "Configure a Route 53 Multivalue Answer Routing Policy linked to health checks to distribute client traffic across both Regions.",
+      "option_b": "Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks.",
+      "option_c": "Configure a Route 53 Geolocation Routing Policy mapping all global client locations to the primary Region.",
+      "option_d": "Configure a Route 53 Weighted Routing Policy with a static 50/50 traffic split between primary and secondary Regions.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Route 53 Failover Routing Policy configures Active-Passive failover, routing traffic to the primary resource when healthy and automatically diverting to the secondary resource when the primary health check fails."
+    },
+    {
+      "id": "q-saa-98",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A hybrid cloud architecture requires encrypted connectivity over the public internet between an on-premises data center router and a single Amazon VPC without using AWS Transit Gateway. The network configuration requires dual IPsec VPN tunnels with dynamic BGP routing for redundancy. Which AWS component terminates the VPN on the AWS side?",
+      "option_a": "Deploy an Internet Gateway (IGW) attached to the VPC to terminate the IPsec VPN tunnels directly.",
+      "option_b": "Attach a Virtual Private Gateway (VGW) to the VPC to terminate the IPsec VPN tunnels on the AWS side.",
+      "option_c": "Deploy an Egress-Only Internet Gateway to terminate dual-tunnel IPv4 IPsec connections.",
+      "option_d": "Configure a NAT Gateway in a public subnet to terminate IPsec VPN connections and handle BGP routing.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Site-to-Site VPN connects an on-premises Customer Gateway (CGW) directly to a Virtual Private Gateway (VGW) attached to a single VPC, establishing dual encrypted IPsec VPN tunnels with BGP dynamic routing."
+    },
+    {
+      "id": "q-saa-99",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company relies on a 1 Gbps AWS Direct Connect connection for hybrid connectivity. To ensure business continuity during an unexpected Direct Connect outage, the company needs a backup network connection that automatically takes over traffic if Direct Connect fails. What is the most resilient, cost-effective backup option?",
+      "option_a": "Order a second 10 Gbps AWS Direct Connect connection at a separate Direct Connect location and configure equal-cost multi-path (ECMP) BGP routing across both physical connections.",
+      "option_b": "Establish an AWS Site-to-Site VPN over the public internet as a backup path, configuring dynamic BGP routing and applying BGP route attributes such as AS-path prepending on the VPN advertisement so the Direct Connect path remains preferred.",
+      "option_c": "Deploy an AWS Transit Gateway peering connection over the public internet with static route tables pointing to on-premises IP ranges to automatically reroute traffic during physical link outages.",
+      "option_d": "Configure an AWS Client VPN endpoint connected to the virtual private gateway and distribute Client VPN software profiles to all on-premises routers to establish automated backup tunnels.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Site-to-Site VPN over the public internet provides a highly cost-effective failover path for AWS Direct Connect. Configuring BGP dynamic routing with AS-path prepending on the VPN route advertisement ensures the shorter Direct Connect path is preferred during normal operations, failing over automatically if Direct Connect drops."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-100",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-100",
+      "topic_id": "topic-step-functions"
+    },
+    {
+      "question_id": "q-saa-91",
+      "topic_id": "topic-aws-backup"
+    },
+    {
+      "question_id": "q-saa-91",
+      "topic_id": "topic-efs"
+    },
+    {
+      "question_id": "q-saa-92",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-92",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-93",
+      "topic_id": "topic-eventbridge"
+    },
+    {
+      "question_id": "q-saa-94",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-95",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-95",
+      "topic_id": "topic-storage-gateway"
+    },
+    {
+      "question_id": "q-saa-96",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-97",
+      "topic_id": "topic-disaster-recovery"
+    },
+    {
+      "question_id": "q-saa-97",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-98",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-98",
+      "topic_id": "topic-vpn"
+    },
+    {
+      "question_id": "q-saa-99",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-99",
+      "topic_id": "topic-vpn"
+    }
+  ]
+}

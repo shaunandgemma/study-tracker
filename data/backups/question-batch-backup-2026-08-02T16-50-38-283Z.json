@@ -1,0 +1,280 @@
+{
+  "createdAt": "2026-08-02T16:50:38.283Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-61",
+    "q-saa-62",
+    "q-saa-63",
+    "q-saa-64",
+    "q-saa-65",
+    "q-saa-66",
+    "q-saa-67",
+    "q-saa-68",
+    "q-saa-69",
+    "q-saa-70"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-61",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A cloud operations team needs to automate the creation of new AWS accounts in AWS Organizations with standard baseline security controls, VPC networking, IAM roles, and centralized logging pre-configured. Which service automates account provisioning using a Landing Zone governance model?",
+      "option_a": "AWS Service Catalog",
+      "option_b": "AWS Control Tower",
+      "option_c": "AWS CloudFormation StackSets",
+      "option_d": "AWS Config Conformance Packs",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Control Tower sets up and governs a multi-account AWS environment using Landing Zones, automating account creation via Account Factory and applying preventive/detective guardrails."
+    },
+    {
+      "id": "q-saa-62",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A software application needs to encrypt large multi-gigabyte files locally before uploading them to storage. The application calls AWS KMS to obtain a plaintext data encryption key (DEK) and an encrypted DEK, encrypts the file locally using the plaintext DEK, and discards the plaintext DEK from memory. What is this encryption pattern called?",
+      "option_a": "Client-Side Asymmetric Rotation",
+      "option_b": "Envelope Encryption",
+      "option_c": "Server-Side Key Exchange",
+      "option_d": "Transport Layer Key Wrapping",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Envelope encryption is the practice of encrypting plaintext data with a data key (DEK), and then encrypting the data key under a root Key Management Service key (KMS CMK)."
+    },
+    {
+      "id": "q-saa-63",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company serves private objects from an Amazon S3 bucket through CloudFront. Users must not be able to bypass CloudFront and access the bucket directly. The bucket policy must grant access only to one specific CloudFront distribution. Which configuration provides the strongest control?",
+      "option_a": "Configure legacy Origin Access Identity and grant the identity access in the bucket policy.",
+      "option_b": "Configure Origin Access Control and allow the CloudFront service principal to perform s3:GetObject only when AWS:SourceArn matches the distribution ARN.",
+      "option_c": "Configure Origin Access Control and allow the CloudFront service principal to read the bucket without a source-distribution condition.",
+      "option_d": "Require CloudFront signed URLs while leaving the S3 bucket publicly readable.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Configure Origin Access Control and allow the CloudFront service principal to perform s3:GetObject only when AWS:SourceArn matches the distribution ARN.\n\nOrigin Access Control signs CloudFront origin requests using Signature Version 4. The bucket policy can trust the CloudFront service principal and restrict access with AWS:SourceArn so only the specified distribution can read the objects. This prevents direct public S3 access.\n\nWhy the other options are wrong:\nA. Origin Access Identity can secure many standard S3-origin designs, but OAC is the recommended modern control and supports additional capabilities.\nC. OAC would authenticate the requests, but omitting the distribution ARN condition creates broader CloudFront service access than required.\nD. Signed URLs control viewer access through CloudFront. They do not secure an origin that remains publicly readable.\n\nExam trigger:\nPrivate S3 origin, CloudFront-only access, SigV4, and one specific distribution.\n\nExam trap:\nSigned URLs protect viewer access. OAC protects the origin.\n\nMemory hook:\nOAC plus SourceArn locks S3 to one distribution."
+    },
+    {
+      "id": "q-saa-64",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A security audit reveals that web applications hosted on EC2 instances are vulnerable to Server-Side Request Forgery (SSRF) attacks, exposing local Instance Metadata Service (IMDS) credentials. How can the solution architect enforce session-oriented, token-backed IMDS requests to mitigate SSRF vulnerabilities?",
+      "option_a": "Disable Instance Metadata Service on all EC2 instances.",
+      "option_b": "Enforce Instance Metadata Service Version 2 (IMDSv2) and set HttpTokens to required.",
+      "option_c": "Configure Network ACLs blocking port 80 to 169.254.169.254.",
+      "option_d": "Attach an IAM Permission Boundary to the EC2 Instance Profile.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "IMDSv2 uses session-oriented requests requiring a Secret Token (PUT request) before fetching metadata, protecting against SSRF vulnerabilities that exploit header-less GET requests in IMDSv1."
+    },
+    {
+      "id": "q-saa-65",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A malicious public IPv4 address is repeatedly attempting SSH connections to EC2 instances in a public subnet. The network team needs a subnet-level rule that explicitly denies traffic from that address before broader allow rules are evaluated. Which solution meets the requirement?",
+      "option_a": "Remove the malicious address from the EC2 security-group allow rules.",
+      "option_b": "Add an inbound network ACL deny rule for the address with a lower rule number than the broader allow rule.",
+      "option_c": "Create an AWS WAF IP set that blocks the address and associate the web ACL with the Application Load Balancer.",
+      "option_d": "Route the subnet's internet traffic through AWS Network Firewall and add a stateless drop rule for the address.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Add an inbound network ACL deny rule for the address with a lower rule number than the broader allow rule.\n\nNetwork ACLs support explicit allow and deny rules at the subnet boundary. Rules are evaluated in rule-number order, so the specific deny must be evaluated before a broader allow.\n\nWhy the other options are wrong:\nA. Security groups contain allow rules rather than explicit deny rules. Removing one allowed address also does not help when a broader CIDR rule still permits it.\nC. AWS WAF filters supported HTTP and HTTPS application traffic. It does not block arbitrary inbound SSH connections.\nD. Network Firewall could block the address if traffic were routed through firewall endpoints, but that introduces substantial architecture and cost for a simple subnet-level deny requirement.\n\nExam trigger:\nExplicit deny, specific IP, subnet boundary, and rule ordering.\n\nExam trap:\nSeveral services can block traffic, but the question specifically asks for a subnet-level explicit deny.\n\nMemory hook:\nSpecific subnet deny means NACL."
+    },
+    {
+      "id": "q-saa-66",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A public e-commerce portal behind an Application Load Balancer suffers from automated HTTP request floods from malicious bots, degrading performance for real buyers. The security team needs to automatically rate-limit IP addresses making more than 2,000 requests per 5-minute period. Which AWS WAF rule type provides this protection?",
+      "option_a": "AWS WAF Managed Ruleset for SQL Injection",
+      "option_b": "AWS WAF Rate-Based Rule",
+      "option_c": "AWS WAF Geo Match Rule",
+      "option_d": "AWS Shield Standard Network Protocol Rule",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS WAF Rate-Based Rules track the rate of requests from each originating IP address and trigger configured actions (such as Block or CAPTCHA) when the request rate exceeds the specified threshold over a 5-minute evaluation window."
+    },
+    {
+      "id": "q-saa-67",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "Account A needs to grant Account B read access to an Amazon S3 bucket without requiring users in Account B to switch IAM roles via AssumeRole. Which resource-based policy configuration allows users in Account B to access Account A S3 bucket directly?",
+      "option_a": "Add an S3 bucket policy in Account A granting the Account B principal s3:GetObject access, and attach a matching identity policy to that principal in Account B.",
+      "option_b": "Attach an IAM Group Policy in Account B with AdministratorAccess permissions to grant cross-account S3 bucket access.",
+      "option_c": "Configure an AWS Organizations Service Control Policy (SCP) in the management account granting cross-account S3 access.",
+      "option_d": "Attach a custom VPC Gateway Endpoint Policy to the S3 endpoint in Account B allowing access to Account A buckets.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Add an S3 bucket policy in Account A that grants the required Account B principal permission to perform s3:GetObject. The principal in Account B must also have an identity-based policy that permits the same action.\n\nFor cross-account access, the resource-owning account must trust the external principal, and the principal's own account must allow the action. The users can then access the bucket directly without assuming a role in Account A.\n\nWhy the other options are wrong:\nB. AdministratorAccess in Account B does not automatically grant access to resources owned by Account A. The Account A bucket must trust the external principal.\nC. An SCP establishes a permission boundary for organization accounts. It cannot grant access to an S3 bucket.\nD. A gateway endpoint policy can restrict which S3 resources are reachable through the endpoint. It cannot replace the required bucket and identity permissions.\n\nExam trigger:\nDirect cross-account S3 access without assuming a role.\n\nExam trap:\nCross-account access normally requires permission from both the identity side and the resource side.\n\nMemory hook:\nThe principal allows it, and the bucket trusts it."
+    },
+    {
+      "id": "q-saa-68",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A high-volume betting website requires advanced Distributed Denial of Service (DDoS) protection for its Application Load Balancers and CloudFront distributions. The company requires 24/7 access to the AWS Shield Response Team (SRT) and financial protection against scaling cost spikes caused by DDoS attacks. Which subscription service meets these requirements?",
+      "option_a": "AWS Shield Standard",
+      "option_b": "AWS Shield Advanced",
+      "option_c": "AWS WAF Core Rule Set",
+      "option_d": "AWS Network Firewall",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Shield Advanced provides enhanced DDoS protection, direct access to the 24/7 Shield Response Team (SRT), advanced health-based detection, and financial protection covering ELB/CloudFront scaling costs due to attacks."
+    },
+    {
+      "id": "q-saa-69",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A Lambda function in Account A must directly retrieve a secret stored in Secrets Manager in Account B. The function must not assume a role in Account B, and the company does not want to duplicate the secret. The secret is encrypted with a customer managed KMS key. Which configuration provides the required access?",
+      "option_a": "Grant the Account A Lambda role secretsmanager:GetSecretValue in an identity policy, grant that role access in the secret's resource policy, and permit the role to use the customer managed KMS key through the required key and IAM policies.",
+      "option_b": "Grant the Account A Lambda role access through the secret resource policy and identity policy, but encrypt the secret using the Account B AWS managed aws/secretsmanager key.",
+      "option_c": "Create a role in Account B with secret and KMS permissions and require the Lambda execution role to call sts:AssumeRole before retrieving the secret.",
+      "option_d": "Create a second copy of the secret in Account A and configure an independent rotation schedule for each copy.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Grant the Account A Lambda role secretsmanager:GetSecretValue in an identity policy, grant that role access in the secret's resource policy, and permit the role to use the customer managed KMS key through the required key and IAM policies.\n\nDirect cross-account Secrets Manager access requires the external principal to be permitted by its identity policy and the secret's resource policy. Because the secret is encrypted with a customer managed KMS key, the role also needs cross-account permission to use that key. AWS managed Secrets Manager keys cannot be used for this cross-account pattern.\n\nWhy the other options are wrong:\nB. The AWS managed aws/secretsmanager key cannot be used to provide the required cross-account decryption access.\nC. Assuming a role in Account B can be a valid alternative architecture, but it violates the stated direct-access requirement.\nD. Duplicating the secret creates separate values and rotation workflows and violates the requirement to maintain one secret.\n\nExam trigger:\nDirect cross-account Secrets Manager access without AssumeRole.\n\nExam trap:\nSecret permission is not enough. The principal must also be able to use the KMS key.\n\nMemory hook:\nCross-account secret means identity, secret policy, and KMS permission."
+    },
+    {
+      "id": "q-saa-70",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A security engineer needs to capture IP traffic flowing through network interfaces in private subnets across multiple VPCs for security auditing and forensic investigation. Log files must be delivered to an Amazon S3 bucket for long-term retention. Which feature provides this network log capture?",
+      "option_a": "Configure AWS CloudTrail Event Logs to capture private subnet packet payloads.",
+      "option_b": "Enable VPC Flow Logs on the target VPCs and configure log delivery to an Amazon S3 bucket.",
+      "option_c": "Configure Route 53 Resolver Query Logs to record network packet headers across instances.",
+      "option_d": "Stream EC2 System Log streams to Amazon CloudWatch Logs using the CloudWatch agent.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nVPC Flow Logs capture IP traffic flowing to and from network interfaces in your VPC and deliver log files directly to Amazon S3 or CloudWatch Logs.\n\nWhy the other options are wrong:\nA. CloudTrail logs AWS API management calls, not IP network packet traffic.\nC. Route 53 Resolver Query Logs record DNS lookup queries, not general IP flow traffic.\nD. EC2 System Logs capture OS boot logs and console output, not network interface IP flows.\n\nExam trigger:\nCapture IP traffic flowing through VPC network interfaces.\n\nExam trap:\nSelecting CloudTrail for network traffic packet analysis.\n\nMemory hook:\nVPC Flow Logs = Network Interface IP Traffic Capture."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-61",
+      "topic_id": "topic-control-tower"
+    },
+    {
+      "question_id": "q-saa-61",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-62",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-63",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-63",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-64",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-64",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-65",
+      "topic_id": "topic-nacl"
+    },
+    {
+      "question_id": "q-saa-65",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-66",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-66",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-67",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-67",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-68",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-68",
+      "topic_id": "topic-shield"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-70",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-70",
+      "topic_id": "topic-vpc"
+    }
+  ]
+}

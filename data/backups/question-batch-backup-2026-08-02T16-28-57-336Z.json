@@ -1,0 +1,293 @@
+{
+  "createdAt": "2026-08-02T16:28:57.336Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-31",
+    "q-saa-32",
+    "q-saa-33",
+    "q-saa-34",
+    "q-saa-35",
+    "q-saa-36",
+    "q-saa-37",
+    "q-saa-38",
+    "q-saa-39",
+    "q-saa-40"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-31",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A web application runs in an Auto Scaling group and stores frequently accessed user-session data in an RDS PostgreSQL database. Repeated session reads are causing high database CPU utilisation. The application needs shared session access with very low-latency, in-memory performance. Which solution best meets the requirement?",
+      "option_a": "Create an RDS read replica and direct all session reads to the replica.",
+      "option_b": "Store the session data in an ElastiCache for Redis cluster.",
+      "option_c": "Deploy RDS Proxy between the application and the database.",
+      "option_d": "Scale the primary RDS instance to a larger instance class.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Store the session data in an ElastiCache for Redis cluster.\n\nRedis provides a shared in-memory data store suitable for session information. Retrieving sessions from Redis removes repeated reads from PostgreSQL and gives all Auto Scaling instances access to the same low-latency session data.\n\nWhy the other options are wrong:\nA. A read replica could offload database reads, but it remains a database solution with replication considerations and does not provide the same in-memory session performance.\nC. RDS Proxy pools and manages database connections. It does not cache query results or session values.\nD. Vertical scaling increases database capacity but does not eliminate the repeated session reads.\n\nExam trigger:\nShared sessions, Auto Scaling instances, repeated database reads, and very low latency.\n\nExam trap:\nRDS Proxy solves connection pressure. Redis solves repeated data retrieval.\n\nMemory hook:\nShared web sessions belong in Redis."
+    },
+    {
+      "id": "q-saa-32",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company operates hundreds of EC2 instances in private subnets across multiple AWS accounts managed by AWS Organizations. The Security team requires centralized inspection of all outbound internet traffic using AWS Network Firewall. What networking component should be deployed to connect multiple VPCs and accounts cost-effectively?",
+      "option_a": "VPC Peering mesh between every VPC pair.",
+      "option_b": "AWS Transit Gateway.",
+      "option_c": "AWS Global Accelerator.",
+      "option_d": "VPC Gateway Endpoints.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. AWS Transit Gateway provides a managed central routing hub for connecting many VPCs and on-premises networks. It works across AWS accounts and can be shared through AWS Resource Access Manager. The company can route VPC traffic through a centralized inspection VPC containing AWS Network Firewall instead of maintaining a large full-mesh peering design.\n\nWhy the other options are wrong:\nA. A VPC peering mesh requires many individual peering connections and routes. It becomes difficult to operate as the number of VPCs grows, and peering is non-transitive.\nC. AWS Global Accelerator improves availability and performance for internet-facing applications. It does not provide private routing between hundreds of VPCs.\nD. Gateway endpoints provide private access to supported AWS services such as S3 and DynamoDB. They do not interconnect VPCs or provide centralized traffic inspection.\n\nExam trigger:\nMany VPCs, multiple accounts, centralized routing, and centralized inspection point to Transit Gateway.\n\nExam trap:\nVPC peering is suitable for simpler direct connections. It is not a scalable transitive hub.\n\nMemory hook:\nTransit Gateway is the central router for many VPCs."
+    },
+    {
+      "id": "q-saa-33",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An application uses AWS Lambda to process messages from an SQS queue. During peak traffic, thousands of messages are pushed to SQS, triggering high Lambda concurrency. To control costs and prevent downstream relational database overload, what Lambda configuration should be applied?",
+      "option_a": "Set Reserved Concurrency on the Lambda function.",
+      "option_b": "Increase the SQS Visibility Timeout to 24 hours.",
+      "option_c": "Configure Provisioned Concurrency on the Lambda function.",
+      "option_d": "Enable Dead-Letter Queue (DLQ) redrive policy on SQS.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Set reserved concurrency on the Lambda function. Reserved concurrency places a maximum limit on the number of simultaneous executions available to that function.\n\nLimiting concurrency prevents thousands of SQS messages from causing an uncontrolled number of Lambda executions and database connections. Messages that cannot be processed immediately remain in SQS and can be processed when concurrency becomes available.\n\nFor a modern design, maximum concurrency on the SQS event source mapping provides a more targeted way to restrict concurrency from that specific queue. However, it is not one of the answer options, so reserved concurrency is the correct answer here.\n\nWhy the other options are wrong:\nB. Visibility timeout controls how long a received message is hidden from other consumers. It does not limit Lambda concurrency or database connections.\nC. Provisioned concurrency keeps pre-initialized Lambda environments ready to reduce cold starts. It does not provide the required upper concurrency limit and can increase cost.\nD. A dead-letter queue stores messages that repeatedly fail processing. It does not control successful invocation concurrency or protect the database from overload.\n\nExam trigger:\nLambda must be prevented from overwhelming a downstream database or service.\n\nExam trap:\nReserved concurrency controls execution count. Provisioned concurrency reduces cold-start latency.\n\nMemory hook:\nProtect the database by capping Lambda concurrency."
+    },
+    {
+      "id": "q-saa-34",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A media company hosts a high-traffic API on EC2 instances behind an Application Load Balancer. The API receives millions of identical GET requests for trending articles. What change reduces EC2 instance count and lowers compute costs?",
+      "option_a": "Deploy API Gateway in front of ALB with API Caching enabled.",
+      "option_b": "Increase ALB Idle Timeout to 3600 seconds.",
+      "option_c": "Replace ALB with a Network Load Balancer (NLB).",
+      "option_d": "Attach EBS io2 Block Express volumes to EC2 instances.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Deploy an API Gateway REST API in front of the ALB-backed API and enable API caching for the GET method.\n\nAPI Gateway can return cached responses for repeated identical requests instead of forwarding every request to the backend. This reduces calls to the ALB and EC2 instances, lowers backend load, and can reduce the required EC2 capacity. API Gateway caching also improves response latency.\n\nWhy the other options are wrong:\nB. Increasing the ALB idle timeout keeps existing connections open longer. It does not cache responses or prevent identical requests from reaching EC2.\nC. Replacing the ALB with an NLB changes the load-balancing layer but does not cache GET responses or reduce backend processing.\nD. io2 Block Express improves block-storage performance. It does not prevent repeated API requests from reaching the application instances.\n\nExam trigger:\nMillions of identical GET requests, cacheable responses, and excessive backend compute usage.\n\nExam trap:\nA faster load balancer still forwards every request. A cache avoids repeated backend requests.\n\nMemory hook:\nIdentical GET requests should be cached."
+    },
+    {
+      "id": "q-saa-35",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company needs to transfer 50 TB of data daily from on-premises file servers to AWS. The company has a dedicated 10 Gbps AWS Direct Connect location. Which service automates and accelerates online data transfers while preserving file metadata and permissions?",
+      "option_a": "AWS DataSync",
+      "option_b": "AWS Snowcone",
+      "option_c": "Amazon S3 Glacier Select",
+      "option_d": "AWS Migration Hub",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Use AWS DataSync to automate the recurring transfer from the on-premises file servers to AWS across the available network connection.\n\nDataSync is designed for high-speed online data transfers and supports scheduled transfer tasks, incremental copying, integrity verification, encryption in transit, and bandwidth controls. Depending on the source and destination systems, it can preserve metadata such as timestamps, ownership, POSIX permissions, and Windows ACLs.\n\nThe 10 Gbps Direct Connect connection provides sufficient network capacity for a high-volume online transfer, provided the source storage, DataSync agent, destination, and connection can sustain the required throughput.\n\nWhy the other options are wrong:\nB. Snowcone is a small physical edge device. It is not appropriate for automating a recurring 50 TB daily online transfer.\nC. S3 Glacier Select queries selected data from archived objects. It does not transfer files from on-premises storage.\nD. Migration Hub tracks and coordinates migrations. It does not copy files or preserve their metadata and permissions.\n\nExam trigger:\nRecurring online file transfer, Direct Connect, automation, acceleration, metadata, and permission preservation.\n\nExam trap:\nMigration Hub tracks migrations. DataSync moves the data.\n\nMemory hook:\nAutomated online file movement means DataSync."
+    },
+    {
+      "id": "q-saa-36",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An e-commerce company wants to protect web applications against common web exploits (such as SQL injection and cross-site scripting) and layer 7 DDoS attacks. Which service integrates directly with Application Load Balancer and CloudFront to block malicious traffic?",
+      "option_a": "Enable AWS Shield Standard to inspect Layer 7 HTTP requests and block custom SQL injection rules.",
+      "option_b": "Deploy AWS WAF (Web Application Firewall) associated with the Application Load Balancer or CloudFront distribution.",
+      "option_c": "Enable Amazon GuardDuty to automatically block Layer 7 web exploit attempts at the load balancer.",
+      "option_d": "Deploy AWS Firewall Manager to automatically rewrite HTTP request headers and block SQL injection payload patterns.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Associate an AWS WAF web ACL with the Application Load Balancer or CloudFront distribution.\n\nAWS WAF inspects HTTP and HTTPS requests at Layer 7. Rules can detect and block common web exploits such as SQL injection and cross-site scripting. Rate-based rules can also restrict sources that send excessive request volumes. AWS WAF directly supports both Application Load Balancers and CloudFront distributions.\n\nWhy the other options are wrong:\nA. Shield Standard provides automatic protection against common network and transport-layer DDoS attacks. It does not inspect HTTP requests using custom SQL injection rules.\nC. GuardDuty detects suspicious activity using AWS logs and threat intelligence. It does not sit in front of the load balancer and block individual malicious HTTP requests.\nD. Firewall Manager centrally deploys and manages security policies across accounts. AWS WAF supplies the actual Layer 7 request-inspection rules.\n\nExam trigger:\nSQL injection, cross-site scripting, HTTP request inspection, CloudFront, or an Application Load Balancer.\n\nExam trap:\nShield protects against DDoS attacks. AWS WAF inspects and filters application-layer web requests.\n\nMemory hook:\nMalicious web requests mean AWS WAF."
+    },
+    {
+      "id": "q-saa-37",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "multiple",
+      "question_text": "A company is designing a high-availability, fault-tolerant web application running on Amazon EC2 across multiple Availability Zones in a single AWS Region. The application requires an active database that supports multi-AZ synchronous replication and automatic failover, as well as an ingress load balancing solution that performs path routing. Which TWO components should be selected? (Select TWO.)",
+      "option_a": "Application Load Balancer (ALB)",
+      "option_b": "Network Load Balancer (NLB)",
+      "option_c": "Amazon RDS Multi-AZ deployment",
+      "option_d": "Amazon RDS Single-AZ deployment with EBS snapshots",
+      "option_e": "Amazon Route 53 Geolocation Routing",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        2
+      ],
+      "explanation": "Correct answer:\nA. Application Load Balancer (ALB) supports path-based routing and distributes HTTP or HTTPS traffic across EC2 targets in multiple Availability Zones.\n\nC. Amazon RDS Multi-AZ deployment uses synchronous replication to a standby in another Availability Zone and provides automatic failover.\n\nWhy the other options are wrong:\nB. Network Load Balancer operates at Layer 4 and does not provide path-based routing.\n\nD. A Single-AZ RDS database with EBS snapshots does not provide synchronous replication or automatic failover.\n\nE. Route 53 geolocation routing directs users based on location but does not replace the required application load balancer or Multi-AZ database.\n\nExam trigger:\n“Path routing” points to an Application Load Balancer, while “synchronous replication and automatic failover” points to Amazon RDS Multi-AZ.\n\nExam trap:\nAn NLB provides high-performance load balancing, but it cannot route requests based on URL paths.\n\nMemory hook:\nALB routes paths; RDS Multi-AZ protects the database."
+    },
+    {
+      "id": "q-saa-38",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A company requires an enterprise data architecture where sensitive customer PII stored in Amazon S3 is encrypted at rest using keys managed centrally with key access auditing. Additionally, all network traffic between private subnets and S3 must remain inside the AWS network. Which TWO AWS services/features satisfy these requirements? (Select TWO.)",
+      "option_a": "AWS KMS with Customer Managed Keys (CMKs)",
+      "option_b": "VPC Gateway Endpoints for Amazon S3",
+      "option_c": "Internet Gateway (IGW) with Security Groups",
+      "option_d": "Amazon S3 Server-Side Encryption with SSE-S3",
+      "option_e": "AWS Direct Connect Public Virtual Interface",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answer:\nA. AWS KMS with a customer managed key provides centrally controlled encryption keys, key policies, rotation controls, and CloudTrail auditing of KMS operations.\n\nB. An S3 gateway VPC endpoint lets resources in private subnets access Amazon S3 without using an internet gateway or NAT gateway, keeping the traffic on the AWS network.\n\nWhy the other options are wrong:\nC. An internet gateway provides internet connectivity and does not meet the requirement to keep S3 traffic private.\n\nD. SSE-S3 encrypts data at rest, but AWS manages the keys and it does not provide the required customer-managed key controls.\n\nE. A Direct Connect public virtual interface is intended for private connectivity from an on-premises network to public AWS services, not private-subnet access to S3 within the VPC.\n\nExam trigger:\n“Keys managed centrally with key access auditing” points to a customer managed KMS key, while “private subnets” and “remain inside the AWS network” point to an S3 gateway endpoint.\n\nExam trap:\nSSE-S3 provides encryption, but it does not provide customer-controlled keys and key-policy auditing.\n\nMemory hook:\nKMS controls the key; an S3 gateway endpoint controls the private path."
+    },
+    {
+      "id": "q-saa-39",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A solutions architect is configuring a disaster recovery solution for a critical relational database running on Amazon Aurora MySQL. The company mandates low RTO and RPO across a secondary AWS Region 1,000 miles away. Which TWO steps configure this solution? (Select TWO.)",
+      "option_a": "Create an Aurora Global Database with a primary cluster in one Region and a secondary cluster in the disaster recovery Region.",
+      "option_b": "Configure S3 Cross-Region Replication of daily database snapshot exports to the secondary Region.",
+      "option_c": "During an unplanned Regional outage, perform a managed failover to promote the selected secondary cluster to the new primary cluster.",
+      "option_d": "Deploy an AWS Storage Gateway File Gateway in the secondary Region to sync database transaction logs.",
+      "option_e": "Set up an AWS Snowball Edge Storage Optimized appliance to physically transport daily database backups.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        2
+      ],
+      "explanation": "Correct answer:\nA. Aurora Global Database creates a primary Aurora cluster in one AWS Region and a secondary cluster in another Region using low-lag storage-based replication.\n\nC. During an unplanned Regional outage, a managed cross-Region failover promotes the selected secondary cluster to become the new writable primary cluster.\n\nWhy the other options are wrong:\nB. Daily snapshot exports to S3 create a much higher RPO and require a slower restore process, so they do not meet the low RTO and RPO requirements.\n\nD. Storage Gateway File Gateway is for file-based access to Amazon S3 and does not replicate Aurora transaction logs.\n\nE. Snowball Edge is designed for offline bulk data transfer and is unsuitable for continuous low-RPO database disaster recovery.\n\nExam trigger:\n“Critical relational database,” “secondary AWS Region,” and “low RTO and RPO” point to Aurora Global Database with cross-Region failover.\n\nExam trap:\nSnapshots provide backups, but restoring a daily snapshot is much slower and may lose up to a day of data.\n\nMemory hook:\nAurora Global Database replicates across Regions; failover promotes the secondary."
+    },
+    {
+      "id": "q-saa-40",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company needs to secure public web microservices deployed on Amazon EC2 behind an ALB. The security policy mandates blocking malicious bot traffic and SQL injection attempts at Layer 7, enforcing SSL/TLS encryption in transit, and restricting administrative SSH access to a bastion host. Which THREE security controls fulfill these requirements? (Select THREE.)",
+      "option_a": "Deploy AWS WAF associated with the Application Load Balancer.",
+      "option_b": "Configure an HTTPS Listener with an AWS Certificate Manager (ACM) TLS certificate on the ALB.",
+      "option_c": "Restrict inbound SSH (port 22) in worker EC2 Security Groups to the Bastion Security Group ID.",
+      "option_d": "Enable AWS Shield Advanced on the EC2 root volumes.",
+      "option_e": "Create a Network ACL blocking all outbound traffic on port 443.",
+      "option_f": "Attach an Amazon S3 Gateway Endpoint to the Bastion host.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "AWS WAF inspects Layer 7 traffic to block SQL injection and bot attacks, ACM TLS certificates enforce encryption in transit on ALB HTTPS listeners, and Security Group nesting restricts SSH access strictly to the bastion host."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-31",
+      "topic_id": "topic-elasticache"
+    },
+    {
+      "question_id": "q-saa-31",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-32",
+      "topic_id": "topic-transit-gateway"
+    },
+    {
+      "question_id": "q-saa-32",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-33",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-33",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-34",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-34",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-35",
+      "topic_id": "topic-datasync"
+    },
+    {
+      "question_id": "q-saa-35",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-36",
+      "topic_id": "topic-security"
+    },
+    {
+      "question_id": "q-saa-36",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-37",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-37",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-38",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-38",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-38",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-39",
+      "topic_id": "topic-aurora"
+    },
+    {
+      "question_id": "q-saa-39",
+      "topic_id": "topic-disaster-recovery"
+    },
+    {
+      "question_id": "q-saa-40",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-40",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-40",
+      "topic_id": "topic-waf"
+    }
+  ]
+}

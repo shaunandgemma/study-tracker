@@ -1,0 +1,288 @@
+{
+  "createdAt": "2026-08-02T18:13:15.323Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-111",
+    "q-saa-112",
+    "q-saa-113",
+    "q-saa-114",
+    "q-saa-115",
+    "q-saa-116",
+    "q-saa-117",
+    "q-saa-118",
+    "q-saa-119",
+    "q-saa-120"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-111",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company needs to migrate 50 physical and virtual Linux servers from an on-premises data center to EC2 with minimal downtime. The migration tool must continuously replicate block-level disk storage over the internet or Direct Connect and orchestrate non-disruptive cutover testing. Which AWS migration service should be used?",
+      "option_a": "Deploy AWS Application Migration Service (AWS MGN) to perform continuous block-level server replication into AWS with minimal downtime.",
+      "option_b": "Use AWS DataSync to execute scheduled online file system synchronizations of physical server root drives over the internet.",
+      "option_c": "Deploy AWS Database Migration Service (AWS DMS) to replicate server operating system disks and applications into EC2 instances.",
+      "option_d": "Use AWS Snowball Edge Storage Optimized appliances to transport server disk images offline for manual EC2 conversion.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "AWS Application Migration Service (AWS MGN) is the primary AWS service for lift-and-shift migration, executing continuous block-level replication of physical, virtual, or cloud servers into AWS with minimal downtime."
+    },
+    {
+      "id": "q-saa-112",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A Machine Learning training job running on EC2 compute clusters requires parallel, sub-millisecond access to hundreds of terabytes of dataset files stored in Amazon S3. The dataset must be presented as a high-performance POSIX file system capable of hundreds of gigabytes per second throughput. Which FSx file system integrates seamlessly with S3 origins for HPC/ML workloads?",
+      "option_a": "Amazon FSx for Windows File Server",
+      "option_b": "Amazon FSx for Lustre",
+      "option_c": "Amazon FSx for NetApp ONTAP",
+      "option_d": "Amazon FSx for OpenZFS",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon FSx for Lustre is built for high-performance computing (HPC), machine learning, and media processing. It links directly to S3 buckets, presenting S3 objects as local files with sub-millisecond latencies and high throughput."
+    },
+    {
+      "id": "q-saa-113",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A high-performance computing (HPC) simulation requires ultra-low latency network communication between 50 EC2 instances located in the same Availability Zone. The application uses Message Passing Interface (MPI) protocols. Which placement group strategy and network adapter configuration delivers maximum inter-node networking performance?",
+      "option_a": "Deploy instances in a Spread Placement Group using standard Elastic Network Interfaces (ENIs) across distinct hardware racks.",
+      "option_b": "Deploy instances in a Cluster Placement Group and configure Elastic Fabric Adapter (EFA) network interfaces on supporting EC2 instances.",
+      "option_c": "Deploy instances in a Partition Placement Group and route inter-node MPI traffic through a central VPC NAT Gateway.",
+      "option_d": "Deploy an Auto Scaling group across multiple Availability Zones using Elastic Load Balancers for MPI message routing.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Cluster Placement Groups pack instances close together inside a single AZ for low-latency network performance, while Elastic Fabric Adapter (EFA) provides OS-bypass hardware acceleration for HPC and MPI workloads."
+    },
+    {
+      "id": "q-saa-114",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A data analyst needs to run ad-hoc SQL queries on 10 TB of unorganized JSON log files stored in Amazon S3. To optimize query performance and reduce data scanned (lowering query cost), how should the data be converted and structured before querying with Amazon Athena?",
+      "option_a": "Convert JSON files to Apache Parquet or ORC columnar format and partition data in Amazon S3 by date structure (year/month/day).",
+      "option_b": "Retain raw JSON files in Amazon S3 and increase the Amazon Athena service quota concurrency limit.",
+      "option_c": "Import the 10 TB JSON dataset into an Amazon EC2 MySQL database instance using multi-threaded loading scripts.",
+      "option_d": "Store the JSON log dataset in Amazon DynamoDB Standard-IA tables and query items using PartiQL.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Converting files to columnar formats (Parquet/ORC) and partitioning data by date allows Athena to scan only relevant columns and partitions, significantly speeding up queries and reducing scan costs."
+    },
+    {
+      "id": "q-saa-115",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A clickstream analytics application ingests streaming web event logs. The system must transform incoming JSON records in near real-time using an AWS Lambda function and continuously deliver compressed Apache Parquet files directly into an S3 analytics bucket. Which serverless streaming delivery service manages this pipeline?",
+      "option_a": "Amazon SQS FIFO",
+      "option_b": "Amazon Kinesis Data Firehose",
+      "option_c": "AWS DataSync",
+      "option_d": "Amazon Managed Streaming for Apache Kafka (MSK)",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon Kinesis Data Firehose is a fully managed service that streams real-time data into S3, Redshift, or OpenSearch. It supports inline data transformation via Lambda and automatic format conversion to Parquet/ORC."
+    },
+    {
+      "id": "q-saa-116",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A serverless backend uses hundreds of concurrent AWS Lambda functions connecting to an Amazon RDS MySQL database. During traffic surges, database connection limits are exceeded because Lambda opens new DB connections on every cold start. What solution manages connection pooling without changing application logic?",
+      "option_a": "Deploy an Amazon RDS Proxy target group between the AWS Lambda functions and the Amazon RDS MySQL DB instance.",
+      "option_b": "Increase the RDS DB instance parameter max_connections setting to 1,000,000 to accept all concurrent Lambda connections.",
+      "option_c": "Migrate the Amazon RDS MySQL database tables to Amazon DynamoDB Global Tables to eliminate database connection limits.",
+      "option_d": "Enable Amazon S3 Transfer Acceleration on the Lambda function execution environment to accelerate database queries.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Amazon RDS Proxy is a fully managed database proxy that pools and shares relational database connections, protecting databases from exhaustion caused by high-concurrency serverless applications."
+    },
+    {
+      "id": "q-saa-117",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A security operations team requires full-text search indexing and real-time visualization of application access logs. The logs are indexed rapidly for search queries using Kibana dashboards. Which AWS service provides managed full-text search and log analytics?",
+      "option_a": "Amazon Redshift",
+      "option_b": "Amazon OpenSearch Service",
+      "option_c": "Amazon Athena",
+      "option_d": "Amazon QuickSight",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon OpenSearch Service offers managed search and analytics engines for log analytics, full-text search, and real-time application monitoring integrated with OpenSearch Dashboards (Kibana)."
+    },
+    {
+      "id": "q-saa-118",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A data engineering team needs an automated tool to discover schema structures from CSV, JSON, and Parquet files arriving in S3, updating a central metadata catalog used by Athena and EMR. Which service crawls data stores to build metadata catalogs?",
+      "option_a": "AWS Glue Crawler",
+      "option_b": "AWS DataSync Task",
+      "option_c": "Amazon Kinesis Data Streams Agent",
+      "option_d": "AWS Step Functions State Machine",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "AWS Glue Crawlers connect to source data stores (such as S3), determine schema definitions, and populate the AWS Glue Data Catalog with metadata table definitions."
+    },
+    {
+      "id": "q-saa-119",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A global web application needs to execute lightweight HTTP request header rewrites and URL redirects at CloudFront edge locations with sub-millisecond execution times and millions of requests per second. Which edge compute option offers the lowest execution latency and lowest cost for simple header manipulations?",
+      "option_a": "Lambda@Edge (Node.js/Python)",
+      "option_b": "CloudFront Functions (JavaScript)",
+      "option_c": "AWS Lambda in a private VPC subnet",
+      "option_d": "EC2 Micro instances",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "CloudFront Functions is a native edge compute feature built for high-scale, lightweight JavaScript operations (such as header rewrites, URL redirects, and request validation) with sub-millisecond latency at a fraction of Lambda@Edge cost."
+    },
+    {
+      "id": "q-saa-120",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An enterprise is migrating an existing self-managed Apache Kafka messaging cluster to AWS. The solution must provide a managed Apache Kafka broker control plane while preserving compatibility with existing Kafka producer and consumer client APIs, custom topic partitions, and low-latency message streaming. Which AWS service fulfills these requirements?",
+      "option_a": "Amazon Managed Streaming for Apache Kafka (Amazon MSK) to provision managed Kafka clusters compatible with open-source Kafka client APIs.",
+      "option_b": "Amazon Kinesis Data Streams utilizing the Kinesis Producer Library (KPL) to replace Kafka brokers and manage partition scaling automatically.",
+      "option_c": "Amazon SQS FIFO queues with unique message group IDs to deliver strict message ordering and partition management across consumer applications.",
+      "option_d": "Amazon MQ with Apache ActiveMQ message brokers configured in a multi-AZ deployment to support high-throughput message streaming workloads.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Amazon Managed Streaming for Apache Kafka (Amazon MSK) provides a fully managed service that provisions Apache Kafka clusters while maintaining full wire-protocol and API compatibility with open-source Apache Kafka applications and client libraries."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-111",
+      "topic_id": "topic-mgn"
+    },
+    {
+      "question_id": "q-saa-111",
+      "topic_id": "topic-migration"
+    },
+    {
+      "question_id": "q-saa-112",
+      "topic_id": "topic-fsx"
+    },
+    {
+      "question_id": "q-saa-112",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-113",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-113",
+      "topic_id": "topic-efa"
+    },
+    {
+      "question_id": "q-saa-113",
+      "topic_id": "topic-placement-groups"
+    },
+    {
+      "question_id": "q-saa-114",
+      "topic_id": "topic-athena"
+    },
+    {
+      "question_id": "q-saa-114",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-115",
+      "topic_id": "topic-kinesis"
+    },
+    {
+      "question_id": "q-saa-115",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-115",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-116",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-116",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-116",
+      "topic_id": "topic-rds-proxy"
+    },
+    {
+      "question_id": "q-saa-117",
+      "topic_id": "topic-cloudwatch"
+    },
+    {
+      "question_id": "q-saa-117",
+      "topic_id": "topic-opensearch"
+    },
+    {
+      "question_id": "q-saa-118",
+      "topic_id": "topic-athena"
+    },
+    {
+      "question_id": "q-saa-118",
+      "topic_id": "topic-glue"
+    },
+    {
+      "question_id": "q-saa-119",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-119",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-120",
+      "topic_id": "topic-msk"
+    }
+  ]
+}

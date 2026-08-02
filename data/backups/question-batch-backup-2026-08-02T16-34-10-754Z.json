@@ -1,0 +1,282 @@
+{
+  "createdAt": "2026-08-02T16:34:10.754Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-41",
+    "q-saa-42",
+    "q-saa-43",
+    "q-saa-44",
+    "q-saa-45",
+    "q-saa-46",
+    "q-saa-47",
+    "q-saa-48",
+    "q-saa-49",
+    "q-saa-50"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-41",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A solutions architect is designing an event-driven order processing system for an e-commerce platform. Order submissions via a REST API must be fanned out independently to inventory, billing, and shipping processing systems. Messages belonging to the same order stream must be processed in order by every downstream system. Which THREE components build this architecture? (Select THREE.)",
+      "option_a": "Amazon API Gateway to receive HTTP order submissions.",
+      "option_b": "An Amazon SNS FIFO topic with message ordering enabled.",
+      "option_c": "Separate Amazon SQS FIFO queues subscribed to the SNS FIFO topic for inventory, billing, and shipping processing systems.",
+      "option_d": "Standard Amazon SQS queues subscribed directly to an Amazon SNS Standard topic.",
+      "option_e": "Amazon EC2 Dedicated Hosts running custom queue polling worker scripts.",
+      "option_f": "Amazon EBS gp3 volumes in Multi-Attach mode to buffer incoming HTTP order payloads.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct answer:\nAPI Gateway receives HTTP order submissions, an SNS FIFO topic provides ordered message fan-out, and separate SQS FIFO queue subscriptions allow inventory, billing, and shipping systems to consume messages independently. SNS FIFO and the subscribed SQS FIFO queues preserve ordering within each Message Group ID.\n\nWhy the other options are wrong:\nD. Standard SQS queues and SNS Standard topics do not guarantee message ordering within an order stream during fan-out.\nE. EC2 Dedicated Hosts incur heavy fixed hourly costs and require manual server management, violating serverless requirements.\nF. EBS gp3 Multi-Attach allows block storage attachment to multiple EC2 instances in a single AZ, but cannot receive or process HTTP API payloads.\n\nExam trigger:\nOrdered event fan-out to multiple independent downstream systems within each Message Group ID.\n\nExam trap:\nAssuming FIFO services impose one global ordering sequence across unrelated Message Group IDs.\n\nMemory hook:\nSNS FIFO + SQS FIFO Queues = Fan-Out with Ordering per Message Group ID."
+    },
+    {
+      "id": "q-saa-42",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A financial services company processes nightly regulatory reports on Amazon EC2. The workload runs for 3 hours every night. If a node fails, the workload automatically retries from checkpoint files stored in S3. Which EC2 instance purchasing strategy offers the highest cost reduction?",
+      "option_a": "On-Demand Instances",
+      "option_b": "Spot Instances",
+      "option_c": "3-Year Reserved Instances",
+      "option_d": "Dedicated Hosts",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Because the batch processing workload is fault-tolerant and saves checkpoints in S3, EC2 Spot Instances provide the maximum cost discount (up to 90%) compared to On-Demand or Reserved Instances."
+    },
+    {
+      "id": "q-saa-43",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An e-commerce application runs on EC2 instances behind an Application Load Balancer. Images, CSS, and JavaScript files are stored on the instances and account for most network traffic and web-server load. The company wants to remove static-file processing from the EC2 fleet, reduce compute requirements, and improve global delivery. Which solution best meets these requirements?",
+      "option_a": "Move the static assets to Amazon S3 and serve them through a CloudFront distribution with the bucket configured as the origin.",
+      "option_b": "Place a CloudFront distribution in front of the existing Application Load Balancer while continuing to store every static asset on the EC2 instances.",
+      "option_c": "Place AWS Global Accelerator in front of the Application Load Balancer to route users over the AWS global network.",
+      "option_d": "Increase the EC2 instance network bandwidth and enable S3 Transfer Acceleration for application uploads.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Move the static assets to Amazon S3 and serve them through a CloudFront distribution with the bucket configured as the origin.\n\nMoving the static assets to S3 removes their storage and delivery workload from the EC2 fleet. CloudFront then caches those assets close to users and reduces repeated requests to the S3 origin.\n\nWhy the other options are wrong:\nB. CloudFront could cache content from the ALB and reduce some requests, but the EC2 environment would remain the authoritative origin and still manage the static files.\nC. Global Accelerator improves network routing to supported Regional application endpoints. It does not cache static content or remove static-file storage from EC2.\nD. Increasing EC2 capacity treats the load rather than removing it. Transfer Acceleration improves transfers to a specific S3 bucket and is not a shared content cache.\n\nExam trigger:\nStatic assets overload EC2, and the company wants lower compute usage plus global delivery.\n\nExam trap:\nCloudFront with an ALB can reduce requests. CloudFront with S3 also removes static-file responsibility from EC2.\n\nMemory hook:\nPut static files in S3 and deliver them with CloudFront."
+    },
+    {
+      "id": "q-saa-44",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company stores 500 TB of backup archives in Amazon S3 Standard. The archives are accessed once every 2 years for audit purposes. The company wants to minimize long-term storage costs. Retrievals can take up to 12 hours. Which S3 storage class should be configured?",
+      "option_a": "S3 Standard-Infrequent Access (S3 Standard-IA)",
+      "option_b": "S3 Glacier Deep Archive",
+      "option_c": "S3 Intelligent-Tiering",
+      "option_d": "S3 One Zone-IA",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "S3 Glacier Deep Archive is AWS lowest-cost storage tier, designed for long-term retention of audit archives accessed once or twice a year with retrieval times within 12 hours."
+    },
+    {
+      "id": "q-saa-45",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company runs a containerized microservice on Amazon ECS with AWS Fargate. The microservice experiences steady traffic during business hours and minimal traffic on weekends. Which pricing option provides the lowest cost for steady-state Fargate compute workloads?",
+      "option_a": "Fargate Spot",
+      "option_b": "Compute Savings Plans",
+      "option_c": "On-Demand Fargate",
+      "option_d": "EBS Provisioned IOPS",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Compute Savings Plans offer up to 66% discount on AWS Fargate compute usage in exchange for a 1-year or 3-year commitment, ideal for predictable steady-state Fargate workloads."
+    },
+    {
+      "id": "q-saa-46",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company wants to delegate IAM policy creation to junior administrators. However, security governance mandates that junior administrators must not be able to grant full AdministratorAccess or escalate their own privileges. Which IAM feature enforces a maximum permission boundary for roles created by junior admins?",
+      "option_a": "Attach an AWS Organizations SCP that grants junior administrators permission to create roles with only approved permissions.",
+      "option_b": "Require junior administrators to attach a specific IAM Permissions Boundary when creating new IAM roles to limit maximum permissions.",
+      "option_c": "Configure IAM Access Analyzer rules to automatically revoke AdministratorAccess policies attached by junior administrators.",
+      "option_d": "Use AWS Resource Access Manager (RAM) to share restricted IAM policy templates with junior administrator IAM groups.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "IAM Permissions Boundaries establish the maximum permissions an IAM role or user can possess. Mandating that junior admins attach a Permissions Boundary when creating roles prevents privilege escalation, even if over-permissive IAM policies are subsequently attached."
+    },
+    {
+      "id": "q-saa-47",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An application deployed on EC2 instances in a private subnet connects to an Amazon RDS PostgreSQL database. The security team mandates that database credentials must be rotated automatically every 30 days without application downtime. Which solution fulfills this requirement with the LEAST operational effort?",
+      "option_a": "Store credentials in AWS Systems Manager Parameter Store and write an AWS Lambda function to rotate keys on an EventBridge schedule.",
+      "option_b": "Store credentials in AWS Secrets Manager and enable automatic rotation using the built-in Secrets Manager rotation Lambda template for RDS PostgreSQL.",
+      "option_c": "Encrypt credentials in a configuration file on the EC2 instance using AWS KMS and update the file manually every month.",
+      "option_d": "Store credentials in an Amazon S3 bucket encrypted with SSE-KMS and trigger a quarterly manual update script.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "AWS Secrets Manager natively integrates with Amazon RDS to manage and automatically rotate database credentials using pre-built Lambda templates without requiring custom code."
+    },
+    {
+      "id": "q-saa-48",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A mobile application requires user registration, login via social identity providers (Google and Facebook), and temporary AWS credentials so authenticated users can upload photos directly to an Amazon S3 bucket. Which combination of Amazon Cognito features should be used?",
+      "option_a": "Use Amazon Cognito User Pools for user authentication and Cognito Identity Pools (Federated Identities) for temporary scoped AWS IAM credentials.",
+      "option_b": "Use Amazon Cognito User Pools only, configured with direct IAM policy attachments for S3 bucket access.",
+      "option_c": "Use Amazon Cognito Identity Pools only, backed by static IAM user access keys stored in the mobile application code.",
+      "option_d": "Use AWS IAM Identity Center integrated with Amazon CloudFront to authenticate mobile users for S3 access.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Amazon Cognito User Pools handle user sign-up, sign-in, and social federation. Cognito Identity Pools exchange the user authentication token for temporary, scoped AWS IAM credentials allowing direct S3 uploads."
+    },
+    {
+      "id": "q-saa-49",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A health insurance company stores millions of medical records and customer identity documents in Amazon S3 buckets. The compliance officer needs automated alerts whenever Personally Identifiable Information (PII) or unencrypted sensitive data is detected in S3. Which service provides automated machine learning discovery of sensitive data in S3?",
+      "option_a": "Amazon GuardDuty",
+      "option_b": "Amazon Macie",
+      "option_c": "Amazon Inspector",
+      "option_d": "AWS Security Hub",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon Macie is a fully managed data security and privacy service that uses machine learning and pattern matching to discover and protect sensitive data (such as PII) stored in Amazon S3."
+    },
+    {
+      "id": "q-saa-50",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A security operations team requires continuous threat monitoring across all AWS accounts in an organization. The security service must analyze VPC Flow Logs, AWS CloudTrail management events, and DNS logs to detect compromised EC2 instances, unauthorized cryptocurrency mining, and unusual API activity. Which service meets these criteria with no agent installation?",
+      "option_a": "AWS Inspector",
+      "option_b": "Amazon GuardDuty",
+      "option_c": "AWS Config",
+      "option_d": "AWS WAF",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Amazon GuardDuty is an intelligent threat detection service that continuously monitors VPC Flow Logs, CloudTrail logs, and DNS logs using anomaly detection and threat intelligence without requiring agent software."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-41",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-41",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-41",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-42",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-43",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-43",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-43",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-44",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-45",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-45",
+      "topic_id": "topic-fargate"
+    },
+    {
+      "question_id": "q-saa-46",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-46",
+      "topic_id": "topic-security"
+    },
+    {
+      "question_id": "q-saa-47",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-47",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-48",
+      "topic_id": "topic-cognito"
+    },
+    {
+      "question_id": "q-saa-48",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-49",
+      "topic_id": "topic-macie"
+    },
+    {
+      "question_id": "q-saa-49",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-50",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-50",
+      "topic_id": "topic-guardduty"
+    }
+  ]
+}
