@@ -1,0 +1,268 @@
+{
+  "createdAt": "2026-08-02T14:57:52.198Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-1",
+    "q-saa-2",
+    "q-saa-3",
+    "q-saa-4",
+    "q-saa-5",
+    "q-saa-6",
+    "q-saa-7",
+    "q-saa-8",
+    "q-saa-9",
+    "q-saa-10"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-1",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company runs a three-tier application on Amazon EC2. The web tier automatically scales across multiple subnets. The database tier must accept MySQL connections on TCP port 3306 only from instances belonging to the web tier. Which solution provides the most precise access control with the least ongoing administration?",
+      "option_a": "Allow TCP port 3306 in the database security group from the CIDR blocks of every web-tier subnet.",
+      "option_b": "Allow TCP port 3306 in the database security group with the web-tier security group as the source.",
+      "option_c": "Add a network ACL rule to the database subnets that allows TCP port 3306 from the web-tier subnet CIDR blocks.",
+      "option_d": "Create an automation function that updates the database security group whenever the Auto Scaling group launches or terminates an instance.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Allow TCP port 3306 in the database security group with the web-tier security group as the source.\n\nA security-group rule can reference another security group as its source. Any web instance associated with the referenced security group can connect to the database on port 3306, including new instances launched by Auto Scaling. This avoids maintaining IP addresses or subnet ranges.\n\nWhy the other options are wrong:\nA. Subnet CIDR rules would also trust other resources using those subnets. They are less precise than identifying the web tier by security-group membership.\nC. A network ACL can control subnet traffic, but it is stateless and applies to every resource in the associated subnets. It is not the most precise instance-level control.\nD. Automated IP-rule updates could work, but they add code, permissions, failure handling, and unnecessary operational overhead.\n\nExam trigger:\nA dynamically scaling tier must be trusted by another tier.\n\nExam trap:\nA subnet CIDR may work, but it trusts the entire subnet rather than only the intended application tier.\n\nMemory hook:\nTrust the tier's security group, not its changing addresses."
+    },
+    {
+      "id": "q-saa-10",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A global web application is deployed across AWS US-East and EU-West regions behind Application Load Balancers. The company wants users automatically routed to the region with the lowest network latency, with health checks to redirect traffic if a region becomes unavailable. Which Amazon Route 53 routing policy should be configured?",
+      "option_a": "Configure a Route 53 Weighted Routing Policy with equal weightings assigned to both Application Load Balancers.",
+      "option_b": "Create Route 53 latency alias records for both regional Application Load Balancers and enable Evaluate Target Health on each record.",
+      "option_c": "Configure a Route 53 Geolocation Routing Policy mapping user countries to primary and secondary Application Load Balancers.",
+      "option_d": "Configure a Route 53 Failover Routing Policy with Primary and Secondary records linked to Route 53 Health Checks.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Create latency alias records for both regional Application Load Balancers. Route 53 latency-based routing sends users to the AWS Region that provides the lowest network latency.\n\nEnabling Evaluate Target Health allows Route 53 to stop returning an alias target when the associated load balancer has no healthy targets. Traffic can then be directed to the healthy regional endpoint.\n\nWhy the other options are wrong:\nA. Weighted routing divides traffic according to configured weights. It does not automatically choose the Region with the lowest latency.\nC. Geolocation routing uses the user's geographic location. Geography does not always identify the AWS Region with the lowest network latency.\nD. Failover routing creates an active-passive design. It sends traffic to the secondary endpoint only when the primary becomes unhealthy. It does not actively select the lowest-latency Region.\n\nExam trigger:\nGlobal application, multiple Regions, lowest latency, and health-aware routing.\n\nExam trap:\nDo not confuse latency routing with geolocation routing.\n\nMemory hook:\nLowest network delay means latency routing."
+    },
+    {
+      "id": "q-saa-2",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company requires all data uploaded to Amazon S3 to be encrypted at rest. Key management mandates dictate that encryption keys must be managed in AWS KMS with automatic annual key rotation enabled and CloudTrail auditing for key usage. Which solution satisfies these compliance demands?",
+      "option_a": "Configure SSE-S3 with S3-managed keys, rely on automatic key management, and use CloudTrail data events to audit encrypted object operations.",
+      "option_b": "Configure SSE-KMS with a customer managed AWS KMS key, enable automatic annual rotation, and use CloudTrail to audit key operations.",
+      "option_c": "Configure SSE-KMS with an AWS managed KMS key, rely on its annual rotation, and use CloudTrail to audit key operations.",
+      "option_d": "Configure SSE-KMS with a customer managed AWS KMS key, replace its alias annually, and use CloudTrail to audit key operations.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. SSE-KMS encrypts S3 objects using an AWS KMS key. A customer managed KMS key gives the company control over the key policy, permissions, and automatic rotation settings. AWS KMS supports automatic rotation for customer managed keys, and KMS key usage can be audited through AWS CloudTrail.\n\nWhy the other options are wrong:\nA. SSE-S3 uses keys managed entirely by Amazon S3. It does not meet the requirement for the encryption keys to be managed through AWS KMS.\nC. An AWS managed KMS key is managed by AWS. The company cannot directly configure its rotation settings or key policy in the same way as a customer managed key.\nD. Changing a KMS alias does not rotate the cryptographic key material. An alias is only a friendly name that points to a KMS key.\n\nExam trigger:\nS3 encryption, KMS-controlled permissions, configurable rotation, and CloudTrail auditing point to SSE-KMS with a customer managed key.\n\nExam trap:\nChanging a key alias is not key rotation.\n\nMemory hook:\nCustomer managed KMS key means customer-controlled policy, rotation, and auditing."
+    },
+    {
+      "id": "q-saa-3",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An e-commerce site expects high spike traffic during promotional sales. Orders are placed by web frontend users, but fulfillment processing can be asynchronous. How should the architecture be designed to decouple components and prevent order loss during traffic bursts?",
+      "option_a": "Store incoming orders directly in an EC2 instance ephemeral volume.",
+      "option_b": "Use an Amazon SQS queue to store order messages, and configure backend worker instances to poll the queue.",
+      "option_c": "Deploy an Elastic Load Balancer to synchronously send order requests directly to worker EC2 instances.",
+      "option_d": "Write orders directly to an Amazon S3 bucket with cross-region replication enabled.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Amazon SQS stores order messages durably between the web frontend and backend workers. The frontend can continue accepting orders during traffic spikes even when fulfillment workers cannot process them immediately. Workers poll the queue and process messages at their own rate.\n\nWhy the other options are wrong:\nA. EC2 instance store is temporary storage. Data can be lost if the instance stops, terminates, or fails. It also does not decouple the frontend from the workers.\nC. An Elastic Load Balancer distributes synchronous requests. It does not durably buffer orders when workers are overloaded or unavailable.\nD. Amazon S3 provides durable object storage, but it is not the normal managed message queue for worker polling and asynchronous order processing.\n\nExam trigger:\nTraffic spikes, asynchronous processing, decoupling, and preventing message loss point to Amazon SQS.\n\nExam trap:\nA load balancer distributes requests but does not queue them durably.\n\nMemory hook:\nSQS absorbs the spike while workers process at their own speed."
+    },
+    {
+      "id": "q-saa-4",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An RDS for MySQL database experiences heavy read traffic that is affecting write performance. The application also requires automatic database failover to another Availability Zone. Which solution meets both requirements?",
+      "option_a": "Create RDS Read Replicas and direct read traffic to them, but keep the primary database as a Single-AZ deployment.",
+      "option_b": "Convert the primary database to a Multi-AZ DB instance deployment and create Read Replicas for read traffic.",
+      "option_c": "Convert the database to a Multi-AZ DB instance deployment and direct application read traffic to the standby instance.",
+      "option_d": "Add ElastiCache for Redis for selected queries while keeping the RDS database in a Single-AZ deployment.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Convert the primary database to a Multi-AZ DB instance deployment and create Read Replicas for read traffic.\n\nA traditional Multi-AZ DB instance deployment provides synchronous standby replication and automatic failover. Read Replicas use asynchronous replication and allow read traffic to be offloaded from the primary database. Together, they address both availability and read scaling.\n\nWhy the other options are wrong:\nA. Read Replicas improve read scalability, but a Single-AZ primary does not provide the required automatic Multi-AZ failover.\nC. A traditional Multi-AZ standby provides failover but cannot serve normal application read traffic.\nD. Redis could reduce some reads, but the Single-AZ RDS database would still lack automatic failover.\n\nExam trigger:\nThe scenario separately requires read scaling and high availability.\n\nExam trap:\nMulti-AZ is not the same as a Read Replica.\n\nMemory hook:\nMulti-AZ protects writes. Read Replicas handle reads."
+    },
+    {
+      "id": "q-saa-5",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A company stores millions of images in Amazon S3. Images are accessed frequently for the first 30 days, rarely accessed between 30 and 90 days, and never accessed after 90 days (but must be retained for 7 years for compliance auditing). What is the most cost-effective storage configuration?",
+      "option_a": "Retain all uploaded objects in the S3 Standard storage class for 7 years with default S3 Object Lock governance mode enabled.",
+      "option_b": "Configure an S3 Lifecycle rule to transition objects to S3 Standard-IA at 30 days and to S3 Glacier Deep Archive at 90 days.",
+      "option_c": "Configure an S3 Lifecycle rule to transition objects directly to S3 Glacier Deep Archive immediately upon initial upload.",
+      "option_d": "Configure an S3 Lifecycle rule to transition objects to S3 Glacier Flexible Retrieval at 30 days and delete objects permanently at 90 days.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. The images should remain in S3 Standard while access is frequent. At 30 days, the objects can transition to S3 Standard-IA because they become infrequently accessed. At 90 days, they can transition to S3 Glacier Deep Archive because they are no longer expected to be accessed but must be retained for seven years. S3 Lifecycle automates these transitions.\n\nWhy the other options are wrong:\nA. Keeping every image in S3 Standard for seven years would cost more after the access frequency falls. Object Lock may enforce retention, but it does not optimize the storage class.\nC. Moving objects immediately to Deep Archive would make frequently accessed images expensive and slow to retrieve during their first 90 days.\nD. Deleting the images at 90 days violates the seven-year retention requirement. Glacier Flexible Retrieval is also more expensive than Deep Archive for data that is never expected to be accessed.\n\nExam trigger:\nKnown access phases and a long retention period point to an S3 Lifecycle policy with multiple transitions.\n\nExam trap:\nRetention does not mean the objects must remain in S3 Standard.\n\nMemory hook:\nHot first, infrequent next, archive last."
+    },
+    {
+      "id": "q-saa-6",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A high-frequency trading platform requires sub-millisecond read latency for a key-value database workload handling millions of requests per second. Which database configuration best fulfills this requirement?",
+      "option_a": "Amazon Aurora PostgreSQL with Multi-AZ.",
+      "option_b": "Amazon DynamoDB with DynamoDB Accelerator (DAX) cluster.",
+      "option_c": "Amazon Redshift with materialized views.",
+      "option_d": "Amazon Athena querying data stored in S3 Parquet format.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. DynamoDB provides a managed key-value database that can operate at very large scale. DynamoDB Accelerator is an in-memory cache designed for DynamoDB and can reduce eventually consistent read latency from milliseconds to microseconds. A highly available DAX cluster can scale to support very high request volumes while providing microsecond response times for cached DynamoDB reads.\n\nWhy the other options are wrong:\nA. Aurora PostgreSQL is a relational database. It is not designed to provide DAX-style microsecond cached reads for a massive key-value workload.\nC. Amazon Redshift is a data warehouse for analytical queries. It is not intended for high-frequency transactional key-value requests.\nD. Amazon Athena performs serverless SQL queries against data in S3. Query latency is far too high for a sub-millisecond transactional workload.\n\nExam trigger:\nDynamoDB, read-heavy traffic, millions of requests, and microsecond latency point to DAX.\n\nExam trap:\nDAX accelerates eventually consistent DynamoDB reads. It is not a general-purpose cache for every database.\n\nMemory hook:\nDynamoDB plus microsecond reads equals DAX."
+    },
+    {
+      "id": "q-saa-7",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A financial institution runs batch processing workloads on EC2 for 4 hours every night. The batch tasks are stateless, resilient to interruption, and can be restarted easily. Which pricing model offers the lowest cost?",
+      "option_a": "EC2 On-Demand Instances",
+      "option_b": "EC2 Spot Instances",
+      "option_c": "3-Year Dedicated Host Savings Plan",
+      "option_d": "EC2 Reserved Instances",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. EC2 Spot Instances use spare EC2 capacity at a substantial discount. They are well suited to stateless, fault-tolerant, flexible batch workloads that can restart after interruption. AWS can interrupt Spot capacity, so the application must save progress or rerun failed work.\n\nWhy the other options are wrong:\nA. On-Demand Instances avoid interruption but cost more. The workload does not require uninterrupted capacity.\nC. Dedicated Hosts are intended for dedicated physical servers, licensing requirements, or compliance needs. They are not a low-cost choice for restartable nightly batch jobs.\nD. Reserved Instances require a longer usage commitment and are better for predictable, continuously required baseline capacity. A four-hour interruption-tolerant batch workload is a stronger Spot use case.\n\nExam trigger:\nStateless, restartable, flexible, and interruption-tolerant workloads point to Spot Instances.\n\nExam trap:\nDo not choose Reserved Instances merely because the workload runs on a schedule. Interruption tolerance is the deciding clue.\n\nMemory hook:\nCan stop and restart means consider Spot."
+    },
+    {
+      "id": "q-saa-8",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An application in a private subnet needs to access Amazon S3 buckets securely without exposing traffic over the public internet. Which VPC networking solution should be deployed?",
+      "option_a": "Internet Gateway (IGW)",
+      "option_b": "VPC Gateway Endpoint for S3",
+      "option_c": "NAT Instance in a public subnet",
+      "option_d": "Egress-Only Internet Gateway",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. An S3 gateway endpoint allows resources inside a VPC to access Amazon S3 without using an internet gateway or NAT device. The endpoint adds an S3 prefix-list route to the selected route tables. Traffic remains on the AWS network, and gateway endpoints for S3 do not have an additional hourly endpoint charge.\n\nWhy the other options are wrong:\nA. An internet gateway provides internet connectivity for resources with suitable routing and public addressing. It does not give private-subnet instances private S3 access by itself.\nC. A NAT instance can provide outbound internet access from a private subnet, but it adds cost, administration, and a public network path that is unnecessary for S3.\nD. An egress-only internet gateway is for outbound IPv6 internet access. It is not the standard private connectivity solution for S3.\n\nExam trigger:\nPrivate subnet, Amazon S3, no public internet, and low cost point to an S3 gateway endpoint.\n\nExam trap:\nDo not choose NAT for S3 when a gateway endpoint can provide private access.\n\nMemory hook:\nPrivate S3 access means gateway endpoint."
+    },
+    {
+      "id": "q-saa-9",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An application running on an EC2 instance needs to securely read objects from an Amazon S3 bucket. Access credentials must not be hardcoded inside the application code or stored on disk. Which configuration is the AWS recommended security practice?",
+      "option_a": "Store AWS IAM access keys in a config file on the EC2 instance root volume.",
+      "option_b": "Create an IAM role with S3 read permissions and attach it as an instance profile to the EC2 instance.",
+      "option_c": "Create an IAM user for the EC2 instance and pass AWS_SECRET_ACCESS_KEY via User Data scripts.",
+      "option_d": "Use AWS KMS to encrypt the access keys on the EC2 instance storage.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. An IAM role attached through an EC2 instance profile provides temporary credentials to applications running on the instance. AWS SDKs can retrieve and rotate these credentials automatically through the Instance Metadata Service. This avoids storing long-term access keys in code or on disk.\n\nWhy the other options are wrong:\nA. Storing IAM user access keys in a configuration file creates long-term credentials that can be copied, exposed, or forgotten during rotation.\nC. User Data is not a secure place for secrets. IAM user keys are also long-lived and require manual rotation.\nD. Encrypting access keys with KMS protects the stored copy but still requires the application to manage long-term credentials. The preferred design avoids storing them entirely.\n\nExam trigger:\nAn AWS workload needs AWS API access without hardcoded credentials. Use an IAM role.\n\nExam trap:\nEncrypting static credentials is not as secure or operationally simple as replacing them with temporary role credentials.\n\nMemory hook:\nAWS workload plus AWS access equals IAM role."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-1",
+      "topic_id": "topic-security-groups"
+    },
+    {
+      "question_id": "q-saa-1",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-10",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-10",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-2",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-2",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-3",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-3",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-4",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-5",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-5",
+      "topic_id": "topic-storage"
+    },
+    {
+      "question_id": "q-saa-6",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-7",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-8",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-8",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-9",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-9",
+      "topic_id": "topic-s3"
+    }
+  ]
+}
