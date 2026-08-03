@@ -129,11 +129,8 @@ function validateQuestions(questions) {
         );
     }
 
-    if (questions.length !== EXPECTED_BATCH_SIZE) {
-        throw new Error(
-            `The batch must contain exactly ${EXPECTED_BATCH_SIZE} questions. ` +
-            `Found ${questions.length}.`
-        );
+    if (!Array.isArray(questions) || questions.length === 0) {
+        throw new Error('data/question-import.json must contain a non-empty array of questions.');
     }
 
     const validTopicIds = getValidTopicIds();
@@ -840,7 +837,7 @@ async function runReplacement({ dryRun }) {
 
         if (writesStarted) {
             console.error(
-                'Attempting to restore the 10 original questions from the backup...'
+                `Attempting to restore the ${existingQuestions.length} original questions from the backup...`
             );
 
             try {

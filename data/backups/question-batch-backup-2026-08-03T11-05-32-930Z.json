@@ -1,0 +1,283 @@
+{
+  "createdAt": "2026-08-03T11:05:32.930Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-173",
+    "q-saa-241",
+    "q-saa-99",
+    "q-saa-84",
+    "q-saa-213",
+    "q-saa-194",
+    "q-saa-252",
+    "q-saa-145",
+    "q-saa-259",
+    "q-saa-153"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-145",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company needs a multi-Region disaster-recovery design that protects supported AWS resources with cross-account backup copies, replicates S3 objects to a secondary Region, and automatically directs public users to the secondary Region when the primary endpoint becomes unhealthy. Which THREE components should be used? (Select THREE.)",
+      "option_a": "AWS Backup plans with cross-account and cross-Region copy actions to protected backup vaults",
+      "option_b": "S3 Cross-Region Replication with versioning enabled on source and destination buckets",
+      "option_c": "Route 53 failover routing with health checks",
+      "option_d": "Tape Gateway in one Availability Zone",
+      "option_e": "EC2 instance-store volumes for persistent backups",
+      "option_f": "Transit Gateway inter-Region peering for public DNS failover",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct answers:\nA, B, and C.\n\nA. AWS Backup can automate scheduled recovery points and copy supported backups across Regions and accounts into controlled backup vaults.\n\nB. S3 Cross-Region Replication copies new object versions to a bucket in another Region and requires versioning on both buckets.\n\nC. Route 53 failover routing uses health checks to return the secondary endpoint when the primary is unhealthy.\n\nWhy the other options are wrong:\nD. Tape Gateway is for virtual-tape backup workflows and does not provide the required broad multi-Region architecture.\nE. Instance-store data is ephemeral and unsuitable for durable backup retention.\nF. Transit Gateway peering handles private network routing and does not redirect public DNS clients between Regions.\n\nExam trigger:\nBackups, object replication, and user-traffic failover are separate DR layers.\n\nExam trap:\nNo single service provides all three layers.\n\nMemory hook:\nBackup copies, S3 replication, Route 53 failover."
+    },
+    {
+      "id": "q-saa-153",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A public application behind an Application Load Balancer is targeted by SQL injection attempts and HTTP request floods from individual client IP addresses. The company wants managed request inspection and automatic rate limiting with minimal administration. Which solution should be used?",
+      "option_a": "Associate an AWS WAF web ACL with the ALB and use managed SQL injection rules plus a rate-based rule.",
+      "option_b": "Enable Shield Advanced and inspect POST bodies with custom Lambda@Edge code.",
+      "option_c": "Use GuardDuty findings to add attacking addresses to subnet network ACLs.",
+      "option_d": "Use ALB security groups to enforce a maximum number of HTTP requests per source IP.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS WAF can inspect HTTP and HTTPS requests sent through an ALB. Managed rule groups can detect common injection patterns, while a rate-based rule can count and block excessive requests using an aggregation key such as source IP.\n\nWhy the other options are wrong:\nB. Shield Advanced improves DDoS protection, but Lambda@Edge is not attached to an ALB and custom body-inspection code is unnecessary.\nC. GuardDuty is a detection service and network ACL changes do not inspect application-layer request payloads.\nD. Security groups filter connections by protocol, port, and address. They cannot inspect SQL injection patterns or enforce HTTP request rates.\n\nExam trigger:\nLayer 7 exploit inspection and per-client HTTP rate limiting point to AWS WAF.\n\nExam trap:\nShield addresses DDoS protection; WAF provides configurable web-request inspection.\n\nMemory hook:\nSQL injection plus request floods means WAF."
+    },
+    {
+      "id": "q-saa-173",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A tier-2 application uses EC2 instances in an Auto Scaling group behind an ALB and an RDS for MySQL database. Disaster recovery requires an RTO below 15 minutes and an RPO below 5 minutes, while secondary-Region idle cost must remain lower than a full production deployment. Which strategy is the best fit?",
+      "option_a": "Maintain a scaled-down but fully functional application stack and an active cross-Region database replica in the secondary Region, then scale out during failover.",
+      "option_b": "Replicate only the database and keep the complete application tier stopped until an incident is declared.",
+      "option_c": "Run full production capacity in both Regions and distribute traffic between them continuously.",
+      "option_d": "Copy daily snapshots to the secondary Region and rebuild the environment after a disaster.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. This is warm standby. A complete but reduced-capacity environment is already running in the secondary Region, so it can be promoted and scaled quickly while costing less than full active-active capacity.\n\nWhy the other options are wrong:\nB. This is closer to pilot light. Starting and warming the full application tier during recovery creates more risk against the sub-15-minute RTO.\nC. Multi-site active-active can provide faster recovery but carries the highest steady-state cost and conflicts with the cost objective.\nD. Daily backup and restore cannot meet an RPO below five minutes and is unlikely to meet the required RTO.\n\nExam trigger:\nAggressive recovery targets plus a complete reduced-capacity secondary environment point to warm standby.\n\nExam trap:\nPilot light keeps only the critical core running; warm standby keeps the whole stack running at reduced scale.\n\nMemory hook:\nWarm standby is already working and only needs to scale."
+    },
+    {
+      "id": "q-saa-194",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "Many EC2 instances use gp2 volumes that were enlarged only to obtain more baseline IOPS. The company wants to reduce storage cost, provision IOPS and throughput independently, and change the attached volumes without recreating them. Which action should be taken?",
+      "option_a": "Modify the volumes from gp2 to gp3 by using EBS Elastic Volumes and configure the required performance.",
+      "option_b": "Create io2 volumes from snapshots and replace every attached gp2 volume during an outage.",
+      "option_c": "Use DataSync to copy the volume contents into S3.",
+      "option_d": "Convert every volume to st1, including boot and random-I/O volumes.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. gp3 decouples capacity, IOPS, and throughput, allowing workloads to avoid buying unnecessary storage solely for performance. Elastic Volumes supports modifying eligible attached volumes without recreating them, although applications should monitor the modification and validate performance.\n\nWhy the other options are wrong:\nB. io2 is appropriate when its Provisioned IOPS characteristics are required, but replacing every volume adds cost and operational disruption.\nC. DataSync transfers files and objects; it does not replace an attached block device with equivalent live EBS storage.\nD. st1 is HDD-backed sequential storage, cannot serve as a boot volume, and is unsuitable for random-I/O SSD workloads.\n\nExam trigger:\ngp2 capacity over-provisioning for IOPS points to gp3 and Elastic Volumes.\n\nExam trap:\nChanging EBS type does not require snapshot restoration for supported online modifications.\n\nMemory hook:\ngp3 separates size from performance."
+    },
+    {
+      "id": "q-saa-213",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "Administrators need interactive shell access to EC2 instances in private subnets. The instances must have no public IP addresses, no inbound SSH rule, and no stored SSH keys. Session activity must be logged centrally. Which solution has the least operational overhead?",
+      "option_a": "Use Systems Manager Session Manager and configure session logging to CloudWatch Logs or S3.",
+      "option_b": "Deploy a hardened bastion host in every Availability Zone.",
+      "option_c": "Allow SSH only from the corporate public IP range.",
+      "option_d": "Use Client VPN and continue distributing shared SSH keys.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Session Manager provides shell access through the Systems Manager control channel without opening inbound ports or managing SSH keys. Session logs can be delivered centrally to CloudWatch Logs or S3 when logging is configured.\n\nWhy the other options are wrong:\nB. Bastion hosts require patching, scaling, monitoring, and key management.\nC. This still requires public reachability and an inbound SSH rule.\nD. Client VPN provides network connectivity but does not remove SSH-key administration or supply session-command logging by itself.\n\nExam trigger:\nPrivate-instance administration without port 22 or SSH keys points to Session Manager.\n\nExam trap:\nSession Manager still requires the instance to be managed by Systems Manager and to reach the required service endpoints.\n\nMemory hook:\nNo SSH port means Session Manager."
+    },
+    {
+      "id": "q-saa-241",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An API Gateway REST API receives many identical GET requests. Each cache miss invokes Lambda functions or HTTP backends that query databases, but responses can be reused for several minutes. The company wants to reduce backend invocations without changing backend code. Which solution has the least operational overhead?",
+      "option_a": "Enable an API Gateway cache for the stage and configure caching and TTL settings for the applicable methods.",
+      "option_b": "Increase the capacity of every backend Auto Scaling group.",
+      "option_c": "Attach EBS volumes to the Lambda functions and store responses on the volumes.",
+      "option_d": "Use Route 53 weighted records to distribute identical requests among API endpoints.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. API Gateway REST API caching stores responses in a managed stage cache. Matching requests can be served from the cache until the configured TTL expires, reducing repeated Lambda, HTTP-backend, and database work without modifying the backend implementation.\n\nWhy the other options are wrong:\nB. Additional backend capacity may increase throughput but still processes every request and can increase cost.\nC. Lambda functions cannot attach EBS volumes, and EBS is not a managed API response cache.\nD. Route 53 controls DNS routing and does not cache HTTP responses or eliminate backend requests.\n\nExam trigger:\nRepeated cacheable REST API requests are creating avoidable backend executions.\n\nExam trap:\nAPI Gateway stage caching applies to REST APIs; it is not the same feature set as an API Gateway HTTP API.\n\nMemory hook:\nCache at the API stage to avoid repeating backend work."
+    },
+    {
+      "id": "q-saa-252",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A management account in AWS Organizations must report monthly cloud costs by business unit. Resources already use a BusinessUnit tag, but some shared accounts must be assigned through account-based rules rather than resource tags. The categories must be available in Cost Explorer and AWS Budgets. Which TWO actions meet the requirements? (Select TWO.)",
+      "option_a": "Activate the BusinessUnit user-defined tag as a cost allocation tag in Billing and Cost Management.",
+      "option_b": "Create AWS Cost Categories with rules that group costs by activated tag values and linked accounts.",
+      "option_c": "Create CloudWatch metric filters for every BusinessUnit tag value.",
+      "option_d": "Attach an SCP that assigns a billing category to each member account.",
+      "option_e": "Create separate AWS Budgets without enabling any cost-allocation dimensions.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. A user-defined resource tag must be activated as a cost allocation tag before it can be used as a billing dimension in cost-management tools.\n\nB. Cost Categories can apply rules that group charges by dimensions such as cost allocation tags and linked accounts. The resulting categories can then be used in tools including Cost Explorer and AWS Budgets.\n\nWhy the other options are wrong:\nC. CloudWatch metric filters analyse log events and do not classify AWS billing line items.\nD. SCPs restrict permissions and cannot assign charges to financial categories.\nE. Budgets can monitor selected dimensions, but they do not create the underlying cost-allocation classification required by the scenario.\n\nExam trigger:\nCosts must be grouped using both resource tags and account-level business rules.\n\nExam trap:\nApplying a tag to a resource is not enough; the tag must be activated for cost allocation.\n\nMemory hook:\nActivate tags, then organise them with Cost Categories."
+    },
+    {
+      "id": "q-saa-259",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An enterprise needs the most granular recurring billing dataset for custom SQL analysis in Amazon Athena. The dataset must include line-item costs, usage, resource identifiers where supported, activated cost allocation tags, Savings Plans details, and Cost Categories. Which solution should be configured?",
+      "option_a": "Create an AWS Data Export for Cost and Usage Report 2.0 to Amazon S3 and query the exported data with Athena.",
+      "option_b": "Export a Cost Explorer chart manually as a CSV file at the end of every month.",
+      "option_c": "Publish the CloudWatch EstimatedCharges metric to an S3 bucket through a metric stream.",
+      "option_d": "Create an AWS Budget for each service and combine the notification emails.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Cost and Usage Report 2.0 through AWS Data Exports provides detailed recurring billing and usage data suitable for downstream analytics. The export can include resource-level information where supported, cost allocation tags, Cost Categories, and commitment-related billing details, and can be stored in S3 for Athena queries.\n\nWhy the other options are wrong:\nB. A manually exported Cost Explorer report is less granular, is not an automated billing data pipeline, and does not provide the complete line-item dataset.\nC. EstimatedCharges is an aggregated billing metric rather than detailed cost-and-usage records.\nD. Budgets monitor thresholds and send alerts; they do not produce a detailed analytical billing dataset.\n\nExam trigger:\nGranular line items, tags, resource IDs, commitment details, S3, and Athena point to CUR 2.0 through Data Exports.\n\nExam trap:\nCost Explorer is for interactive analysis; the Cost and Usage Report is the detailed billing data source.\n\nMemory hook:\nDeep billing analysis starts with CUR data in S3."
+    },
+    {
+      "id": "q-saa-84",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An SQS consumer repeatedly receives one malformed message. Each processing attempt fails, the visibility timeout expires, and the message returns to the source queue. The application must move the message aside after five receives so valid messages can continue processing. Which configuration should be used?",
+      "option_a": "Set the source queue visibility timeout to 12 hours.",
+      "option_b": "Configure a dead-letter queue and set the source queue redrive policy maxReceiveCount to 5.",
+      "option_c": "Set the source queue delivery delay to 15 minutes.",
+      "option_d": "Reduce the source queue message-retention period to five minutes.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. A dead-letter queue isolates messages that cannot be processed successfully. The redrive policy's maxReceiveCount controls how many receives are allowed before SQS moves the message from the source queue to the DLQ.\n\nWhy the other options are wrong:\nA. A longer visibility timeout delays the next attempt but does not isolate the poison message after a defined number of failures.\nC. Delivery delay postpones the first delivery of messages and is not a failure-isolation mechanism.\nD. A shorter retention period can cause messages to expire and be lost rather than retained for investigation.\n\nExam trigger:\nA poison message fails repeatedly and must be isolated after a fixed number of receives.\n\nExam trap:\nVisibility timeout controls retry timing; a DLQ controls failure isolation.\n\nMemory hook:\nRepeated failure plus maxReceiveCount means DLQ."
+    },
+    {
+      "id": "q-saa-99",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company uses one AWS Direct Connect connection as its preferred hybrid path. It needs an inexpensive backup that automatically carries traffic if the Direct Connect connection fails, while Direct Connect remains preferred during normal operation. Which design meets the requirement?",
+      "option_a": "Order a second higher-capacity Direct Connect connection and configure equal-cost multipath routing across both connections.",
+      "option_b": "Create an AWS Site-to-Site VPN over the internet and use BGP path selection so Direct Connect is preferred until it becomes unavailable.",
+      "option_c": "Create a Transit Gateway peering attachment to the on-premises network and configure static routes.",
+      "option_d": "Use AWS Client VPN from the on-premises routers as an automated site-level backup.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. An AWS Site-to-Site VPN provides a cost-effective backup path over the public internet. With dynamic routing, BGP attributes can keep the Direct Connect path preferred during normal operation and allow the VPN route to take over if Direct Connect fails.\n\nWhy the other options are wrong:\nA. A second Direct Connect connection at another location can provide stronger physical resilience, but it is not the lowest-cost backup option requested.\nC. Transit Gateway peering connects Transit Gateways to each other; it does not create a direct on-premises backup path by itself.\nD. Client VPN is intended for individual client devices, not redundant site-to-site connectivity for routers.\n\nExam trigger:\nLow-cost automatic backup for Direct Connect points to Site-to-Site VPN with BGP.\n\nExam trap:\nA second Direct Connect is more resilient but usually not the most cost-effective backup.\n\nMemory hook:\nDirect Connect primary, VPN backup."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-route53"
+    },
+    {
+      "question_id": "q-saa-145",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-153",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-153",
+      "topic_id": "topic-waf"
+    },
+    {
+      "question_id": "q-saa-173",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-173",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-194",
+      "topic_id": "topic-ebs"
+    },
+    {
+      "question_id": "q-saa-194",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-213",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-213",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-241",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-252",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-252",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-252",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-259",
+      "topic_id": "topic-athena"
+    },
+    {
+      "question_id": "q-saa-259",
+      "topic_id": "topic-cost-explorer"
+    },
+    {
+      "question_id": "q-saa-259",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-84",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-99",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-99",
+      "topic_id": "topic-vpn"
+    }
+  ]
+}

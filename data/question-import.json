@@ -1,217 +1,132 @@
 [
   {
-    "id": "q-saa-94",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A production account stores compliance logs in an S3 bucket. Every new object must be replicated automatically to a bucket owned by a separate audit account in the same AWS Region. The audit copy must remain independently owned and managed. Which S3 capability should be configured?",
-    "options": [
-      "Configure Cross-Region Replication to a bucket in the audit account and enable destination ownership.",
-      "Configure Same-Region Replication to the audit-account bucket and set the destination to bucket-owner-enforced ownership.",
-      "Use S3 Transfer Acceleration to copy each object into a bucket owned by the audit account.",
-      "Use an S3 Lifecycle rule to transition each object into a storage class managed by the audit account."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. S3 Same-Region Replication automatically replicates new objects between buckets in the same Region and supports cross-account destinations. Configuring the audit destination with bucket-owner-enforced Object Ownership makes the audit account own the replicated objects and manage them independently.\n\nWhy the other options are wrong:\nA. Cross-Region Replication requires the destination bucket to be in a different Region.\nC. Transfer Acceleration improves transfer performance but does not create replicas.\nD. Lifecycle transitions change an object's storage class and do not create an independently owned cross-account copy.\n\nExam trigger:\nAutomatic cross-account replication within one Region, with the destination account owning the audit copies.\n\nExam trap:\nCross-account replication does not automatically change replica ownership unless destination ownership is configured.\n\nMemory hook:\nSame Region uses SRR; independent audit ownership needs bucket-owner-enforced ownership.",
-    "topics": [
-      "topic-s3"
-    ]
-  },
-  {
-    "id": "q-saa-96",
+    "id": "q-saa-221",
     "exam_code": "aws-saa-c03",
     "difficulty": "Hard",
-    "type": "single",
-    "question": "A company exposes a latency-sensitive TCP service on EC2. External partners require static public IP addresses for firewall allow lists, and the service must scale to very high connection rates across multiple Availability Zones. Which load balancer is the best fit?",
+    "type": "multiple",
+    "question": "A Step Functions Standard Workflow invokes a Lambda function. Named transient errors should be retried a limited number of times with exponential backoff. Validation errors and failures that exhaust all retries must be routed to manual review while preserving the state's original input alongside the error details. Which TWO configurations meet the requirements? (Select TWO.)",
     "options": [
-      "Use an Application Load Balancer with fixed IP addresses assigned through AWS Global Accelerator.",
-      "Use a Network Load Balancer with one Elastic IP address assigned in each enabled Availability Zone.",
-      "Use a Classic Load Balancer with cross-zone load balancing and public IP address preservation.",
-      "Use a Gateway Load Balancer with appliance endpoints deployed across the required Availability Zones."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. A Network Load Balancer operates at Layer 4, supports TCP, handles very high connection volumes with low latency, and can use a static Elastic IP address for each enabled Availability Zone.\n\nWhy the other options are wrong:\nA. An ALB provides Layer 7 HTTP and HTTPS routing and does not provide the same static per-AZ Elastic IP model.\nC. Classic Load Balancer is a previous-generation option and is not the preferred design for high-scale static-IP TCP workloads.\nD. Gateway Load Balancer is designed to deploy and scale virtual network appliances, not to front ordinary application servers for client TCP access.\n\nExam trigger:\nTCP, static IP allow lists, ultra-high scale, and low latency point to NLB.\n\nExam trap:\nStatic IP plus Layer 4 traffic distinguishes NLB from ALB.\n\nMemory hook:\nStatic IP TCP load balancing means NLB.",
-    "topics": [
-      "topic-elb"
-    ]
-  },
-  {
-    "id": "q-saa-235",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A relational application needs a managed in-memory cache that supports replicas, Multi-AZ automatic failover, optional data persistence, and rich data structures such as sorted sets and hashes. Which service is the best fit?",
-    "options": [
-      "Use Amazon ElastiCache for Valkey or Redis OSS with a replication group.",
-      "Use Amazon ElastiCache for Memcached with multiple cache nodes.",
-      "Use DynamoDB Accelerator as a general cache for the relational database.",
-      "Use Amazon OpenSearch Service as the application session and query cache."
+      "Add Retry for the named transient errors and configure IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "Add Catch after the retriers and use ResultPath to merge error details with the original input before review.",
+      "Increase the Lambda timeout and configure unlimited retries for every possible error.",
+      "Use a Choice state before the Lambda task to predict which executions will fail.",
+      "Convert the workflow to Express because Express guarantees successful task completion."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
-      0
+      0,
+      1
     ],
-    "explanation": "Correct answer:\nA. ElastiCache for Valkey or Redis OSS supports replication groups, read replicas, Multi-AZ automatic failover, backup and persistence-related options, and rich data structures such as lists, hashes, and sorted sets.\n\nWhy the other options are wrong:\nB. Memcached provides a distributed cache but does not offer the same native replication, automatic failover, persistence, or rich-data-structure capabilities.\nC. DAX is purpose-built as a DynamoDB-compatible cache rather than a general cache for relational application data.\nD. OpenSearch provides search and analytics indexes, not the simplest managed session and database-query cache.\n\nExam trigger:\nReplicas, failover, persistence options, and rich cache structures point to Valkey or Redis OSS.\n\nExam trap:\nMemcached is simpler and horizontally distributed; Valkey or Redis OSS provides the richer resilient feature set.\n\nMemory hook:\nRich resilient cache means Valkey or Redis.",
+    "explanation": "Correct answers:\nA and B.\n\nA. A Step Functions retrier can match named transient errors and apply bounded exponential backoff through IntervalSeconds, BackoffRate, and MaxAttempts.\n\nB. Catch handles errors that are not retried or that remain after all matching retries are exhausted. Setting ResultPath to a child path, such as $.error, preserves the original input and adds the error details before the workflow moves to manual review.\n\nWhy the other options are wrong:\nC. A longer Lambda timeout does not fix service failures or validation errors, and unlimited retry can create runaway executions and duplicate side effects.\nD. A Choice state evaluates existing data; it cannot predict a runtime exception before the task runs.\nE. Express Workflows do not guarantee task success and are not a replacement for explicit Retry and Catch handling.\n\nExam trigger:\nTransient failures need bounded retry; terminal failures need a catcher that preserves input.\n\nExam trap:\nRetry is evaluated before Catch, and ResultPath determines whether the error replaces or augments the input.\n\nMemory hook:\nRetry what may recover; catch what remains.",
     "topics": [
-      "topic-elasticache"
+      "topic-lambda",
+      "topic-step-functions"
     ]
   },
   {
-    "id": "q-saa-97",
+    "id": "q-saa-80",
     "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
+    "difficulty": "Hard",
     "type": "single",
-    "question": "A public application uses an active-passive design across two AWS Regions. Clients must always use the primary Regional endpoint while it is healthy. If the primary health check fails, DNS responses must automatically direct clients to the secondary endpoint. Which Route 53 policy should be used?",
+    "question": "A company uses Route 53 Application Recovery Controller routing controls for an active-passive multi-Region application. During a primary-Region outage, operators must change routing state through a highly available recovery data plane while safety rules prevent unsafe combinations of routing-control changes. Which architecture provides this capability?",
     "options": [
-      "Use multivalue answer routing with both Regional endpoints and health checks.",
-      "Use failover routing with primary and secondary records associated with health checks.",
-      "Use geolocation routing and map all users to the preferred primary Region.",
-      "Use weighted routing with nearly all traffic sent to the primary endpoint."
+      "Run Route 53 record-change scripts from an EC2 instance in the primary AWS Region.",
+      "Use an ARC routing-control cluster with safety rules and its highly available Regional data-plane endpoints.",
+      "Use S3 Cross-Region Replication events to update the public DNS records automatically.",
+      "Use Transit Gateway inter-Region route changes to redirect public internet clients."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
       1
     ],
-    "explanation": "Correct answer:\nB. Route 53 failover routing supports active-passive DNS. The primary record is returned while healthy, and the secondary record is returned when the primary health check fails.\n\nWhy the other options are wrong:\nA. Multivalue answer routing returns multiple healthy records and is not a strict primary-secondary design.\nC. Geolocation routing selects records according to the user's location rather than primary health status.\nD. Weighted routing divides traffic according to configured percentages and would send traffic to both Regions during normal operation.\n\nExam trigger:\nOne active primary endpoint and one passive secondary endpoint with health-based DNS failover.\n\nExam trap:\nWeighted routing distributes traffic; failover routing switches traffic.\n\nMemory hook:\nActive-passive DNS means Route 53 failover routing.",
+    "explanation": "Correct answer:\nB. Route 53 ARC routing control provides a recovery-oriented data plane for changing routing-control state during an incident. A routing-control cluster exposes highly available Regional endpoints, while safety rules help prevent operators or automation from placing the application into an unsafe routing state.\n\nWhy the other options are wrong:\nA. Running failover scripts from the affected Region creates a dependency on the Region that may be unavailable.\nC. S3 replication events do not provide the managed routing-control and safety-rule system described.\nD. Transit Gateway controls private network routing and does not direct public users between Regional application endpoints.\n\nExam trigger:\nRecovery data plane, routing controls, and safety rules point to Route 53 ARC routing control.\n\nExam trap:\nARC readiness capabilities assess recovery preparedness; routing controls execute the traffic switch.\n\nMemory hook:\nARC routing controls switch traffic; safety rules prevent bad failovers.",
     "topics": [
       "topic-route53"
     ]
   },
   {
-    "id": "q-saa-98",
+    "id": "q-saa-255",
     "exam_code": "aws-saa-c03",
     "difficulty": "Medium",
     "type": "single",
-    "question": "An on-premises router must establish an AWS Site-to-Site VPN directly to one VPC. The design uses two IPsec tunnels and dynamic BGP routing and does not use AWS Transit Gateway. Which AWS-side component terminates the VPN connection?",
+    "question": "A company wants a CloudWatch alarm on its worldwide estimated AWS charges. An administrator enabled billing alerts, but the EstimatedCharges metric is not visible while working in eu-west-2. What should the administrator do?",
     "options": [
-      "Attach an internet gateway to the VPC and terminate both IPsec tunnels on it.",
-      "Attach a virtual private gateway to the VPC and terminate the Site-to-Site VPN there.",
-      "Attach an egress-only internet gateway and use it as the BGP endpoint for the VPN.",
-      "Deploy a NAT gateway in each Availability Zone and terminate one VPN tunnel on each gateway."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. A virtual private gateway attaches to a VPC and can terminate an AWS Site-to-Site VPN connection from an on-premises customer gateway. The managed VPN connection provides two tunnels and can use BGP for dynamic routing.\n\nWhy the other options are wrong:\nA. An internet gateway provides internet connectivity for a VPC and does not terminate Site-to-Site VPN tunnels.\nC. An egress-only internet gateway supports outbound-only IPv6 internet access and is unrelated to IPsec VPN termination.\nD. A NAT gateway translates outbound IPv4 connections and does not terminate VPNs or participate in BGP.\n\nExam trigger:\nDirect Site-to-Site VPN to one VPC without Transit Gateway points to a virtual private gateway.\n\nExam trap:\nThe customer gateway is on premises; the virtual private gateway is the VPC-side endpoint.\n\nMemory hook:\nOne VPC Site-to-Site VPN terminates on a VGW.",
-    "topics": [
-      "topic-vpc",
-      "topic-vpn"
-    ]
-  },
-  {
-    "id": "q-saa-230",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A latency-sensitive transactional database on a Nitro-based EC2 instance requires one EBS volume with 120,000 sustained IOPS, 3,000 MiB/s of throughput, and consistent sub-millisecond storage latency. Which EBS volume type meets the requirements?",
-    "options": [
-      "Use one provisioned io2 Block Express volume.",
-      "Use one provisioned gp3 volume at maximum performance.",
-      "Use one throughput-optimized st1 volume sized for the workload.",
-      "Use one cold HDD sc1 volume sized for the workload."
+      "Switch CloudWatch to US East (N. Virginia) and create the alarm from the billing metric there.",
+      "Create an EstimatedCharges metric in every Region and combine the values with metric math.",
+      "Enable detailed monitoring on every billable resource running in eu-west-2.",
+      "Create the billing alarm in the account's home Region because billing metrics are Regional."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. io2 Block Express on supported Nitro-based instances can provide up to 256,000 IOPS and 4,000 MiB/s per volume and is designed for consistent sub-millisecond latency. It meets all three requirements.\n\nWhy the other options are wrong:\nB. Current gp3 volumes can provide up to 80,000 IOPS and 2,000 MiB/s, so one gp3 volume cannot meet either stated performance figure.\nC. st1 is HDD-backed storage designed for large sequential throughput, not high-IOPS low-latency transactional databases.\nD. sc1 is low-cost cold HDD storage for infrequently accessed sequential workloads.\n\nExam trigger:\nOne volume above gp3 IOPS and throughput limits plus sub-millisecond latency points to io2 Block Express.\n\nExam trap:\nCurrent gp3 limits are higher than the old 16,000-IOPS limit, but this workload still exceeds them.\n\nMemory hook:\nBeyond gp3 with sub-millisecond latency means io2 Block Express.",
+    "explanation": "Correct answer:\nA. CloudWatch billing metric data is stored in US East (N. Virginia). After billing alerts are enabled, the administrator must use that Region to view EstimatedCharges and create the alarm. The metric represents worldwide estimated charges for the applicable account or payer context.\n\nWhy the other options are wrong:\nB. Customers do not create Regional EstimatedCharges metrics and sum them manually.\nC. Detailed monitoring changes EC2 metric frequency and is unrelated to AWS billing metrics.\nD. Billing alarm metrics are not placed in an arbitrary account home Region.\n\nExam trigger:\nEstimatedCharges is enabled but cannot be found in another Region.\n\nExam trap:\nThe monitored charges are global, but the CloudWatch billing metric is published in us-east-1.\n\nMemory hook:\nWorldwide billing metric, us-east-1 alarm.",
     "topics": [
-      "topic-ebs"
+      "topic-cloudwatch"
     ]
   },
   {
-    "id": "q-saa-202",
+    "id": "q-saa-24",
     "exam_code": "aws-saa-c03",
     "difficulty": "Hard",
     "type": "single",
-    "question": "Billing and fulfilment must each receive every order-status event. Events for the same customer must remain ordered, while separate customers can progress independently. Producer retries during the deduplication interval must not create another copy of the same logical event. Which design has the least operational overhead?",
+    "question": "A CloudFront distribution serves the same product image for every viewer. Requests include unique marketing query strings and different User-Agent headers. The origin needs the User-Agent header for logging but does not use either value to choose the image. The current cache key includes both values, producing a low cache-hit ratio. Which configuration improves cache reuse while preserving the required origin logging?",
     "options": [
-      "Publish to an SQS standard queue and have billing and fulfilment compete for each message.",
-      "Use an SNS FIFO topic with separate SQS FIFO subscriptions and customer-based message groups.",
-      "Use one SQS FIFO queue and have billing and fulfilment consume from the same queue.",
-      "Publish to Kinesis Data Streams and make each consumer handle ordering and duplicate producer retries."
-    ],
-    "correctAnswer": 1,
-    "correctAnswers": [
-      1
-    ],
-    "explanation": "Correct answer:\nB. SNS FIFO provides managed fan-out, while each subscribed SQS FIFO queue gives the downstream system its own durable backlog. The customer ID preserves order within that customer's message group, and retries of the same logical event reuse the same deduplication ID during the deduplication interval.\n\nWhy the other options are wrong:\nA. SQS standard queues provide best-effort ordering and can deliver duplicates.\nC. Competing consumers divide the work; they do not deliver every event independently to both systems.\nD. Kinesis can preserve order within a partition, but producer-retry deduplication would require additional application logic.\n\nExam trigger:\nOrdered and deduplicated fan-out to independent consumers points to SNS FIFO and SQS FIFO.\n\nExam trap:\nThe message group ID controls ordering; the deduplication ID identifies repeated sends of one logical event.\n\nMemory hook:\nFIFO topic copies; FIFO queues isolate.",
-    "topics": [
-      "topic-sns",
-      "topic-sqs"
-    ]
-  },
-  {
-    "id": "q-saa-172",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "An enterprise connects its data centre to multiple VPCs attached to an AWS Transit Gateway. It requires a dedicated high-bandwidth primary path and a lower-cost internet-based backup that takes over automatically through BGP when the primary path fails. Which design meets the requirements?",
-    "options": [
-      "Use two Site-to-Site VPN connections to the Transit Gateway and designate one as the primary route.",
-      "Use a Direct Connect public VIF and provision another Direct Connect circuit as the backup path.",
-      "Use a transit VIF through a Direct Connect gateway, plus a BGP Site-to-Site VPN to the same Transit Gateway.",
-      "Use two Direct Connect circuits and omit VPN because BGP cannot fail over between Direct Connect and VPN."
-    ],
-    "correctAnswer": 2,
-    "correctAnswers": [
-      2
-    ],
-    "explanation": "Correct answer:\nC. A transit VIF connects Direct Connect through a Direct Connect gateway to the Transit Gateway, providing the dedicated primary path for multiple attached VPCs. A dynamically routed Site-to-Site VPN to the same Transit Gateway provides a cost-effective internet backup, with BGP attributes keeping Direct Connect preferred during normal operation.\n\nWhy the other options are wrong:\nA. Two VPNs improve internet-path resilience but do not provide the required dedicated primary connection.\nB. A public VIF reaches public AWS services rather than providing the required Transit Gateway private connectivity, and a second circuit is not the lower-cost internet backup requested.\nD. Two Direct Connect circuits can improve resilience but do not provide an internet VPN backup and usually cost more.\n\nExam trigger:\nTransit Gateway, dedicated primary connectivity, and automatic internet backup point to Direct Connect plus Site-to-Site VPN with BGP.\n\nExam trap:\nTransit Gateway connectivity through Direct Connect requires a transit VIF and Direct Connect gateway.\n\nMemory hook:\nDirect Connect primary, VPN backup, BGP chooses the path.",
-    "topics": [
-      "topic-direct-connect",
-      "topic-transit-gateway",
-      "topic-vpn"
-    ]
-  },
-  {
-    "id": "q-saa-175",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Hard",
-    "type": "single",
-    "question": "A company must protect AWS Backup recovery points for EBS, RDS, and DynamoDB against ransomware and malicious administrators. For 365 days, no IAM principal or root user may delete a recovery point or shorten its retention. Which solution provides the strongest protection?",
-    "options": [
-      "Copy recovery points to a dedicated account and apply Backup Vault Lock in compliance mode.",
-      "Encrypt recovery points with a customer managed KMS key and deny deletion through IAM policies.",
-      "Apply Backup Vault Lock in governance mode and permit designated administrators to override retention.",
-      "Keep recovery points in the production account and copy them to another Region with encryption."
+      "Exclude query strings and User-Agent from the cache key, then forward User-Agent with an origin request policy.",
+      "Include User-Agent in the cache key, exclude query strings, and omit an origin request policy.",
+      "Forward all viewer values with an origin request policy and include them automatically in the cache key.",
+      "Enable Origin Shield while retaining the existing cache key with query strings and User-Agent."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. Cross-account backup copies improve isolation from a compromised workload account. After the Vault Lock compliance-mode cooling-off period expires, protected recovery points cannot be deleted and their lifecycle cannot be shortened by users, including root, before retention expires.\n\nWhy the other options are wrong:\nB. IAM and bucket policies can be changed by sufficiently privileged administrators and do not create AWS Backup recovery-point immutability.\nC. Governance mode is designed to permit authorized override and does not satisfy the no-bypass requirement.\nD. Encryption prevents unauthorized reading but does not stop an authorized principal from deleting a recovery point.\n\nExam trigger:\nRoot-resistant immutable AWS backups and ransomware isolation point to cross-account copies plus compliance-mode Vault Lock.\n\nExam trap:\nEncryption protects confidentiality; Vault Lock protects retention and deletion.\n\nMemory hook:\nImmutable recovery points require Vault Lock compliance mode.",
+    "explanation": "Correct answer:\nA. Exclude the marketing query strings and User-Agent header from the cache key because neither changes the returned image. Use a separate origin request policy to forward User-Agent for logging. This allows requests with different viewer values to reuse one cached object while preserving the header required by the origin.\n\nWhy the other options are wrong:\nB. Including User-Agent in the cache key creates separate cache entries for many browser and device values even though the image is identical.\nC. An origin request policy controls values forwarded to the origin but does not automatically require those values to be part of the cache key. Forwarding every viewer value also sends unnecessary data.\nD. Origin Shield adds another caching layer, but unnecessary cache-key variation would continue to create distinct cache entries and avoidable misses.\n\nExam trigger:\nDecide separately which request values change the response and which values merely need to reach the origin.\n\nExam trap:\nA value can be forwarded through an origin request policy without being included in the cache key.\n\nMemory hook:\nCache only by response-changing values; forward logging values separately.",
     "topics": [
-      "topic-aws-backup"
+      "topic-cloudfront"
     ]
   },
   {
-    "id": "q-saa-205",
+    "id": "q-saa-73",
     "exam_code": "aws-saa-c03",
     "difficulty": "Hard",
     "type": "single",
-    "question": "Member-account administrators in production and development OUs must be prevented from stopping CloudTrail, leaving the organization, and using Regional services outside approved Regions. Workload teams should continue receiving normal IAM permissions within those limits. Which control should be applied?",
+    "question": "An S3 bucket must accept PutObject requests only when the caller explicitly specifies SSE-KMS and one approved customer managed KMS key. Bucket default encryption is enabled, but requests that omit either required encryption header must still be rejected. Which bucket-policy design enforces both requirements?",
     "options": [
-      "Use AWS Config rules and remediation actions to identify and reverse prohibited administrator activity.",
-      "Use an SCP with explicit denies to restrict the protected CloudTrail and S3 actions across the required OUs.",
-      "Use permissions boundaries on administrator roles and rely on each account to maintain the boundary assignments.",
-      "Use Security Hub findings and automated remediation to prevent administrators from completing prohibited API calls."
+      "Use separate explicit Deny statements for missing or incorrect encryption-algorithm and approved-KMS-key headers.",
+      "Use one Deny statement that checks only whether the encryption header equals aws:kms.",
+      "Rely on default encryption and deny only requests that explicitly specify another KMS key.",
+      "Use one Deny statement that blocks requests only when both the algorithm and key are incorrect."
     ],
-    "correctAnswer": 1,
+    "correctAnswer": 0,
     "correctAnswers": [
-      1
+      0
     ],
-    "explanation": "Correct answer:\nB. SCPs centrally define the maximum permissions available to principals in affected member accounts. An explicit deny in an applicable SCP overrides allows in identity-based policies, preventing the protected CloudTrail and Amazon S3 actions across the required organizational units.\n\nWhy the other options are wrong:\nA. AWS Config is reactive. It can detect noncompliant changes and trigger remediation after the action occurs, but it does not prevent the API request during authorization.\nC. Permissions boundaries require per-role administration and do not constrain the account root user. They are less suitable than a centrally applied organization-level guardrail.\nD. Security Hub findings are detective rather than preventive. Security Hub aggregates and prioritizes findings but does not directly block prohibited API calls.\n\nExam trigger:\nA central control must override administrator permissions across multiple member accounts.\n\nExam trap:\nSCPs restrict the maximum permissions available but do not grant permissions themselves.\n\nMemory hook:\nOrganization-wide preventive guardrails mean SCPs.",
+    "explanation": "Correct answer:\nA. Two separate explicit Deny checks ensure that violating either requirement causes the upload to fail. One statement enforces the aws:kms algorithm header, and the other enforces the approved KMS key identifier. The policy should also account for missing headers so omission is treated as noncompliance.\n\nWhy the other options are wrong:\nB. Checking only the encryption algorithm would allow a caller to choose an unapproved KMS key.\nC. Default encryption protects stored objects but does not satisfy a requirement that callers explicitly provide the approved encryption headers.\nD. Combining the failures so that both must be wrong can allow a request through when only one requirement is violated.\n\nExam trigger:\nThe request must explicitly specify both SSE-KMS and one exact key.\n\nExam trap:\nDefault encryption encrypts the object; it does not necessarily reject a noncompliant request.\n\nMemory hook:\nDeny a missing or wrong algorithm, and deny a missing or wrong key.",
     "topics": [
-      "topic-cloudtrail",
-      "topic-organizations"
+      "topic-kms",
+      "topic-s3"
+    ]
+  },
+  {
+    "id": "q-saa-253",
+    "exam_code": "aws-saa-c03",
+    "difficulty": "Medium",
+    "type": "single",
+    "question": "A project manager wants an alert before the end of the month when AWS predicts that the project's monthly cost will exceed £8,000. The notification must be delivered to an Amazon SNS topic used by the finance automation workflow. Which solution should be configured?",
+    "options": [
+      "Create a project-filtered cost budget with a forecasted threshold and add the SNS topic as the alert subscriber.",
+      "Create a CloudWatch EstimatedCharges alarm with an eight-hour evaluation period.",
+      "Create a Cost Explorer saved report that invokes SNS when costs exceed £8,000.",
+      "Create a usage budget that counts resources carrying the project tag."
+    ],
+    "correctAnswer": 0,
+    "correctAnswers": [
+      0
+    ],
+    "explanation": "Correct answer:\nA. AWS Budgets supports cost budgets with alerts based on forecasted values. The budget can be filtered to the relevant project dimension and can publish the alert to an authorised Amazon SNS topic.\n\nWhy the other options are wrong:\nB. A CloudWatch billing alarm evaluates the current estimated-charge metric, not a month-end cost forecast for a filtered project.\nC. Cost Explorer analyses cost and usage but does not turn a saved report into a threshold-triggered SNS alarm.\nD. A usage budget tracks service usage units rather than the forecasted monetary cost required here.\n\nExam trigger:\nNotify before month end based on predicted cost for a selected project.\n\nExam trap:\nActual-cost alerts report what has already happened; forecasted budget alerts estimate where the month is heading.\n\nMemory hook:\nFuture overspend warning means a forecasted AWS Budget alert.",
+    "topics": [
+      "topic-budgets"
     ]
   }
 ]

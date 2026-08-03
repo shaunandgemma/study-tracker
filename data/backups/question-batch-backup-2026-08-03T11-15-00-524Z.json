@@ -1,0 +1,157 @@
+{
+  "createdAt": "2026-08-03T11:15:00.524Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-221",
+    "q-saa-80",
+    "q-saa-255",
+    "q-saa-24",
+    "q-saa-73",
+    "q-saa-253"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-221",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A Step Functions Standard Workflow invokes a Lambda function. Named transient errors should be retried a limited number of times with exponential backoff. Validation errors and failures that exhaust all retries must be routed to manual review while preserving the state's original input alongside the error details. Which TWO configurations meet the requirements? (Select TWO.)",
+      "option_a": "Add a Retry field for the transient error names and configure IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "option_b": "Add a Catch field after the retriers and use ResultPath to insert the error into the original state input before routing to review.",
+      "option_c": "Increase the Lambda timeout and retry every error indefinitely.",
+      "option_d": "Use a Choice state before the Lambda task to predict which invocations will fail.",
+      "option_e": "Convert the state machine to an Express Workflow because Express guarantees successful task completion.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. A Step Functions retrier can match named transient errors and apply bounded exponential backoff through IntervalSeconds, BackoffRate, and MaxAttempts.\n\nB. Catch handles errors that are not retried or that remain after all matching retries are exhausted. Setting ResultPath to a child path, such as $.error, preserves the original input and adds the error details before the workflow moves to manual review.\n\nWhy the other options are wrong:\nC. A longer Lambda timeout does not fix service failures or validation errors, and unlimited retry can create runaway executions and duplicate side effects.\nD. A Choice state evaluates existing data; it cannot predict a runtime exception before the task runs.\nE. Express Workflows do not guarantee task success and are not a replacement for explicit Retry and Catch handling.\n\nExam trigger:\nTransient failures need bounded retry; terminal failures need a catcher that preserves input.\n\nExam trap:\nRetry is evaluated before Catch, and ResultPath determines whether the error replaces or augments the input.\n\nMemory hook:\nRetry what may recover; catch what remains."
+    },
+    {
+      "id": "q-saa-24",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A CloudFront distribution serves the same product image for every viewer. Requests include unique marketing query strings and different User-Agent headers. The origin needs the User-Agent header for logging but does not use either value to choose the image. The current cache key includes both values, producing a low cache-hit ratio. Which configuration improves cache reuse while preserving the required origin logging?",
+      "option_a": "Create a cache policy that excludes the query strings and User-Agent header from the cache key, and create an origin request policy that forwards User-Agent to the origin.",
+      "option_b": "Create a cache policy that includes User-Agent but excludes the query strings, and do not configure an origin request policy.",
+      "option_c": "Create an origin request policy that forwards all viewer values and automatically includes those values in the cache key.",
+      "option_d": "Enable Origin Shield and retain the existing cache key containing the query strings and User-Agent header.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Exclude the marketing query strings and User-Agent header from the cache key because neither changes the returned image. Use a separate origin request policy to forward User-Agent for logging. This allows requests with different viewer values to reuse one cached object while preserving the header required by the origin.\n\nWhy the other options are wrong:\nB. Including User-Agent in the cache key creates separate cache entries for many browser and device values even though the image is identical.\nC. An origin request policy controls values forwarded to the origin but does not automatically require those values to be part of the cache key. Forwarding every viewer value also sends unnecessary data.\nD. Origin Shield adds another caching layer, but unnecessary cache-key variation would continue to create distinct cache entries and avoidable misses.\n\nExam trigger:\nDecide separately which request values change the response and which values merely need to reach the origin.\n\nExam trap:\nA value can be forwarded through an origin request policy without being included in the cache key.\n\nMemory hook:\nCache only by response-changing values; forward logging values separately."
+    },
+    {
+      "id": "q-saa-253",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A project manager wants an alert before the end of the month when AWS predicts that the project's monthly cost will exceed £8,000. The notification must be delivered to an Amazon SNS topic used by the finance automation workflow. Which solution should be configured?",
+      "option_a": "Create an AWS cost budget filtered to the project, configure a forecasted-cost threshold, and add the SNS topic as an alert subscriber.",
+      "option_b": "Create a CloudWatch billing alarm on EstimatedCharges with an eight-hour evaluation period.",
+      "option_c": "Create a Cost Explorer saved report and configure it to invoke SNS when the graph crosses £8,000.",
+      "option_d": "Create a usage budget that monitors the number of resources tagged to the project.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS Budgets supports cost budgets with alerts based on forecasted values. The budget can be filtered to the relevant project dimension and can publish the alert to an authorised Amazon SNS topic.\n\nWhy the other options are wrong:\nB. A CloudWatch billing alarm evaluates the current estimated-charge metric, not a month-end cost forecast for a filtered project.\nC. Cost Explorer analyses cost and usage but does not turn a saved report into a threshold-triggered SNS alarm.\nD. A usage budget tracks service usage units rather than the forecasted monetary cost required here.\n\nExam trigger:\nNotify before month end based on predicted cost for a selected project.\n\nExam trap:\nActual-cost alerts report what has already happened; forecasted budget alerts estimate where the month is heading.\n\nMemory hook:\nFuture overspend warning means a forecasted AWS Budget alert."
+    },
+    {
+      "id": "q-saa-255",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A company wants a CloudWatch alarm on its worldwide estimated AWS charges. An administrator enabled billing alerts, but the EstimatedCharges metric is not visible while working in eu-west-2. What should the administrator do?",
+      "option_a": "Switch the CloudWatch console to US East (N. Virginia) and create the alarm from the billing metric there.",
+      "option_b": "Create one EstimatedCharges metric in every Region and combine them with metric math.",
+      "option_c": "Enable detailed monitoring on all billable resources in eu-west-2.",
+      "option_d": "Create the alarm in the account's home Region because billing metrics are Regional.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. CloudWatch billing metric data is stored in US East (N. Virginia). After billing alerts are enabled, the administrator must use that Region to view EstimatedCharges and create the alarm. The metric represents worldwide estimated charges for the applicable account or payer context.\n\nWhy the other options are wrong:\nB. Customers do not create Regional EstimatedCharges metrics and sum them manually.\nC. Detailed monitoring changes EC2 metric frequency and is unrelated to AWS billing metrics.\nD. Billing alarm metrics are not placed in an arbitrary account home Region.\n\nExam trigger:\nEstimatedCharges is enabled but cannot be found in another Region.\n\nExam trap:\nThe monitored charges are global, but the CloudWatch billing metric is published in us-east-1.\n\nMemory hook:\nWorldwide billing metric, us-east-1 alarm."
+    },
+    {
+      "id": "q-saa-73",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An S3 bucket must accept PutObject requests only when the caller explicitly specifies SSE-KMS and one approved customer managed KMS key. Bucket default encryption is enabled, but requests that omit either required encryption header must still be rejected. Which bucket-policy design enforces both requirements?",
+      "option_a": "Use separate explicit Deny statements: use StringNotEquals for the server-side encryption header and ArnNotEqualsIfExists for the KMS key ID header, requiring aws:kms and the approved key ARN.",
+      "option_b": "Use one Deny statement that checks only whether the server-side encryption header equals aws:kms.",
+      "option_c": "Rely on bucket default encryption and deny requests only when a different KMS key is explicitly supplied.",
+      "option_d": "Use one Deny statement with both mismatches combined so the request is denied only when the algorithm and key are both incorrect.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Two separate explicit Deny checks ensure that violating either requirement causes the upload to fail. One statement enforces the aws:kms algorithm header, and the other enforces the approved KMS key identifier. The policy should also account for missing headers so omission is treated as noncompliance.\n\nWhy the other options are wrong:\nB. Checking only the encryption algorithm would allow a caller to choose an unapproved KMS key.\nC. Default encryption protects stored objects but does not satisfy a requirement that callers explicitly provide the approved encryption headers.\nD. Combining the failures so that both must be wrong can allow a request through when only one requirement is violated.\n\nExam trigger:\nThe request must explicitly specify both SSE-KMS and one exact key.\n\nExam trap:\nDefault encryption encrypts the object; it does not necessarily reject a noncompliant request.\n\nMemory hook:\nDeny a missing or wrong algorithm, and deny a missing or wrong key."
+    },
+    {
+      "id": "q-saa-80",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company uses Route 53 Application Recovery Controller routing controls for an active-passive multi-Region application. During a primary-Region outage, operators must change routing state through a highly available recovery data plane while safety rules prevent unsafe combinations of routing-control changes. Which architecture provides this capability?",
+      "option_a": "Run Route 53 record-change scripts from an EC2 instance in the primary Region.",
+      "option_b": "Use an ARC routing-control cluster with routing controls, safety rules, and the cluster's highly available Regional data-plane endpoints.",
+      "option_c": "Use S3 Cross-Region Replication events to update public DNS records automatically.",
+      "option_d": "Use Transit Gateway inter-Region peering route updates to redirect internet clients.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Route 53 ARC routing control provides a recovery-oriented data plane for changing routing-control state during an incident. A routing-control cluster exposes highly available Regional endpoints, while safety rules help prevent operators or automation from placing the application into an unsafe routing state.\n\nWhy the other options are wrong:\nA. Running failover scripts from the affected Region creates a dependency on the Region that may be unavailable.\nC. S3 replication events do not provide the managed routing-control and safety-rule system described.\nD. Transit Gateway controls private network routing and does not direct public users between Regional application endpoints.\n\nExam trigger:\nRecovery data plane, routing controls, and safety rules point to Route 53 ARC routing control.\n\nExam trap:\nARC readiness capabilities assess recovery preparedness; routing controls execute the traffic switch.\n\nMemory hook:\nARC routing controls switch traffic; safety rules prevent bad failovers."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-221",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-221",
+      "topic_id": "topic-step-functions"
+    },
+    {
+      "question_id": "q-saa-24",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-253",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-255",
+      "topic_id": "topic-cloudwatch"
+    },
+    {
+      "question_id": "q-saa-73",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-73",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-80",
+      "topic_id": "topic-route53"
+    }
+  ]
+}

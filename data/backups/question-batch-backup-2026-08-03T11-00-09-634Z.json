@@ -1,0 +1,262 @@
+{
+  "createdAt": "2026-08-03T11:00:09.634Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-46",
+    "q-saa-254",
+    "q-saa-218",
+    "q-saa-227",
+    "q-saa-120",
+    "q-saa-21",
+    "q-saa-217",
+    "q-saa-238",
+    "q-saa-82",
+    "q-saa-222"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-120",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company is migrating a self-managed Apache Kafka platform to AWS. Existing producers and consumers must continue using Kafka APIs and wire protocols, and the team must retain control over topics, partitions, and Kafka configuration while AWS manages the broker infrastructure. Which service should be selected?",
+      "option_a": "Amazon Managed Streaming for Apache Kafka",
+      "option_b": "Amazon Kinesis Data Streams",
+      "option_c": "Amazon SQS FIFO",
+      "option_d": "Amazon MQ for ActiveMQ",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Amazon MSK runs managed Apache Kafka clusters and preserves compatibility with standard Kafka producers, consumers, tools, APIs, and wire protocols. Customers retain Kafka concepts such as topics and partitions while AWS manages broker provisioning and infrastructure operations.\n\nWhy the other options are wrong:\nB. Kinesis Data Streams is an AWS-native streaming service with different APIs and operational concepts from Kafka.\nC. SQS FIFO provides queue-based messaging and ordering within message groups, not Kafka broker compatibility.\nD. Amazon MQ for ActiveMQ supports traditional message-broker protocols but is not an Apache Kafka service.\n\nExam trigger:\nExisting Kafka clients and APIs must continue working on a managed service.\n\nExam trap:\nKinesis is managed streaming, but it is not wire-compatible with Kafka.\n\nMemory hook:\nManaged Kafka without rewriting clients means Amazon MSK."
+    },
+    {
+      "id": "q-saa-21",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company must migrate 150 TB of file data from an on-premises data centre to Amazon S3 within 14 days. Its 10 Mbps internet connection is already heavily used and cannot be upgraded before the deadline. The company is an existing AWS Snowball Edge customer and is eligible to order devices. Which solution meets the deadline with the least disruption to the network?",
+      "option_a": "Deploy AWS DataSync and schedule bandwidth-limited transfers outside business hours until all data reaches Amazon S3.",
+      "option_b": "Order AWS Snowball Edge Storage Optimized devices, copy the data to the devices over the local network, and return them to AWS for import into Amazon S3.",
+      "option_c": "Deploy AWS Storage Gateway File Gateway and allow its local cache to upload the complete dataset asynchronously to Amazon S3.",
+      "option_d": "Enable S3 Transfer Acceleration and perform parallel multipart uploads through the existing internet connection.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Order AWS Snowball Edge Storage Optimized devices, copy the data over the local network, and return the devices to AWS for import into Amazon S3. At 10 Mbps, transferring 150 TB online would take far longer than 14 days even before allowing for protocol overhead or existing network use. Because the company is an eligible existing Snowball Edge customer, an offline transfer avoids consuming the constrained WAN connection and is the practical way to meet the deadline.\n\nWhy the other options are wrong:\nA. DataSync accelerates and automates online transfers, but it cannot overcome the available 10 Mbps bandwidth. Throttling the task would extend the transfer further.\nC. File Gateway provides cached file access backed by Amazon S3, but the initial 150 TB would still need to cross the same limited internet connection.\nD. Transfer Acceleration can improve the network path to S3, but it cannot create additional last-mile bandwidth or make 150 TB transferable over 10 Mbps within two weeks.\n\nExam trigger:\nCompare the data volume and deadline with the available network capacity before choosing an online migration service.\n\nExam trap:\nAcceleration services improve use of an available connection; they do not remove a severe bandwidth limit.\n\nMemory hook:\nWhen the network cannot meet the deadline, move the data offline."
+    },
+    {
+      "id": "q-saa-217",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An application role in Account A must publish only to one SNS topic in Account B without assuming a role in Account B. Which permission model provides least privilege?",
+      "option_a": "Allow sns:Publish on the topic ARN in the role's IAM policy and allow that role in the SNS topic policy.",
+      "option_b": "Create an IAM user in Account B and embed its access keys in the application.",
+      "option_c": "Allow sns:* on all resources in both accounts.",
+      "option_d": "Use an SCP in Account B to grant the role access to the topic.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Direct cross-account publishing requires an identity policy on the caller and a resource policy on the SNS topic that trusts the external role. Both can be restricted to sns:Publish and the exact topic ARN.\n\nWhy the other options are wrong:\nB. Long-term credentials increase risk and operational overhead.\nC. Wildcard permissions violate least privilege.\nD. An SCP cannot grant resource access; it only limits permissions available in organization accounts.\n\nExam trigger:\nDirect cross-account access to a resource that supports a resource policy requires permission on both sides.\n\nExam trap:\nThe caller policy authorizes the request; the topic policy trusts the external caller.\n\nMemory hook:\nCaller allows, topic trusts."
+    },
+    {
+      "id": "q-saa-218",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "multiple",
+      "question_text": "A stateless web tier must run across two Availability Zones, replace unhealthy instances automatically, and scale with unpredictable traffic. Which TWO configurations provide the least operational overhead? (Select TWO.)",
+      "option_a": "Place the instances in an Auto Scaling group spanning both Availability Zones and use target tracking scaling.",
+      "option_b": "Use an Application Load Balancer across both Availability Zones and enable ELB health checks for the Auto Scaling group.",
+      "option_c": "Run a fixed number of instances and replace failures manually.",
+      "option_d": "Use DNS round robin between one large instance in each Availability Zone.",
+      "option_e": "Run in one Availability Zone and copy AMIs to another Region.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. A multi-AZ Auto Scaling group maintains desired capacity, replaces unhealthy instances, and adjusts capacity through target tracking.\n\nB. An ALB distributes requests across healthy targets in both Availability Zones. When ELB health checks are enabled for the Auto Scaling group, failed targets can be replaced automatically.\n\nWhy the other options are wrong:\nC. Fixed capacity and manual replacement do not meet the scaling or self-healing requirements.\nD. DNS round robin lacks target-aware health routing, managed scaling, and automated replacement.\nE. A single-AZ deployment does not tolerate an Availability Zone failure.\n\nExam trigger:\nStateless, variable demand, and multi-AZ self-healing point to Auto Scaling and an ALB.\n\nExam trap:\nThe ALB routes around unhealthy targets; the Auto Scaling group replaces them.\n\nMemory hook:\nALB balances; Auto Scaling heals and grows."
+    },
+    {
+      "id": "q-saa-222",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A worker reads jobs from an SQS standard queue. A worker can crash after receiving a message but before deleting it, and one malformed job can fail repeatedly. The application can safely process a delivered message more than once. Which design is the most resilient?",
+      "option_a": "Set a visibility timeout long enough for normal processing, keep the consumer idempotent, and configure a dead-letter queue with an appropriate maxReceiveCount.",
+      "option_b": "Set the visibility timeout to zero so every message is immediately available to multiple workers.",
+      "option_c": "Set a very short retention period and discard each message after its first failure.",
+      "option_d": "Replace the queue with synchronous calls from the producer to the worker.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. The visibility timeout temporarily hides an in-flight message. If a worker fails before deletion, the message becomes visible for redelivery. Idempotent processing tolerates repeated delivery, and the dead-letter queue isolates messages that repeatedly fail.\n\nWhy the other options are wrong:\nB. A zero visibility timeout permits concurrent processing of the same message and creates unnecessary duplicates.\nC. Discarding a message after one failure can lose recoverable work and provides no investigation path.\nD. Synchronous coupling makes producer availability dependent on the worker and removes durable buffering.\n\nExam trigger:\nAt-least-once delivery, worker failure, and poison-message isolation point to visibility timeout, idempotency, and a DLQ.\n\nExam trap:\nThe visibility timeout is not a processing guarantee; consumers must delete successful messages and remain idempotent.\n\nMemory hook:\nHide while working, retry after failure, quarantine repeated failures."
+    },
+    {
+      "id": "q-saa-227",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "Independent image jobs are processed from an SQS queue. One malformed image repeatedly causes worker failure, but unrelated valid jobs must continue without application-level poison-message handling. Which configuration best meets the requirement?",
+      "option_a": "Configure a dead-letter queue and redrive policy, and use an appropriate visibility timeout while processing each message independently.",
+      "option_b": "Increase the queue retention period and set the visibility timeout to zero.",
+      "option_c": "Place every image job into one FIFO message group.",
+      "option_d": "Use one worker and stop polling the queue after the first failure.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. The visibility timeout hides a message while a worker processes it. After repeated failed receives, the redrive policy moves the poison message to the DLQ so valid independent jobs can continue and the failed item can be investigated separately.\n\nWhy the other options are wrong:\nB. Retention controls how long a message remains in SQS and does not isolate a poison message; zero visibility can cause concurrent duplicates.\nC. One FIFO message group serializes all work and can allow a failing message to block later messages in that group.\nD. A single worker and halted polling create a bottleneck and stop healthy work.\n\nExam trigger:\nOne bad message must be quarantined without blocking independent queue work.\n\nExam trap:\nA DLQ isolates repeated failures; it does not fix the malformed message automatically.\n\nMemory hook:\nQuarantine poison messages; keep good jobs flowing."
+    },
+    {
+      "id": "q-saa-238",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "Latency-sensitive ECS services require customer-selected EC2 instance types with specialised networking capabilities. The platform must scale both the number of application tasks and the EC2 capacity available to place those tasks. Which TWO configurations meet the requirements? (Select TWO.)",
+      "option_a": "Run the ECS service with an EC2 capacity provider backed by an Auto Scaling group containing the required instance types.",
+      "option_b": "Configure ECS Service Auto Scaling for task desired count and capacity-provider managed scaling for the backing Auto Scaling group.",
+      "option_c": "Use Fargate because it allows selection of every underlying EC2 instance type.",
+      "option_d": "Scale only the Application Load Balancer and keep task and cluster capacity fixed.",
+      "option_e": "Use Kubernetes Cluster Autoscaler to add capacity to the ECS cluster.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. An EC2 capacity provider backed by an Auto Scaling group preserves control over the EC2 instance families and networking capabilities used by the ECS cluster.\n\nB. ECS Service Auto Scaling adjusts the service's desired task count. Capacity-provider managed scaling adjusts the backing Auto Scaling group's EC2 capacity so tasks can be placed.\n\nWhy the other options are wrong:\nC. Fargate abstracts the underlying host fleet and does not let the customer choose each EC2 instance type.\nD. Load-balancer capacity management does not create ECS tasks or container instances.\nE. Kubernetes Cluster Autoscaler is intended for Kubernetes clusters and does not manage ECS capacity.\n\nExam trigger:\nECS task scaling plus customer-controlled EC2 host scaling points to Service Auto Scaling and an EC2 capacity provider.\n\nExam trap:\nService Auto Scaling scales tasks; capacity-provider managed scaling supplies hosts.\n\nMemory hook:\nScale tasks with the service and hosts with the capacity provider."
+    },
+    {
+      "id": "q-saa-254",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A sandbox AWS account has a monthly cost budget. When forecasted spending reaches 100% of the budget, the company wants an IAM policy attached automatically to restrict further resource creation. The finance team must not manually approve the response each month. Which configuration meets the requirement?",
+      "option_a": "Configure an AWS Budgets action for the forecasted threshold, select automatic execution, and provide an IAM role that permits the policy action.",
+      "option_b": "Configure an AWS Cost Anomaly Detection monitor to attach the IAM policy whenever an anomaly is detected.",
+      "option_c": "Create a CloudWatch composite alarm that modifies IAM policies when EstimatedCharges enters ALARM.",
+      "option_d": "Create a Cost Explorer rightsizing recommendation and enable automatic remediation.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS Budgets actions can respond when an actual or forecasted budget threshold is reached. The action can apply an IAM policy, and automatic execution removes the need for a person to approve each occurrence. AWS Budgets requires an appropriately trusted role with permission to perform the action.\n\nWhy the other options are wrong:\nB. Cost Anomaly Detection identifies unusual spending patterns but does not provide the described automatic IAM policy budget action.\nC. CloudWatch alarms can invoke supported alarm actions, but they do not natively edit IAM policies as a billing-control mechanism.\nD. Cost Explorer rightsizing recommendations identify potential savings and do not enforce budget thresholds or IAM restrictions.\n\nExam trigger:\nA budget threshold must automatically trigger a cost-control action.\n\nExam trap:\nAWS Budgets alerts only notify; AWS Budgets actions can apply a control automatically or after approval.\n\nMemory hook:\nAlert about spend with Budgets; enforce a response with a budget action."
+    },
+    {
+      "id": "q-saa-46",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Junior administrators are allowed to create IAM roles and attach approved or customer-managed policies. The security team must ensure that no role they create can receive permissions beyond a centrally defined maximum, even if an administrator later attaches an overly permissive identity policy. Which design should be implemented?",
+      "option_a": "Use an AWS Organizations service control policy to grant the junior administrators permission to create only approved roles.",
+      "option_b": "Require every role created by the junior administrators to include a specified IAM permissions boundary, and restrict their role-creation permissions so the boundary cannot be removed or replaced.",
+      "option_c": "Use IAM Access Analyzer to detect roles with excessive permissions and automatically detach their policies.",
+      "option_d": "Store approved IAM policy documents in AWS Resource Access Manager and allow administrators to attach only shared policies.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. A permissions boundary defines the maximum permissions that an IAM user or role can receive from identity-based policies. Requiring a specific boundary during role creation and preventing the administrators from removing or replacing it keeps newly created roles within the centrally defined limit.\n\nWhy the other options are wrong:\nA. SCPs limit permissions available in organization accounts but do not grant permissions or directly ensure that every newly created role has the intended role-specific maximum.\nC. Access Analyzer identifies external access and can help validate policies, but it is not a preventive control that automatically enforces a maximum permission set on each role.\nD. AWS RAM does not distribute IAM managed policies as a mechanism for controlling role permissions.\n\nExam trigger:\nDelegated role creation with a required maximum permission ceiling points to permissions boundaries.\n\nExam trap:\nAn SCP limits an account or organizational unit; a permissions boundary limits a specific IAM principal.\n\nMemory hook:\nDelegated IAM creation needs a permissions boundary ceiling."
+    },
+    {
+      "id": "q-saa-82",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A write-intensive MySQL workload requires automatic failover across three Availability Zones and additional read capacity without creating separate read replicas. The company is comparing an RDS Multi-AZ DB cluster with a traditional Multi-AZ DB instance deployment. Which advantage does the DB cluster provide?",
+      "option_a": "It uses one writer and two readable standby instances and can provide lower write latency than a traditional Multi-AZ DB instance deployment.",
+      "option_b": "It permits active-active writes on all three DB instances and resolves write conflicts automatically.",
+      "option_c": "It synchronously replicates each transaction to two DB instances in separate AWS Regions.",
+      "option_d": "It stores the primary database on instance-store NVMe volumes to avoid network storage latency.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. An RDS Multi-AZ DB cluster has one writer and two readable standby DB instances across three Availability Zones. The design can provide lower write latency than a traditional Multi-AZ DB instance deployment, and the standby instances can serve read traffic.\n\nWhy the other options are wrong:\nB. The cluster has one writer, not active-active writers on all three instances.\nC. Multi-AZ DB clusters operate across Availability Zones in one Region, not synchronously across Regions.\nD. RDS uses managed database storage. The architecture is not based on customer-visible instance-store NVMe persistence.\n\nExam trigger:\nThree Availability Zones, one writer, readable standbys, and lower commit latency point to an RDS Multi-AZ DB cluster.\n\nExam trap:\nReadable standbys do not make the cluster multi-writer.\n\nMemory hook:\nMulti-AZ DB cluster means one writer plus two readable standbys."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-222",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-227",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-238",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-238",
+      "topic_id": "topic-ecs"
+    },
+    {
+      "question_id": "q-saa-82",
+      "topic_id": "topic-rds"
+    },
+    {
+      "question_id": "q-saa-21",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-21",
+      "topic_id": "topic-snow-family"
+    },
+    {
+      "question_id": "q-saa-120",
+      "topic_id": "topic-msk"
+    },
+    {
+      "question_id": "q-saa-254",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-254",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-217",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-217",
+      "topic_id": "topic-sns"
+    },
+    {
+      "question_id": "q-saa-218",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-218",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-46",
+      "topic_id": "topic-iam"
+    }
+  ]
+}

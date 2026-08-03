@@ -440,10 +440,10 @@
     "type": "single",
     "question": "A company must migrate 150 TB of file data from an on-premises data centre to Amazon S3 within 14 days. Its 10 Mbps internet connection is already heavily used and cannot be upgraded before the deadline. The company is an existing AWS Snowball Edge customer and is eligible to order devices. Which solution meets the deadline with the least disruption to the network?",
     "options": [
-      "Deploy AWS DataSync and schedule bandwidth-limited transfers outside business hours until all data reaches Amazon S3.",
-      "Order AWS Snowball Edge Storage Optimized devices, copy the data to the devices over the local network, and return them to AWS for import into Amazon S3.",
-      "Deploy AWS Storage Gateway File Gateway and allow its local cache to upload the complete dataset asynchronously to Amazon S3.",
-      "Enable S3 Transfer Acceleration and perform parallel multipart uploads through the existing internet connection."
+      "Use AWS DataSync with bandwidth limits and schedule transfers outside normal business hours.",
+      "Use Snowball Edge Storage Optimized devices, copy data locally, and return them for S3 import.",
+      "Use Storage Gateway File Gateway and upload the complete dataset through its local cache.",
+      "Use S3 Transfer Acceleration with parallel multipart uploads over the existing internet connection."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -505,10 +505,10 @@
     "type": "single",
     "question": "A CloudFront distribution serves the same product image for every viewer. Requests include unique marketing query strings and different User-Agent headers. The origin needs the User-Agent header for logging but does not use either value to choose the image. The current cache key includes both values, producing a low cache-hit ratio. Which configuration improves cache reuse while preserving the required origin logging?",
     "options": [
-      "Create a cache policy that excludes the query strings and User-Agent header from the cache key, and create an origin request policy that forwards User-Agent to the origin.",
-      "Create a cache policy that includes User-Agent but excludes the query strings, and do not configure an origin request policy.",
-      "Create an origin request policy that forwards all viewer values and automatically includes those values in the cache key.",
-      "Enable Origin Shield and retain the existing cache key containing the query strings and User-Agent header."
+      "Exclude query strings and User-Agent from the cache key, then forward User-Agent with an origin request policy.",
+      "Include User-Agent in the cache key, exclude query strings, and omit an origin request policy.",
+      "Forward all viewer values with an origin request policy and include them automatically in the cache key.",
+      "Enable Origin Shield while retaining the existing cache key with query strings and User-Agent."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -653,10 +653,10 @@
     "type": "single",
     "question": "A web application runs on EC2 instances in an Auto Scaling group. User-session records are stored in an Amazon RDS for PostgreSQL database, and repeated session lookups are driving high database CPU utilisation. Every application instance must access the same session state with sub-millisecond latency. Which solution should a solutions architect recommend?",
     "options": [
-      "Create an RDS read replica and direct all session lookups to the replica endpoint.",
-      "Move the session state to an Amazon ElastiCache for Redis cluster and configure the application instances to read and update sessions there.",
-      "Place Amazon RDS Proxy between the application and the database to pool session queries.",
-      "Increase the RDS DB instance class and enable storage autoscaling."
+      "Create an RDS read replica and send all user-session lookups to the replica endpoint.",
+      "Store session state in ElastiCache for Redis and let every application instance read and update it.",
+      "Place RDS Proxy between the application and database to pool repeated session-query connections.",
+      "Increase the RDS instance class and enable storage autoscaling for additional database capacity."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -675,10 +675,10 @@
     "type": "single",
     "question": "A company operates dozens of VPCs across multiple AWS accounts in AWS Organizations. All outbound internet traffic must pass through a central inspection VPC that contains AWS Network Firewall. The design must support transitive routing and avoid maintaining a full mesh of point-to-point connections. Which architecture should a solutions architect recommend?",
     "options": [
-      "Create VPC peering connections between every application VPC and the inspection VPC, and add routes for transitive forwarding between peers.",
-      "Attach the application VPCs and inspection VPC to an AWS Transit Gateway, enable appliance mode on the inspection VPC attachment, share the transit gateway across accounts, and use route tables to steer egress traffic through the firewall endpoints.",
-      "Place AWS Global Accelerator in front of the inspection VPC and register NAT gateways from each application VPC as endpoints.",
-      "Create interface VPC endpoints for AWS Network Firewall in every application VPC and route internet traffic through the endpoints."
+      "Build VPC peering links from every application VPC to the inspection VPC and configure transitive forwarding.",
+      "Attach all VPCs to a shared Transit Gateway, enable appliance mode, and route egress through Network Firewall.",
+      "Place Global Accelerator before the inspection VPC and register each application VPC NAT gateway as an endpoint.",
+      "Deploy interface endpoints for Network Firewall in every application VPC and route internet traffic through them."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -719,10 +719,10 @@
     "type": "single",
     "question": "A REST API is hosted on EC2 instances behind an Application Load Balancer. Millions of clients repeatedly request the same cacheable article responses, and these requests account for most of the backend CPU usage. The company wants a managed solution that reduces requests reaching the ALB without moving the application. Which solution should a solutions architect recommend?",
     "options": [
-      "Create an Amazon API Gateway REST API with a private integration to the ALB and enable stage caching for the cacheable GET methods.",
-      "Increase the ALB idle timeout so that client connections remain open between repeated requests.",
+      "Place API Gateway before the ALB and enable stage caching for the cacheable GET methods.",
+      "Increase the ALB idle timeout so repeated client connections remain open for longer.",
       "Replace the ALB with a Network Load Balancer to reduce Layer 7 processing overhead.",
-      "Attach larger EBS volumes to the EC2 instances and enable EBS-optimized networking."
+      "Increase EBS capacity and enable EBS optimisation on the EC2 application instances."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -997,10 +997,10 @@
     "type": "single",
     "question": "Junior administrators are allowed to create IAM roles and attach approved or customer-managed policies. The security team must ensure that no role they create can receive permissions beyond a centrally defined maximum, even if an administrator later attaches an overly permissive identity policy. Which design should be implemented?",
     "options": [
-      "Use an AWS Organizations service control policy to grant the junior administrators permission to create only approved roles.",
-      "Require every role created by the junior administrators to include a specified IAM permissions boundary, and restrict their role-creation permissions so the boundary cannot be removed or replaced.",
-      "Use IAM Access Analyzer to detect roles with excessive permissions and automatically detach their policies.",
-      "Store approved IAM policy documents in AWS Resource Access Manager and allow administrators to attach only shared policies."
+      "Use an AWS Organizations service control policy to restrict which IAM roles junior administrators may create.",
+      "Require a specified permissions boundary on every created role and prevent administrators from removing or replacing it.",
+      "Use IAM Access Analyzer to identify excessive role permissions and automatically detach noncompliant policies.",
+      "Store approved IAM policies in AWS Resource Access Manager and allow administrators to attach only shared policies."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -1431,10 +1431,10 @@
     "type": "single",
     "question": "A public API behind an Application Load Balancer receives automated HTTP floods from individual source IP addresses. The security team wants AWS WAF to count requests per source IP during a five-minute evaluation window and block sources that exceed the configured threshold. Which rule type should be used?",
     "options": [
-      "A managed SQL injection rule group",
-      "A rate-based rule with IP as the aggregation key",
-      "A geographic match rule",
-      "An AWS Shield Standard protection rule"
+      "Use a managed SQL injection rule group with a block action.",
+      "Use a rate-based rule with source IP as the aggregation key.",
+      "Use a geographic match rule that blocks selected source countries.",
+      "Use AWS Shield Standard to define a per-client HTTP request threshold."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -1497,10 +1497,10 @@
     "type": "single",
     "question": "A Lambda function in Account A must retrieve one secret directly from AWS Secrets Manager in Account B. The function cannot assume a role in Account B, and the secret must remain a single centrally rotated copy. The secret is encrypted with a customer managed KMS key in Account B. Which configuration is required?",
     "options": [
-      "Allow secretsmanager:GetSecretValue in the Lambda role identity policy, trust the role in the secret resource policy, and allow the role to use the KMS key through the required key and IAM permissions.",
-      "Trust the Lambda role only in the secret resource policy and rely on the AWS managed aws/secretsmanager key for cross-account decryption.",
-      "Create an assumable role in Account B with secret and KMS permissions and have Lambda call sts:AssumeRole.",
-      "Replicate the secret manually into Account A and rotate the two copies independently."
+      "Allow GetSecretValue in the Lambda role, trust the role in the secret policy, and permit KMS decryption.",
+      "Trust the Lambda role only in the secret policy and use the AWS managed Secrets Manager key.",
+      "Create an assumable role in Account B with secret and KMS permissions for the function.",
+      "Replicate the secret into Account A and rotate both copies on the same schedule."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -1564,10 +1564,10 @@
     "type": "single",
     "question": "Administrators must manage EC2 instances in private subnets without public IP addresses, inbound SSH rules, or distributed SSH keys. The company also requires session activity to be logged centrally for audit purposes. Which AWS Systems Manager capability should be used?",
     "options": [
-      "Patch Manager with maintenance windows",
-      "Session Manager with session logging configured",
-      "State Manager associations",
-      "Automation runbooks"
+      "Use Patch Manager with maintenance windows and centralized patch reporting.",
+      "Use Session Manager with centralized session logging enabled.",
+      "Use State Manager associations with scheduled command execution.",
+      "Use Automation runbooks with approval steps for administrative tasks."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -1586,10 +1586,10 @@
     "type": "single",
     "question": "An S3 bucket must accept PutObject requests only when the caller explicitly specifies SSE-KMS and one approved customer managed KMS key. Bucket default encryption is enabled, but requests that omit either required encryption header must still be rejected. Which bucket-policy design enforces both requirements?",
     "options": [
-      "Use separate explicit Deny statements: use StringNotEquals for the server-side encryption header and ArnNotEqualsIfExists for the KMS key ID header, requiring aws:kms and the approved key ARN.",
-      "Use one Deny statement that checks only whether the server-side encryption header equals aws:kms.",
-      "Rely on bucket default encryption and deny requests only when a different KMS key is explicitly supplied.",
-      "Use one Deny statement with both mismatches combined so the request is denied only when the algorithm and key are both incorrect."
+      "Use separate explicit Deny statements for missing or incorrect encryption-algorithm and approved-KMS-key headers.",
+      "Use one Deny statement that checks only whether the encryption header equals aws:kms.",
+      "Rely on default encryption and deny only requests that explicitly specify another KMS key.",
+      "Use one Deny statement that blocks requests only when both the algorithm and key are incorrect."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -1717,10 +1717,10 @@
     "type": "single",
     "question": "A partner-facing API must use mutual TLS so API Gateway validates each caller's X.509 client certificate against a trusted private CA chain. The API uses a Regional custom domain name. Which configuration is required?",
     "options": [
-      "Configure mutual TLS on the API Gateway Regional custom domain, use an ACM certificate for the server side, and reference an Amazon S3 truststore containing the trusted CA certificate chain.",
-      "Attach an AWS WAF web ACL that inspects the TLS client-certificate fields before API Gateway authorisation.",
-      "Place a Network Load Balancer in front of the API Gateway Regional endpoint and pass client certificates through a TCP listener.",
-      "Use a Cognito user pool client-credentials flow and upload the client CA certificate to the user pool."
+      "Enable mutual TLS on the Regional custom domain and reference an S3 truststore containing the trusted CA chain.",
+      "Attach AWS WAF and inspect client-certificate fields before API Gateway performs request authorisation.",
+      "Place a Network Load Balancer before API Gateway and pass client certificates through a TCP listener.",
+      "Use Cognito client credentials and upload the trusted client CA chain into the user pool."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -1738,10 +1738,10 @@
     "type": "single",
     "question": "A company uses Route 53 Application Recovery Controller routing controls for an active-passive multi-Region application. During a primary-Region outage, operators must change routing state through a highly available recovery data plane while safety rules prevent unsafe combinations of routing-control changes. Which architecture provides this capability?",
     "options": [
-      "Run Route 53 record-change scripts from an EC2 instance in the primary Region.",
-      "Use an ARC routing-control cluster with routing controls, safety rules, and the cluster's highly available Regional data-plane endpoints.",
-      "Use S3 Cross-Region Replication events to update public DNS records automatically.",
-      "Use Transit Gateway inter-Region peering route updates to redirect internet clients."
+      "Run Route 53 record-change scripts from an EC2 instance in the primary AWS Region.",
+      "Use an ARC routing-control cluster with safety rules and its highly available Regional data-plane endpoints.",
+      "Use S3 Cross-Region Replication events to update the public DNS records automatically.",
+      "Use Transit Gateway inter-Region route changes to redirect public internet clients."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -1780,10 +1780,10 @@
     "type": "single",
     "question": "A write-intensive MySQL workload requires automatic failover across three Availability Zones and additional read capacity without creating separate read replicas. The company is comparing an RDS Multi-AZ DB cluster with a traditional Multi-AZ DB instance deployment. Which advantage does the DB cluster provide?",
     "options": [
-      "It uses one writer and two readable standby instances and can provide lower write latency than a traditional Multi-AZ DB instance deployment.",
-      "It permits active-active writes on all three DB instances and resolves write conflicts automatically.",
-      "It synchronously replicates each transaction to two DB instances in separate AWS Regions.",
-      "It stores the primary database on instance-store NVMe volumes to avoid network storage latency."
+      "Use one writer and two readable standbys, with lower write latency than a traditional Multi-AZ deployment.",
+      "Use active-active writes on all three DB instances with automatic conflict resolution.",
+      "Synchronously replicate each transaction to two DB instances in separate AWS Regions.",
+      "Store the primary database on instance-store NVMe volumes to avoid network storage latency."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -1822,10 +1822,10 @@
     "type": "single",
     "question": "An SQS consumer repeatedly receives one malformed message. Each processing attempt fails, the visibility timeout expires, and the message returns to the source queue. The application must move the message aside after five receives so valid messages can continue processing. Which configuration should be used?",
     "options": [
-      "Set the source queue visibility timeout to 12 hours.",
-      "Configure a dead-letter queue and set the source queue redrive policy maxReceiveCount to 5.",
-      "Set the source queue delivery delay to 15 minutes.",
-      "Reduce the source queue message-retention period to five minutes."
+      "Set the source queue visibility timeout to 12 hours for every received message.",
+      "Configure a dead-letter queue and set the redrive policy maxReceiveCount to 5.",
+      "Set the source queue delivery delay to 15 minutes for all new messages.",
+      "Reduce the source queue message-retention period to five minutes for failed messages."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -1886,10 +1886,10 @@
     "type": "single",
     "question": "An EC2 Auto Scaling group supports unpredictable flash-sale traffic. CPU utilisation can jump from 20% to 90% within one minute. The company wants severe metric breaches to add substantially more capacity than moderate breaches, while keeping the scaling response based on observed demand. Which policy should be configured?",
     "options": [
-      "A step scaling policy with CloudWatch alarms and different scaling adjustments for multiple breach ranges",
-      "A target tracking policy with a longer instance warm-up time",
-      "Recurring scheduled scaling actions every hour",
-      "Predictive scaling in forecast-only mode"
+      "Use step scaling with CloudWatch alarm ranges that apply progressively larger capacity adjustments.",
+      "Use target tracking with a lower utilisation target and a longer instance warm-up period.",
+      "Use recurring scheduled actions that add different capacity amounts throughout each business day.",
+      "Use predictive scaling in forecast-only mode and apply the recommendations through manual changes."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2143,9 +2143,9 @@
     "type": "single",
     "question": "A company uses one AWS Direct Connect connection as its preferred hybrid path. It needs an inexpensive backup that automatically carries traffic if the Direct Connect connection fails, while Direct Connect remains preferred during normal operation. Which design meets the requirement?",
     "options": [
-      "Order a second higher-capacity Direct Connect connection and configure equal-cost multipath routing across both connections.",
-      "Create an AWS Site-to-Site VPN over the internet and use BGP path selection so Direct Connect is preferred until it becomes unavailable.",
-      "Create a Transit Gateway peering attachment to the on-premises network and configure static routes.",
+      "Order another Direct Connect connection and configure equal-cost multipath routing across both links.",
+      "Use a Site-to-Site VPN with BGP so Direct Connect remains preferred until it fails.",
+      "Create Transit Gateway peering to the on-premises network and configure static backup routes.",
       "Use AWS Client VPN from the on-premises routers as an automated site-level backup."
     ],
     "correctAnswer": 1,
@@ -2273,10 +2273,10 @@
     "type": "single",
     "question": "A global TCP application uses AWS Global Accelerator with endpoints in two AWS Regions. Clients connect through the accelerator's static IP addresses. If the currently selected Regional endpoint becomes unhealthy, how is new client traffic redirected?",
     "options": [
-      "Global Accelerator updates public Route 53 records and waits for DNS caches to expire.",
-      "Global Accelerator uses health checks and the AWS global network to route traffic through the same Anycast IP addresses to a healthy endpoint.",
-      "The Network Load Balancer enables cross-zone load balancing across the two Regions.",
-      "AWS Direct Connect gateways provide an alternate path to the secondary Region."
+      "Global Accelerator updates Route 53 records and waits for client DNS caches to expire.",
+      "Global Accelerator keeps the same Anycast IPs and routes new traffic to a healthy endpoint.",
+      "The Network Load Balancer extends cross-zone balancing across both AWS Regions.",
+      "Direct Connect gateways provide the alternate path to the secondary Region."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -2315,10 +2315,10 @@
     "type": "single",
     "question": "An SQS worker normally needs five minutes to process each video-rendering message. The queue's visibility timeout is 30 seconds, so messages become visible to another worker while the first worker is still processing them. Which change addresses the immediate cause while preserving retries for failed work?",
     "options": [
-      "Set the visibility timeout to longer than the expected processing time, or extend it while processing.",
-      "Set the message-retention period to 30 seconds.",
-      "Set maxReceiveCount to 1 and move every retried message immediately to a dead-letter queue.",
-      "Enable long polling with a 20-second wait time."
+      "Set the visibility timeout beyond normal processing time or extend it while work continues.",
+      "Set the message-retention period to 30 seconds for faster cleanup.",
+      "Set maxReceiveCount to 1 and immediately send every retry to a dead-letter queue.",
+      "Enable long polling with a 20-second wait time for each receive request."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2400,10 +2400,10 @@
     "type": "single",
     "question": "A company must migrate 50 physical and virtual Linux servers from an on-premises data centre to Amazon EC2. The migration must continuously replicate server disks at the block level, support non-disruptive test launches, and minimise downtime during cutover. Which service should be used?",
     "options": [
-      "AWS Transform MGN, formerly AWS Application Migration Service, with replication agents installed on the source servers",
-      "AWS DataSync with scheduled NFS and SMB transfer tasks",
-      "AWS Database Migration Service with ongoing change data capture",
-      "AWS Snowball Edge Storage Optimized with offline disk-image export"
+      "Use AWS Transform MGN with replication agents installed on the source servers.",
+      "Use AWS DataSync with scheduled NFS and SMB transfer tasks.",
+      "Use AWS Database Migration Service with ongoing change data capture.",
+      "Use AWS Snowball Edge Storage Optimized with offline disk-image export."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2464,10 +2464,10 @@
     "type": "single",
     "question": "A data lake contains 10 TB of JSON logs in Amazon S3. Analysts use Athena for ad-hoc SQL queries, but costs are high because each query scans large amounts of data. Which redesign most directly reduces both data scanned and query time?",
     "options": [
-      "Convert the logs to Parquet or ORC and partition the S3 layout by commonly filtered dimensions such as date",
-      "Keep the JSON format and increase the Athena workgroup query-concurrency quota",
-      "Load the logs into a large EC2-hosted MySQL database before each query",
-      "Move the logs into DynamoDB Standard-IA and query them with PartiQL"
+      "Convert the logs to Parquet or ORC and partition the S3 data by commonly filtered fields.",
+      "Keep the JSON files and increase the Athena workgroup query-concurrency quota for more parallel queries.",
+      "Load the logs into an EC2-hosted MySQL database and scale the database before each query period.",
+      "Move the logs into DynamoDB Standard-IA and query them through PartiQL with secondary indexes."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2596,10 +2596,10 @@
     "type": "single",
     "question": "A company is migrating a self-managed Apache Kafka platform to AWS. Existing producers and consumers must continue using Kafka APIs and wire protocols, and the team must retain control over topics, partitions, and Kafka configuration while AWS manages the broker infrastructure. Which service should be selected?",
     "options": [
-      "Amazon Managed Streaming for Apache Kafka",
-      "Amazon Kinesis Data Streams",
-      "Amazon SQS FIFO",
-      "Amazon MQ for ActiveMQ"
+      "Use Amazon Managed Streaming for Apache Kafka for managed Kafka-compatible broker infrastructure.",
+      "Use Amazon Kinesis Data Streams for managed shard-based streaming with different client APIs.",
+      "Use Amazon SQS FIFO for ordered messaging with queue-based producer and consumer semantics.",
+      "Use Amazon MQ for ActiveMQ for managed JMS-compatible broker messaging."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2837,11 +2837,11 @@
     "type": "multiple",
     "question": "Hundreds of EC2 instances in private subnets transfer petabytes of data each month to Amazon S3 and DynamoDB through NAT gateways. The company wants to remove NAT data-processing charges for traffic to both services without making the instances publicly reachable. Which TWO changes should be made? (Select TWO.)",
     "options": [
-      "Create an S3 gateway VPC endpoint and add the endpoint routes to the private-subnet route tables.",
-      "Create a DynamoDB gateway VPC endpoint and add the endpoint routes to the private-subnet route tables.",
-      "Replace the NAT gateways with egress-only internet gateways.",
-      "Create interface VPC endpoints for S3 and DynamoDB in every subnet.",
-      "Enable S3 Transfer Acceleration on all destination buckets."
+      "Create an S3 gateway endpoint and add its routes to the private-subnet route tables.",
+      "Create a DynamoDB gateway endpoint and add its routes to the private-subnet route tables.",
+      "Replace the NAT gateways with egress-only internet gateways for outbound service access.",
+      "Create interface endpoints for S3 and DynamoDB in every private subnet.",
+      "Enable S3 Transfer Acceleration on all destination buckets used by the instances."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -2978,11 +2978,11 @@
     "type": "multiple",
     "question": "A company requires a 10 Gbps private primary connection from its data centre to a VPC and an encrypted backup path over the public internet that can take over automatically if the physical primary link fails. Which TWO components should be used? (Select TWO.)",
     "options": [
-      "A dedicated Direct Connect connection with a private virtual interface",
-      "An AWS Site-to-Site VPN using IPsec and dynamic BGP routing",
-      "Transit Gateway inter-Region peering",
-      "Storage Gateway in cached mode",
-      "Global Accelerator with Transit Gateway endpoints"
+      "Use a dedicated Direct Connect connection with a private virtual interface for the primary path.",
+      "Use a dynamically routed AWS Site-to-Site VPN with IPsec tunnels for automatic backup connectivity.",
+      "Use Transit Gateway inter-Region peering to provide the encrypted internet-based backup connection.",
+      "Use Storage Gateway cached volumes to replace the failed private network connection automatically.",
+      "Use Global Accelerator with Transit Gateway endpoints to provide encrypted hybrid network failover."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -3025,11 +3025,11 @@
     "type": "multiple",
     "question": "A startup needs a serverless REST API with highly variable demand and no infrastructure running overnight. The API must scale automatically, and JSON user profiles require low-latency persistent reads and writes without provisioned database capacity. Which TWO services best fit? (Select TWO.)",
     "options": [
-      "Amazon API Gateway HTTP APIs",
-      "Amazon DynamoDB on-demand capacity mode",
-      "EC2 Reserved Instances",
-      "Amazon RDS Multi-AZ PostgreSQL",
-      "Amazon EFS"
+      "Use Amazon API Gateway HTTP APIs for the serverless REST endpoint.",
+      "Use Amazon DynamoDB in on-demand capacity mode for the user profiles.",
+      "Use EC2 Reserved Instances for the application compute layer.",
+      "Use Amazon RDS Multi-AZ PostgreSQL for persistent profile storage.",
+      "Use Amazon EFS as the primary JSON profile database."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -3171,12 +3171,12 @@
     "type": "multiple",
     "question": "A company needs a multi-Region disaster-recovery design that protects supported AWS resources with cross-account backup copies, replicates S3 objects to a secondary Region, and automatically directs public users to the secondary Region when the primary endpoint becomes unhealthy. Which THREE components should be used? (Select THREE.)",
     "options": [
-      "AWS Backup plans with cross-account and cross-Region copy actions to protected backup vaults",
-      "S3 Cross-Region Replication with versioning enabled on source and destination buckets",
-      "Route 53 failover routing with health checks",
-      "Tape Gateway in one Availability Zone",
-      "EC2 instance-store volumes for persistent backups",
-      "Transit Gateway inter-Region peering for public DNS failover"
+      "Use AWS Backup plans with cross-account and cross-Region copy actions to protected vaults.",
+      "Use S3 Cross-Region Replication with versioning enabled on both participating buckets.",
+      "Use Route 53 failover routing with health checks for the Regional endpoints.",
+      "Use Tape Gateway in one Availability Zone for all disaster-recovery backup copies.",
+      "Use EC2 instance-store volumes as the persistent storage for recovery backups.",
+      "Use Transit Gateway inter-Region peering to perform public DNS failover."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -3186,6 +3186,7 @@
     ],
     "explanation": "Correct answers:\nA, B, and C.\n\nA. AWS Backup can automate scheduled recovery points and copy supported backups across Regions and accounts into controlled backup vaults.\n\nB. S3 Cross-Region Replication copies new object versions to a bucket in another Region and requires versioning on both buckets.\n\nC. Route 53 failover routing uses health checks to return the secondary endpoint when the primary is unhealthy.\n\nWhy the other options are wrong:\nD. Tape Gateway is for virtual-tape backup workflows and does not provide the required broad multi-Region architecture.\nE. Instance-store data is ephemeral and unsuitable for durable backup retention.\nF. Transit Gateway peering handles private network routing and does not redirect public DNS clients between Regions.\n\nExam trigger:\nBackups, object replication, and user-traffic failover are separate DR layers.\n\nExam trap:\nNo single service provides all three layers.\n\nMemory hook:\nBackup copies, S3 replication, Route 53 failover.",
     "topics": [
+      "topic-aws-backup",
       "topic-route53",
       "topic-s3"
     ]
@@ -3224,12 +3225,12 @@
     "type": "multiple",
     "question": "EC2 instances in private subnets access S3, DynamoDB, and Secrets Manager. The application must avoid long-term credentials, keep AWS API traffic off the public internet, and prevent general outbound internet access. Which THREE controls meet the requirements? (Select THREE.)",
     "options": [
-      "Attach an IAM role through an instance profile and require IMDSv2.",
-      "Create gateway endpoints for S3 and DynamoDB and an interface endpoint for Secrets Manager.",
-      "Remove the private subnets' default routes to NAT gateways so no general internet egress remains.",
-      "Store IAM access keys in the application configuration.",
-      "Assign public IPv4 addresses to the EC2 instances.",
-      "Allow inbound SSH from 0.0.0.0/0."
+      "Attach an IAM role through an instance profile and require IMDSv2 for temporary credentials.",
+      "Create gateway endpoints for S3 and DynamoDB plus an interface endpoint for Secrets Manager.",
+      "Remove default NAT gateway routes from the private subnets to block general internet egress.",
+      "Store IAM access keys in the application configuration and rotate them on a fixed schedule.",
+      "Assign public IPv4 addresses to the EC2 instances and restrict access with security groups.",
+      "Allow inbound SSH only from a corporate CIDR range through the instance security groups."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -3356,10 +3357,10 @@
     "type": "single",
     "question": "An EC2 role in Account B must directly read objects from an S3 bucket in Account A. The objects are encrypted with a customer managed KMS key in Account A, and the role will not assume a role in Account A. Which permission model is required?",
     "options": [
-      "Grant the role s3:GetObject and kms:Decrypt in Account B and update only the S3 bucket policy.",
-      "Grant the role access in the KMS key policy and update only the role's IAM policy.",
-      "Allow the role in the S3 bucket policy and KMS key policy in Account A, and grant s3:GetObject and kms:Decrypt in the role's IAM policy in Account B.",
-      "Use the AWS managed aws/s3 KMS key and grant the role AdministratorAccess in Account B."
+      "Grant the role S3 and KMS permissions in Account B and update only the bucket policy.",
+      "Grant the role access in the KMS key policy and update only its IAM policy.",
+      "Allow the role in the bucket and KMS key policies, and grant S3 and KMS permissions in its IAM policy.",
+      "Use the AWS managed S3 KMS key and grant AdministratorAccess to the role in Account B."
     ],
     "correctAnswer": 2,
     "correctAnswers": [
@@ -3379,10 +3380,10 @@
     "type": "single",
     "question": "A public application behind an Application Load Balancer is targeted by SQL injection attempts and HTTP request floods from individual client IP addresses. The company wants managed request inspection and automatic rate limiting with minimal administration. Which solution should be used?",
     "options": [
-      "Associate an AWS WAF web ACL with the ALB and use managed SQL injection rules plus a rate-based rule.",
-      "Enable Shield Advanced and inspect POST bodies with custom Lambda@Edge code.",
+      "Associate AWS WAF with the ALB and use managed SQL injection and rate-based rules.",
+      "Enable Shield Advanced and inspect POST bodies by using custom Lambda@Edge code.",
       "Use GuardDuty findings to add attacking addresses to subnet network ACLs.",
-      "Use ALB security groups to enforce a maximum number of HTTP requests per source IP."
+      "Use ALB security groups to enforce per-source HTTP request-rate limits."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -3697,10 +3698,10 @@
     "type": "single",
     "question": "Order messages for the same order stream must be processed in sequence. Producers may retry sends, and a message that cannot be processed must be isolated after three receives. Which queue configuration best meets the requirements?",
     "options": [
-      "An SQS standard queue with a CloudWatch alarm for failed processing",
-      "An SQS FIFO queue using message-group and deduplication IDs, with a DLQ redrive policy whose maxReceiveCount is 3",
-      "An SNS standard topic forwarding directly to all workers",
-      "An EventBridge event bus with failed events written to S3"
+      "Use an SQS standard queue with a CloudWatch alarm for failed message processing.",
+      "Use an SQS FIFO queue with message groups, deduplication IDs, and a DLQ after three receives.",
+      "Use an SNS standard topic that forwards each order directly to all workers.",
+      "Use an EventBridge event bus that stores failed events in an S3 bucket."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -3830,9 +3831,9 @@
     "type": "single",
     "question": "A tier-2 application uses EC2 instances in an Auto Scaling group behind an ALB and an RDS for MySQL database. Disaster recovery requires an RTO below 15 minutes and an RPO below 5 minutes, while secondary-Region idle cost must remain lower than a full production deployment. Which strategy is the best fit?",
     "options": [
-      "Maintain a scaled-down but fully functional application stack and an active cross-Region database replica in the secondary Region, then scale out during failover.",
-      "Replicate only the database and keep the complete application tier stopped until an incident is declared.",
-      "Run full production capacity in both Regions and distribute traffic between them continuously.",
+      "Maintain a scaled-down working stack with a monitored cross-Region database replica designed to meet the RPO, then scale it during failover.",
+      "Replicate only the database and keep the full application tier stopped until an incident occurs.",
+      "Run full production capacity in both Regions and distribute live traffic between them continuously.",
       "Copy daily snapshots to the secondary Region and rebuild the environment after a disaster."
     ],
     "correctAnswer": 0,
@@ -4284,10 +4285,10 @@
     "type": "single",
     "question": "EC2 analytics nodes exchange hundreds of terabytes each day. Some communicating nodes are in the same Availability Zone, but they use public IPv4 addresses; other flows cross Availability Zones. Which change reduces transfer charges without redesigning the application?",
     "options": [
-      "Use private IPv4 addresses and place highly chatty nodes in the same Availability Zone where resilience requirements permit.",
-      "Assign Elastic IP addresses to every node and continue routing through the internet gateway.",
-      "Insert CloudFront between the EC2 nodes.",
-      "Create a Site-to-Site VPN between the Availability Zones."
+      "Use private IPv4 addresses and colocate highly chatty nodes in one Availability Zone where resilience permits.",
+      "Assign Elastic IP addresses to every node and continue routing all cluster traffic through the internet gateway.",
+      "Place CloudFront between the EC2 analytics nodes to cache and accelerate their east-west data transfers.",
+      "Create a Site-to-Site VPN between Availability Zones and route all analytics traffic through encrypted tunnels."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4306,10 +4307,10 @@
     "type": "single",
     "question": "Many EC2 instances use gp2 volumes that were enlarged only to obtain more baseline IOPS. The company wants to reduce storage cost, provision IOPS and throughput independently, and change the attached volumes without recreating them. Which action should be taken?",
     "options": [
-      "Modify the volumes from gp2 to gp3 by using EBS Elastic Volumes and configure the required performance.",
-      "Create io2 volumes from snapshots and replace every attached gp2 volume during an outage.",
-      "Use DataSync to copy the volume contents into S3.",
-      "Convert every volume to st1, including boot and random-I/O volumes."
+      "Modify gp2 volumes to gp3 with Elastic Volumes and configure the required performance.",
+      "Create io2 volumes from snapshots and replace the gp2 volumes during an outage.",
+      "Use AWS DataSync to copy each volume's contents into an Amazon S3 bucket.",
+      "Convert every volume to st1, including boot volumes and random-I/O workloads."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4351,10 +4352,10 @@
     "type": "single",
     "question": "EC2 instances in private subnets transfer 50 TB each month to Amazon S3 through NAT gateways. The company wants to eliminate NAT gateway hourly-path dependence and NAT data-processing charges specifically for this S3 traffic. Which change should be made?",
     "options": [
-      "Replace the NAT gateways with small NAT instances.",
+      "Replace the NAT gateways with NAT instances sized for the monthly Amazon S3 transfer volume.",
       "Create an S3 gateway VPC endpoint and associate it with the private-subnet route tables.",
-      "Install a Direct Connect connection inside the VPC.",
-      "Route the traffic through Transit Gateway inter-Region peering."
+      "Provision a Direct Connect connection and route Amazon S3 traffic through a private virtual interface.",
+      "Route the Amazon S3 traffic through a Transit Gateway peering attachment in another Region."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -4373,10 +4374,10 @@
     "type": "single",
     "question": "Checkpointed batch jobs can tolerate EC2 interruption and require as many as 500 instances during processing runs. The company wants Spot pricing while reducing the likelihood of simultaneous interruption. Which Auto Scaling configuration is the best fit?",
     "options": [
-      "Use a mixed instances policy with several suitable instance types and Availability Zones, and select the capacity-optimised Spot allocation strategy.",
-      "Use only On-Demand Instances covered by an EC2 Instance Savings Plan.",
-      "Use the lowest-price Spot pool for one instance type in one Availability Zone.",
-      "Purchase 500 Convertible Reserved Instances for the maximum possible scale."
+      "Use a mixed instances policy across several instance types and Availability Zones with capacity-optimised Spot allocation.",
+      "Use only On-Demand Instances covered by an EC2 Instance Savings Plan for the expected processing capacity.",
+      "Use the lowest-price Spot pool for one instance type deployed in a single Availability Zone.",
+      "Purchase Convertible Reserved Instances sized for the maximum possible batch-processing scale."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4394,10 +4395,10 @@
     "type": "single",
     "question": "An AWS Organization wants one centrally managed commitment to reduce eligible EC2, Fargate, and Lambda costs across member accounts and Regions. Which configuration meets the requirement?",
     "options": [
-      "Purchase Compute Savings Plans through the management account and keep Savings Plans discount sharing enabled for the organization.",
-      "Purchase separate EC2 Instance Savings Plans in every member account.",
-      "Deploy pricing commitments through a CloudFormation StackSet.",
-      "Configure Trusted Advisor to purchase commitments automatically."
+      "Purchase Compute Savings Plans in the management account and retain organization-wide discount sharing.",
+      "Purchase EC2 Instance Savings Plans separately in each account and share their discounts across Regions.",
+      "Deploy standardized pricing commitments to member accounts by using an AWS CloudFormation StackSet.",
+      "Configure AWS Trusted Advisor to purchase recommended commitments automatically for all organization accounts."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4415,10 +4416,10 @@
     "type": "single",
     "question": "Payment messages must remain ordered within each customer session while different sessions are processed independently. Producers can retry a send, and repeated submissions within the FIFO deduplication interval should be suppressed. Which design meets the requirements?",
     "options": [
-      "Use an SQS standard queue with a five-minute visibility timeout.",
-      "Use an SQS FIFO queue with one message group ID per session and a unique deduplication ID for each logical payment.",
-      "Use an SNS standard topic with several Lambda subscribers.",
-      "Use a Kinesis stream and rely on server-side encryption for deduplication."
+      "Use an SQS standard queue with session attributes and a five-minute visibility timeout.",
+      "Use an SQS FIFO queue with session message groups and stable payment deduplication IDs.",
+      "Use an SNS standard topic with separate subscribers and session identifiers in message attributes.",
+      "Use Kinesis Data Streams with one shard per session and server-side encryption enabled."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
@@ -4436,10 +4437,10 @@
     "type": "single",
     "question": "Sandbox-account spending must trigger an automated control after AWS Budgets refreshes its cost data and detects that a configured threshold has been exceeded. The company wants to stop specified EC2 instances with the least custom code and operational overhead. Which solution should be used?",
     "options": [
-      "Configure an AWS Budgets action that uses the required IAM role and Systems Manager action to stop the specified EC2 instances when the threshold is exceeded.",
-      "Send an AWS Budgets SNS notification to a custom Lambda function that discovers and stops instances.",
-      "Poll Cost Explorer every hour from a custom Systems Manager Automation script.",
-      "Review Cost Explorer reports manually at the end of each month."
+      "Configure an AWS Budgets action with the required IAM role to stop the specified EC2 instances.",
+      "Send the budget notification to Lambda and maintain custom discovery and instance-stopping logic.",
+      "Poll Cost Explorer hourly from Systems Manager Automation and stop instances after detecting overspend.",
+      "Review monthly Cost Explorer reports and stop affected instances manually after finance approval."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4739,10 +4740,10 @@
     "type": "single",
     "question": "Administrators need interactive shell access to EC2 instances in private subnets. The instances must have no public IP addresses, no inbound SSH rule, and no stored SSH keys. Session activity must be logged centrally. Which solution has the least operational overhead?",
     "options": [
-      "Use Systems Manager Session Manager and configure session logging to CloudWatch Logs or S3.",
-      "Deploy a hardened bastion host in every Availability Zone.",
-      "Allow SSH only from the corporate public IP range.",
-      "Use Client VPN and continue distributing shared SSH keys."
+      "Use Session Manager and send session logs to CloudWatch Logs or Amazon S3.",
+      "Deploy a hardened bastion host in every Availability Zone for administrator access.",
+      "Allow SSH only from the corporate public IP range through instance security groups.",
+      "Use Client VPN and continue distributing shared SSH keys to administrators."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4761,11 +4762,11 @@
     "type": "multiple",
     "question": "A company must centrally record management API activity from every current and future AWS Organizations member account. Member-account administrators must not control the trail, and delivered log objects must remain undeletable and unmodifiable for the retention period. Which TWO actions meet the requirements? (Select TWO.)",
     "options": [
-      "Create a CloudTrail organization trail from the management account or delegated administrator and deliver it to a central S3 bucket.",
-      "Enable S3 Object Lock in Compliance mode on the destination bucket and configure the required retention.",
-      "Enable CloudTrail log-file validation only.",
-      "Create separately managed trails and buckets in each member account.",
-      "Send events only to CloudWatch Logs and retain them with metric filters."
+      "Create a centrally managed CloudTrail organization trail that delivers activity to an archive S3 bucket.",
+      "Enable S3 Object Lock Compliance mode on the destination and apply the required retention period.",
+      "Enable CloudTrail log-file validation and rely on digest files to prevent log deletion or modification.",
+      "Create independent trails and S3 buckets in every member account under local administrator control.",
+      "Send management events only to CloudWatch Logs and protect them by using metric filters."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4835,10 +4836,10 @@
     "type": "single",
     "question": "An application role in Account A must publish only to one SNS topic in Account B without assuming a role in Account B. Which permission model provides least privilege?",
     "options": [
-      "Allow sns:Publish on the topic ARN in the role's IAM policy and allow that role in the SNS topic policy.",
-      "Create an IAM user in Account B and embed its access keys in the application.",
-      "Allow sns:* on all resources in both accounts.",
-      "Use an SCP in Account B to grant the role access to the topic."
+      "Allow sns:Publish on the topic ARN in the role policy and trust the role in the SNS topic policy.",
+      "Create an IAM user in Account B and embed its long-term access keys in the application.",
+      "Allow sns:* on every resource in both accounts through broad identity policies for the application.",
+      "Use an SCP in Account B to grant the external role access to the topic directly."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4857,11 +4858,11 @@
     "type": "multiple",
     "question": "A stateless web tier must run across two Availability Zones, replace unhealthy instances automatically, and scale with unpredictable traffic. Which TWO configurations provide the least operational overhead? (Select TWO.)",
     "options": [
-      "Place the instances in an Auto Scaling group spanning both Availability Zones and use target tracking scaling.",
+      "Use an Auto Scaling group across both Availability Zones with target tracking scaling enabled.",
       "Use an Application Load Balancer across both Availability Zones and enable ELB health checks for the Auto Scaling group.",
-      "Run a fixed number of instances and replace failures manually.",
-      "Use DNS round robin between one large instance in each Availability Zone.",
-      "Run in one Availability Zone and copy AMIs to another Region."
+      "Run a fixed number of instances and replace failed instances through a manual process.",
+      "Use DNS round robin between one large instance deployed in each Availability Zone.",
+      "Run in one Availability Zone and copy the AMIs to another AWS Region."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4881,10 +4882,10 @@
     "type": "single",
     "question": "A CloudFront distribution has synchronized S3 origins in two Regions. For GET, HEAD, and OPTIONS requests, CloudFront must retry the secondary S3 origin when the primary times out or returns selected server-error responses. Which configuration provides the native behaviour?",
     "options": [
-      "Create a CloudFront origin group with the primary and secondary S3 origins and configure the failover criteria.",
-      "Create Route 53 failover records for the CloudFront distribution domain.",
-      "Use Global Accelerator with both S3 buckets as endpoints.",
-      "Use Lambda@Edge to update DNS after each 5xx response."
+      "Create a CloudFront origin group with primary and secondary S3 origins and configured failover criteria.",
+      "Create Route 53 failover records that point to the CloudFront distribution domain.",
+      "Use Global Accelerator with both S3 buckets registered as Regional endpoints.",
+      "Use Lambda@Edge to update DNS whenever the primary origin returns a 5xx response."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4903,10 +4904,10 @@
     "type": "single",
     "question": "A global application uses internet-facing ALBs in two Regions. DNS should normally return the healthy Region with the lowest measured network latency, and it must stop returning an ALB when that load balancer has no healthy targets. Which Route 53 configuration is the best fit?",
     "options": [
-      "Latency-based alias records for both ALBs with Evaluate Target Health enabled",
-      "Primary and secondary failover records",
-      "Equal-weight weighted records without health evaluation",
-      "Geolocation records based only on user country"
+      "Use latency-based alias records for both ALBs and enable Evaluate Target Health.",
+      "Use primary and secondary failover records with health checks for both ALBs.",
+      "Use equal-weight weighted records without evaluating the health of either ALB.",
+      "Use geolocation records that map users to Regions according to their country."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4925,11 +4926,11 @@
     "type": "multiple",
     "question": "A Step Functions Standard Workflow invokes a Lambda function. Named transient errors should be retried a limited number of times with exponential backoff. Validation errors and failures that exhaust all retries must be routed to manual review while preserving the state's original input alongside the error details. Which TWO configurations meet the requirements? (Select TWO.)",
     "options": [
-      "Add a Retry field for the transient error names and configure IntervalSeconds, BackoffRate, and MaxAttempts.",
-      "Add a Catch field after the retriers and use ResultPath to insert the error into the original state input before routing to review.",
-      "Increase the Lambda timeout and retry every error indefinitely.",
-      "Use a Choice state before the Lambda task to predict which invocations will fail.",
-      "Convert the state machine to an Express Workflow because Express guarantees successful task completion."
+      "Add Retry for the named transient errors and configure IntervalSeconds, BackoffRate, and MaxAttempts.",
+      "Add Catch after the retriers and use ResultPath to merge error details with the original input before review.",
+      "Increase the Lambda timeout and configure unlimited retries for every possible error.",
+      "Use a Choice state before the Lambda task to predict which executions will fail.",
+      "Convert the workflow to Express because Express guarantees successful task completion."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -4949,10 +4950,10 @@
     "type": "single",
     "question": "A worker reads jobs from an SQS standard queue. A worker can crash after receiving a message but before deleting it, and one malformed job can fail repeatedly. The application can safely process a delivered message more than once. Which design is the most resilient?",
     "options": [
-      "Set a visibility timeout long enough for normal processing, keep the consumer idempotent, and configure a dead-letter queue with an appropriate maxReceiveCount.",
-      "Set the visibility timeout to zero so every message is immediately available to multiple workers.",
-      "Set a very short retention period and discard each message after its first failure.",
-      "Replace the queue with synchronous calls from the producer to the worker."
+      "Use a suitable visibility timeout, keep consumers idempotent, and configure a DLQ with maxReceiveCount.",
+      "Set the visibility timeout to zero so multiple workers can immediately receive the same message.",
+      "Set a short retention period and discard each message after its first failure.",
+      "Replace the queue with synchronous producer-to-worker calls for guaranteed processing."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5038,10 +5039,10 @@
     "type": "single",
     "question": "A web tier stores user sessions on each EC2 instance. Sessions disappear whenever Auto Scaling replaces an instance, and any healthy instance must be able to serve the next request. Which architectural change provides the best resilience?",
     "options": [
-      "Externalize session state to a shared managed store such as ElastiCache for Redis or DynamoDB.",
-      "Enable termination protection on every instance in the Auto Scaling group.",
-      "Increase the size of each instance-store volume.",
-      "Use ALB stickiness as the only session-protection mechanism."
+      "Store session state in a shared managed service such as ElastiCache for Redis or DynamoDB.",
+      "Enable termination protection on every instance launched by the Auto Scaling group.",
+      "Increase each instance-store volume so session files persist for a longer period.",
+      "Enable ALB stickiness and rely on client affinity to preserve each session."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5061,10 +5062,10 @@
     "type": "single",
     "question": "Independent image jobs are processed from an SQS queue. One malformed image repeatedly causes worker failure, but unrelated valid jobs must continue without application-level poison-message handling. Which configuration best meets the requirement?",
     "options": [
-      "Configure a dead-letter queue and redrive policy, and use an appropriate visibility timeout while processing each message independently.",
-      "Increase the queue retention period and set the visibility timeout to zero.",
-      "Place every image job into one FIFO message group.",
-      "Use one worker and stop polling the queue after the first failure."
+      "Configure a dead-letter queue and redrive policy, and use a suitable visibility timeout for processing.",
+      "Increase the queue retention period and set the visibility timeout to zero for every message.",
+      "Place every image job into one FIFO message group to preserve processing order.",
+      "Use one worker and stop polling the queue after the first processing failure."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5295,11 +5296,11 @@
     "type": "multiple",
     "question": "Latency-sensitive ECS services require customer-selected EC2 instance types with specialised networking capabilities. The platform must scale both the number of application tasks and the EC2 capacity available to place those tasks. Which TWO configurations meet the requirements? (Select TWO.)",
     "options": [
-      "Run the ECS service with an EC2 capacity provider backed by an Auto Scaling group containing the required instance types.",
-      "Configure ECS Service Auto Scaling for task desired count and capacity-provider managed scaling for the backing Auto Scaling group.",
-      "Use Fargate because it allows selection of every underlying EC2 instance type.",
-      "Scale only the Application Load Balancer and keep task and cluster capacity fixed.",
-      "Use Kubernetes Cluster Autoscaler to add capacity to the ECS cluster."
+      "Use an EC2 capacity provider backed by an Auto Scaling group with the required instance types.",
+      "Use ECS Service Auto Scaling for tasks and capacity-provider managed scaling for EC2 capacity.",
+      "Use Fargate because it supports selecting any underlying EC2 instance type.",
+      "Scale only the Application Load Balancer while keeping tasks and cluster capacity fixed.",
+      "Use Kubernetes Cluster Autoscaler to add capacity to the Amazon ECS cluster."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5362,10 +5363,10 @@
     "type": "single",
     "question": "An API Gateway REST API receives many identical GET requests. Each cache miss invokes Lambda functions or HTTP backends that query databases, but responses can be reused for several minutes. The company wants to reduce backend invocations without changing backend code. Which solution has the least operational overhead?",
     "options": [
-      "Enable an API Gateway cache for the stage and configure caching and TTL settings for the applicable methods.",
-      "Increase the capacity of every backend Auto Scaling group.",
-      "Attach EBS volumes to the Lambda functions and store responses on the volumes.",
-      "Use Route 53 weighted records to distribute identical requests among API endpoints."
+      "Enable API Gateway stage caching and configure TTL values for the applicable GET methods.",
+      "Increase the capacity of every backend Auto Scaling group that handles API requests.",
+      "Attach EBS volumes to the Lambda functions and store reusable responses on those volumes.",
+      "Use Route 53 weighted records to distribute identical requests among several API endpoints."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5427,10 +5428,10 @@
     "type": "single",
     "question": "Log objects are read frequently for their first 30 days, infrequently for the following 60 days, and then retained for seven years. Retrieval after day 90 may take up to 12 hours. Which S3 Lifecycle design best matches the access pattern?",
     "options": [
-      "Store objects in S3 Standard, transition them to S3 Standard-IA after 30 days, and transition them to S3 Glacier Deep Archive after 90 days.",
-      "Store objects in S3 Glacier Deep Archive immediately after creation.",
-      "Keep every object in S3 Standard for all seven years.",
-      "Transition objects to S3 One Zone-IA after 30 days and delete them after 90 days."
+      "Use S3 Standard initially, transition to Standard-IA after 30 days, then Deep Archive after 90 days.",
+      "Use S3 Glacier Deep Archive from creation and restore objects whenever users request recent logs.",
+      "Keep all objects in S3 Standard throughout the full seven-year regulatory retention period.",
+      "Use S3 One Zone-IA after 30 days and permanently delete every object after 90 days."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5606,11 +5607,11 @@
     "type": "multiple",
     "question": "A management account in AWS Organizations must report monthly cloud costs by business unit. Resources already use a BusinessUnit tag, but some shared accounts must be assigned through account-based rules rather than resource tags. The categories must be available in Cost Explorer and AWS Budgets. Which TWO actions meet the requirements? (Select TWO.)",
     "options": [
-      "Activate the BusinessUnit user-defined tag as a cost allocation tag in Billing and Cost Management.",
-      "Create AWS Cost Categories with rules that group costs by activated tag values and linked accounts.",
-      "Create CloudWatch metric filters for every BusinessUnit tag value.",
-      "Attach an SCP that assigns a billing category to each member account.",
-      "Create separate AWS Budgets without enabling any cost-allocation dimensions."
+      "Activate the BusinessUnit tag as a cost allocation tag in Billing and Cost Management.",
+      "Create Cost Categories that group costs by activated tag values and linked accounts.",
+      "Create CloudWatch metric filters for each BusinessUnit tag value used by resources.",
+      "Attach an SCP that assigns a billing category to every AWS Organizations account.",
+      "Create separate AWS Budgets without enabling cost allocation dimensions or categories."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5631,10 +5632,10 @@
     "type": "single",
     "question": "A project manager wants an alert before the end of the month when AWS predicts that the project's monthly cost will exceed £8,000. The notification must be delivered to an Amazon SNS topic used by the finance automation workflow. Which solution should be configured?",
     "options": [
-      "Create an AWS cost budget filtered to the project, configure a forecasted-cost threshold, and add the SNS topic as an alert subscriber.",
-      "Create a CloudWatch billing alarm on EstimatedCharges with an eight-hour evaluation period.",
-      "Create a Cost Explorer saved report and configure it to invoke SNS when the graph crosses £8,000.",
-      "Create a usage budget that monitors the number of resources tagged to the project."
+      "Create a project-filtered cost budget with a forecasted threshold and add the SNS topic as the alert subscriber.",
+      "Create a CloudWatch EstimatedCharges alarm with an eight-hour evaluation period.",
+      "Create a Cost Explorer saved report that invokes SNS when costs exceed £8,000.",
+      "Create a usage budget that counts resources carrying the project tag."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5652,10 +5653,10 @@
     "type": "single",
     "question": "A sandbox AWS account has a monthly cost budget. When forecasted spending reaches 100% of the budget, the company wants an IAM policy attached automatically to restrict further resource creation. The finance team must not manually approve the response each month. Which configuration meets the requirement?",
     "options": [
-      "Configure an AWS Budgets action for the forecasted threshold, select automatic execution, and provide an IAM role that permits the policy action.",
-      "Configure an AWS Cost Anomaly Detection monitor to attach the IAM policy whenever an anomaly is detected.",
-      "Create a CloudWatch composite alarm that modifies IAM policies when EstimatedCharges enters ALARM.",
-      "Create a Cost Explorer rightsizing recommendation and enable automatic remediation."
+      "Configure an AWS Budgets action at the forecast threshold, enable automatic execution, and provide an IAM role.",
+      "Configure Cost Anomaly Detection to attach the IAM policy whenever unusual spending is detected.",
+      "Create a CloudWatch composite alarm that changes IAM policies when EstimatedCharges enters ALARM.",
+      "Create a Cost Explorer rightsizing recommendation and enable automatic remediation for the account."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5674,10 +5675,10 @@
     "type": "single",
     "question": "A company wants a CloudWatch alarm on its worldwide estimated AWS charges. An administrator enabled billing alerts, but the EstimatedCharges metric is not visible while working in eu-west-2. What should the administrator do?",
     "options": [
-      "Switch the CloudWatch console to US East (N. Virginia) and create the alarm from the billing metric there.",
-      "Create one EstimatedCharges metric in every Region and combine them with metric math.",
-      "Enable detailed monitoring on all billable resources in eu-west-2.",
-      "Create the alarm in the account's home Region because billing metrics are Regional."
+      "Switch CloudWatch to US East (N. Virginia) and create the alarm from the billing metric there.",
+      "Create an EstimatedCharges metric in every Region and combine the values with metric math.",
+      "Enable detailed monitoring on every billable resource running in eu-west-2.",
+      "Create the billing alarm in the account's home Region because billing metrics are Regional."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5760,10 +5761,10 @@
     "type": "single",
     "question": "An enterprise needs the most granular recurring billing dataset for custom SQL analysis in Amazon Athena. The dataset must include line-item costs, usage, resource identifiers where supported, activated cost allocation tags, Savings Plans details, and Cost Categories. Which solution should be configured?",
     "options": [
-      "Create an AWS Data Export for Cost and Usage Report 2.0 to Amazon S3 and query the exported data with Athena.",
-      "Export a Cost Explorer chart manually as a CSV file at the end of every month.",
-      "Publish the CloudWatch EstimatedCharges metric to an S3 bucket through a metric stream.",
-      "Create an AWS Budget for each service and combine the notification emails."
+      "Export Cost and Usage Report 2.0 data to S3 and query it with Athena.",
+      "Export a Cost Explorer chart manually as a CSV file at each month end.",
+      "Publish the CloudWatch EstimatedCharges metric to S3 through a metric stream.",
+      "Create an AWS Budget for every service and combine their notification emails."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
@@ -5783,11 +5784,11 @@
     "type": "multiple",
     "question": "A CloudWatch alarm monitors an application metric that is published only while jobs are processing. Missing data during an idle period should be considered healthy. During an expected processing window, missing application metrics should trigger investigation only when a separate job-state signal confirms that processing should be active. Which TWO alarm-design choices meet these requirements? (Select TWO.)",
     "options": [
-      "Configure the application alarm's missing-data treatment as notBreaching for expected idle periods.",
-      "Publish a separate heartbeat or job-state metric and use a composite alarm to notify when processing is expected but the application metric is absent or unhealthy.",
-      "Configure every missing application datapoint to be treated as breaching.",
-      "Increase the CloudWatch billing-alert threshold during idle periods.",
-      "Disable the application alarm whenever the metric has no data."
+      "Treat missing application datapoints as notBreaching during periods when the workload is expected to be idle.",
+      "Publish a job-state heartbeat and use a composite alarm to detect missing metrics during active processing.",
+      "Treat every missing application datapoint as breaching regardless of whether jobs are currently running.",
+      "Raise the CloudWatch billing-alarm threshold whenever the application enters an expected idle period.",
+      "Disable the application alarm whenever CloudWatch stops receiving data from the monitored metric."
     ],
     "correctAnswer": 0,
     "correctAnswers": [

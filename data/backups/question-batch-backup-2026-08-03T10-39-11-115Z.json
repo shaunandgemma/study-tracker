@@ -1,0 +1,267 @@
+{
+  "createdAt": "2026-08-03T10:39:11.115Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-198",
+    "q-saa-87",
+    "q-saa-199",
+    "q-saa-244",
+    "q-saa-260",
+    "q-saa-200",
+    "q-saa-214",
+    "q-saa-137",
+    "q-saa-32",
+    "q-saa-193"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-137",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company requires a 10 Gbps private primary connection from its data centre to a VPC and an encrypted backup path over the public internet that can take over automatically if the physical primary link fails. Which TWO components should be used? (Select TWO.)",
+      "option_a": "Use a dedicated Direct Connect connection with a private virtual interface for the primary path.",
+      "option_b": "Use a dynamically routed AWS Site-to-Site VPN with IPsec tunnels for automatic backup connectivity.",
+      "option_c": "Use Transit Gateway inter-Region peering to provide the encrypted internet-based backup connection.",
+      "option_d": "Use Storage Gateway cached volumes to replace the failed private network connection automatically.",
+      "option_e": "Use Global Accelerator with Transit Gateway endpoints to provide encrypted hybrid network failover.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. A dedicated Direct Connect connection with a private VIF provides high-bandwidth private connectivity to resources in a VPC or through an appropriate gateway architecture.\n\nB. A Site-to-Site VPN supplies encrypted IPsec tunnels over the public internet. With dynamic routing and appropriate BGP path preferences, it can act as an automatic backup when Direct Connect becomes unavailable.\n\nWhy the other options are wrong:\nC. Transit Gateway peering connects Transit Gateways and does not create an on-premises backup circuit.\nD. Storage Gateway provides hybrid storage integration, not network failover.\nE. Global Accelerator does not attach to Transit Gateway as a hybrid backup mechanism.\n\nExam trigger:\nDedicated private primary link plus encrypted internet backup points to Direct Connect and Site-to-Site VPN.\n\nExam trap:\nDirect Connect is not encrypted by default; the backup VPN provides encryption over the internet.\n\nMemory hook:\nDirect Connect primary, VPN backup."
+    },
+    {
+      "id": "q-saa-193",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "EC2 analytics nodes exchange hundreds of terabytes each day. Some communicating nodes are in the same Availability Zone, but they use public IPv4 addresses; other flows cross Availability Zones. Which change reduces transfer charges without redesigning the application?",
+      "option_a": "Use private IPv4 addresses and colocate highly chatty nodes in one Availability Zone where resilience permits.",
+      "option_b": "Assign Elastic IP addresses to every node and continue routing all cluster traffic through the internet gateway.",
+      "option_c": "Place CloudFront between the EC2 analytics nodes to cache and accelerate their east-west data transfers.",
+      "option_d": "Create a Site-to-Site VPN between Availability Zones and route all analytics traffic through encrypted tunnels.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Private-IP communication between EC2 instances in the same Availability Zone avoids Regional data-transfer charges. Traffic that crosses Availability Zones can still incur cross-AZ charges, so co-locating the most data-intensive nodes reduces cost when the availability trade-off is acceptable.\n\nWhy the other options are wrong:\nB. Elastic IP addresses preserve the public-address path and do not remove the applicable Regional data-transfer charges.\nC. CloudFront accelerates content delivery to viewers and is not an intra-cluster transport layer.\nD. Site-to-Site VPN connects external networks to a VPC and adds cost and complexity without removing cross-AZ placement charges.\n\nExam trigger:\nLarge east-west EC2 traffic and transfer charges require attention to private addressing and AZ placement.\n\nExam trap:\nPrivate addresses do not make cross-AZ traffic free; the same-AZ placement is the cost-saving part.\n\nMemory hook:\nChatty nodes save most when private and in the same AZ."
+    },
+    {
+      "id": "q-saa-198",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "An AWS Organization wants one centrally managed commitment to reduce eligible EC2, Fargate, and Lambda costs across member accounts and Regions. Which configuration meets the requirement?",
+      "option_a": "Purchase Compute Savings Plans in the management account and retain organization-wide discount sharing.",
+      "option_b": "Purchase EC2 Instance Savings Plans separately in each account and share their discounts across Regions.",
+      "option_c": "Deploy standardized pricing commitments to member accounts by using an AWS CloudFormation StackSet.",
+      "option_d": "Configure AWS Trusted Advisor to purchase recommended commitments automatically for all organization accounts.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Compute Savings Plans apply to eligible EC2, Fargate, and Lambda usage and retain flexibility across Regions. Under consolidated billing, shared Savings Plans benefits can apply across organization accounts when discount sharing is enabled.\n\nWhy the other options are wrong:\nB. EC2 Instance Savings Plans do not cover Fargate or Lambda and are less flexible across instance families and Regions.\nC. CloudFormation deploys resources and does not purchase financial commitments.\nD. Trusted Advisor can provide optimisation recommendations but does not automatically enter a Savings Plans purchase commitment.\n\nExam trigger:\nOne flexible compute commitment covering EC2, Fargate, Lambda, Regions, and organization accounts points to Compute Savings Plans with sharing.\n\nExam trap:\nThe commitment is purchased centrally, but the discount is applied according to eligible usage and sharing rules.\n\nMemory hook:\nCompute Savings Plans follow eligible compute across the organization."
+    },
+    {
+      "id": "q-saa-199",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Payment messages must remain ordered within each customer session while different sessions are processed independently. Producers can retry a send, and repeated submissions within the FIFO deduplication interval should be suppressed. Which design meets the requirements?",
+      "option_a": "Use an SQS standard queue with session attributes and a five-minute visibility timeout.",
+      "option_b": "Use an SQS FIFO queue with session message groups and stable payment deduplication IDs.",
+      "option_c": "Use an SNS standard topic with separate subscribers and session identifiers in message attributes.",
+      "option_d": "Use Kinesis Data Streams with one shard per session and server-side encryption enabled.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. SQS FIFO preserves order within each message group while allowing different groups to progress independently. A deduplication ID suppresses repeated sends of the same logical message during the five-minute deduplication interval.\n\nWhy the other options are wrong:\nA. A standard queue provides best-effort ordering and does not implement FIFO producer deduplication.\nC. SNS standard does not provide strict per-group ordering or the FIFO deduplication model.\nD. Kinesis provides ordering within a shard, but encryption does not suppress duplicate producer submissions.\n\nConsumers should remain idempotent because redelivery can still occur around processing failures and visibility-timeout behaviour.\n\nExam trigger:\nPer-session ordering plus producer retry suppression points to FIFO message groups and deduplication IDs.\n\nExam trap:\nA visibility timeout controls redelivery timing; it is not a deduplication window.\n\nMemory hook:\nGroup by session, deduplicate the logical payment."
+    },
+    {
+      "id": "q-saa-200",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Sandbox-account spending must trigger an automated control after AWS Budgets refreshes its cost data and detects that a configured threshold has been exceeded. The company wants to stop specified EC2 instances with the least custom code and operational overhead. Which solution should be used?",
+      "option_a": "Configure an AWS Budgets action with the required IAM role to stop the specified EC2 instances.",
+      "option_b": "Send the budget notification to Lambda and maintain custom discovery and instance-stopping logic.",
+      "option_c": "Poll Cost Explorer hourly from Systems Manager Automation and stop instances after detecting overspend.",
+      "option_d": "Review monthly Cost Explorer reports and stop affected instances manually after finance approval.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS Budgets actions can apply supported controls when a budget threshold is exceeded, including using a Systems Manager action to stop specified EC2 or RDS instances. This removes the need to build and operate a custom notification and remediation function.\n\nWhy the other options are wrong:\nB. SNS and Lambda can implement remediation but add custom code, IAM permissions, discovery logic, testing, and maintenance when a native budget action is sufficient.\nC. Polling Cost Explorer does not make billing data update faster and introduces custom automation and API usage.\nD. Monthly review is detective and manual rather than automated.\n\nBudget actions depend on periodically refreshed billing data, so they are not real-time infrastructure controls. Stopping an instance in an Auto Scaling group is also ineffective by itself because Auto Scaling can replace it.\n\nExam trigger:\nBudget threshold plus native automated remediation and least overhead point to AWS Budgets actions.\n\nExam trap:\nA budget control reacts to refreshed billing data; it does not enforce a real-time per-request spending limit.\n\nMemory hook:\nLet Budgets take the action directly."
+    },
+    {
+      "id": "q-saa-214",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A company must centrally record management API activity from every current and future AWS Organizations member account. Member-account administrators must not control the trail, and delivered log objects must remain undeletable and unmodifiable for the retention period. Which TWO actions meet the requirements? (Select TWO.)",
+      "option_a": "Create a centrally managed CloudTrail organization trail that delivers activity to an archive S3 bucket.",
+      "option_b": "Enable S3 Object Lock Compliance mode on the destination and apply the required retention period.",
+      "option_c": "Enable CloudTrail log-file validation and rely on digest files to prevent log deletion or modification.",
+      "option_d": "Create independent trails and S3 buckets in every member account under local administrator control.",
+      "option_e": "Send management events only to CloudWatch Logs and protect them by using metric filters.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. An organization trail centrally covers current and future member accounts. Member accounts can view the trail but cannot modify or delete the organization trail created by the management account or delegated administrator.\n\nB. Object Lock Compliance mode prevents protected S3 object versions from being overwritten or deleted until retention expires, including by root.\n\nWhy the other options are wrong:\nC. Log-file validation helps detect modification or deletion by verifying digest files, but it does not prevent either action.\nD. Local trails increase administration and allow configuration drift or disablement by member-account administrators.\nE. CloudWatch Logs does not replace an organization trail or provide S3 WORM retention.\n\nExam trigger:\nOrganization-wide audit collection plus immutable delivered objects requires an organization trail and Object Lock.\n\nExam trap:\nValidation detects tampering; Object Lock prevents it.\n\nMemory hook:\nOrganization trail collects; Compliance mode preserves."
+    },
+    {
+      "id": "q-saa-244",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "Log objects are read frequently for their first 30 days, infrequently for the following 60 days, and then retained for seven years. Retrieval after day 90 may take up to 12 hours. Which S3 Lifecycle design best matches the access pattern?",
+      "option_a": "Use S3 Standard initially, transition to Standard-IA after 30 days, then Deep Archive after 90 days.",
+      "option_b": "Use S3 Glacier Deep Archive from creation and restore objects whenever users request recent logs.",
+      "option_c": "Keep all objects in S3 Standard throughout the full seven-year regulatory retention period.",
+      "option_d": "Use S3 One Zone-IA after 30 days and permanently delete every object after 90 days.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. S3 Standard supports frequent initial access. Standard-IA fits the subsequent infrequent-access period, and transitioning after 30 days satisfies its minimum storage-duration model. Glacier Deep Archive provides low-cost long-term retention when retrieval of archived data can take hours.\n\nWhy the other options are wrong:\nB. Immediate Deep Archive storage cannot efficiently serve frequent reads during the first month.\nC. S3 Standard meets the access requirement but wastes money during years of archival retention.\nD. Deletion violates the seven-year requirement, and One Zone-IA provides less resilience than the multi-AZ storage classes.\n\nExam trigger:\nKnown hot, cool, and deep-archive phases point to an S3 Lifecycle policy.\n\nExam trap:\nAccount for storage-class minimum durations when choosing transition dates.\n\nMemory hook:\nMove data as its temperature falls."
+    },
+    {
+      "id": "q-saa-260",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "A CloudWatch alarm monitors an application metric that is published only while jobs are processing. Missing data during an idle period should be considered healthy. During an expected processing window, missing application metrics should trigger investigation only when a separate job-state signal confirms that processing should be active. Which TWO alarm-design choices meet these requirements? (Select TWO.)",
+      "option_a": "Treat missing application datapoints as notBreaching during periods when the workload is expected to be idle.",
+      "option_b": "Publish a job-state heartbeat and use a composite alarm to detect missing metrics during active processing.",
+      "option_c": "Treat every missing application datapoint as breaching regardless of whether jobs are currently running.",
+      "option_d": "Raise the CloudWatch billing-alarm threshold whenever the application enters an expected idle period.",
+      "option_e": "Disable the application alarm whenever CloudWatch stops receiving data from the monitored metric.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. Treating missing application data as notBreaching prevents normal idle periods from creating false alarms when the application intentionally emits no samples.\n\nB. A separate heartbeat or job-state metric establishes whether processing is expected. A composite alarm can then notify only when the job-state signal says processing should be active and the application alarm indicates that the expected metric is absent or unhealthy.\n\nWhy the other options are wrong:\nC. Treating every missing datapoint as breaching would generate false alarms during legitimate idle periods.\nD. Billing alarm thresholds are unrelated to application metric availability.\nE. Disabling the alarm whenever data disappears can conceal real failures and removes monitoring precisely when context is needed.\n\nExam trigger:\nMissing data is healthy while idle but suspicious only when another signal confirms that work should be occurring.\n\nExam trap:\nOne missing-data setting cannot express both idle and active states; use a separate context signal and combine alarm states.\n\nMemory hook:\nTreat idle silence as healthy; use a heartbeat to detect active silence."
+    },
+    {
+      "id": "q-saa-32",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company operates dozens of VPCs across multiple AWS accounts in AWS Organizations. All outbound internet traffic must pass through a central inspection VPC that contains AWS Network Firewall. The design must support transitive routing and avoid maintaining a full mesh of point-to-point connections. Which architecture should a solutions architect recommend?",
+      "option_a": "Build VPC peering links from every application VPC to the inspection VPC and configure transitive forwarding.",
+      "option_b": "Attach all VPCs to a shared Transit Gateway, enable appliance mode, and route egress through Network Firewall.",
+      "option_c": "Place Global Accelerator before the inspection VPC and register each application VPC NAT gateway as an endpoint.",
+      "option_d": "Deploy interface endpoints for Network Firewall in every application VPC and route internet traffic through them.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Use AWS Transit Gateway as the central routing hub and share it across accounts through AWS Resource Access Manager. Transit Gateway provides transitive routing between attached VPCs, while its route tables can direct outbound traffic through a central inspection VPC containing AWS Network Firewall. Appliance mode on the inspection VPC attachment helps maintain symmetric routing through the stateful firewall endpoints.\n\nWhy the other options are wrong:\nA. VPC peering is non-transitive. A peering mesh would require many individual connections and routes and cannot provide the required transitive hub-and-spoke inspection model.\nC. Global Accelerator improves performance and availability for supported public application endpoints. It does not provide private routing between VPCs or centralized egress inspection.\nD. AWS Network Firewall creates firewall endpoints in the VPC containing the firewall. Interface VPC endpoints are not deployed in every spoke VPC to provide this inspection architecture.\n\nExam trigger:\nMany VPCs, multiple accounts, transitive routing, and centralized stateful inspection indicate Transit Gateway with an inspection VPC.\n\nExam trap:\nVPC peering provides direct connectivity but cannot act as a transitive routing hub.\n\nMemory hook:\nTransit Gateway connects the spokes; appliance mode preserves the inspection path."
+    },
+    {
+      "id": "q-saa-87",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An EC2 Auto Scaling group supports unpredictable flash-sale traffic. CPU utilisation can jump from 20% to 90% within one minute. The company wants severe metric breaches to add substantially more capacity than moderate breaches, while keeping the scaling response based on observed demand. Which policy should be configured?",
+      "option_a": "Use step scaling with CloudWatch alarm ranges that apply progressively larger capacity adjustments.",
+      "option_b": "Use target tracking with a lower utilisation target and a longer instance warm-up period.",
+      "option_c": "Use recurring scheduled actions that add different capacity amounts throughout each business day.",
+      "option_d": "Use predictive scaling in forecast-only mode and apply the recommendations through manual changes.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Step scaling can associate different capacity adjustments with different CloudWatch alarm breach ranges. A moderate metric breach can add a small amount of capacity, while a severe breach can trigger a much larger increase.\n\nWhy the other options are wrong:\nB. Target tracking attempts to maintain one target value. Increasing warm-up time would not create the requested severity-based scaling steps and can delay the influence of new instances on scaling calculations.\nC. Scheduled scaling is intended for demand that occurs at known times, not unpredictable viral events.\nD. Forecast-only mode produces recommendations but does not change Auto Scaling capacity.\n\nExam trigger:\nDifferent scaling amounts must be applied according to the severity of a metric breach.\n\nExam trap:\nTarget tracking maintains a target; step scaling maps alarm ranges to different adjustments.\n\nMemory hook:\nBigger breach, bigger step."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-198",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-87",
+      "topic_id": "topic-ec2-asg"
+    },
+    {
+      "question_id": "q-saa-199",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-244",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-260",
+      "topic_id": "topic-cloudwatch"
+    },
+    {
+      "question_id": "q-saa-200",
+      "topic_id": "topic-budgets"
+    },
+    {
+      "question_id": "q-saa-200",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-cloudtrail"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-organizations"
+    },
+    {
+      "question_id": "q-saa-214",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-137",
+      "topic_id": "topic-direct-connect"
+    },
+    {
+      "question_id": "q-saa-137",
+      "topic_id": "topic-vpn"
+    },
+    {
+      "question_id": "q-saa-32",
+      "topic_id": "topic-transit-gateway"
+    },
+    {
+      "question_id": "q-saa-32",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-193",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-193",
+      "topic_id": "topic-vpc"
+    }
+  ]
+}

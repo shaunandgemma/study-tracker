@@ -1,0 +1,287 @@
+{
+  "createdAt": "2026-08-03T10:48:38.714Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-147",
+    "q-saa-69",
+    "q-saa-220",
+    "q-saa-105",
+    "q-saa-219",
+    "q-saa-167",
+    "q-saa-72",
+    "q-saa-152",
+    "q-saa-111",
+    "q-saa-131"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-105",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A global TCP application uses AWS Global Accelerator with endpoints in two AWS Regions. Clients connect through the accelerator's static IP addresses. If the currently selected Regional endpoint becomes unhealthy, how is new client traffic redirected?",
+      "option_a": "Global Accelerator updates public Route 53 records and waits for DNS caches to expire.",
+      "option_b": "Global Accelerator uses health checks and the AWS global network to route traffic through the same Anycast IP addresses to a healthy endpoint.",
+      "option_c": "The Network Load Balancer enables cross-zone load balancing across the two Regions.",
+      "option_d": "AWS Direct Connect gateways provide an alternate path to the secondary Region.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Global Accelerator advertises static Anycast IP addresses from AWS edge locations. It continuously evaluates endpoint health and directs new connections across the AWS global network to a healthy Regional endpoint without requiring clients to resolve a new DNS address.\n\nWhy the other options are wrong:\nA. Global Accelerator failover does not depend on Route 53 record changes or DNS TTL expiry.\nC. Cross-zone load balancing distributes traffic across Availability Zones within a Region and does not provide inter-Region failover.\nD. Direct Connect gateways support private hybrid connectivity and are unrelated to public Global Accelerator traffic steering.\n\nExam trigger:\nStatic Anycast IPs, global TCP acceleration, and fast Regional failover point to Global Accelerator.\n\nExam trap:\nRoute 53 failover is DNS based; Global Accelerator preserves the same static IPs.\n\nMemory hook:\nSame Anycast IPs, healthier Region."
+    },
+    {
+      "id": "q-saa-111",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A company must migrate 50 physical and virtual Linux servers from an on-premises data centre to Amazon EC2. The migration must continuously replicate server disks at the block level, support non-disruptive test launches, and minimise downtime during cutover. Which service should be used?",
+      "option_a": "AWS Transform MGN, formerly AWS Application Migration Service, with replication agents installed on the source servers",
+      "option_b": "AWS DataSync with scheduled NFS and SMB transfer tasks",
+      "option_c": "AWS Database Migration Service with ongoing change data capture",
+      "option_d": "AWS Snowball Edge Storage Optimized with offline disk-image export",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS Transform MGN, formerly AWS Application Migration Service, performs continuous block-level replication of physical, virtual, and cloud-based servers into a staging area in AWS. It supports non-disruptive test launches and coordinated cutover to EC2 with minimal downtime.\n\nWhy the other options are wrong:\nB. DataSync transfers file and object data between storage systems. It does not continuously replicate complete server disks or orchestrate EC2 cutover.\nC. Database Migration Service replicates database schemas and data, not operating systems, applications, and entire server volumes.\nD. Snowball Edge can move large datasets offline, but it does not provide continuous replication or repeatable test launches for server migration.\n\nExam trigger:\nLift-and-shift servers, block-level replication, test launches, and low-downtime cutover point to AWS Transform MGN.\n\nExam trap:\nDataSync moves files; DMS moves databases; MGN moves servers.\n\nMemory hook:\nWhole-server migration means AWS Transform MGN."
+    },
+    {
+      "id": "q-saa-131",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "Hundreds of EC2 instances in private subnets transfer petabytes of data each month to Amazon S3 and DynamoDB through NAT gateways. The company wants to remove NAT data-processing charges for traffic to both services without making the instances publicly reachable. Which TWO changes should be made? (Select TWO.)",
+      "option_a": "Create an S3 gateway VPC endpoint and add the endpoint routes to the private-subnet route tables.",
+      "option_b": "Create a DynamoDB gateway VPC endpoint and add the endpoint routes to the private-subnet route tables.",
+      "option_c": "Replace the NAT gateways with egress-only internet gateways.",
+      "option_d": "Create interface VPC endpoints for S3 and DynamoDB in every subnet.",
+      "option_e": "Enable S3 Transfer Acceleration on all destination buckets.",
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1
+      ],
+      "explanation": "Correct answers:\nA and B.\n\nA. An S3 gateway endpoint adds service-specific routes to the VPC route tables so private-subnet traffic reaches S3 without traversing a NAT gateway.\n\nB. A DynamoDB gateway endpoint provides the same private routing model for DynamoDB. Gateway endpoints for these services do not incur hourly endpoint charges or NAT data-processing charges.\n\nWhy the other options are wrong:\nC. An egress-only internet gateway supports outbound IPv6 internet traffic and does not provide private IPv4 access to S3 or DynamoDB.\nD. S3 and DynamoDB support gateway endpoints for this use case. Interface endpoints would add hourly and data-processing charges and are not the most cost-effective answer.\nE. Transfer Acceleration changes the upload network path for S3 but does not bypass NAT gateways for private-subnet traffic.\n\nExam trigger:\nPrivate subnets, S3 and DynamoDB, and high NAT processing charges point to gateway endpoints.\n\nExam trap:\nNot every AWS service uses a gateway endpoint, but S3 and DynamoDB do.\n\nMemory hook:\nS3 and DynamoDB bypass NAT with gateway endpoints."
+    },
+    {
+      "id": "q-saa-147",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "multiple",
+      "question_text": "EC2 instances in private subnets access S3, DynamoDB, and Secrets Manager. The application must avoid long-term credentials, keep AWS API traffic off the public internet, and prevent general outbound internet access. Which THREE controls meet the requirements? (Select THREE.)",
+      "option_a": "Attach an IAM role through an instance profile and require IMDSv2.",
+      "option_b": "Create gateway endpoints for S3 and DynamoDB and an interface endpoint for Secrets Manager.",
+      "option_c": "Remove the private subnets' default routes to NAT gateways so no general internet egress remains.",
+      "option_d": "Store IAM access keys in the application configuration.",
+      "option_e": "Assign public IPv4 addresses to the EC2 instances.",
+      "option_f": "Allow inbound SSH from 0.0.0.0/0.",
+      "correct_answer": 0,
+      "correct_answers": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Correct answers:\nA, B, and C.\n\nA. An instance profile supplies temporary AWS credentials to the application, and IMDSv2 strengthens access to instance metadata.\n\nB. Gateway endpoints provide private access to S3 and DynamoDB, while an interface endpoint provides private access to Secrets Manager.\n\nC. Removing the private subnets' default routes to NAT gateways prevents arbitrary outbound internet access while the required AWS services remain reachable through VPC endpoints.\n\nWhy the other options are wrong:\nD. Hardcoded access keys are long-lived secrets and violate the credential requirement.\nE. Public IP addresses would introduce direct public reachability and are unnecessary.\nF. Open SSH access increases inbound exposure and does not satisfy any stated requirement.\n\nExam trigger:\nTemporary credentials, private service access, and no general internet egress.\n\nExam trap:\nPrivate subnets can still reach the internet through NAT unless the default route is removed.\n\nMemory hook:\nRole for identity, endpoints for APIs, no NAT route."
+    },
+    {
+      "id": "q-saa-152",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "An EC2 role in Account B must directly read objects from an S3 bucket in Account A. The objects are encrypted with a customer managed KMS key in Account A, and the role will not assume a role in Account A. Which permission model is required?",
+      "option_a": "Grant the role s3:GetObject and kms:Decrypt in Account B and update only the S3 bucket policy.",
+      "option_b": "Grant the role access in the KMS key policy and update only the role's IAM policy.",
+      "option_c": "Allow the role in the S3 bucket policy and KMS key policy in Account A, and grant s3:GetObject and kms:Decrypt in the role's IAM policy in Account B.",
+      "option_d": "Use the AWS managed aws/s3 KMS key and grant the role AdministratorAccess in Account B.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 2,
+      "correct_answers": [
+        2
+      ],
+      "explanation": "Correct answer:\nC. Direct cross-account access requires authorization from both accounts and both protected resources. The role in Account B needs identity-policy permissions for s3:GetObject and kms:Decrypt. The bucket policy in Account A must trust the role for object access, and the customer managed KMS key policy must permit the cross-account decryption path.\n\nWhy the other options are wrong:\nA. The KMS key policy is missing, so the external role cannot use the key even if its IAM policy allows kms:Decrypt.\nB. The S3 bucket policy is missing, so the private bucket does not trust the external role.\nD. AWS managed service keys are not configurable for this direct cross-account sharing pattern, and AdministratorAccess in Account B does not grant access to Account A resources.\n\nExam trigger:\nCross-account S3 plus customer managed KMS encryption requires identity, bucket, and key permissions.\n\nExam trap:\nAccess to the object does not automatically grant access to its encryption key.\n\nMemory hook:\nCross-account encrypted S3 needs role, bucket, and KMS permission."
+    },
+    {
+      "id": "q-saa-167",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "Order messages for the same order stream must be processed in sequence. Producers may retry sends, and a message that cannot be processed must be isolated after three receives. Which queue configuration best meets the requirements?",
+      "option_a": "An SQS standard queue with a CloudWatch alarm for failed processing",
+      "option_b": "An SQS FIFO queue using message-group and deduplication IDs, with a DLQ redrive policy whose maxReceiveCount is 3",
+      "option_c": "An SNS standard topic forwarding directly to all workers",
+      "option_d": "An EventBridge event bus with failed events written to S3",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. SQS FIFO preserves ordering within a message group and suppresses duplicate sends within the deduplication interval using explicit or content-based deduplication. A dead-letter queue with maxReceiveCount set to 3 isolates repeatedly failing messages.\n\nWhy the other options are wrong:\nA. SQS standard queues provide best-effort ordering and at-least-once delivery without FIFO deduplication.\nC. SNS standard provides fan-out but not ordered worker-queue processing.\nD. EventBridge routes events but does not provide the required FIFO queue semantics and receive-count redrive policy.\n\nConsumers should still be idempotent because failures can cause a message to be delivered again after processing begins.\n\nExam trigger:\nPer-stream ordering, duplicate-send suppression, and poison-message isolation point to FIFO plus a DLQ.\n\nExam trap:\nFIFO deduplication suppresses duplicate sends; it does not remove the need for idempotent processing.\n\nMemory hook:\nFIFO orders; DLQ isolates."
+    },
+    {
+      "id": "q-saa-219",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A CloudFront distribution has synchronized S3 origins in two Regions. For GET, HEAD, and OPTIONS requests, CloudFront must retry the secondary S3 origin when the primary times out or returns selected server-error responses. Which configuration provides the native behaviour?",
+      "option_a": "Create a CloudFront origin group with the primary and secondary S3 origins and configure the failover criteria.",
+      "option_b": "Create Route 53 failover records for the CloudFront distribution domain.",
+      "option_c": "Use Global Accelerator with both S3 buckets as endpoints.",
+      "option_d": "Use Lambda@Edge to update DNS after each 5xx response.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. A CloudFront origin group defines a primary and secondary origin. For supported read methods, CloudFront can retry the secondary origin when the primary has a connection failure, timeout, or configured HTTP status response.\n\nWhy the other options are wrong:\nB. Route 53 sees the CloudFront distribution endpoint and does not perform per-request failover between the distribution's internal origins.\nC. S3 buckets are not standard Global Accelerator endpoints for this design.\nD. DNS mutation is slower, custom, and unnecessary because CloudFront already provides native origin failover.\n\nExam trigger:\nPer-request failover between origins inside one CloudFront distribution points to an origin group.\n\nExam trap:\nRoute 53 fails over DNS endpoints; CloudFront origin groups retry origins for a request.\n\nMemory hook:\nOrigin failure inside CloudFront means origin group."
+    },
+    {
+      "id": "q-saa-220",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A global application uses internet-facing ALBs in two Regions. DNS should normally return the healthy Region with the lowest measured network latency, and it must stop returning an ALB when that load balancer has no healthy targets. Which Route 53 configuration is the best fit?",
+      "option_a": "Latency-based alias records for both ALBs with Evaluate Target Health enabled",
+      "option_b": "Primary and secondary failover records",
+      "option_c": "Equal-weight weighted records without health evaluation",
+      "option_d": "Geolocation records based only on user country",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Latency-based routing selects the AWS Region expected to provide the lowest network latency for the resolver's location. Alias records can evaluate the health of their ALB targets so unhealthy load balancers are excluded from DNS responses.\n\nWhy the other options are wrong:\nB. Failover routing always prefers the designated primary while healthy rather than selecting the lowest-latency Region.\nC. Equal weights do not consider latency and, without health evaluation, can return an unhealthy target.\nD. Geolocation routing follows configured geographic rules, not measured latency.\n\nExam trigger:\nLowest-latency healthy Regional endpoint points to latency alias records with target-health evaluation.\n\nExam trap:\nLatency routing optimizes network performance; geolocation routing follows business-defined location rules.\n\nMemory hook:\nFastest healthy Region means latency alias plus target health."
+    },
+    {
+      "id": "q-saa-69",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Hard",
+      "question_type": "single",
+      "question_text": "A Lambda function in Account A must retrieve one secret directly from AWS Secrets Manager in Account B. The function cannot assume a role in Account B, and the secret must remain a single centrally rotated copy. The secret is encrypted with a customer managed KMS key in Account B. Which configuration is required?",
+      "option_a": "Allow secretsmanager:GetSecretValue in the Lambda role identity policy, trust the role in the secret resource policy, and allow the role to use the KMS key through the required key and IAM permissions.",
+      "option_b": "Trust the Lambda role only in the secret resource policy and rely on the AWS managed aws/secretsmanager key for cross-account decryption.",
+      "option_c": "Create an assumable role in Account B with secret and KMS permissions and have Lambda call sts:AssumeRole.",
+      "option_d": "Replicate the secret manually into Account A and rotate the two copies independently.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Direct cross-account access requires the caller's identity policy to allow GetSecretValue and the secret's resource policy to trust the external Lambda role. Because the secret uses a customer managed KMS key, the role must also be permitted to decrypt with that key through the applicable key policy and IAM authorization.\n\nWhy the other options are wrong:\nB. The AWS managed Secrets Manager KMS key cannot be configured for this direct cross-account decryption pattern, and a resource policy alone is not sufficient.\nC. Assuming a role in Account B can be a valid design, but it violates the requirement for direct access without AssumeRole.\nD. Duplicating the secret creates separate rotation and consistency problems and violates the single-copy requirement.\n\nExam trigger:\nDirect cross-account secret retrieval requires identity permission, secret resource permission, and KMS permission.\n\nExam trap:\nGranting access to the secret does not automatically grant access to its encryption key.\n\nMemory hook:\nCross-account secret access needs three permissions: identity, secret, and KMS."
+    },
+    {
+      "id": "q-saa-72",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "Administrators must manage EC2 instances in private subnets without public IP addresses, inbound SSH rules, or distributed SSH keys. The company also requires session activity to be logged centrally for audit purposes. Which AWS Systems Manager capability should be used?",
+      "option_a": "Patch Manager with maintenance windows",
+      "option_b": "Session Manager with session logging configured",
+      "option_c": "State Manager associations",
+      "option_d": "Automation runbooks",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Session Manager provides interactive shell access to managed instances without opening inbound ports, assigning public IP addresses, or distributing SSH keys. Session logging can be configured to send session activity to CloudWatch Logs or Amazon S3 for auditing.\n\nWhy the other options are wrong:\nA. Patch Manager automates operating-system patching and does not provide interactive administrative sessions.\nC. State Manager maintains a desired configuration on managed nodes but does not replace an administrator shell session.\nD. Automation runbooks execute predefined operational workflows rather than providing interactive command-line access.\n\nExam trigger:\nPrivate instances, no SSH, no public IP, and audited shell access point to Session Manager.\n\nExam trap:\nSystems Manager has several management features, but only Session Manager replaces interactive SSH access.\n\nMemory hook:\nNo SSH port, no keys, audited shell means Session Manager."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-147",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-167",
+      "topic_id": "topic-sqs"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-69",
+      "topic_id": "topic-secrets-manager"
+    },
+    {
+      "question_id": "q-saa-105",
+      "topic_id": "topic-global-accelerator"
+    },
+    {
+      "question_id": "q-saa-72",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-72",
+      "topic_id": "topic-ssm"
+    },
+    {
+      "question_id": "q-saa-111",
+      "topic_id": "topic-mgn"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-iam"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-kms"
+    },
+    {
+      "question_id": "q-saa-152",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-dynamodb"
+    },
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-131",
+      "topic_id": "topic-vpc"
+    },
+    {
+      "question_id": "q-saa-219",
+      "topic_id": "topic-cloudfront"
+    },
+    {
+      "question_id": "q-saa-219",
+      "topic_id": "topic-s3"
+    },
+    {
+      "question_id": "q-saa-220",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-220",
+      "topic_id": "topic-route53"
+    }
+  ]
+}
