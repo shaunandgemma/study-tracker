@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ExamProvider, useExam } from './context/ExamContext';
 import { TaskProvider } from './context/TaskContext';
 import { Navbar } from './components/Navbar';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
 import { QuizEngine } from './components/PrepExam/QuizEngine';
@@ -247,7 +248,7 @@ const MainContent = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
         {viewMode === 'checklist' && (
           <ChecklistView onLaunchPrepExam={handleLaunchPrepExam} />
         )}
@@ -287,6 +288,9 @@ const MainContent = () => {
           </div>
         )}
       </main>
+
+      {/* Mobile Fixed Bottom Navigation Bar */}
+      <MobileBottomNav />
 
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">

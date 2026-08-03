@@ -348,32 +348,32 @@ export const QuizEngine = ({ config, onFinishExam, onCancelExam }) => {
       </div>
 
       {/* Navigation & Submit Bar */}
-      <div className="flex items-center justify-between gap-4 pt-2">
+      <div className="flex items-center justify-between gap-3 pt-2">
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-800 text-xs font-bold text-slate-300 flex items-center gap-1.5 transition-colors"
+          className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-800 text-xs font-bold text-slate-300 flex items-center gap-1 sm:gap-1.5 transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" /> Previous
+          <ChevronLeft className="w-4 h-4" /> <span className="hidden xs:inline">Previous</span><span className="xs:hidden">Prev</span>
         </button>
 
-        <span className="text-xs font-semibold text-slate-400">
-          {answeredCount} of {questions.length} answered
+        <span className="text-[11px] sm:text-xs font-semibold text-slate-400 text-center">
+          {answeredCount}/{questions.length} <span className="hidden xs:inline">answered</span>
         </span>
 
         {currentIndex < questions.length - 1 ? (
           <button
             onClick={handleNext}
-            className="px-6 py-2.5 rounded-xl text-xs font-extrabold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 transition-transform hover:scale-105"
+            className="px-4 sm:px-6 py-2.5 rounded-xl text-xs font-extrabold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1 sm:gap-1.5 transition-transform hover:scale-105"
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>
         ) : (
           <button
             onClick={() => setShowSubmitConfirm(true)}
-            className="px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-600/30 flex items-center gap-1.5 transition-transform hover:scale-105"
+            className="px-4 sm:px-6 py-2.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-600/30 flex items-center gap-1 sm:gap-1.5 transition-transform hover:scale-105"
           >
-            Submit Exam <Send className="w-4 h-4" />
+            Submit <Send className="w-4 h-4" />
           </button>
         )}
       </div>
