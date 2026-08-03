@@ -1,0 +1,102 @@
+{
+  "createdAt": "2026-08-03T11:32:15.451Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-236",
+    "q-saa-240",
+    "q-saa-247",
+    "q-saa-267"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-236",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A public application exposes several HTTP microservices through one load balancer. Requests must be routed by URL path, and TLS should terminate at the load balancer before traffic reaches the target groups. Which load balancer should be used?",
+      "option_a": "Application Load Balancer",
+      "option_b": "Network Load Balancer",
+      "option_c": "Gateway Load Balancer",
+      "option_d": "Classic Load Balancer",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. An Application Load Balancer operates at Layer 7, supports HTTPS listeners and TLS termination, and can route requests to different target groups by URL path or host name.\n\nWhy the other options are wrong:\nB. A Network Load Balancer operates primarily at Layer 4 and does not provide ALB path-based routing rules.\nC. A Gateway Load Balancer distributes traffic through fleets of virtual network appliances.\nD. A Classic Load Balancer lacks the modern content-based routing features requested.\n\nExam trigger:\nHTTP path-based routing and TLS termination point to an ALB.\n\nExam trap:\nNLB is selected for extreme Layer 4 performance or static IPs, not URL-aware routing.\n\nMemory hook:\nLayer 7 routing means ALB."
+    },
+    {
+      "id": "q-saa-240",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "An internet-facing service must handle millions of long-lived TCP connections with very low latency. The load balancer must provide a fixed IP address in each enabled Availability Zone and does not need HTTP-aware routing. Which solution meets the requirements?",
+      "option_a": "Network Load Balancer",
+      "option_b": "Application Load Balancer",
+      "option_c": "Gateway Load Balancer",
+      "option_d": "Route 53 weighted routing",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. A Network Load Balancer is designed for high-performance Layer 4 TCP, UDP, and TLS traffic. It provides one static IP address per enabled Availability Zone and can optionally use Elastic IP addresses for internet-facing load balancers.\n\nWhy the other options are wrong:\nB. An ALB provides HTTP-aware Layer 7 routing and does not offer the same static per-AZ IP design.\nC. A Gateway Load Balancer distributes traffic to virtual network appliances by using GENEVE.\nD. Route 53 returns DNS answers and does not proxy or balance individual TCP connections.\n\nExam trigger:\nMassive TCP scale, very low latency, and static per-AZ addresses point to an NLB.\n\nExam trap:\nChoose ALB for HTTP content routing; choose NLB for Layer 4 performance and static addresses.\n\nMemory hook:\nLayer 4 plus static IP means NLB."
+    },
+    {
+      "id": "q-saa-247",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A stateless nightly batch job saves checkpoints and can restart after an interruption. Which EC2 purchasing option is normally the most cost-effective?",
+      "option_a": "Spot Instances",
+      "option_b": "On-Demand Instances",
+      "option_c": "Dedicated Hosts",
+      "option_d": "Standard Reserved Instances",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. Spot Instances use spare EC2 capacity at a discount and are well suited to fault-tolerant, checkpointed workloads that can stop and resume.\n\nWhy the other options are wrong:\nB. On-Demand avoids commitments but normally costs more when interruption is acceptable.\nC. Dedicated Hosts are selected for host-level licensing, compliance, or isolation requirements rather than low-cost interruptible batch capacity.\nD. Reserved Instances suit predictable EC2 baselines and require a commitment; they are not generally the lowest-cost choice for an interruption-tolerant intermittent job.\n\nExam trigger:\nThe job is restartable, checkpointed, and interruption tolerant.\n\nExam trap:\nSpot saves cost only when the workload handles interruption correctly.\n\nMemory hook:\nSafe to interrupt means Spot."
+    },
+    {
+      "id": "q-saa-267",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Easy",
+      "question_type": "single",
+      "question_text": "A fraud-detection platform must analyse relationships among customers, payment cards, devices, IP addresses, and transactions. Queries frequently traverse several relationship levels to identify connected entities and suspicious paths. Which database service is purpose-built for this workload?",
+      "option_a": "Amazon DocumentDB",
+      "option_b": "Amazon Neptune",
+      "option_c": "Amazon DynamoDB",
+      "option_d": "Amazon Timestream",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 1,
+      "correct_answers": [
+        1
+      ],
+      "explanation": "Correct answer:\nB. Amazon Neptune is a fully managed graph database designed for highly connected datasets. It is optimized for storing relationships and efficiently traversing paths among entities, making it suitable for fraud graphs, knowledge graphs, identity graphs, and social-network relationships.\n\nWhy the other options are wrong:\nA. DocumentDB is a document database for MongoDB-compatible workloads. It is not optimized for multi-hop graph traversal.\nC. DynamoDB provides scalable key-value and document access but would require the application to model and execute complex graph traversals manually.\nD. Timestream is a time-series database for measurements and events indexed by time, not a graph relationship engine.\n\nExam trigger:\nThe workload revolves around connected entities, multi-hop relationships, and path traversal.\n\nExam trap:\nDocument databases store nested documents; graph databases optimize relationships between records.\n\nMemory hook:\nMany connected entities and path queries mean Neptune."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-236",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-240",
+      "topic_id": "topic-elb"
+    },
+    {
+      "question_id": "q-saa-247",
+      "topic_id": "topic-ec2"
+    },
+    {
+      "question_id": "q-saa-267",
+      "topic_id": "topic-neptune"
+    }
+  ]
+}

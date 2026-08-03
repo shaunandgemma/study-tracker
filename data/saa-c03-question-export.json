@@ -5250,20 +5250,20 @@
   {
     "id": "q-saa-236",
     "exam_code": "aws-saa-c03",
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "type": "single",
-    "question": "A public application exposes several HTTP microservices through one load balancer. Requests must be routed by URL path, and TLS should terminate at the load balancer before traffic reaches the target groups. Which load balancer should be used?",
+    "question": "A company runs several HTTP microservices in one AWS Region. Requests for /orders/* and /catalog/* must be routed to separate target groups, TLS must terminate at the load-balancing layer using an ACM certificate, and the targets are replaced automatically by EC2 Auto Scaling. Which design meets the requirements with the least operational overhead?",
     "options": [
-      "Application Load Balancer",
-      "Network Load Balancer",
-      "Gateway Load Balancer",
-      "Classic Load Balancer"
+      "Use an Application Load Balancer with an HTTPS listener, an ACM certificate, and path-based forwarding rules.",
+      "Use a Network Load Balancer with a TLS listener and separate target groups for each URL path.",
+      "Use a Gateway Load Balancer with listener rules that inspect HTTP paths before forwarding traffic.",
+      "Use Route 53 weighted records to send requests to separate EC2 target groups according to the URL path."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. An Application Load Balancer operates at Layer 7, supports HTTPS listeners and TLS termination, and can route requests to different target groups by URL path or host name.\n\nWhy the other options are wrong:\nB. A Network Load Balancer operates primarily at Layer 4 and does not provide ALB path-based routing rules.\nC. A Gateway Load Balancer distributes traffic through fleets of virtual network appliances.\nD. A Classic Load Balancer lacks the modern content-based routing features requested.\n\nExam trigger:\nHTTP path-based routing and TLS termination point to an ALB.\n\nExam trap:\nNLB is selected for extreme Layer 4 performance or static IPs, not URL-aware routing.\n\nMemory hook:\nLayer 7 routing means ALB.",
+    "explanation": "Correct answer:\nA. An Application Load Balancer operates at Layer 7, supports HTTPS listeners with ACM certificates, and can route requests to different target groups according to URL paths. Target groups also integrate with EC2 Auto Scaling so replacement instances are registered automatically.\n\nWhy the other options are wrong:\nB. A Network Load Balancer can terminate TLS and provide high-performance Layer 4 routing, but it cannot inspect HTTP URL paths for content-based forwarding.\nC. A Gateway Load Balancer distributes traffic through virtual network appliances and does not provide application path-based routing.\nD. Route 53 chooses DNS records and cannot inspect the path of an individual HTTP request.\n\nExam trigger:\nHTTPS termination plus URL path routing to Auto Scaling target groups points to an Application Load Balancer.\n\nExam trap:\nNLB supports TLS, but TLS support does not make it capable of Layer 7 path routing.\n\nMemory hook:\nPaths and target groups mean ALB.",
     "topics": [
       "topic-elb"
     ]
@@ -5338,20 +5338,20 @@
   {
     "id": "q-saa-240",
     "exam_code": "aws-saa-c03",
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "type": "single",
-    "question": "An internet-facing service must handle millions of long-lived TCP connections with very low latency. The load balancer must provide a fixed IP address in each enabled Availability Zone and does not need HTTP-aware routing. Which solution meets the requirements?",
+    "question": "An internet-facing financial market-data service must sustain millions of long-lived TCP connections with very low latency. Partners require fixed public IP addresses for firewall allow lists, the service runs across three Availability Zones, and no HTTP-aware routing is required. Which architecture best meets the requirements?",
     "options": [
-      "Network Load Balancer",
-      "Application Load Balancer",
-      "Gateway Load Balancer",
-      "Route 53 weighted routing"
+      "Use an internet-facing Network Load Balancer and assign an Elastic IP address to each Availability Zone subnet mapping.",
+      "Use an Application Load Balancer with cross-zone load balancing and publish its DNS name to partners.",
+      "Use AWS Global Accelerator with an Application Load Balancer endpoint and perform TCP pass-through at the ALB.",
+      "Use Route 53 weighted records that return the private IP addresses of the EC2 service instances."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. A Network Load Balancer is designed for high-performance Layer 4 TCP, UDP, and TLS traffic. It provides one static IP address per enabled Availability Zone and can optionally use Elastic IP addresses for internet-facing load balancers.\n\nWhy the other options are wrong:\nB. An ALB provides HTTP-aware Layer 7 routing and does not offer the same static per-AZ IP design.\nC. A Gateway Load Balancer distributes traffic to virtual network appliances by using GENEVE.\nD. Route 53 returns DNS answers and does not proxy or balance individual TCP connections.\n\nExam trigger:\nMassive TCP scale, very low latency, and static per-AZ addresses point to an NLB.\n\nExam trap:\nChoose ALB for HTTP content routing; choose NLB for Layer 4 performance and static addresses.\n\nMemory hook:\nLayer 4 plus static IP means NLB.",
+    "explanation": "Correct answer:\nA. A Network Load Balancer is designed for very high-performance Layer 4 traffic, supports long-lived TCP connections, and can use one Elastic IP address in each enabled Availability Zone. This gives partners stable addresses for allow lists without requiring HTTP-aware routing.\n\nWhy the other options are wrong:\nB. An Application Load Balancer is intended for HTTP and HTTPS Layer 7 routing and does not provide the same per-Availability-Zone Elastic IP design.\nC. Global Accelerator provides static Anycast IP addresses, but an ALB endpoint still terminates HTTP or HTTPS rather than providing generic TCP pass-through. An NLB directly satisfies all stated requirements.\nD. Route 53 provides DNS responses and does not proxy millions of individual TCP connections. Publishing instance private IP addresses would also not provide an internet-facing endpoint.\n\nExam trigger:\nMassive TCP scale, low latency, multi-AZ deployment, and fixed public addresses point to a Network Load Balancer.\n\nExam trap:\nGlobal Accelerator can provide static global IPs, but it is unnecessary when static per-AZ IPs and Layer 4 load balancing are the direct requirement.\n\nMemory hook:\nLayer 4 plus Elastic IPs means NLB.",
     "topics": [
       "topic-elb"
     ]
@@ -5497,22 +5497,23 @@
   {
     "id": "q-saa-247",
     "exam_code": "aws-saa-c03",
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "type": "single",
-    "question": "A stateless nightly batch job saves checkpoints and can restart after an interruption. Which EC2 purchasing option is normally the most cost-effective?",
+    "question": "A nightly analytics job requires up to 300 EC2 instances for four hours. The workload is stateless, writes checkpoints to Amazon S3 every few minutes, and can restart after interruption. The company wants the lowest cost while reducing the chance that a large portion of the fleet is interrupted at once. Which configuration should be used?",
     "options": [
-      "Spot Instances",
-      "On-Demand Instances",
-      "Dedicated Hosts",
-      "Standard Reserved Instances"
+      "Use a mixed instances policy across several instance types and Availability Zones with price-capacity-optimized Spot allocation.",
+      "Use one Spot instance type in one Availability Zone with the lowest-price allocation strategy.",
+      "Purchase Standard Reserved Instances for 300 instances and stop them after each nightly run.",
+      "Use On-Demand Instances covered by a Compute Savings Plan sized for the maximum nightly fleet."
     ],
     "correctAnswer": 0,
     "correctAnswers": [
       0
     ],
-    "explanation": "Correct answer:\nA. Spot Instances use spare EC2 capacity at a discount and are well suited to fault-tolerant, checkpointed workloads that can stop and resume.\n\nWhy the other options are wrong:\nB. On-Demand avoids commitments but normally costs more when interruption is acceptable.\nC. Dedicated Hosts are selected for host-level licensing, compliance, or isolation requirements rather than low-cost interruptible batch capacity.\nD. Reserved Instances suit predictable EC2 baselines and require a commitment; they are not generally the lowest-cost choice for an interruption-tolerant intermittent job.\n\nExam trigger:\nThe job is restartable, checkpointed, and interruption tolerant.\n\nExam trap:\nSpot saves cost only when the workload handles interruption correctly.\n\nMemory hook:\nSafe to interrupt means Spot.",
+    "explanation": "Correct answer:\nA. Spot Instances provide the largest savings for checkpointed, interruption-tolerant work. A mixed instances policy across several suitable instance types and Availability Zones spreads the fleet across more Spot capacity pools, while a capacity-aware allocation strategy reduces the risk of broad simultaneous interruption.\n\nWhy the other options are wrong:\nB. Spot is appropriate, but using one instance type and one Availability Zone concentrates the workload in one capacity pool and increases interruption risk.\nC. Reserved Instances require a long-term commitment and are poorly matched to a workload that runs only four hours per night at variable scale.\nD. On-Demand capacity with a Savings Plan could reduce cost, but committing to the maximum short-lived fleet would usually cost more and risk unused commitment outside the nightly window.\n\nExam trigger:\nLarge checkpointed batch work that can restart, combined with a need to reduce Spot interruption concentration, points to diversified Spot capacity.\n\nExam trap:\nChoosing Spot is only part of the design; diversify instance types and Availability Zones as well.\n\nMemory hook:\nCheckpointed batch plus diversified Spot equals lowest resilient cost.",
     "topics": [
-      "topic-ec2"
+      "topic-ec2",
+      "topic-ec2-asg"
     ]
   },
   {
@@ -5936,20 +5937,20 @@
   {
     "id": "q-saa-267",
     "exam_code": "aws-saa-c03",
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "type": "single",
-    "question": "A fraud-detection platform must analyse relationships among customers, payment cards, devices, IP addresses, and transactions. Queries frequently traverse several relationship levels to identify connected entities and suspicious paths. Which database service is purpose-built for this workload?",
+    "question": "A fraud-detection platform stores customers, payment cards, devices, IP addresses, merchants, and transactions. Investigators must run low-latency queries that traverse several relationship levels, such as finding all accounts connected to a compromised device through shared cards and addresses. The company wants a managed database that supports graph query languages and avoids implementing traversal logic in the application. Which service should be used?",
     "options": [
-      "Amazon DocumentDB",
-      "Amazon Neptune",
-      "Amazon DynamoDB",
-      "Amazon Timestream"
+      "Use Amazon DocumentDB and store each customer's related entities in nested JSON documents.",
+      "Use Amazon Neptune and model the entities and relationships as a graph.",
+      "Use Amazon DynamoDB with adjacency-list items and perform each traversal step in application code.",
+      "Use Amazon OpenSearch Service and reconstruct relationship paths from indexed transaction documents."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
       1
     ],
-    "explanation": "Correct answer:\nB. Amazon Neptune is a fully managed graph database designed for highly connected datasets. It is optimized for storing relationships and efficiently traversing paths among entities, making it suitable for fraud graphs, knowledge graphs, identity graphs, and social-network relationships.\n\nWhy the other options are wrong:\nA. DocumentDB is a document database for MongoDB-compatible workloads. It is not optimized for multi-hop graph traversal.\nC. DynamoDB provides scalable key-value and document access but would require the application to model and execute complex graph traversals manually.\nD. Timestream is a time-series database for measurements and events indexed by time, not a graph relationship engine.\n\nExam trigger:\nThe workload revolves around connected entities, multi-hop relationships, and path traversal.\n\nExam trap:\nDocument databases store nested documents; graph databases optimize relationships between records.\n\nMemory hook:\nMany connected entities and path queries mean Neptune.",
+    "explanation": "Correct answer:\nB. Amazon Neptune is a managed graph database designed for highly connected datasets and multi-hop relationship queries. It supports graph query models such as property graphs and RDF, allowing fraud investigators to traverse paths between customers, cards, devices, addresses, and transactions efficiently.\n\nWhy the other options are wrong:\nA. DocumentDB is a document database and is not optimised for repeated multi-hop graph traversal across many related entities.\nC. DynamoDB can model relationships with adjacency lists, but the application would need to coordinate multiple reads and implement traversal logic, which the requirement explicitly seeks to avoid.\nD. OpenSearch can search and aggregate indexed documents, but it is not a purpose-built graph database for deep path traversal.\n\nExam trigger:\nHighly connected entities, multi-hop traversal, path discovery, and graph query languages point to Amazon Neptune.\n\nExam trap:\nA key-value or document database can store relationships, but Neptune is purpose-built to traverse them.\n\nMemory hook:\nConnected entities and path queries mean Neptune.",
     "topics": [
       "topic-neptune"
     ]

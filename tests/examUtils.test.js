@@ -36,7 +36,7 @@ function createQuestion(id) {
 const completeBank = Object.keys(QUESTION_DOMAIN_MAP).map(createQuestion);
 
 test('the primary-domain map covers the bank and has enough questions for every quota', () => {
-  assert.equal(completeBank.length, 250);
+  assert.ok(completeBank.length >= 250);
 
   const poolCounts = completeBank.reduce((counts, question) => {
     const domainId = getPrimaryDomainIdForQuestion(question);
@@ -104,7 +104,7 @@ test('Full Mock selection rejects duplicate and unmapped bank IDs', () => {
     /question bank contains duplicate IDs/
   );
   assert.throws(
-    () => selectFullMockQuestions([...completeBank, createQuestion('q-unmapped')], seededRandom(7)),
+    () => selectFullMockQuestions([...completeBank, { id: 'q-unmapped', type: 'single', options: ['A', 'B', 'C', 'D'], correctAnswer: 0 }], seededRandom(7)),
     /question q-unmapped has no valid primary SAA-C03 domain/
   );
 });

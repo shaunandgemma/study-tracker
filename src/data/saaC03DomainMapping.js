@@ -308,7 +308,27 @@ export const QUESTION_DOMAIN_MAP = {
   "q-saa-247": "domain-4",
   "q-saa-248": "domain-4",
   "q-saa-249": "domain-4",
-  "q-saa-250": "domain-4"
+  "q-saa-250": "domain-4",
+  "q-saa-251": "domain-4",
+  "q-saa-252": "domain-4",
+  "q-saa-253": "domain-4",
+  "q-saa-254": "domain-4",
+  "q-saa-255": "domain-4",
+  "q-saa-256": "domain-4",
+  "q-saa-257": "domain-4",
+  "q-saa-258": "domain-4",
+  "q-saa-259": "domain-4",
+  "q-saa-260": "domain-4",
+  "q-saa-261": "domain-2",
+  "q-saa-262": "domain-2",
+  "q-saa-263": "domain-3",
+  "q-saa-264": "domain-3",
+  "q-saa-265": "domain-2",
+  "q-saa-266": "domain-3",
+  "q-saa-267": "domain-3",
+  "q-saa-268": "domain-1",
+  "q-saa-269": "domain-3",
+  "q-saa-270": "domain-3"
 };
 
 /**
@@ -329,6 +349,7 @@ export const TOPIC_DOMAIN_MAP = {
   'topic-cognito': 'domain-1',
   'topic-cloudtrail': 'domain-1',
   'topic-ssm-parameter-store': 'domain-1',
+  'topic-lake-formation': 'domain-1',
   'topic-vpc': 'domain-2',
   'topic-elb': 'domain-2',
   'topic-ec2-asg': 'domain-2',
@@ -341,6 +362,8 @@ export const TOPIC_DOMAIN_MAP = {
   'topic-aws-backup': 'domain-2',
   'topic-vpn': 'domain-2',
   'topic-transit-gateway': 'domain-2',
+  'topic-cloudformation': 'domain-2',
+  'topic-mq': 'domain-2',
   'topic-ec2': 'domain-3',
   'topic-s3': 'domain-3',
   'topic-ebs': 'domain-3',
@@ -371,6 +394,11 @@ export const TOPIC_DOMAIN_MAP = {
   'topic-privatelink': 'domain-3',
   'topic-step-functions': 'domain-3',
   'topic-ssm': 'domain-3',
+  'topic-documentdb': 'domain-3',
+  'topic-emr': 'domain-3',
+  'topic-neptune': 'domain-3',
+  'topic-quicksight': 'domain-3',
+  'topic-transfer-family': 'domain-3',
   'topic-organizations': 'domain-4',
   'topic-budgets': 'domain-4',
   'topic-cost-explorer': 'domain-4',
@@ -384,12 +412,25 @@ export const TOPIC_DOMAIN_MAP = {
 
 /**
  * Returns the single authoritative primary domain ID used for Full Mock
- * selection. Topic tags are deliberately ignored because a question can have
- * several tags but must count toward exactly one exam domain.
+ * selection. If not explicitly mapped by question ID in QUESTION_DOMAIN_MAP,
+ * falls back to resolving via topic ID mappings in TOPIC_DOMAIN_MAP.
  */
 export function getPrimaryDomainIdForQuestion(q) {
   if (!q?.id) return null;
-  return QUESTION_DOMAIN_MAP[q.id] || null;
+  if (QUESTION_DOMAIN_MAP[q.id]) {
+    return QUESTION_DOMAIN_MAP[q.id];
+  }
+  if (q.topicId && TOPIC_DOMAIN_MAP[q.topicId]) {
+    return TOPIC_DOMAIN_MAP[q.topicId];
+  }
+  if (Array.isArray(q.topics) && q.topics.length > 0) {
+    for (const t of q.topics) {
+      if (TOPIC_DOMAIN_MAP[t]) {
+        return TOPIC_DOMAIN_MAP[t];
+      }
+    }
+  }
+  return null;
 }
 
 /**
@@ -405,7 +446,12 @@ export function getDomainForQuestion(q) {
   }
   
   if (!domainId && Array.isArray(q.topics) && q.topics.length > 0) {
-    domainId = TOPIC_DOMAIN_MAP[q.topics[0]];
+    for (const t of q.topics) {
+      if (TOPIC_DOMAIN_MAP[t]) {
+        domainId = TOPIC_DOMAIN_MAP[t];
+        break;
+      }
+    }
   }
   
   return SAA_C03_DOMAINS.find(d => d.id === domainId) || SAA_C03_DOMAINS[0];
