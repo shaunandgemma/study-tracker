@@ -408,6 +408,11 @@ export const TOPIC_DOMAIN_MAP = {
   'topic-config': 'domain-4',
   'topic-control-tower': 'domain-4',
   'topic-cloudwatch': 'domain-4',
+  'topic-xray': 'domain-3',
+  'topic-service-quotas': 'domain-2',
+  'topic-reliability': 'domain-2',
+  'topic-shared-responsibility': 'domain-1',
+  'topic-aws-health': 'domain-2',
 };
 
 /**

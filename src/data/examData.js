@@ -6865,6 +6865,61 @@ export const DEFAULT_EXAMS = [
             "text": "CDK Synthesis to CloudFormation"
           }
         ]
+      },
+      {
+        "id": "topic-xray",
+        "code": "Observability",
+        "title": "AWS X-Ray",
+        "weight": 2,
+        "description": "Distributed request tracing, trace maps, subsegments, and latency bottleneck identification.",
+        "items": [
+          { "id": "xray-1", "text": "AWS X-Ray Active Tracing & Daemon" },
+          { "id": "xray-2", "text": "X-Ray Sampling Rules & Trace Maps" }
+        ]
+      },
+      {
+        "id": "topic-service-quotas",
+        "code": "Management",
+        "title": "AWS Service Quotas",
+        "weight": 2,
+        "description": "View and manage account limits, vCPU quotas, and quota increase requests.",
+        "items": [
+          { "id": "sq-1", "text": "Service Quotas Review & Increase Requests" },
+          { "id": "sq-2", "text": "Regional vCPU & Concurrency Limits" }
+        ]
+      },
+      {
+        "id": "topic-reliability",
+        "code": "Architecture",
+        "title": "AWS Reliability & Resiliency",
+        "weight": 3,
+        "description": "Exponential backoff, jitter, retry strategies, and fault-tolerant architectural patterns.",
+        "items": [
+          { "id": "rel-1", "text": "Exponential Backoff & Randomized Jitter" },
+          { "id": "rel-2", "text": "Throttling Recovery & Resilient Application Design" }
+        ]
+      },
+      {
+        "id": "topic-shared-responsibility",
+        "code": "Security",
+        "title": "AWS Shared Responsibility Model",
+        "weight": 3,
+        "description": "Division of security responsibilities between AWS (of the cloud) and customers (in the cloud).",
+        "items": [
+          { "id": "srm-1", "text": "Customer vs AWS Security Responsibilities" },
+          { "id": "srm-2", "text": "Guest OS Patching vs Infrastructure Security" }
+        ]
+      },
+      {
+        "id": "topic-aws-health",
+        "code": "Operations",
+        "title": "AWS Health Dashboard",
+        "weight": 2,
+        "description": "Account-specific AWS events, affected resources, and automated event notifications via EventBridge.",
+        "items": [
+          { "id": "health-1", "text": "AWS Health Dashboard & Account-Specific Events" },
+          { "id": "health-2", "text": "AWS Health EventBridge Integration & Notifications" }
+        ]
       }
     ],
     "questions": []

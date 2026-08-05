@@ -1,87 +1,26 @@
 [
   {
-    "id": "q-saa-236",
+    "id": "q-saa-271",
     "exam_code": "aws-saa-c03",
     "difficulty": "Medium",
     "type": "single",
-    "question": "A company runs several HTTP microservices in one AWS Region. Requests for /orders/* and /catalog/* must be routed to separate target groups, TLS must terminate at the load-balancing layer using an ACM certificate, and the targets are replaced automatically by EC2 Auto Scaling. Which design meets the requirements with the least operational overhead?",
+    "question": "A serverless checkout API uses Amazon API Gateway, AWS Lambda, and DynamoDB. Users report intermittent high latency, but CloudWatch metrics show that each service is generally healthy. The operations team must trace individual requests across the distributed components and identify which downstream call contributes most to the latency. Which solution should be used?",
     "options": [
-      "Use an Application Load Balancer with an HTTPS listener, an ACM certificate, and path-based forwarding rules.",
-      "Use a Network Load Balancer with a TLS listener and separate target groups for each URL path.",
-      "Use a Gateway Load Balancer with listener rules that inspect HTTP paths before forwarding traffic.",
-      "Use Route 53 weighted records to send requests to separate EC2 target groups according to the URL path."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. An Application Load Balancer operates at Layer 7, supports HTTPS listeners with ACM certificates, and can route requests to different target groups according to URL paths. Target groups also integrate with EC2 Auto Scaling so replacement instances are registered automatically.\n\nWhy the other options are wrong:\nB. A Network Load Balancer can terminate TLS and provide high-performance Layer 4 routing, but it cannot inspect HTTP URL paths for content-based forwarding.\nC. A Gateway Load Balancer distributes traffic through virtual network appliances and does not provide application path-based routing.\nD. Route 53 chooses DNS records and cannot inspect the path of an individual HTTP request.\n\nExam trigger:\nHTTPS termination plus URL path routing to Auto Scaling target groups points to an Application Load Balancer.\n\nExam trap:\nNLB supports TLS, but TLS support does not make it capable of Layer 7 path routing.\n\nMemory hook:\nPaths and target groups mean ALB.",
-    "topics": [
-      "topic-elb"
-    ]
-  },
-  {
-    "id": "q-saa-240",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "An internet-facing financial market-data service must sustain millions of long-lived TCP connections with very low latency. Partners require fixed public IP addresses for firewall allow lists, the service runs across three Availability Zones, and no HTTP-aware routing is required. Which architecture best meets the requirements?",
-    "options": [
-      "Use an internet-facing Network Load Balancer and assign an Elastic IP address to each Availability Zone subnet mapping.",
-      "Use an Application Load Balancer with cross-zone load balancing and publish its DNS name to partners.",
-      "Use AWS Global Accelerator with an Application Load Balancer endpoint and perform TCP pass-through at the ALB.",
-      "Use Route 53 weighted records that return the private IP addresses of the EC2 service instances."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. A Network Load Balancer is designed for very high-performance Layer 4 traffic, supports long-lived TCP connections, and can use one Elastic IP address in each enabled Availability Zone. This gives partners stable addresses for allow lists without requiring HTTP-aware routing.\n\nWhy the other options are wrong:\nB. An Application Load Balancer is intended for HTTP and HTTPS Layer 7 routing and does not provide the same per-Availability-Zone Elastic IP design.\nC. Global Accelerator provides static Anycast IP addresses, but an ALB endpoint still terminates HTTP or HTTPS rather than providing generic TCP pass-through. An NLB directly satisfies all stated requirements.\nD. Route 53 provides DNS responses and does not proxy millions of individual TCP connections. Publishing instance private IP addresses would also not provide an internet-facing endpoint.\n\nExam trigger:\nMassive TCP scale, low latency, multi-AZ deployment, and fixed public addresses point to a Network Load Balancer.\n\nExam trap:\nGlobal Accelerator can provide static global IPs, but it is unnecessary when static per-AZ IPs and Layer 4 load balancing are the direct requirement.\n\nMemory hook:\nLayer 4 plus Elastic IPs means NLB.",
-    "topics": [
-      "topic-elb"
-    ]
-  },
-  {
-    "id": "q-saa-247",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A nightly analytics job requires up to 300 EC2 instances for four hours. The workload is stateless, writes checkpoints to Amazon S3 every few minutes, and can restart after interruption. The company wants the lowest cost while reducing the chance that a large portion of the fleet is interrupted at once. Which configuration should be used?",
-    "options": [
-      "Use a mixed instances policy across several instance types and Availability Zones with price-capacity-optimized Spot allocation.",
-      "Use one Spot instance type in one Availability Zone with the lowest-price allocation strategy.",
-      "Purchase Standard Reserved Instances for 300 instances and stop them after each nightly run.",
-      "Use On-Demand Instances covered by a Compute Savings Plan sized for the maximum nightly fleet."
-    ],
-    "correctAnswer": 0,
-    "correctAnswers": [
-      0
-    ],
-    "explanation": "Correct answer:\nA. Spot Instances provide the largest savings for checkpointed, interruption-tolerant work. A mixed instances policy across several suitable instance types and Availability Zones spreads the fleet across more Spot capacity pools, while a capacity-aware allocation strategy reduces the risk of broad simultaneous interruption.\n\nWhy the other options are wrong:\nB. Spot is appropriate, but using one instance type and one Availability Zone concentrates the workload in one capacity pool and increases interruption risk.\nC. Reserved Instances require a long-term commitment and are poorly matched to a workload that runs only four hours per night at variable scale.\nD. On-Demand capacity with a Savings Plan could reduce cost, but committing to the maximum short-lived fleet would usually cost more and risk unused commitment outside the nightly window.\n\nExam trigger:\nLarge checkpointed batch work that can restart, combined with a need to reduce Spot interruption concentration, points to diversified Spot capacity.\n\nExam trap:\nChoosing Spot is only part of the design; diversify instance types and Availability Zones as well.\n\nMemory hook:\nCheckpointed batch plus diversified Spot equals lowest resilient cost.",
-    "topics": [
-      "topic-ec2",
-      "topic-ec2-asg"
-    ]
-  },
-  {
-    "id": "q-saa-267",
-    "exam_code": "aws-saa-c03",
-    "difficulty": "Medium",
-    "type": "single",
-    "question": "A fraud-detection platform stores customers, payment cards, devices, IP addresses, merchants, and transactions. Investigators must run low-latency queries that traverse several relationship levels, such as finding all accounts connected to a compromised device through shared cards and addresses. The company wants a managed database that supports graph query languages and avoids implementing traversal logic in the application. Which service should be used?",
-    "options": [
-      "Use Amazon DocumentDB and store each customer's related entities in nested JSON documents.",
-      "Use Amazon Neptune and model the entities and relationships as a graph.",
-      "Use Amazon DynamoDB with adjacency-list items and perform each traversal step in application code.",
-      "Use Amazon OpenSearch Service and reconstruct relationship paths from indexed transaction documents."
+      "Enable VPC Flow Logs for the Lambda subnets and query the records in Amazon Athena to identify delayed network connections.",
+      "Enable active AWS X-Ray tracing, instrument downstream calls from Lambda, and analyse the resulting traces and service map.",
+      "Create CloudWatch Logs metric filters for API Gateway and Lambda, then correlate error counts and invocation durations manually.",
+      "Create AWS Config rules for the API Gateway stage and Lambda functions to detect resources that do not have tracing enabled."
     ],
     "correctAnswer": 1,
     "correctAnswers": [
       1
     ],
-    "explanation": "Correct answer:\nB. Amazon Neptune is a managed graph database designed for highly connected datasets and multi-hop relationship queries. It supports graph query models such as property graphs and RDF, allowing fraud investigators to traverse paths between customers, cards, devices, addresses, and transactions efficiently.\n\nWhy the other options are wrong:\nA. DocumentDB is a document database and is not optimised for repeated multi-hop graph traversal across many related entities.\nC. DynamoDB can model relationships with adjacency lists, but the application would need to coordinate multiple reads and implement traversal logic, which the requirement explicitly seeks to avoid.\nD. OpenSearch can search and aggregate indexed documents, but it is not a purpose-built graph database for deep path traversal.\n\nExam trigger:\nHighly connected entities, multi-hop traversal, path discovery, and graph query languages point to Amazon Neptune.\n\nExam trap:\nA key-value or document database can store relationships, but Neptune is purpose-built to traverse them.\n\nMemory hook:\nConnected entities and path queries mean Neptune.",
+    "explanation": "Correct answer:\nB. AWS X-Ray provides distributed request tracing across supported services. Active tracing creates and propagates trace context, while instrumenting the Lambda function's AWS SDK and external client calls creates downstream subsegments. The operations team can analyse individual traces and the service map to determine which dependency contributes most to the latency.\n\nWhy the other options are wrong:\nA. VPC Flow Logs record network-flow metadata such as source addresses, destination addresses, ports, and accepted or rejected traffic. They do not provide application-level request paths or downstream call timings.\nC. CloudWatch Logs metric filters can expose aggregate counts and patterns, but manually correlating logs does not provide the same end-to-end request trace and dependency timing.\nD. AWS Config evaluates resource configuration and compliance. It can detect whether tracing is enabled, but it does not trace live requests or identify the source of application latency.\n\nExam trigger:\nThe team must follow individual requests across distributed services and compare the latency of downstream dependencies.\n\nExam trap:\nCloudWatch metrics and logs provide aggregate operational information, while X-Ray traces the path and timing of individual requests.\n\nMemory hook:\nFollow one distributed request with X-Ray.",
     "topics": [
-      "topic-neptune"
+      "topic-xray",
+      "topic-cloudwatch",
+      "topic-lambda",
+      "topic-api-gateway"
     ]
   }
 ]

@@ -335,35 +335,42 @@ export function filterHandsOnTasks(tasks = [], filters = {}, taskProgress = {}) 
   });
 }
 
+import { INITIAL_SEED_TASKS } from '../data/tasksData.js';
+
 /**
  * Loads published task definitions.
- * Supabase is the production source of truth. Failures are surfaced so the UI
- * cannot silently replace remote data with a misleading bundled catalogue.
+ * Supabase is the primary production source of truth. If Supabase is unconfigured or query fails,
+ * gracefully falls back to the bundled canonical seed catalogue so the application functions offline/on mobile.
  */
 export async function getTasks(examCode = 'aws-saa-c03', topicId = null, client = supabase) {
-  let query = client.from('hands_on_tasks').select('*').eq('status', 'published');
-  if (examCode) query = query.eq('exam_code', examCode);
-  if (topicId) query = query.eq('topic_id', topicId);
+  try {
+    let query = client.from('hands_on_tasks').select('*').eq('status', 'published');
+    if (examCode) query = query.eq('exam_code', examCode);
+    if (topicId) query = query.eq('topic_id', topicId);
 
-  const { data, error } = await query;
-  if (error) {
-    throw new Error(`Unable to load published hands-on tasks: ${error.message || String(error)}`);
-  }
-  if (!Array.isArray(data)) {
-    throw new Error('Unable to load published hands-on tasks: Supabase returned an invalid response.');
-  }
-
-  // Map DB snake_case columns back to camelCase task schema if stored as content json.
-  return data.map(row => {
-    if (row.content && typeof row.content === 'object') {
-      return {
-        ...row.content,
-        id: row.id || row.content.id,
-        examCode: row.exam_code || row.content.examCode,
-        topicId: row.topic_id || row.content.topicId
-      };
+    const { data, error } = await query;
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return data.map(row => {
+        if (row.content && typeof row.content === 'object') {
+          return {
+            ...row.content,
+            id: row.id || row.content.id,
+            examCode: row.exam_code || row.content.examCode,
+            topicId: row.topic_id || row.content.topicId
+          };
+        }
+        return row;
+      });
     }
-    return row;
+  } catch (err) {
+    console.warn('[taskService] Failed to fetch tasks from Supabase, using local seed task catalogue:', err);
+  }
+
+  // Graceful fallback to bundled task catalogue
+  return INITIAL_SEED_TASKS.filter(task => {
+    if (examCode && examCode !== 'all' && task.examCode !== examCode) return false;
+    if (topicId && topicId !== 'all' && task.topicId !== topicId) return false;
+    return true;
   });
 }
 

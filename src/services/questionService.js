@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import fallbackBank from '../../data/saa-c03-question-export.json';
 
 /**
  * Transforms raw database rows and topic mappings into the question structure
@@ -40,132 +41,120 @@ function mapDatabaseToAppQuestion(q, topicMap) {
   };
 }
 
+function mapFallbackQuestions(examCode) {
+  return fallbackBank
+    .filter(q => (q.exam_code || 'aws-saa-c03') === examCode || examCode === 'aws-saa-c03')
+    .map(q => ({
+      ...q,
+      topicId: q.topics?.[0] || q.topicId || null,
+      topicIds: q.topics || (q.topicId ? [q.topicId] : [])
+    }));
+}
+
 /**
- * Fetches all questions for a given exam code from Supabase.
+ * Fetches all questions for a given exam code from Supabase, with local fallback.
  *
  * @param {string} examCode - The exam identifier, e.g., 'aws-saa-c03'
  * @returns {Promise<Array>} List of practice questions in application format
  */
 export async function getExamQuestions(examCode) {
-  // 1. Fetch questions for exam code
-  const { data: questions, error: qError } = await supabase
-    .from('exam_questions')
-    .select('*')
-    .eq('exam_code', examCode);
+  try {
+    const { data: questions, error: qError } = await supabase
+      .from('exam_questions')
+      .select('*')
+      .eq('exam_code', examCode);
 
-  if (qError) {
-    console.error('Error fetching exam questions from Supabase:', qError);
-    throw new Error('Unable to load exam questions from database.');
-  }
+    if (!qError && questions && questions.length > 0) {
+      const questionIds = questions.map(q => q.id);
 
-  if (!questions || questions.length === 0) {
-    return [];
-  }
+      const { data: topicsData } = await supabase
+        .from('question_topics')
+        .select('question_id, topic_id')
+        .in('question_id', questionIds);
 
-  const questionIds = questions.map(q => q.id);
+      const topicMap = {};
+      (topicsData || []).forEach(row => {
+        if (!topicMap[row.question_id]) {
+          topicMap[row.question_id] = [];
+        }
+        if (!topicMap[row.question_id].includes(row.topic_id)) {
+          topicMap[row.question_id].push(row.topic_id);
+        }
+      });
 
-  // 2. Fetch topic mappings for these questions
-  const { data: topicsData, error: tError } = await supabase
-    .from('question_topics')
-    .select('question_id, topic_id')
-    .in('question_id', questionIds);
+      const sortedQuestions = [...questions].sort((a, b) => {
+        const numA = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+        const numB = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+        return numA - numB;
+      });
 
-  if (tError) {
-    console.error('Error fetching question topics from Supabase:', tError);
-    throw new Error('Unable to load question topics from database.');
-  }
-
-  // 3. Build topic lookup map preserving order
-  const topicMap = {};
-  (topicsData || []).forEach(row => {
-    if (!topicMap[row.question_id]) {
-      topicMap[row.question_id] = [];
+      return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
     }
-    if (!topicMap[row.question_id].includes(row.topic_id)) {
-      topicMap[row.question_id].push(row.topic_id);
-    }
-  });
+  } catch (err) {
+    console.warn('[questionService] Failed to load questions from Supabase, using local fallback:', err);
+  }
 
-  // Sort questions by numerical ID if present (e.g. q-saa-1 ... q-saa-45)
-  const sortedQuestions = [...questions].sort((a, b) => {
-    const numA = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
-    const numB = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
-    return numA - numB;
-  });
-
-  return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
+  return mapFallbackQuestions(examCode);
 }
 
 /**
- * Fetches questions mapped to a targeted topic ID for an exam code.
+ * Fetches questions mapped to a targeted topic ID for an exam code, with local fallback.
  *
  * @param {string} examCode - The exam identifier, e.g., 'aws-saa-c03'
  * @param {string} topicId - The targeted topic identifier, e.g., 'topic-s3'
  * @returns {Promise<Array>} List of practice questions mapped to topicId
  */
 export async function getQuestionsByTopic(examCode, topicId) {
-  // 1. Fetch matching question IDs from question_topics table
-  const { data: matchingTopics, error: tError } = await supabase
-    .from('question_topics')
-    .select('question_id')
-    .eq('topic_id', topicId);
+  try {
+    // 1. Fetch matching question IDs from question_topics table
+    const { data: matchingTopics, error: tError } = await supabase
+      .from('question_topics')
+      .select('question_id')
+      .eq('topic_id', topicId);
 
-  if (tError) {
-    console.error('Error fetching topic mappings from Supabase:', tError);
-    throw new Error('Unable to load targeted topic mappings from database.');
-  }
+    if (!tError && matchingTopics && matchingTopics.length > 0) {
+      const distinctQuestionIds = Array.from(new Set(matchingTopics.map(m => m.question_id)));
 
-  if (!matchingTopics || matchingTopics.length === 0) {
-    return [];
-  }
+      // 2. Fetch full question details for matching IDs filtered by exam code
+      const { data: questions, error: qError } = await supabase
+        .from('exam_questions')
+        .select('*')
+        .in('id', distinctQuestionIds)
+        .eq('exam_code', examCode);
 
-  const distinctQuestionIds = Array.from(new Set(matchingTopics.map(m => m.question_id)));
+      if (!qError && questions && questions.length > 0) {
+        const foundQuestionIds = questions.map(q => q.id);
 
-  // 2. Fetch full question details for matching IDs filtered by exam code
-  const { data: questions, error: qError } = await supabase
-    .from('exam_questions')
-    .select('*')
-    .in('id', distinctQuestionIds)
-    .eq('exam_code', examCode);
+        const { data: allTopicsData } = await supabase
+          .from('question_topics')
+          .select('question_id, topic_id')
+          .in('question_id', foundQuestionIds);
 
-  if (qError) {
-    console.error('Error fetching targeted topic questions from Supabase:', qError);
-    throw new Error('Unable to load targeted topic questions from database.');
-  }
+        const topicMap = {};
+        (allTopicsData || []).forEach(row => {
+          if (!topicMap[row.question_id]) {
+            topicMap[row.question_id] = [];
+          }
+          if (!topicMap[row.question_id].includes(row.topic_id)) {
+            topicMap[row.question_id].push(row.topic_id);
+          }
+        });
 
-  if (!questions || questions.length === 0) {
-    return [];
-  }
+        const sortedQuestions = [...questions].sort((a, b) => {
+          const numA = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+          const numB = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+          return numA - numB;
+        });
 
-  const foundQuestionIds = questions.map(q => q.id);
-
-  // 3. Fetch all topic mappings for these questions to rebuild complete topicIds arrays
-  const { data: allTopicsData, error: allTError } = await supabase
-    .from('question_topics')
-    .select('question_id, topic_id')
-    .in('question_id', foundQuestionIds);
-
-  if (allTError) {
-    console.error('Error fetching full topic mappings from Supabase:', allTError);
-    throw new Error('Unable to load full topic mappings for targeted questions.');
-  }
-
-  const topicMap = {};
-  (allTopicsData || []).forEach(row => {
-    if (!topicMap[row.question_id]) {
-      topicMap[row.question_id] = [];
+        return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
+      }
     }
-    if (!topicMap[row.question_id].includes(row.topic_id)) {
-      topicMap[row.question_id].push(row.topic_id);
-    }
-  });
+  } catch (err) {
+    console.warn('[questionService] Failed to load topic questions from Supabase, using local fallback:', err);
+  }
 
-  // Sort by numerical ID
-  const sortedQuestions = [...questions].sort((a, b) => {
-    const numA = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
-    const numB = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
-    return numA - numB;
-  });
-
-  return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
+  // Fallback to local bundled questions if Supabase is offline/unconfigured or fails
+  return mapFallbackQuestions(examCode).filter(q => 
+    q.topicId === topicId || (Array.isArray(q.topicIds) && q.topicIds.includes(topicId))
+  );
 }

@@ -1,0 +1,45 @@
+{
+  "createdAt": "2026-08-05T11:15:07.167Z",
+  "sourceFile": "data/question-import.json",
+  "questionIds": [
+    "q-saa-271"
+  ],
+  "examQuestions": [
+    {
+      "id": "q-saa-271",
+      "exam_code": "aws-saa-c03",
+      "difficulty": "Medium",
+      "question_type": "single",
+      "question_text": "A serverless checkout API uses Amazon API Gateway, AWS Lambda, and DynamoDB. Users report intermittent high latency, but CloudWatch metrics show that each service is generally healthy. The operations team must trace individual requests across the distributed components and identify which downstream call contributes most to the latency. Which solution should be used?",
+      "option_a": "Enable active X-Ray tracing for API Gateway and Lambda, instrument the Lambda downstream calls, and inspect the traces and trace map in CloudWatch.",
+      "option_b": "Create CloudWatch Logs metric filters that count every API Gateway response code and Lambda invocation.",
+      "option_c": "Enable VPC Flow Logs for the Lambda subnets and analyse accepted network connections in Amazon Athena.",
+      "option_d": "Create an AWS Config rule that evaluates whether tracing is enabled on each supported resource.",
+      "option_e": null,
+      "option_f": null,
+      "correct_answer": 0,
+      "correct_answers": [
+        0
+      ],
+      "explanation": "Correct answer:\nA. AWS X-Ray records distributed request traces and timing information across supported services. Enabling active tracing for API Gateway and Lambda creates and propagates trace context. Instrumenting the Lambda function's AWS SDK and external client calls creates the downstream subsegments required to compare the latency of individual dependencies. The team can then inspect traces and the trace map in CloudWatch to identify where latency is introduced.\n\nWhy the other options are wrong:\nB. CloudWatch Logs and metric filters can count events and expose aggregate patterns, but they do not reconstruct the end-to-end path and timing of one request across services.\nC. VPC Flow Logs record network-flow metadata and do not provide application-level request traces or method-level latency.\nD. AWS Config evaluates resource configuration. It does not trace runtime request execution.\n\nExam trigger:\nOne request must be followed across several managed services and individual downstream calls must be timed.\n\nExam trap:\nActive tracing provides the trace context, but downstream calls must be instrumented to appear as detailed subsegments.\n\nMemory hook:\nTrace the path with X-Ray; instrument dependencies for detail."
+    }
+  ],
+  "questionTopics": [
+    {
+      "question_id": "q-saa-271",
+      "topic_id": "topic-api-gateway"
+    },
+    {
+      "question_id": "q-saa-271",
+      "topic_id": "topic-cloudwatch"
+    },
+    {
+      "question_id": "q-saa-271",
+      "topic_id": "topic-lambda"
+    },
+    {
+      "question_id": "q-saa-271",
+      "topic_id": "topic-xray"
+    }
+  ]
+}

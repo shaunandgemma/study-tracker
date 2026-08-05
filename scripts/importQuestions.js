@@ -36,9 +36,14 @@ const saaExam = DEFAULT_EXAMS.find(e => e.id === 'aws-saa-c03');
 const validTopicIds = new Set((saaExam?.topics || []).map(t => t.id));
 
 export async function runImporter() {
+  const isDryRun = process.argv.includes('--dry-run') || process.argv.includes('-d');
+
   console.log('\n========================================');
-  console.log('      AWS SAA-C03 QUESTION IMPORTER     ');
+  console.log(`      AWS SAA-C03 QUESTION IMPORTER ${isDryRun ? '(DRY RUN)' : ''}     `);
   console.log('========================================\n');
+  if (isDryRun) {
+    console.log('🔍 DRY RUN MODE: Validations & duplicate checks will run, but NO changes will be written to database.\n');
+  }
 
   const jsonPath = path.join(projectRoot, 'data', 'question-import.json');
 
@@ -219,6 +224,11 @@ export async function runImporter() {
       continue;
     }
 
+    if (isDryRun) {
+      importedList.push(`${q.id} (Dry Run - would be inserted)`);
+      continue;
+    }
+
     const correctAnswersArr = q.type === 'single' ? [q.correctAnswer] : q.correctAnswers;
     const primaryCorrectAns = q.type === 'single' ? q.correctAnswer : q.correctAnswers[0];
 
@@ -271,14 +281,14 @@ export async function runImporter() {
 
   // Output Final Report Summary
   console.log('========================================');
-  console.log('        Question Import Complete        ');
+  console.log(`        Question Import ${isDryRun ? 'Dry Run ' : ''}Complete        `);
   console.log('========================================\n');
-  console.log(`Imported: ${importedList.length}`);
-  console.log(`Skipped:  ${skippedList.length}`);
-  console.log(`Failed:   ${failedList.length}\n`);
+  console.log(`${isDryRun ? 'Would Import' : 'Imported'}: ${importedList.length}`);
+  console.log(`Skipped:      ${skippedList.length}`);
+  console.log(`Failed:       ${failedList.length}\n`);
 
   if (importedList.length > 0) {
-    console.log('Imported questions:');
+    console.log(`${isDryRun ? 'Would import questions:' : 'Imported questions:'}`);
     importedList.forEach(id => console.log(`  ✓ ${id}`));
     console.log('');
   }
