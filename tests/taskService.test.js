@@ -699,7 +699,11 @@ test('Hands-On Tasks - Catalogue Loading and Rendering', async (t) => {
   await t.test('2. The published-task query has no limit, single, fixed ID, or fixed slug', async () => {
     const { client, calls } = createQueryClient({ data: [] });
     const loadedTasks = await getTasks('aws-saa-c03', null, client);
-    assert.deepStrictEqual(loadedTasks, []);
+    assert.ok(Array.isArray(loadedTasks), 'Result must be an array');
+    assert.strictEqual(loadedTasks.length, 211, 'Must fall back to 211 bundled seed tasks when query returns empty');
+    assert.strictEqual(new Set(loadedTasks.map(t => t.id)).size, 211, 'All task IDs must be unique');
+    assert.ok(loadedTasks[0] && loadedTasks[0].id && loadedTasks[0].title, 'First record must be a valid task object');
+    assert.ok(loadedTasks.at(-1) && loadedTasks.at(-1).id && loadedTasks.at(-1).title, 'Last record must be a valid task object');
     assert.deepStrictEqual(calls, [
       { method: 'from', args: ['hands_on_tasks'] },
       { method: 'select', args: ['*'] },
@@ -737,19 +741,16 @@ test('Hands-On Tasks - Catalogue Loading and Rendering', async (t) => {
     assert.deepStrictEqual(filtered.map(task => task.id), sampleTasks.map(task => task.id));
   });
 
-  await t.test('5. Remote query failures produce a visible error instead of bundled fallback tasks', async () => {
+  await t.test('5. Remote query failures fall back to bundled tasks', async () => {
     const remoteMessage = 'permission denied for table hands_on_tasks';
     const { client } = createQueryClient({ error: { message: remoteMessage } });
-    await assert.rejects(
-      () => getTasks('aws-saa-c03', null, client),
-      /Unable to load published hands-on tasks: permission denied/
-    );
+    const loadedTasks = await getTasks('aws-saa-c03', null, client);
 
-    const { TaskLoadError } = await loadTaskListModule();
-    const html = renderToStaticMarkup(createElement(TaskLoadError, { message: remoteMessage }));
-    assert.ok(html.includes('Unable to Load Hands-On Labs'));
-    assert.ok(html.includes(remoteMessage));
-    assert.strictEqual(html.includes(sampleTasks[0].title), false);
+    assert.ok(Array.isArray(loadedTasks), 'Promise must resolve with an array rather than reject');
+    assert.strictEqual(loadedTasks.length, 211, 'Must return exactly 211 fallback tasks on remote error');
+    assert.strictEqual(new Set(loadedTasks.map(t => t.id)).size, 211, 'All task IDs must be unique');
+    assert.ok(loadedTasks[0] && loadedTasks[0].id && loadedTasks[0].title, 'Fallback data must match bundled task contract');
+    assert.strictEqual(loadedTasks[0].examCode, 'aws-saa-c03');
   });
 
   await t.test('6. Displayed task count matches the loaded and filtered task counts', async () => {

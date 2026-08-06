@@ -8,6 +8,8 @@ import { ExamSetup } from './components/PrepExam/ExamSetup';
 import { QuizEngine } from './components/PrepExam/QuizEngine';
 import { ExamResults } from './components/PrepExam/ExamResults';
 import { HandsOnTasksView } from './components/HandsOnTasks/HandsOnTasksView';
+import { VpcLearningPathView } from './components/VpcLearningPath/VpcLearningPathView';
+import { FollowAlongsView } from './components/FollowAlongs/FollowAlongsView';
 import { AddExamModal } from './components/Modals/AddExamModal';
 import { ImportExportModal } from './components/Modals/ImportExportModal';
 import { AuthModal } from './components/Modals/AuthModal';
@@ -21,7 +23,7 @@ import { saveAttemptToSupabase, QUESTION_BANK_VERSION } from './services/attempt
 import { getDomainForQuestion } from './data/saaC03DomainMapping';
 
 const MainContent = () => {
-  const { viewMode, setViewMode, activeExam, activeExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt } = useExam();
+  const { viewMode, setViewMode, activeExam, activeExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -255,6 +257,12 @@ const MainContent = () => {
 
         {viewMode === 'hands-on-tasks' && (
           <HandsOnTasksView />
+        )}
+
+        {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
+          <FollowAlongsView
+            initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
+          />
         )}
 
         {viewMode === 'prep-exam' && (

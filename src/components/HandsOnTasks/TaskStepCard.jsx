@@ -1,7 +1,7 @@
 import React from 'react';
 import { InstructionCheckbox } from './InstructionCheckbox';
 import { CommandBlock } from './CommandBlock';
-import { CheckCircle2, AlertTriangle, Info, Sparkles, Check } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Info, Check } from 'lucide-react';
 
 export const TaskStepCard = ({
   step,
@@ -9,14 +9,13 @@ export const TaskStepCard = ({
   onToggleItem,
   onToggleMainStep
 }) => {
+  if (!step) return null;
+
   const instructions = step.instructions || [];
   const commands = step.commands || [];
 
   const completedSet = new Set(completedItemIds);
 
-  // Main step is completed if:
-  // - For instruction steps: all child instructions are completed
-  // - For command steps: step.id is in completedSet
   let isStepComplete = false;
   if (instructions.length > 0) {
     isStepComplete = instructions.every(ins => completedSet.has(ins.id));
@@ -36,13 +35,15 @@ export const TaskStepCard = ({
         : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
     }`}>
       {/* Header Row */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-3 flex-wrap">
-          <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${
-            isStepComplete ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300'
-          }`}>
-            Step {step.number}
-          </span>
+          {step.number !== undefined && (
+            <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${
+              isStepComplete ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300'
+            }`}>
+              Step {step.number}
+            </span>
+          )}
           <h3 className={`text-base font-semibold ${
             isStepComplete ? 'text-indigo-200' : 'text-slate-100'
           }`}>
@@ -67,6 +68,11 @@ export const TaskStepCard = ({
         </label>
       </div>
 
+      {/* Step Description */}
+      {step.description && (
+        <p className="text-xs text-slate-400 mb-3 leading-relaxed">{step.description}</p>
+      )}
+
       {/* Instructions list */}
       {instructions.length > 0 && (
         <div className="space-y-1 my-3 pl-1">
@@ -85,7 +91,7 @@ export const TaskStepCard = ({
       {commands.length > 0 && (
         <div className="my-3">
           {commands.map(cmd => (
-            <CommandBlock key={cmd.id} command={cmd} />
+            <CommandBlock key={cmd.id || cmd.text} command={cmd} />
           ))}
         </div>
       )}

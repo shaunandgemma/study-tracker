@@ -12,6 +12,7 @@ import {
   Award,
   Database,
   Terminal,
+  Network,
   Menu,
   X,
   User,
@@ -177,6 +178,25 @@ export const Navbar = ({ onOpenAddModal, onOpenBackupModal }) => {
                   : 'bg-slate-800 text-slate-400'
               }`}>
                 {labsPercent}%
+              </span>
+            </button>
+
+            <button
+              onClick={() => setViewMode('follow-alongs')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
+                viewMode === 'follow-alongs'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-cyan-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Network className="w-4 h-4 text-cyan-400" />
+              <span>Follow Alongs</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                viewMode === 'follow-alongs'
+                  ? 'bg-cyan-800 text-cyan-100'
+                  : 'bg-slate-800 text-slate-400'
+              }`}>
+                13
               </span>
             </button>
           </div>

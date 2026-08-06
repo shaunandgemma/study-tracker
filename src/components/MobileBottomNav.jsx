@@ -2,7 +2,7 @@ import React from 'react';
 import { useExam } from '../context/ExamContext';
 import { useTask } from '../context/TaskContext';
 import { calculateTaskProgress } from '../services/taskService';
-import { CheckSquare, FileText, Terminal } from 'lucide-react';
+import { CheckSquare, FileText, Terminal, Network } from 'lucide-react';
 
 export const MobileBottomNav = () => {
   const { 
@@ -72,6 +72,13 @@ export const MobileBottomNav = () => {
       icon: Terminal,
       badge: `${labsPercent}%`,
       activeColor: 'from-emerald-600 to-teal-600 text-white shadow-emerald-500/20'
+    },
+    {
+      id: 'follow-alongs',
+      label: 'Follow Alongs',
+      icon: Network,
+      badge: '13',
+      activeColor: 'from-blue-600 to-cyan-600 text-white shadow-cyan-500/20'
     }
   ];
 

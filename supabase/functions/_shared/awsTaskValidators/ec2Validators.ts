@@ -1,4 +1,14 @@
-import { EC2Client, DescribeInstancesCommand, DescribeVpcsCommand, DescribeSubnetsCommand, DescribeSecurityGroupsCommand } from 'npm:@aws-sdk/client-ec2@3';
+import {
+  EC2Client,
+  DescribeInstancesCommand,
+  DescribeVpcsCommand,
+  DescribeSubnetsCommand,
+  DescribeSecurityGroupsCommand,
+  DescribeNatGatewaysCommand,
+  DescribeVpcPeeringConnectionsCommand,
+  DescribeTransitGatewaysCommand,
+  DescribeVpcEndpointsCommand
+} from 'npm:@aws-sdk/client-ec2@3';
 
 export async function validateEC2Task(credentials: any, region: string, type: string, resourceInput: string) {
   const ec2Client = new EC2Client({ region, credentials });
@@ -61,6 +71,50 @@ export async function validateEC2Task(credentials: any, region: string, type: st
         return { passed: true, message: `Live AWS Verified: Security Group '${sgs[0].GroupId}' exists.` };
       }
       return { passed: false, message: `Security Group '${input}' not found.` };
+    }
+
+    if (type === 'ec2.nat-gateway-available') {
+      const res = await ec2Client.send(new DescribeNatGatewaysCommand({
+        NatGatewayIds: input ? [input] : undefined
+      }));
+      const nats = (res.NatGateways || []).filter(n => n.State === 'available');
+      if (nats.length > 0) {
+        return { passed: true, message: `Live AWS Verified: NAT Gateway '${nats[0].NatGatewayId}' is available.` };
+      }
+      return { passed: false, message: `No available NAT Gateway found matching '${input || 'any'}'.` };
+    }
+
+    if (type === 'ec2.peering-active') {
+      const res = await ec2Client.send(new DescribeVpcPeeringConnectionsCommand({
+        VpcPeeringConnectionIds: input ? [input] : undefined
+      }));
+      const peerings = (res.VpcPeeringConnections || []).filter(p => p.Status?.Code === 'active');
+      if (peerings.length > 0) {
+        return { passed: true, message: `Live AWS Verified: VPC Peering Connection '${peerings[0].VpcPeeringConnectionId}' is active.` };
+      }
+      return { passed: false, message: `No active VPC Peering connection found matching '${input || 'any'}'.` };
+    }
+
+    if (type === 'ec2.transit-gateway-available') {
+      const res = await ec2Client.send(new DescribeTransitGatewaysCommand({
+        TransitGatewayIds: input ? [input] : undefined
+      }));
+      const tgws = (res.TransitGateways || []).filter(t => t.State === 'available');
+      if (tgws.length > 0) {
+        return { passed: true, message: `Live AWS Verified: Transit Gateway '${tgws[0].TransitGatewayId}' is available.` };
+      }
+      return { passed: false, message: `No available Transit Gateway found matching '${input || 'any'}'.` };
+    }
+
+    if (type === 'vpce.interface-endpoint-available' || type === 'vpce.gateway-endpoint-exists') {
+      const res = await ec2Client.send(new DescribeVpcEndpointsCommand({
+        VpcEndpointIds: input ? [input] : undefined
+      }));
+      const vpces = (res.VpcEndpoints || []).filter(v => v.State === 'available' || v.State === 'associated');
+      if (vpces.length > 0) {
+        return { passed: true, message: `Live AWS Verified: VPC Endpoint '${vpces[0].VpcEndpointId}' is available.` };
+      }
+      return { passed: false, message: `No active VPC Endpoint found matching '${input || 'any'}'.` };
     }
 
     return { passed: false, message: `Unsupported EC2 validation type '${type}'.` };

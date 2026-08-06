@@ -100,6 +100,34 @@ export const TASK_VALIDATION_REGISTRY = {
     requiredPermissions: ['cloudwatch:DescribeAlarms'],
     resourceInput: 'alarmName',
     description: 'Verify CloudWatch metric alarm exists'
+  },
+  'ec2.nat-gateway-available': {
+    type: 'ec2.nat-gateway-available',
+    service: 'Amazon VPC',
+    requiredPermissions: ['ec2:DescribeNatGateways'],
+    resourceInput: 'natGatewayId',
+    description: 'Verify target NAT Gateway exists and status is available'
+  },
+  'ec2.peering-active': {
+    type: 'ec2.peering-active',
+    service: 'Amazon VPC',
+    requiredPermissions: ['ec2:DescribeVpcPeeringConnections'],
+    resourceInput: 'peeringConnectionId',
+    description: 'Verify VPC Peering connection status is active'
+  },
+  'ec2.transit-gateway-available': {
+    type: 'ec2.transit-gateway-available',
+    service: 'Amazon VPC',
+    requiredPermissions: ['ec2:DescribeTransitGateways'],
+    resourceInput: 'transitGatewayId',
+    description: 'Verify Transit Gateway status is available'
+  },
+  'vpce.interface-endpoint-available': {
+    type: 'vpce.interface-endpoint-available',
+    service: 'Amazon VPC',
+    requiredPermissions: ['ec2:DescribeVpcEndpoints'],
+    resourceInput: 'interfaceEndpointId',
+    description: 'Verify Interface VPC Endpoint status is available'
   }
 };
 
@@ -210,6 +238,19 @@ export const TASK_VALIDATION_CONTRACT_TYPES = {
   'task-saa-vpc-troubleshoot-connectivity-with-reachability-analyzer-and-traceroute-032': ['ec2.vpc-exists'],
   'task-saa-vpc-review-and-implement-vpc-security-best-practices-036': VPC_CONTRACTS,
 
+  // ── VPC Learning Path Dedicated Tasks ──────────────────────────────────────
+  'path-vpc-create-public-subnets': ['ec2.subnet-exists'],
+  'path-vpc-create-private-subnets': ['ec2.subnet-exists'],
+  'path-vpc-configure-public-route-table': ['ec2.vpc-exists'],
+  'path-vpc-launch-public-bastion-instance': EC2_INSTANCE_CONTRACTS,
+  'path-vpc-launch-private-test-instance': EC2_INSTANCE_CONTRACTS,
+  'path-vpc-configure-private-route-table': ['ec2.vpc-exists'],
+  'path-vpc-validate-private-outbound-access': EC2_INSTANCE_CONTRACTS,
+  'path-vpc-create-second-vpc': VPC_CONTRACTS,
+  'path-vpc-create-third-vpc-tgw': VPC_CONTRACTS,
+  'path-vpc-architecture-final-validation': VPC_CONTRACTS,
+  'path-vpc-project-final-cleanup': ['ec2.vpc-exists'],
+
   // ── IAM: Category 1 (originally mapped) ────────────────────────────────────
   'task-saa-iam-create-an-ec2-role-to-read-one-s3-bucket-005': ['iam.role-exists'],
   'task-saa-iam-create-a-role-with-external-id-and-test-assumerole-014': ['iam.role-exists'],
@@ -275,7 +316,7 @@ const NEW_BACKEND_VALIDATOR_TASK_IDS = new Set([
 
 export const RESTORED_EXISTING_HANDLER_TASK_IDS = Object.freeze(
   Object.keys(TASK_VALIDATION_CONTRACT_TYPES).filter(taskId => (
-    !ORIGINAL_EXACT_TASK_IDS.has(taskId) && !NEW_BACKEND_VALIDATOR_TASK_IDS.has(taskId)
+    !taskId.startsWith('path-') && !ORIGINAL_EXACT_TASK_IDS.has(taskId) && !NEW_BACKEND_VALIDATOR_TASK_IDS.has(taskId)
   ))
 );
 

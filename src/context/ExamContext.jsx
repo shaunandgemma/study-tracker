@@ -22,7 +22,22 @@ const ExamContext = createContext();
 export const ExamProvider = ({ children }) => {
   const [exams, setExams] = useState(() => loadExams());
   const [activeExamId, setActiveExamIdState] = useState(() => loadActiveExamId());
-  const [viewMode, setViewMode] = useState('checklist'); // 'checklist' | 'prep-exam'
+  const [viewModeRaw, setViewModeRaw] = useState('checklist'); // 'checklist' | 'prep-exam' | 'hands-on-tasks' | 'follow-alongs'
+  const [legacyAutoOpenProgrammeId, setLegacyAutoOpenProgrammeId] = useState(null);
+
+  const setViewMode = useCallback((mode) => {
+    if (mode === 'vpc-learning-path') {
+      setLegacyAutoOpenProgrammeId('vpc-learning-path');
+      setViewModeRaw('follow-alongs');
+    } else {
+      if (mode !== 'follow-alongs') {
+        setLegacyAutoOpenProgrammeId(null);
+      }
+      setViewModeRaw(mode);
+    }
+  }, []);
+
+  const viewMode = viewModeRaw === 'vpc-learning-path' ? 'follow-alongs' : viewModeRaw;
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [checklist, setChecklist] = useState(() => loadChecklistState());
   const [flagged, setFlagged] = useState(() => loadFlaggedState());
@@ -342,6 +357,7 @@ export const ExamProvider = ({ children }) => {
         setActiveExamId,
         viewMode,
         setViewMode,
+        legacyAutoOpenProgrammeId,
         theme,
         toggleTheme,
         checklist,
