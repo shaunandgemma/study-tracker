@@ -16,14 +16,17 @@ import {
 } from '../src/services/vpcLearningPathService.js';
 
 test('Follow Alongs - Programme Catalogue Integrity', async (t) => {
-  await t.test('1. Programme catalogue contains two available programmes (VPC and EC2)', () => {
+  await t.test('1. Programme catalogue contains four available programmes (VPC, EC2, S3, and IAM)', () => {
     const available = FOLLOW_ALONG_PROGRAMMES.filter(p => p.status === 'available');
-    assert.equal(available.length, 2, 'Must have exactly 2 available programmes');
+    assert.equal(available.length, 4, 'Must have exactly 4 available programmes');
   });
 
-  await t.test('2. The available programmes are vpc-learning-path and ec2-learning-path', () => {
+  await t.test('2. The available programmes are vpc-learning-path, ec2-learning-path, s3-learning-path, and iam-learning-path', () => {
     const vpcProg = getFollowAlongProgramme('vpc-learning-path');
     const ec2Prog = getFollowAlongProgramme('ec2-learning-path');
+    const s3Prog = getFollowAlongProgramme('s3-learning-path');
+    const iamProg = getFollowAlongProgramme('iam-learning-path');
+
     assert.ok(vpcProg, 'vpc-learning-path must exist in catalogue');
     assert.equal(vpcProg.status, 'available');
     assert.equal(vpcProg.taskCount, 45);
@@ -33,11 +36,23 @@ test('Follow Alongs - Programme Catalogue Integrity', async (t) => {
     assert.equal(ec2Prog.status, 'available');
     assert.equal(ec2Prog.taskCount, 34);
     assert.equal(ec2Prog.phaseCount, 8);
+
+    assert.ok(s3Prog, 's3-learning-path must exist in catalogue');
+    assert.equal(s3Prog.status, 'available');
+    assert.equal(s3Prog.pathId, 's3-learning-path');
+    assert.equal(s3Prog.taskCount, 34); // 33 canonical S3 tasks + 1 path-only cleanup task
+    assert.equal(s3Prog.phaseCount, 7);
+
+    assert.ok(iamProg, 'iam-learning-path must exist in catalogue');
+    assert.equal(iamProg.status, 'available');
+    assert.equal(iamProg.pathId, 'iam-learning-path');
+    assert.equal(iamProg.taskCount, 23); // 22 canonical IAM tasks + 1 path-only cleanup task
+    assert.equal(iamProg.phaseCount, 6);
   });
 
-  await t.test('3. The catalogue contains exactly 11 Coming Soon programmes', () => {
+  await t.test('3. The catalogue contains exactly 9 Coming Soon programmes', () => {
     const comingSoon = FOLLOW_ALONG_PROGRAMMES.filter(p => p.status === 'coming-soon');
-    assert.equal(comingSoon.length, 11, 'Must have exactly 11 coming-soon programmes');
+    assert.equal(comingSoon.length, 9, 'Must have exactly 9 coming-soon programmes');
   });
 
   await t.test('4. All programme IDs and slugs are unique', () => {

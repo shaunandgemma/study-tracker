@@ -7,6 +7,8 @@
  */
 
 import { VPC_LEARNING_PATH_PHASES, VPC_PATH_TASKS } from './vpcLearningPathData.js';
+import { S3_LEARNING_PATH_PHASES, getS3PathTasks } from './s3LearningPathData.js';
+import { IAM_LEARNING_PATH_PHASES, getIamPathTasks } from './iamLearningPathData.js';
 
 export const FOLLOW_ALONG_PROGRAMMES = [
   {
@@ -35,14 +37,15 @@ export const FOLLOW_ALONG_PROGRAMMES = [
     subtitle: 'Simple Storage Service',
     description: 'Build secure, versioned, multi-region, and highly available object storage architectures with lifecycle rules and replication.',
     service: 'Amazon S3',
-    status: 'coming-soon',
-    taskCount: null,
-    phaseCount: null,
+    status: 'available',
+    taskCount: getS3PathTasks().length,
+    phaseCount: S3_LEARNING_PATH_PHASES.length,
     supportedModes: ['console', 'cli', 'both'],
     icon: 'HardDrive',
     category: 'Storage',
     difficulty: 'Beginner to Intermediate',
-    estimatedHours: '3 - 4 hours'
+    estimatedHours: '3 - 4 hours',
+    pathId: 's3-learning-path'
   },
   {
     id: 'ec2-learning-path',
@@ -70,14 +73,15 @@ export const FOLLOW_ALONG_PROGRAMMES = [
     subtitle: 'Identity & Access Management',
     description: 'Design least-privilege IAM policies, role delegation, cross-account access, permission boundaries, and SCPs.',
     service: 'AWS IAM',
-    status: 'coming-soon',
-    taskCount: null,
-    phaseCount: null,
+    status: 'available',
+    taskCount: getIamPathTasks().length,
+    phaseCount: IAM_LEARNING_PATH_PHASES.length,
     supportedModes: ['console', 'cli', 'both'],
     icon: 'ShieldCheck',
     category: 'Security & Identity',
     difficulty: 'Intermediate to Advanced',
-    estimatedHours: '4 - 5 hours'
+    estimatedHours: '4 - 5 hours',
+    pathId: 'iam-learning-path'
   },
   {
     id: 'rds-learning-path',

@@ -3,6 +3,8 @@ import { Layers, Search, Sparkles, Network, CheckCircle2, Shield, Filter } from 
 import { FOLLOW_ALONG_PROGRAMMES } from '../../data/followAlongProgrammes.js';
 import { getProgrammeProgressSummary } from '../../services/vpcLearningPathService.js';
 import { getEc2ProgrammeProgressSummary } from '../../services/ec2LearningPathService.js';
+import { getS3ProgrammeProgressSummary } from '../../services/s3LearningPathService.js';
+import { getIamProgrammeProgressSummary } from '../../services/iamLearningPathService.js';
 import { FollowAlongCard } from './FollowAlongCard.jsx';
 
 export const FollowAlongLandingPage = ({
@@ -13,29 +15,39 @@ export const FollowAlongLandingPage = ({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [vpcSummary, setVpcSummary] = useState({ loading: true });
   const [ec2Summary, setEc2Summary] = useState({ loading: true });
+  const [s3Summary, setS3Summary] = useState({ loading: true });
+  const [iamSummary, setIamSummary] = useState({ loading: true });
 
-  // Fetch VPC and EC2 progress summaries on mount or user change
+  // Fetch VPC, EC2, S3, and IAM progress summaries on mount or user change
   useEffect(() => {
     let isMounted = true;
 
     async function loadSummaries() {
       setVpcSummary({ loading: true });
       setEc2Summary({ loading: true });
+      setS3Summary({ loading: true });
+      setIamSummary({ loading: true });
       try {
         const [vSummary, eSummary] = await Promise.all([
           getProgrammeProgressSummary(currentUser?.id, 'vpc-learning-path'),
           getEc2ProgrammeProgressSummary(currentUser?.id)
         ]);
+        const sSummary = getS3ProgrammeProgressSummary([]);
+        const iSummary = getIamProgrammeProgressSummary([]);
 
         if (isMounted) {
           setVpcSummary(vSummary || { loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45 });
           setEc2Summary(eSummary || { loading: false, status: 'not-started', completedTasks: 0, totalTasks: 34 });
+          setS3Summary(sSummary || { loading: false, status: 'Not Started', completed: 0, total: 34 });
+          setIamSummary(iSummary || { loading: false, status: 'Not Started', completed: 0, total: 23 });
         }
       } catch (err) {
         console.error('[FollowAlongLandingPage] Error loading summaries:', err);
         if (isMounted) {
           setVpcSummary({ loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45, error: err.message });
           setEc2Summary({ loading: false, status: 'not-started', completedTasks: 0, totalTasks: 34, error: err.message });
+          setS3Summary({ loading: false, status: 'Not Started', completed: 0, total: 34, error: err.message });
+          setIamSummary({ loading: false, status: 'Not Started', completed: 0, total: 23, error: err.message });
         }
       }
     }
@@ -152,6 +164,10 @@ export const FollowAlongLandingPage = ({
                     ? vpcSummary
                     : prog.id === 'ec2-learning-path'
                     ? ec2Summary
+                    : prog.id === 's3-learning-path'
+                    ? s3Summary
+                    : prog.id === 'iam-learning-path'
+                    ? iamSummary
                     : null
                 }
                 onSelectProgramme={onSelectProgramme}
