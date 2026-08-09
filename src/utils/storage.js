@@ -1,4 +1,8 @@
 import { DEFAULT_EXAMS } from '../data/examData';
+import {
+  readLocalHandsOnProgressArchive,
+  restoreLocalHandsOnProgressArchiveFromBackup
+} from '../services/handsOnProgressArchiveService.js';
 
 const KEYS = {
   EXAMS: 'exampulse_exams_v1',
@@ -6,8 +10,7 @@ const KEYS = {
   FLAGGED: 'exampulse_flagged_v1',
   HISTORY: 'exampulse_history_v1',
   ACTIVE_EXAM: 'exampulse_active_exam_v1',
-  THEME: 'exampulse_theme_v1',
-  TASK_PROGRESS: 'exampulse_task_progress_v1'
+  THEME: 'exampulse_theme_v1'
 };
 
 export const getStoredTheme = () => {
@@ -116,23 +119,6 @@ export const saveActiveExamId = (examId) => {
   }
 };
 
-export const loadTaskProgressState = () => {
-  try {
-    const data = localStorage.getItem(KEYS.TASK_PROGRESS);
-    return data ? JSON.parse(data) : {};
-  } catch (e) {
-    return {};
-  }
-};
-
-export const saveTaskProgressState = (state) => {
-  try {
-    localStorage.setItem(KEYS.TASK_PROGRESS, JSON.stringify(state));
-  } catch (e) {
-    console.error('Error saving task progress state:', e);
-  }
-};
-
 // Export all user data as a JSON file
 export const exportBackupJSON = () => {
   const backup = {
@@ -142,7 +128,7 @@ export const exportBackupJSON = () => {
     checklist: loadChecklistState(),
     flagged: loadFlaggedState(),
     history: loadExamHistory(),
-    taskProgress: loadTaskProgressState()
+    taskProgress: readLocalHandsOnProgressArchive()
   };
 
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
@@ -162,7 +148,7 @@ export const importBackupJSON = (jsonData) => {
     if (parsed.checklist) saveChecklistState(parsed.checklist);
     if (parsed.flagged) saveFlaggedState(parsed.flagged);
     if (parsed.history) saveExamHistory(parsed.history);
-    if (parsed.taskProgress) saveTaskProgressState(parsed.taskProgress);
+    if (parsed.taskProgress) restoreLocalHandsOnProgressArchiveFromBackup(parsed.taskProgress);
     return { success: true, message: 'Backup successfully imported!' };
   } catch (e) {
     return { success: false, message: 'Invalid backup JSON file.' };

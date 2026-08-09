@@ -1,5 +1,5 @@
 /**
- * AWS Connection Service for Study Tracker Hands-On Tasks
+ * Shared AWS Connection Service for Follow Alongs
  *
  * Reads/writes connection metadata strictly from/to Supabase user_aws_connections table.
  * Invokes Supabase Edge Functions (aws-test-connection, aws-validate-task) for live STS AssumeRole

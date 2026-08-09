@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Layers, Search, Sparkles, Network, CheckCircle2, Shield, Filter } from 'lucide-react';
+import { Layers, Search, Sparkles, Network, CheckCircle2 } from 'lucide-react';
 import { FOLLOW_ALONG_PROGRAMMES } from '../../data/followAlongProgrammes.js';
 import { getProgrammeProgressSummary } from '../../services/vpcLearningPathService.js';
 import { getEc2ProgrammeProgressSummary } from '../../services/ec2LearningPathService.js';
 import { getS3ProgrammeProgressSummary } from '../../services/s3LearningPathService.js';
 import { getIamProgrammeProgressSummary } from '../../services/iamLearningPathService.js';
 import { FollowAlongCard } from './FollowAlongCard.jsx';
+import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 
 export const FollowAlongLandingPage = ({
   currentUser = null,
@@ -17,6 +18,16 @@ export const FollowAlongLandingPage = ({
   const [ec2Summary, setEc2Summary] = useState({ loading: true });
   const [s3Summary, setS3Summary] = useState({ loading: true });
   const [iamSummary, setIamSummary] = useState({ loading: true });
+  const [programmes, setProgrammes] = useState(FOLLOW_ALONG_PROGRAMMES);
+
+  useEffect(() => {
+    let active = true;
+    const service = createPublishedFollowAlongService();
+    service.listPublishedProgrammes().then(result => {
+      if (active && result.success) setProgrammes(mergePublishedProgrammeCards(FOLLOW_ALONG_PROGRAMMES, result.programmes));
+    });
+    return () => { active = false; };
+  }, []);
 
   // Fetch VPC, EC2, S3, and IAM progress summaries on mount or user change
   useEffect(() => {
@@ -60,10 +71,10 @@ export const FollowAlongLandingPage = ({
   }, [currentUser]);
 
   // Extract unique categories
-  const categories = ['All', ...new Set(FOLLOW_ALONG_PROGRAMMES.map(p => p.category))];
+  const categories = ['All', ...new Set(programmes.map(p => p.category))];
 
   // Filter programmes
-  const filteredProgrammes = FOLLOW_ALONG_PROGRAMMES.filter(p => {
+  const filteredProgrammes = programmes.filter(p => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -90,7 +101,7 @@ export const FollowAlongLandingPage = ({
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Build complete AWS environments step by step. Each follow-along connects multiple hands-on tasks, preserves your resources between tasks, and supports both the AWS Console and AWS CLI.
+            Build complete AWS environments step by step. Each follow-along connects multiple guided tasks, preserves your resources between tasks, and supports both the AWS Console and AWS CLI.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300">

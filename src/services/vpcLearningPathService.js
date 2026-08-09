@@ -4,7 +4,7 @@
  * Manages path progress persistence, shared resource bindings, CLI string interpolation,
  * resource schema validation, and guest-to-account merge conflict resolution.
  *
- * Zero-regression isolation requirement: Does not alter hands_on_task_progress or taskService.
+ * Zero-regression isolation requirement: Does not alter the historical Hands On progress archive.
  */
 
 import { supabase } from '../lib/supabase.js';
@@ -209,11 +209,11 @@ export function mergeGuestStateWithRemote(guestState, remoteState) {
 /**
  * Loads user path progress from Supabase DB.
  */
-export async function fetchUserPathProgressFromSupabase(userId) {
+export async function fetchUserPathProgressFromSupabase(userId, client = supabase) {
   if (!userId) return null;
 
   try {
-    const { data: progData, error: progError } = await supabase
+    const { data: progData, error: progError } = await client
       .from('user_learning_path_progress')
       .select('*')
       .eq('user_id', userId)
@@ -224,7 +224,7 @@ export async function fetchUserPathProgressFromSupabase(userId) {
       console.warn('[vpcLearningPathService] Error fetching progress:', progError.message);
     }
 
-    const { data: resData, error: resError } = await supabase
+    const { data: resData, error: resError } = await client
       .from('user_learning_path_resources')
       .select('*')
       .eq('user_id', userId)
@@ -301,7 +301,7 @@ export async function saveUserPathProgressToSupabase(userId, progressRecord, res
  * Calculates a standardized progress summary for a follow-along programme.
  * Handles loading states, guest localStorage progress, and authenticated Supabase progress.
  */
-export async function getProgrammeProgressSummary(userId, programmeId = 'vpc-learning-path') {
+export async function getProgrammeProgressSummary(userId, programmeId = 'vpc-learning-path', client = supabase) {
   if (programmeId !== 'vpc-learning-path') {
     return {
       loading: false,
@@ -323,7 +323,7 @@ export async function getProgrammeProgressSummary(userId, programmeId = 'vpc-lea
   if (!userId) {
     state = loadGuestPathState();
   } else {
-    state = await fetchUserPathState(userId, 'vpc-learning-path');
+    state = await fetchUserPathProgressFromSupabase(userId, client);
   }
 
   if (!state || !state.progress) {
@@ -378,4 +378,3 @@ export async function getProgrammeProgressSummary(userId, programmeId = 'vpc-lea
     lastUpdatedAt: prog.updated_at || prog.updatedAt || null
   };
 }
-

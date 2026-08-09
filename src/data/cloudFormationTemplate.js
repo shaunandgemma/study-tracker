@@ -1,5 +1,5 @@
 /**
- * CloudFormation Template Generator for Study Tracker Hands-On Tasks IAM Role
+ * CloudFormation Template Generator for the Study Tracker Follow Along IAM Role
  *
  * Generates a restricted, read-only IAM Role template for AWS STS AssumeRole validation.
  * Uses External ID protection and explicit read-only action scoping.
@@ -22,10 +22,10 @@ export function generateCloudFormationTemplate(
 
   return `AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  Study Tracker Hands-On Tasks - Restricted Read-Only IAM Validation Role.
+  Study Tracker Follow Alongs - Restricted Read-Only IAM Validation Role.
   This template creates an IAM role that allows the Study Tracker backend role
   (StudyTrackerAwsValidationBackendRole) to perform read-only verification of
-  hands-on lab resources using AWS STS AssumeRole.
+  Follow Along resources using AWS STS AssumeRole.
 
 Parameters:
   BackendAccountId:
@@ -46,7 +46,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: StudyTrackerHandsOnRole
-      Description: Read-only validation role for Study Tracker Hands-On AWS Labs
+      Description: Read-only validation role for Study Tracker AWS Follow Alongs
       MaxSessionDuration: 3600
       AssumeRolePolicyDocument:
         Version: '2012-10-17'

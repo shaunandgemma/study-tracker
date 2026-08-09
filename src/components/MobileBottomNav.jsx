@@ -1,8 +1,6 @@
 import React from 'react';
 import { useExam } from '../context/ExamContext';
-import { useTask } from '../context/TaskContext';
-import { calculateTaskProgress } from '../services/taskService';
-import { CheckSquare, FileText, Terminal, Network } from 'lucide-react';
+import { CheckSquare, FileText, Network } from 'lucide-react';
 
 export const MobileBottomNav = () => {
   const { 
@@ -13,8 +11,6 @@ export const MobileBottomNav = () => {
     checklist, 
     examHistory 
   } = useExam();
-
-  const { tasks, taskProgress } = useTask();
 
   // Calculate active exam overall checklist progress %
   let totalTasks = 0;
@@ -35,18 +31,6 @@ export const MobileBottomNav = () => {
 
   const checklistPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  // Calculate hands-on labs overall progress %
-  let totalLabs = 0;
-  let completedLabs = 0;
-  tasks.forEach(t => {
-    totalLabs++;
-    const prog = taskProgress[t.id];
-    const metrics = calculateTaskProgress(t, prog || {}, prog?.selectedMode || 'console');
-    if (metrics.isCompleted) completedLabs++;
-  });
-
-  const labsPercent = totalLabs > 0 ? Math.round((completedLabs / totalLabs) * 100) : 0;
-
   // Calculate last score for active exam
   const activeHistory = examHistory.filter(h => h.examId === activeExamId);
   const lastAttempt = activeHistory[0];
@@ -65,13 +49,6 @@ export const MobileBottomNav = () => {
       icon: FileText,
       badge: lastAttempt ? `${lastAttempt.score}%` : null,
       activeColor: 'from-purple-600 to-pink-600 text-white shadow-purple-500/20'
-    },
-    {
-      id: 'hands-on-tasks',
-      label: 'Hands-On',
-      icon: Terminal,
-      badge: `${labsPercent}%`,
-      activeColor: 'from-emerald-600 to-teal-600 text-white shadow-emerald-500/20'
     },
     {
       id: 'follow-alongs',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTask } from '../../context/TaskContext.jsx';
+import { useAuth } from '../../features/auth/useAuth.js';
 import { getEc2PathTasks } from '../../data/ec2LearningPathData.js';
 import {
   loadGuestEc2PathState,
@@ -15,7 +15,7 @@ import { Ec2TaskRunner } from './Ec2TaskRunner.jsx';
 import { Ec2ProjectCleanup } from './Ec2ProjectCleanup.jsx';
 
 export const Ec2LearningPathView = ({ onBackToLanding = null }) => {
-  const { currentUser } = useTask();
+  const { currentUser } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [activeTaskId, setActiveTaskId] = useState('task-saa-ec2-compare-ec2-pricing-models-016');

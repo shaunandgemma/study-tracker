@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { interpolateResourceVariables, validateResourceRecord } from '../../services/vpcLearningPathService.js';
 import { VPC_PATH_TASKS } from '../../data/vpcLearningPathData.js';
-import { TaskStepCard } from '../HandsOnTasks/TaskStepCard.jsx';
+import { FollowAlongStepCard } from '../../features/followAlongs/runtime/FollowAlongStepCard.jsx';
 
 export const VpcTaskRunner = ({
   task = null,
@@ -26,18 +26,16 @@ export const VpcTaskRunner = ({
   onNavigateTask = () => {},
   onUpdateResources = () => {}
 }) => {
-  if (!task) return null;
-
-  const taskId = task.id;
+  const taskId = task?.id || null;
   const isCompleted = completedTaskIds.includes(taskId);
 
   // Local state for mode switching inside the task
   const [activeMode, setActiveMode] = useState(preferredMode);
-  const [checkedSteps, setCheckedSteps] = useState(() => stepProgressMap[taskId] || []);
+  const [checkedSteps, setCheckedSteps] = useState(() => taskId ? stepProgressMap[taskId] || [] : []);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDecisionModal, setShowDecisionModal] = useState(false);
   const [editableResources, setEditableResources] = useState(() => {
-    const keys = task.createdResourceKeys || [];
+    const keys = task?.createdResourceKeys || [];
     const initial = {};
     keys.forEach(k => {
       initial[k] = resourcesMap[k]?.awsId || '';
@@ -48,16 +46,18 @@ export const VpcTaskRunner = ({
   // Sync mode and resources when task changes
   useEffect(() => {
     setActiveMode(preferredMode);
-    setCheckedSteps(stepProgressMap[taskId] || []);
+    setCheckedSteps(taskId ? stepProgressMap[taskId] || [] : []);
     setHasUnsavedChanges(false);
 
-    const keys = task.createdResourceKeys || [];
+    const keys = task?.createdResourceKeys || [];
     const updated = {};
     keys.forEach(k => {
       updated[k] = resourcesMap[k]?.awsId || '';
     });
     setEditableResources(updated);
   }, [taskId, preferredMode, resourcesMap, stepProgressMap, task]);
+
+  if (!task) return null;
 
   // Toggle item checkbox
   const handleToggleItem = (itemId) => {
@@ -276,7 +276,7 @@ export const VpcTaskRunner = ({
               {rawConsoleSteps.map((step, sIdx) => {
                 const interpolated = interpolateStep(step, sIdx);
                 return (
-                  <TaskStepCard
+                  <FollowAlongStepCard
                     key={step.id || sIdx}
                     step={interpolated}
                     completedItemIds={checkedSteps}
@@ -299,7 +299,7 @@ export const VpcTaskRunner = ({
               {rawCliSteps.map((step, sIdx) => {
                 const interpolated = interpolateStep(step, sIdx);
                 return (
-                  <TaskStepCard
+                  <FollowAlongStepCard
                     key={step.id || sIdx}
                     step={interpolated}
                     completedItemIds={checkedSteps}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTask } from '../../context/TaskContext.jsx';
+import { useAuth } from '../../features/auth/useAuth.js';
 import { getS3PathTasks } from '../../data/s3LearningPathData.js';
 import {
   loadGuestS3PathState,
@@ -15,7 +15,7 @@ import { S3TaskRunner } from './S3TaskRunner.jsx';
 import { S3ProjectCleanup } from './S3ProjectCleanup.jsx';
 
 export const S3LearningPathView = ({ onBackToLanding = null }) => {
-  const { currentUser } = useTask();
+  const { currentUser } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [activeTaskId, setActiveTaskId] = useState('task-saa-s3-list-s3-buckets-and-find-each-bucket-region-001');

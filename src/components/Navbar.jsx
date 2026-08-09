@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useExam } from '../context/ExamContext';
-import { useTask } from '../context/TaskContext';
-import { calculateTaskProgress } from '../services/taskService';
+import { useAuth } from '../features/auth/useAuth.js';
 import { 
   CheckSquare, 
   FileText, 
@@ -11,7 +10,6 @@ import {
   Sparkles, 
   Award,
   Database,
-  Terminal,
   Network,
   Menu,
   X,
@@ -33,7 +31,7 @@ export const Navbar = ({ onOpenAddModal, onOpenBackupModal }) => {
     examHistory
   } = useExam();
 
-  const { tasks, taskProgress, currentUser, openAuthModal, signOutUser } = useTask();
+  const { currentUser, openAuthModal, signOut: signOutUser } = useAuth();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Calculate active exam overall checklist progress %
@@ -54,18 +52,6 @@ export const Navbar = ({ onOpenAddModal, onOpenBackupModal }) => {
   }
 
   const checklistPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-  // Calculate hands-on labs overall progress %
-  let totalLabs = 0;
-  let completedLabs = 0;
-  tasks.forEach(t => {
-    totalLabs++;
-    const prog = taskProgress[t.id];
-    const metrics = calculateTaskProgress(t, prog || {}, prog?.selectedMode || 'console');
-    if (metrics.isCompleted) completedLabs++;
-  });
-
-  const labsPercent = totalLabs > 0 ? Math.round((completedLabs / totalLabs) * 100) : 0;
 
   // Calculate last score for active exam
   const activeHistory = examHistory.filter(h => h.examId === activeExamId);
@@ -160,25 +146,6 @@ export const Navbar = ({ onOpenAddModal, onOpenBackupModal }) => {
                   {Math.round(lastAttempt.scorePercentage)}%
                 </span>
               )}
-            </button>
-
-            <button
-              onClick={() => setViewMode('hands-on-tasks')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                viewMode === 'hands-on-tasks'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Terminal className="w-4 h-4 text-emerald-400" />
-              <span>Hands-On Tasks</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                viewMode === 'hands-on-tasks'
-                  ? 'bg-emerald-800 text-emerald-100'
-                  : 'bg-slate-800 text-slate-400'
-              }`}>
-                {labsPercent}%
-              </span>
             </button>
 
             <button

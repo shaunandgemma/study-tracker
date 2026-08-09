@@ -13,9 +13,7 @@ import {
   Activity,
   Lock,
   RefreshCw,
-  Play,
   ArrowRight,
-  Sparkles,
   Layers,
   Terminal
 } from 'lucide-react';
@@ -46,7 +44,11 @@ export const FollowAlongCard = ({
   const isAvailable = programme.status === 'available';
 
   const isLoading = progressSummary?.loading;
-  const isNotStarted = !progressSummary || progressSummary.status === 'not-started';
+  const normalizedProgressStatus = String(progressSummary?.status || 'not-started')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+  const isNotStarted = !progressSummary || normalizedProgressStatus === 'not-started';
   const buttonText = isNotStarted ? 'Start Follow Along' : 'Resume Follow Along';
 
   return (

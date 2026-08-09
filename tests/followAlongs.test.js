@@ -105,6 +105,38 @@ test('Follow Alongs - Progress Summaries & Status Mapping', async (t) => {
     assert.equal(summary.completedTasks, 0);
   });
 
+  await t.test('9a. Signed-in VPC summaries use the existing Supabase progress loader', async () => {
+    const completedTaskId = VPC_PATH_TASKS[0].id;
+    const responses = {
+      user_learning_path_progress: {
+        data: {
+          completed_task_ids: [completedTaskId],
+          current_task_id: completedTaskId,
+          completion_status: 'in_progress',
+          updated_at: '2026-08-09T12:00:00.000Z'
+        },
+        error: null
+      },
+      user_learning_path_resources: { data: { resources: {} }, error: null }
+    };
+    const client = {
+      from(table) {
+        const builder = {
+          select() { return builder; },
+          eq() { return builder; },
+          maybeSingle() { return Promise.resolve(responses[table]); }
+        };
+        return builder;
+      }
+    };
+
+    const summary = await getProgrammeProgressSummary('signed-in-user', 'vpc-learning-path', client);
+    assert.equal(summary.status, 'in-progress');
+    assert.equal(summary.completedTasks, 1);
+    assert.equal(summary.totalTasks, 45);
+    assert.equal(summary.currentTaskId, completedTaskId);
+  });
+
   await t.test('10. Verified all 6 status mapping values: Not Started, In Progress, Completed, Cleanup Pending, Resources Retained, Coming Soon', () => {
     const supportedStatuses = ['not-started', 'in-progress', 'completed', 'cleanup-pending', 'resources-retained', 'coming-soon'];
     assert.equal(supportedStatuses.length, 6);

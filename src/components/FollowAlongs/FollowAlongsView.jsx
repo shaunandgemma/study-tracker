@@ -4,10 +4,11 @@ import { VpcLearningPathView } from '../VpcLearningPath/VpcLearningPathView.jsx'
 import { Ec2LearningPathView } from '../Ec2LearningPath/Ec2LearningPathView.jsx';
 import { S3LearningPathView } from '../S3LearningPath/S3LearningPathView.jsx';
 import { IamLearningPathView } from '../IamLearningPath/IamLearningPathView.jsx';
-import { useExam } from '../../context/ExamContext.jsx';
+import { useAuth } from '../../features/auth/useAuth.js';
+import { PublishedFollowAlongView } from './PublishedFollowAlongView.jsx';
 
 export const FollowAlongsView = ({ initialProgrammeId = null }) => {
-  const { currentUser } = useExam();
+  const { currentUser } = useAuth();
   const [selectedProgrammeId, setSelectedProgrammeId] = useState(initialProgrammeId);
 
   // Sync state if initialProgrammeId prop changes
@@ -51,6 +52,10 @@ export const FollowAlongsView = ({ initialProgrammeId = null }) => {
         onBackToLanding={() => setSelectedProgrammeId(null)}
       />
     );
+  }
+
+  if (selectedProgrammeId) {
+    return <PublishedFollowAlongView programmeId={selectedProgrammeId} onBackToLanding={() => setSelectedProgrammeId(null)} />;
   }
 
   // Otherwise, render landing page

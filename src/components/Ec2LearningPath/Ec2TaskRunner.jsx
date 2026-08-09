@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TaskStepCard } from '../HandsOnTasks/TaskStepCard.jsx';
-import { AwsValidationPanel } from '../HandsOnTasks/AwsValidationPanel.jsx';
+import { FollowAlongStepCard } from '../../features/followAlongs/runtime/FollowAlongStepCard.jsx';
+import { FollowAlongAwsValidationPanel } from '../../features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx';
 import { EC2_PATH_ORDERED_TASK_IDS } from '../../data/ec2LearningPathData.js';
 import {
   CheckCircle2,
@@ -27,16 +27,9 @@ export const Ec2TaskRunner = ({
   onNavigateTask = () => {},
   onUpdateResources = () => {}
 }) => {
-  if (!task) {
-    return (
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-8 text-center backdrop-blur-xl">
-        <p className="text-slate-400 text-sm">Select an EC2 task from the navigator to begin.</p>
-      </div>
-    );
-  }
-
-  const isCompleted = completedTaskIds.includes(task.id);
-  const currentStepProgress = stepProgressMap[task.id] || {};
+  const taskId = task?.id || null;
+  const isCompleted = completedTaskIds.includes(taskId);
+  const currentStepProgress = taskId ? stepProgressMap[taskId] || {} : {};
   const [completedItemIds, setCompletedItemIds] = useState(
     new Set(currentStepProgress.completedItems || [])
   );
@@ -50,10 +43,18 @@ export const Ec2TaskRunner = ({
   }, [preferredMode]);
 
   useEffect(() => {
-    const prog = stepProgressMap[task.id] || {};
+    const prog = taskId ? stepProgressMap[taskId] || {} : {};
     setCompletedItemIds(new Set(prog.completedItems || []));
     setResourceInputs(prog.resourceInputs || {});
-  }, [task.id, stepProgressMap]);
+  }, [taskId, stepProgressMap]);
+
+  if (!task) {
+    return (
+      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-8 text-center backdrop-blur-xl">
+        <p className="text-slate-400 text-sm">Select an EC2 task from the navigator to begin.</p>
+      </div>
+    );
+  }
 
   // Interpolates {{variable}} in strings using resourcesMap and resourceInputs
   const interpolateVariables = (str) => {
@@ -229,7 +230,7 @@ export const Ec2TaskRunner = ({
               </h3>
             )}
             {consoleSteps.map((step, idx) => (
-              <TaskStepCard
+              <FollowAlongStepCard
                 key={step.id || idx}
                 step={step}
                 completedItemIds={completedItemIds}
@@ -247,7 +248,7 @@ export const Ec2TaskRunner = ({
               </h3>
             )}
             {cliSteps.map((step, idx) => (
-              <TaskStepCard
+              <FollowAlongStepCard
                 key={step.id || idx}
                 step={step}
                 completedItemIds={completedItemIds}
@@ -289,7 +290,7 @@ export const Ec2TaskRunner = ({
       )}
 
       {/* Read-Only Validation Panel */}
-      <AwsValidationPanel task={task} />
+      <FollowAlongAwsValidationPanel task={task} />
 
       {/* Bottom Control Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800">

@@ -13,10 +13,12 @@ import { IamPathNavigator } from './IamPathNavigator.jsx';
 import { IamTaskRunner } from './IamTaskRunner.jsx';
 import { IamProjectCleanup } from './IamProjectCleanup.jsx';
 import { useExam } from '../../context/ExamContext.jsx';
+import { useAuth } from '../../features/auth/useAuth.js';
 import { ShieldCheck, LayoutDashboard, ListOrdered, Wrench, ArrowLeft, RefreshCw } from 'lucide-react';
 
 export const IamLearningPathView = ({ onBackToLanding }) => {
-  const { currentUser, supabaseClient } = useExam();
+  const { currentUser } = useAuth();
+  const { supabaseClient } = useExam();
   const allTasks = getIamPathTasks();
 
   const [loading, setLoading] = useState(true);

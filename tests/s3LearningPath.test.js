@@ -18,7 +18,7 @@ import {
   validateS3ResourceRecord,
   mergeGuestS3StateWithRemote
 } from '../src/services/s3LearningPathService.js';
-import { S3_TASKS } from '../src/data/tasks/s3Tasks.js';
+import { S3_TASKS } from '../src/features/followAlongs/catalogues/s3FollowAlongTasks.js';
 
 describe('S3 Learning Path Comprehensive Permanent Test Suite', () => {
 

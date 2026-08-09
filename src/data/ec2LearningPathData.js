@@ -1,4 +1,4 @@
-import { EC2_TASKS } from './tasks/ec2Tasks.js';
+import { EC2_TASKS } from '../features/followAlongs/catalogues/ec2FollowAlongTasks.js';
 
 export const EC2_PATH_ID = 'ec2-learning-path';
 

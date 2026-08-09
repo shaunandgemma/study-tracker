@@ -19,10 +19,16 @@ import { fetchAttemptsFromSupabase } from '../services/attemptService';
 
 const ExamContext = createContext();
 
+export const normalizeMainViewMode = (mode) => (
+  mode === 'vpc-learning-path'
+    ? 'follow-alongs'
+    : mode
+);
+
 export const ExamProvider = ({ children }) => {
   const [exams, setExams] = useState(() => loadExams());
   const [activeExamId, setActiveExamIdState] = useState(() => loadActiveExamId());
-  const [viewModeRaw, setViewModeRaw] = useState('checklist'); // 'checklist' | 'prep-exam' | 'hands-on-tasks' | 'follow-alongs'
+  const [viewModeRaw, setViewModeRaw] = useState('checklist'); // 'checklist' | 'prep-exam' | 'follow-alongs'
   const [legacyAutoOpenProgrammeId, setLegacyAutoOpenProgrammeId] = useState(null);
 
   const setViewMode = useCallback((mode) => {
@@ -30,14 +36,15 @@ export const ExamProvider = ({ children }) => {
       setLegacyAutoOpenProgrammeId('vpc-learning-path');
       setViewModeRaw('follow-alongs');
     } else {
-      if (mode !== 'follow-alongs') {
+      const normalizedMode = normalizeMainViewMode(mode);
+      if (normalizedMode !== 'follow-alongs') {
         setLegacyAutoOpenProgrammeId(null);
       }
-      setViewModeRaw(mode);
+      setViewModeRaw(normalizedMode);
     }
   }, []);
 
-  const viewMode = viewModeRaw === 'vpc-learning-path' ? 'follow-alongs' : viewModeRaw;
+  const viewMode = normalizeMainViewMode(viewModeRaw);
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [checklist, setChecklist] = useState(() => loadChecklistState());
   const [flagged, setFlagged] = useState(() => loadFlaggedState());

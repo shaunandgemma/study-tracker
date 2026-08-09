@@ -1,4 +1,4 @@
-import { IAM_TASKS } from './tasks/iamTasks.js';
+import { IAM_TASKS } from '../features/followAlongs/catalogues/iamFollowAlongTasks.js';
 
 export const IAM_PATH_ID = 'iam-learning-path';
 

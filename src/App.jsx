@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ExamProvider, useExam } from './context/ExamContext';
-import { TaskProvider } from './context/TaskContext';
+import { AuthProvider } from './features/auth/AuthContext';
+import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
+import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
+import { AwsConnectionProvider } from './features/awsConnection/AwsConnectionContext';
+import { useAwsConnection } from './features/awsConnection/useAwsConnection.js';
 import { Navbar } from './components/Navbar';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
 import { QuizEngine } from './components/PrepExam/QuizEngine';
 import { ExamResults } from './components/PrepExam/ExamResults';
-import { HandsOnTasksView } from './components/HandsOnTasks/HandsOnTasksView';
+import { AwsSetupGuide } from './features/awsConnection/AwsSetupGuide.jsx';
 import { VpcLearningPathView } from './components/VpcLearningPath/VpcLearningPathView';
 import { FollowAlongsView } from './components/FollowAlongs/FollowAlongsView';
 import { AddExamModal } from './components/Modals/AddExamModal';
@@ -24,6 +28,12 @@ import { getDomainForQuestion } from './data/saaC03DomainMapping';
 
 const MainContent = () => {
   const { viewMode, setViewMode, activeExam, activeExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
+  const { isSetupOpen, closeSetup } = useAwsConnection();
+
+  // Main navigation remains usable while the shared AWS setup screen is open.
+  useEffect(() => {
+    closeSetup();
+  }, [viewMode, closeSetup]);
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -251,49 +261,51 @@ const MainContent = () => {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
-        {viewMode === 'checklist' && (
-          <ChecklistView onLaunchPrepExam={handleLaunchPrepExam} />
-        )}
+        {isSetupOpen ? (
+          <AwsSetupGuide />
+        ) : (
+          <>
+            {viewMode === 'checklist' && (
+              <ChecklistView onLaunchPrepExam={handleLaunchPrepExam} />
+            )}
 
-        {viewMode === 'hands-on-tasks' && (
-          <HandsOnTasksView />
-        )}
-
-        {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
-          <FollowAlongsView
-            initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
-          />
-        )}
-
-        {viewMode === 'prep-exam' && (
-          <div>
-            {prepState === 'setup' && (
-              <ExamSetup
-                onStartExam={handleStartExam}
-                presetConfig={presetConfig}
-                onViewAttempt={handleViewHistoricalAttempt}
+            {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
+              <FollowAlongsView
+                initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
               />
             )}
-            {prepState === 'quiz' && activeQuizConfig && (
-              <QuizEngine
-                config={activeQuizConfig}
-                onFinishExam={handleFinishExam}
-                onCancelExam={() => setPrepState('setup')}
-              />
+
+            {viewMode === 'prep-exam' && (
+              <div>
+                {prepState === 'setup' && (
+                  <ExamSetup
+                    onStartExam={handleStartExam}
+                    presetConfig={presetConfig}
+                    onViewAttempt={handleViewHistoricalAttempt}
+                  />
+                )}
+                {prepState === 'quiz' && activeQuizConfig && (
+                  <QuizEngine
+                    config={activeQuizConfig}
+                    onFinishExam={handleFinishExam}
+                    onCancelExam={() => setPrepState('setup')}
+                  />
+                )}
+                {prepState === 'results' && activeAttemptResult && (
+                  <ExamResults
+                    attemptResult={activeAttemptResult}
+                    onRetake={handleRetakeExam}
+                    onChangeMode={() => {
+                      setIsReadOnly(false);
+                      setPrepState('setup');
+                    }}
+                    isReadOnly={isReadOnly}
+                    saveError={attemptSaveError}
+                  />
+                )}
+              </div>
             )}
-            {prepState === 'results' && activeAttemptResult && (
-              <ExamResults
-                attemptResult={activeAttemptResult}
-                onRetake={handleRetakeExam}
-                onChangeMode={() => {
-                  setIsReadOnly(false);
-                  setPrepState('setup');
-                }}
-                isReadOnly={isReadOnly}
-                saveError={attemptSaveError}
-              />
-            )}
-          </div>
+          </>
         )}
       </main>
 
@@ -303,7 +315,7 @@ const MainContent = () => {
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span>ExamPulse Prep AI — Interactive Study & Hands-On Labs</span>
+          <span>ExamPulse Prep AI — Interactive Study & AWS Follow Alongs</span>
           <span>Local Storage Persisted & Offline Ready</span>
         </div>
       </footer>
@@ -323,12 +335,30 @@ const MainContent = () => {
   );
 };
 
+const AuthenticatedApplication = () => {
+  const [authorRequested, setAuthorRequested] = useState(() => isAuthorEntryRequested());
+
+  useEffect(() => {
+    const updateEntry = () => setAuthorRequested(isAuthorEntryRequested());
+    globalThis.addEventListener?.('hashchange', updateEntry);
+    return () => globalThis.removeEventListener?.('hashchange', updateEntry);
+  }, []);
+
+  if (authorRequested) return <AuthorEntry />;
+
+  return (
+    <AwsConnectionProvider enabled={true}>
+      <ExamProvider>
+        <MainContent />
+      </ExamProvider>
+    </AwsConnectionProvider>
+  );
+};
+
 export default function App() {
   return (
-    <ExamProvider>
-      <TaskProvider>
-        <MainContent />
-      </TaskProvider>
-    </ExamProvider>
+    <AuthProvider>
+      <AuthenticatedApplication />
+    </AuthProvider>
   );
 }

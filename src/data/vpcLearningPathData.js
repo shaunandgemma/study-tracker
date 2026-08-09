@@ -5,7 +5,7 @@
  * Zero-regression isolation requirement: Does not mutate canonical standalone task definitions.
  */
 
-import { VPC_TASKS } from './tasks/vpcTasks.js';
+import { VPC_TASKS } from '../features/followAlongs/catalogues/vpcFollowAlongTasks.js';
 
 // Map of canonical VPC task lookup by ID
 const CANONICAL_TASK_MAP = new Map(VPC_TASKS.map(t => [t.id, t]));

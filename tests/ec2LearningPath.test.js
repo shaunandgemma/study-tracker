@@ -33,7 +33,7 @@ import {
   GUEST_EC2_RESOURCES_KEY
 } from '../src/services/ec2LearningPathService.js';
 
-import { EC2_TASKS } from '../src/data/tasks/ec2Tasks.js';
+import { EC2_TASKS } from '../src/features/followAlongs/catalogues/ec2FollowAlongTasks.js';
 
 test('EC2 Learning Path - Comprehensive Stage 4 Test Suite', async (t) => {
   // 1. Catalogue Audit & ID Uniqueness

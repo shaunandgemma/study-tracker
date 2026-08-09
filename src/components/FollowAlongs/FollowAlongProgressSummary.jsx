@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, Clock, Cpu, Layers, AlertCircle, Wrench } from 'lucide-react';
+import { CheckCircle2, Clock, Cpu, Wrench } from 'lucide-react';
 
 export const FollowAlongProgressSummary = ({ summary }) => {
   if (!summary || summary.loading) {
@@ -14,15 +14,14 @@ export const FollowAlongProgressSummary = ({ summary }) => {
     );
   }
 
-  const {
-    status,
-    completedTasks = 0,
-    totalTasks = 45,
-    completionPercentage = 0,
-    currentTaskTitle,
-    resourcesRetained,
-    cleanupPending
-  } = summary;
+  const status = String(summary.status || 'not-started')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+  const completedTasks = summary.completedTasks ?? summary.completed ?? 0;
+  const totalTasks = summary.totalTasks ?? summary.total ?? 0;
+  const completionPercentage = summary.completionPercentage ?? summary.percentage ?? 0;
+  const { currentTaskTitle } = summary;
 
   const getStatusBadge = () => {
     switch (status) {

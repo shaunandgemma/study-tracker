@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTask } from '../../context/TaskContext.jsx';
+import { useAuth } from '../../features/auth/useAuth.js';
 import { VPC_PATH_TASKS } from '../../data/vpcLearningPathData.js';
 import {
   loadGuestPathState,
@@ -15,7 +15,7 @@ import { VpcTaskRunner } from './VpcTaskRunner.jsx';
 import { VpcProjectCleanup } from './VpcProjectCleanup.jsx';
 
 export const VpcLearningPathView = ({ onBackToLanding = null }) => {
-  const { currentUser } = useTask();
+  const { currentUser } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [activeTaskId, setActiveTaskId] = useState('task-saa-vpc-design-a-vpc-cidr-plan-001');

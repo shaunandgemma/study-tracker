@@ -1,4 +1,4 @@
-import { S3_TASKS } from './tasks/s3Tasks.js';
+import { S3_TASKS } from '../features/followAlongs/catalogues/s3FollowAlongTasks.js';
 
 export const S3_PATH_ID = 's3-learning-path';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTask } from '../../context/TaskContext';
+import { useAuth } from '../../features/auth/useAuth.js';
 import { X, Mail, Lock, LogIn, UserPlus, AlertCircle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 
 export const AuthModal = () => {
@@ -8,7 +8,7 @@ export const AuthModal = () => {
     closeAuthModal,
     signInWithEmail,
     signUpWithEmail
-  } = useTask();
+  } = useAuth();
 
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [email, setEmail] = useState('');

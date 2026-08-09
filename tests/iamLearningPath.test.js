@@ -18,7 +18,7 @@ import {
   validateIamResourceRecord,
   mergeGuestIamStateWithRemote
 } from '../src/services/iamLearningPathService.js';
-import { IAM_TASKS } from '../src/data/tasks/iamTasks.js';
+import { IAM_TASKS } from '../src/features/followAlongs/catalogues/iamFollowAlongTasks.js';
 
 describe('IAM Learning Path Comprehensive Permanent Test Suite', () => {
 
