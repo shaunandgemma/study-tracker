@@ -1,4 +1,6 @@
-import { loadAuthorDrafts, saveAuthorDraft, storeNewAuthorDraft } from './authorDraftService.js';
+import { deleteAuthorDraft, loadAuthorDrafts, saveAuthorDraft, storeNewAuthorDraft } from './authorDraftService.js';
+import { buildAuthorCandidateReadinessPreview, isStep94VerifiedSqsDraft } from './authorCandidateReadiness.js';
+import { fingerprintAuthorHandoffJson } from './authorHandoffPreview.js';
 import { createAuthorSharedStorageService, isAuthorSharedStorageEnabled } from './authorSharedStorageService.js';
 
 export const AUTHOR_STORAGE_MODE = Object.freeze({
@@ -23,7 +25,37 @@ function draftRevision(draft) {
   return Number(draft?.draft?.revision) || 1;
 }
 
-function copySummary(localDraft, remoteDraft) {
+const SHA256_PATTERN = /^[a-f0-9]{64}$/;
+
+function contentCounts(draft) {
+  const tasks = draft?.tasks || [];
+  return {
+    phaseCount: (draft?.phases || []).length,
+    taskCount: tasks.length,
+    checkboxCount: tasks.flatMap(task => task.consoleSteps || []).flatMap(step => step.instructions || []).length,
+    verificationCheckCount: tasks.flatMap(task => task.verification || []).length,
+    cleanupItemCount: tasks.flatMap(task => task.cleanup || []).length + (draft?.cleanup?.steps || []).length,
+    officialAwsSourceCount: (draft?.sources || []).length
+  };
+}
+
+function verifiedHandoff(draft) {
+  const source = draft?.draft?.importedFrom || {};
+  const fingerprint = String(source.handoffFingerprint || '').trim().toLowerCase();
+  return source.type === 'author_assistant_handoff'
+    && source.importStep === '92'
+    && source.acceptedStages === '1-11'
+    && SHA256_PATTERN.test(fingerprint)
+    && SHA256_PATTERN.test(String(source.authorDraftContentFingerprint || '').trim().toLowerCase())
+    && draft?.draft?.draftId === `author-draft-import-${fingerprint}`;
+}
+
+async function copySummary(localDraft, remoteDraft) {
+  const [localContentFingerprint, remoteContentFingerprint] = await Promise.all([
+    fingerprintAuthorHandoffJson(localDraft),
+    remoteDraft ? fingerprintAuthorHandoffJson(remoteDraft) : Promise.resolve(null)
+  ]);
+  const source = localDraft?.draft?.importedFrom || {};
   return {
     draftId: draftId(localDraft),
     title: localDraft?.programme?.displayName || localDraft?.programme?.serviceName || 'Untitled Follow Along',
@@ -31,6 +63,16 @@ function copySummary(localDraft, remoteDraft) {
     localRevision: draftRevision(localDraft),
     localUpdatedAt: localDraft?.draft?.updatedAt || null,
     remoteRevision: remoteDraft ? draftRevision(remoteDraft) : null,
+    ownerId: localDraft?.draft?.createdBy || '',
+    programmeId: localDraft?.programme?.programmeId || '',
+    serviceSlug: localDraft?.programme?.serviceSlug || '',
+    assistantSessionId: source.sessionId || '',
+    handoffFingerprint: source.handoffFingerprint || '',
+    isVerifiedHandoff: verifiedHandoff(localDraft),
+    localContentFingerprint,
+    remoteContentFingerprint,
+    remoteContentMatches: remoteDraft ? localContentFingerprint === remoteContentFingerprint : null,
+    counts: contentCounts(localDraft),
     status: remoteDraft ? AUTHOR_DRAFT_COPY_STATUS.CONFLICT : AUTHOR_DRAFT_COPY_STATUS.READY,
     canCopy: !remoteDraft,
     localWillRemain: true
@@ -85,6 +127,16 @@ export function createAuthorStorageCoordinator({
       return remote.listDrafts();
     },
 
+    async listPublishedDrafts() {
+      if (getMode() !== AUTHOR_STORAGE_MODE.SHARED) return { success: true, storageMode: AUTHOR_STORAGE_MODE.LOCAL, publications: [], publishedDraftIds: [] };
+      return remote.listPublishedDrafts();
+    },
+
+    async listReleaseCandidates() {
+      if (getMode() !== AUTHOR_STORAGE_MODE.SHARED) return { success: true, storageMode: AUTHOR_STORAGE_MODE.LOCAL, candidates: [] };
+      return remote.listReleaseCandidates();
+    },
+
     async loadDraft(requestedDraftId) {
       if (!requestedDraftId) return { success: false, notFound: true, storageMode: getMode(), error: 'A draft ID is required.' };
       if (getMode() === AUTHOR_STORAGE_MODE.SHARED) return remote.loadDraft(requestedDraftId);
@@ -108,11 +160,43 @@ export function createAuthorStorageCoordinator({
       return { ...result, storageMode: AUTHOR_STORAGE_MODE.LOCAL };
     },
 
+    async deleteDraft({ draftId: requestedDraftId, expectedRevision, confirmation } = {}) {
+      if (getMode() === AUTHOR_STORAGE_MODE.SHARED) return remote.deleteDraft({ draftId: requestedDraftId, expectedRevision, confirmation });
+      return deleteAuthorDraft({ userId, draftId: requestedDraftId, expectedRevision, confirmation, storage });
+    },
+
     async storeReleaseCandidate(candidate) {
       if (getMode() !== AUTHOR_STORAGE_MODE.SHARED) {
         return { success: false, disabled: true, storageMode: AUTHOR_STORAGE_MODE.LOCAL, error: 'Trusted approval requires a shared draft.' };
       }
       return remote.storeReleaseCandidate(candidate);
+    },
+
+    async previewReleaseCandidateReadiness({ draft, authorEmail, planningValidation, contentValidation, reviewValidation } = {}) {
+      if (getMode() !== AUTHOR_STORAGE_MODE.SHARED) {
+        return { success: false, disabled: true, previewOnly: true, error: 'Select the private Shared Draft before checking candidate readiness.' };
+      }
+      if (!isStep94VerifiedSqsDraft(draft)) {
+        return { success: false, wrongTarget: true, previewOnly: true, error: 'Step 94 is limited to the exact verified SQS handoff draft.' };
+      }
+      const [saved, candidateResult] = await Promise.all([
+        remote.loadDraft(draft.draft.draftId),
+        remote.listReleaseCandidates()
+      ]);
+      if (!saved.success) return { ...saved, success: false, previewOnly: true };
+      if (!candidateResult.success) return { ...candidateResult, success: false, previewOnly: true };
+      return buildAuthorCandidateReadinessPreview({
+        draft,
+        userId,
+        authorEmail,
+        storageMode: getMode(),
+        serverDraft: saved.draft,
+        serverRow: saved.row,
+        candidates: candidateResult.candidates || [],
+        planningValidation,
+        contentValidation,
+        reviewValidation
+      });
     },
 
     async previewLocalDraftCopies() {
@@ -126,7 +210,7 @@ export function createAuthorStorageCoordinator({
           previewOnly: true,
           localPreserved: true,
           storageMode: AUTHOR_STORAGE_MODE.LOCAL,
-          drafts: local.drafts.map(item => copySummary(item, null)),
+          drafts: await Promise.all(local.drafts.map(item => copySummary(item, null))),
           error: 'Shared Author storage is disabled. Local drafts remain unchanged.'
         };
       }
@@ -137,7 +221,7 @@ export function createAuthorStorageCoordinator({
       }
 
       const remoteById = new Map((shared.drafts || []).map(item => [draftId(item), item]));
-      const drafts = local.drafts.map(item => copySummary(item, remoteById.get(draftId(item))));
+      const drafts = await Promise.all(local.drafts.map(item => copySummary(item, remoteById.get(draftId(item)))));
       return {
         success: true,
         previewOnly: true,
@@ -191,6 +275,10 @@ export function createAuthorStorageCoordinator({
 
       const afterCopy = loadLocal();
       const localStillExists = afterCopy.success && afterCopy.drafts.some(item => draftId(item) === requestedDraftId);
+      const [localContentFingerprint, sharedContentFingerprint] = await Promise.all([
+        fingerprintAuthorHandoffJson(source),
+        fingerprintAuthorHandoffJson(copied.draft)
+      ]);
       return {
         success: true,
         storageMode: AUTHOR_STORAGE_MODE.SHARED,
@@ -198,7 +286,13 @@ export function createAuthorStorageCoordinator({
         row: copied.row,
         localPreserved: true,
         localVerified: localStillExists,
-        message: 'The draft was copied to shared storage. The private browser draft remains available.'
+        exactContentVerified: localContentFingerprint === sharedContentFingerprint,
+        localContentFingerprint,
+        sharedContentFingerprint,
+        initialSharedRevision: draftRevision(copied.draft),
+        message: localContentFingerprint === sharedContentFingerprint
+          ? 'The exact draft was copied to shared storage at revision 1. The private browser draft remains available.'
+          : 'The shared copy was created but its returned content did not match the private draft fingerprint. Stop before Stage 12.'
       };
     }
   };

@@ -1,0 +1,106 @@
+86. AUTHOR ASSISTANT - STEP 82B UTF-8 CONSOLE DISPLAY CORRECTION
+
+Date: 9 August 2026
+
+1. REPORTED ISSUE
+
+Several em dash characters appeared in the Windows PowerShell output as the three
+incorrect characters commonly shown as a UTF-8 decoding error.
+
+The visible problem affected AWS CLI source titles and manual review text.
+
+2. STORAGE INVESTIGATION
+
+The saved SQS files were read directly with Node using UTF-8.
+
+The stored character was confirmed as Unicode U+2014, which is the correct em dash.
+
+The saved files did not contain the incorrect three-character sequence.
+
+Confirmed files:
+
+research-result.json
+accepted-sources.json
+
+3. SAFE REPAIR DECISION
+
+No saved SQS text was repaired because no saved text was damaged.
+
+Rewriting correct accepted research would have been unnecessary and would have
+changed audited files without a valid reason.
+
+The accepted source URLs, decisions, timestamps and manual findings remain unchanged.
+
+4. ROOT CAUSE
+
+The secure launcher used Windows PowerShell without explicitly aligning the console
+input and output encoding with Node's UTF-8 output.
+
+The JSON was correct, but the terminal decoded the displayed bytes incorrectly.
+
+5. CORRECTION IMPLEMENTED
+
+The secure launcher now:
+
+1. Saves the original console input encoding.
+2. Saves the original console output encoding.
+3. Saves the original PowerShell pipeline output encoding.
+4. Uses UTF-8 without a byte-order mark while Author Assistant runs.
+5. Restores every original encoding setting before the launcher exits.
+
+The launcher does not open or rewrite saved research files.
+
+6. LIVE DISPLAY PROBE
+
+A harmless console-only probe printed an AWS CLI title containing an em dash.
+
+The em dash displayed correctly.
+
+Direct JSON checks confirmed:
+
+research-result.json stored mojibake: false
+accepted-sources.json stored mojibake: false
+
+7. VERIFICATION
+
+Focused Author Assistant checks:
+
+30 passed, 0 failed.
+
+PowerShell syntax validation:
+
+Passed.
+
+Complete application checks:
+
+547 passed, 0 failed.
+
+Linter:
+
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+
+Passed. Existing Node version and bundle-size warnings remain.
+
+Git whitespace check:
+
+Passed. Existing line-ending notices are informational.
+
+8. SAFETY BOUNDARIES
+
+Author stages prepared: None
+AWS connected: No
+Supabase connected: No
+Candidate prepared: No
+Published: No
+
+No API request was made during Step 82B.
+No API credits were used during Step 82B.
+No later Author Assistant stage was started.
+
+9. STATUS
+
+Step 82B UTF-8 console correction: Complete.
+Saved SQS research repair: Not required because the files were already correct.
+Next Author Assistant stage: Not started.

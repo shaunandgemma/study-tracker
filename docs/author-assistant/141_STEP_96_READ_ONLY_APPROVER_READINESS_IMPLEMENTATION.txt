@@ -1,0 +1,119 @@
+STEP 96 - READ-ONLY APPROVER READINESS IMPLEMENTATION
+======================================================
+
+1. APPROVED SCOPE
+
+Step 96 adds one read-only Approver readiness preview for the exact SQS release candidate created in Step 95.
+
+The preview does not approve, reject, publish, create, update or delete anything.
+
+2. EXACT PROTECTED TARGET
+
+Programme:
+Amazon SQS: Basic Message Queue Test
+
+Candidate Approval Key:
+release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r2-b56d599d5479
+
+Shared Draft ID:
+author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+Source revision:
+2
+
+The new preview is shown only when all of these exact SQS identifiers match. Other approval requests keep their existing behaviour.
+
+3. WHAT THE APPROVER SEES
+
+The Waiting card for the exact SQS candidate now contains a section named:
+Step 96 - Read-only preview
+
+The Approver presses:
+Preview Approval Readiness
+
+The page then displays:
+
+1. The signed-in Approver.
+2. The candidate Author ID.
+3. The source revision.
+4. The unpublished state.
+5. The exact Candidate Approval Key.
+6. Programme content counts.
+7. The three relevant SHA-256 fingerprints.
+8. Fourteen separate readiness checks.
+9. A clear statement that approval, rejection, publication and database-write counts are all zero.
+
+4. FOURTEEN READ-ONLY CHECKS
+
+1. The exact verified SQS Candidate Approval Key matches.
+2. The signed-in account has a server-managed Approver role.
+3. The Approver is different from the Author.
+4. The candidate points to the saved SQS Shared Draft.
+5. The candidate and saved Shared Draft are both revision 2.
+6. The candidate-key suffix matches the canonical snapshot SHA-256.
+7. The protected candidate SHA-256 is present.
+8. The immutable candidate snapshot still matches the saved Shared Draft.
+9. The candidate is bound to the protected saved-draft SHA-256.
+10. The candidate creator matches the protected Shared Draft owner.
+11. The candidate is still awaiting a decision.
+12. The candidate remains unpublished.
+13. The reviewed snapshot remains Ready for Approval and pending.
+14. The complete stored-candidate integrity check passes.
+
+5. DECISION SAFETY GATE
+
+For this exact SQS candidate only, the Approve and Reject buttons remain disabled until the read-only readiness preview passes.
+
+Passing the preview does not make a decision. The existing exact-key and rejection-reason requirements still apply separately.
+
+Refreshing the queue clears the temporary readiness result, so the protected data must be checked again before a later decision.
+
+6. FILES ADDED
+
+src/features/followAlongAuthor/authorApproverReadiness.js
+src/features/followAlongAuthor/AuthorApproverReadinessPreview.jsx
+tests/followAlongAuthorApproverReadinessStep96.test.js
+
+7. FILE UPDATED
+
+src/features/followAlongAuthor/AuthorApprovalQueue.jsx
+
+The update adds the read-only preview, performs one protected Shared Draft read when requested, and applies the temporary readiness gate to the two decision buttons for the exact SQS candidate.
+
+8. AUTOMATED VERIFICATION
+
+The Step 96 test covers:
+
+1. Exact candidate identity.
+2. Separate server-managed Approver identity.
+3. Same-Author rejection.
+4. Browser-only role rejection.
+5. Revision mismatch rejection.
+6. Saved-draft fingerprint mismatch rejection.
+7. Candidate-key fingerprint mismatch rejection.
+8. Previously decided candidate rejection.
+9. Published candidate rejection.
+10. Exact-candidate-only routing.
+11. No approval, rejection or publishing method in the preview implementation.
+12. Readiness gating on both decision buttons.
+
+Complete result:
+740 tests passed.
+0 tests failed.
+
+Production build:
+Passed.
+
+Linter:
+Passed with no errors. Existing unrelated warnings remain.
+
+9. STOP BOUNDARY
+
+Step 96 stops before approval.
+
+No approval was recorded.
+No rejection was recorded.
+No publication was performed.
+No candidate was created.
+No Shared Draft or candidate content was changed.
+

@@ -1,0 +1,73 @@
+STEP 84 REQUIRED AWS DOCS SEARCH CORRECTION
+===========================================
+
+1. REPORTED PROBLEM
+
+The private SQS Stage 6 run stopped safely with this message:
+
+Protected AWS Docs search returned no sources for Stage 6.
+
+The same result occurred on two attempts.
+
+
+2. CAUSE
+
+The Stage 6 Responses API request made the web-search tool available but set:
+
+tool_choice: auto
+
+With this setting, the model can answer without using web search. The structured
+answer was returned without protected source metadata, so the local safety
+checker correctly rejected it.
+
+
+3. OFFICIAL OPENAI DOCUMENTATION
+
+Official OpenAI documentation states that web search is optional when
+tool_choice is auto. It says to use required or a specific web-search tool
+choice when search must run.
+
+Reference:
+
+https://developers.openai.com/api/docs/guides/tools-web-search
+
+
+4. CORRECTION
+
+Only the Stage 6 instruction request was changed to:
+
+tool_choice: required
+
+The accepted-source restrictions remain unchanged.
+
+
+5. SAFETY BEHAVIOUR RETAINED
+
+- Search remains limited to docs.aws.amazon.com.
+- Instruction URLs must still be accepted by the user.
+- Each URL must still be linked to the exact blueprint task.
+- Each used URL must still be returned by protected search.
+- A response without protected source results is still rejected.
+- Nothing writes to Author, Supabase or AWS.
+- Stage 7 remains excluded.
+
+
+6. SAVED SESSION STATUS
+
+The two failed attempts did not create a Stage 6 file.
+
+The SQS session remains at the accepted Stages 1-5 boundary and is safe to
+retry after this correction.
+
+
+7. VERIFICATION
+
+- Focused Stage 81, 82 and 84 checks: 33 passed, 0 failed
+- Complete automated tests: 576 passed, 0 failed
+- Linter: 0 errors
+- Production build: passed
+
+Existing unrelated linter warnings remain.
+
+The existing Node version and bundle-size warnings remain. They did not stop
+the build.

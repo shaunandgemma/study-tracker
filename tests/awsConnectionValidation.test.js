@@ -18,11 +18,12 @@ import {
 import { generateCloudFormationTemplate } from '../src/data/cloudFormationTemplate.js';
 
 const s3VersioningTask = Object.freeze({
-  id: 'task-saa-s3-versioning-001',
+  id: 'published-s3-versioning-check',
   service: 'Amazon S3',
   feature: 'Versioning',
   topicId: 'topic-s3',
-  region: 'eu-west-2'
+  region: 'eu-west-2',
+  validationContracts: ['s3.bucket-exists', 's3.versioning-enabled', 's3.default-encryption-enabled']
 });
 
 test('AWS connection and validation security safeguards', async (t) => {
@@ -91,7 +92,7 @@ test('AWS connection and validation security safeguards', async (t) => {
     assert.equal(result.status, 'account_mismatch');
   });
 
-  await t.test('7. the validation registry retains least-privilege S3 contracts', () => {
+  await t.test('7. published task metadata can use least-privilege S3 contracts', () => {
     assert.ok(TASK_VALIDATION_REGISTRY['s3.bucket-exists']);
     assert.ok(TASK_VALIDATION_REGISTRY['s3.versioning-enabled']);
     assert.ok(TASK_VALIDATION_REGISTRY['s3.default-encryption-enabled']);

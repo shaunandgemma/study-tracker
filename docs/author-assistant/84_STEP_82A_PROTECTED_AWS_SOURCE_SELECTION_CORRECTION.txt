@@ -1,0 +1,119 @@
+84. AUTHOR ASSISTANT - STEP 82A PROTECTED AWS SOURCE SELECTION CORRECTION
+
+Date: 9 August 2026
+
+1. REASON FOR THIS STEP
+
+The OpenAI request and protected AWS Docs search completed.
+
+The first AI answer rewrote or proposed at least one AWS documentation URL that was
+not an exact member of the protected web search source list.
+
+The existing safety check correctly stopped the run instead of accepting that URL.
+
+2. OFFICIAL API BEHAVIOUR USED
+
+Official OpenAI documentation states that:
+
+1. allowed_domains restricts web search to approved domains.
+2. web_search_call.action.sources returns the complete list of URLs consulted.
+
+Reference:
+
+https://developers.openai.com/api/docs/guides/tools-web-search#sources
+
+3. CORRECTION IMPLEMENTED
+
+The initial search remains restricted to:
+
+docs.aws.amazon.com
+
+The initial prompt now tells the model to copy returned URLs exactly.
+
+If the first answer still proposes a different AWS URL, the script performs one
+bounded correction request.
+
+The correction request receives only the official AWS URLs already returned by the
+protected search.
+
+Its strict response schema permits only those exact URLs.
+
+4. SAFETY RULES PRESERVED
+
+1. No outside-domain URL can be accepted.
+2. An AWS-looking URL that was not returned by protected search is still rejected.
+3. Only one correction attempt is allowed.
+4. The correction request has no web search tool and cannot expand the source list.
+5. The API key remains only in the private Authorization header.
+6. The API key is not written into either request body or saved files.
+7. Human acceptance of every proposed source remains required.
+8. No Author draft stage is prepared.
+9. No AWS connection is made.
+10. No Supabase connection is made.
+11. No candidate is prepared.
+12. Nothing is approved or published.
+
+5. AUDIT INFORMATION
+
+Saved research results now record whether protected source correction was applied.
+
+When applied, the correction response identifier is also recorded for audit purposes.
+
+6. VERIFICATION
+
+Focused Author Assistant checks after the final correction:
+
+13 passed, 0 failed.
+
+Complete application checks:
+
+545 passed, 0 failed.
+
+Linter:
+
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+
+Passed. Existing Node version and bundle-size warnings remain.
+
+Git whitespace check:
+
+Passed. Existing line-ending notices are informational.
+
+7. SAVED SQS SESSION
+
+The existing SQS session remains unchanged at input_complete.
+
+It still contains only:
+
+session.json
+research-request.json
+
+No failed or partial research result was saved.
+
+8. CONTROLLED LIVE RETRY
+
+Run:
+
+npm run author-assistant:secure
+
+Then:
+
+1. Enter the API key privately.
+2. Answer Y to resume the saved SQS session.
+3. Answer y to start read-only AWS Docs research.
+4. Review each returned official AWS source.
+5. Accept or reject each source explicitly.
+
+If exact sources were returned initially, one API request is used.
+
+If safe correction is needed, one small additional API request is used.
+
+9. STATUS
+
+Step 82A implementation and local verification: Complete.
+
+Step 82 live SQS research and human source acceptance: Not yet complete.
+
+No later Author Assistant stage has started.

@@ -16,38 +16,22 @@ import {
 } from '../src/services/vpcLearningPathService.js';
 
 test('Follow Alongs - Programme Catalogue Integrity', async (t) => {
-  await t.test('1. Programme catalogue contains four available programmes (VPC, EC2, S3, and IAM)', () => {
+  await t.test('1. Static programme catalogue contains only the retained VPC programme', () => {
     const available = FOLLOW_ALONG_PROGRAMMES.filter(p => p.status === 'available');
-    assert.equal(available.length, 4, 'Must have exactly 4 available programmes');
+    assert.equal(available.length, 1, 'Must have exactly 1 static available programme');
   });
 
-  await t.test('2. The available programmes are vpc-learning-path, ec2-learning-path, s3-learning-path, and iam-learning-path', () => {
+  await t.test('2. Legacy S3, EC2, and IAM programmes are absent from the static catalogue', () => {
     const vpcProg = getFollowAlongProgramme('vpc-learning-path');
-    const ec2Prog = getFollowAlongProgramme('ec2-learning-path');
-    const s3Prog = getFollowAlongProgramme('s3-learning-path');
-    const iamProg = getFollowAlongProgramme('iam-learning-path');
 
     assert.ok(vpcProg, 'vpc-learning-path must exist in catalogue');
     assert.equal(vpcProg.status, 'available');
     assert.equal(vpcProg.taskCount, 45);
     assert.equal(vpcProg.phaseCount, 8);
 
-    assert.ok(ec2Prog, 'ec2-learning-path must exist in catalogue');
-    assert.equal(ec2Prog.status, 'available');
-    assert.equal(ec2Prog.taskCount, 34);
-    assert.equal(ec2Prog.phaseCount, 8);
-
-    assert.ok(s3Prog, 's3-learning-path must exist in catalogue');
-    assert.equal(s3Prog.status, 'available');
-    assert.equal(s3Prog.pathId, 's3-learning-path');
-    assert.equal(s3Prog.taskCount, 34); // 33 canonical S3 tasks + 1 path-only cleanup task
-    assert.equal(s3Prog.phaseCount, 7);
-
-    assert.ok(iamProg, 'iam-learning-path must exist in catalogue');
-    assert.equal(iamProg.status, 'available');
-    assert.equal(iamProg.pathId, 'iam-learning-path');
-    assert.equal(iamProg.taskCount, 23); // 22 canonical IAM tasks + 1 path-only cleanup task
-    assert.equal(iamProg.phaseCount, 6);
+    assert.equal(getFollowAlongProgramme('ec2-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('s3-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('iam-learning-path'), null);
   });
 
   await t.test('3. The catalogue contains exactly 9 Coming Soon programmes', () => {

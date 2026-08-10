@@ -14,14 +14,4 @@ test('Follow Along runners keep null-task returns below their hooks', async (t) 
     assert.ok(nullReturn > lastHook, 'The VPC null-task return must remain below all hooks');
     assert.match(source, /const taskId = task\?\.id \|\| null;/);
   });
-
-  await t.test('EC2 runner calls every hook before rendering its missing-task message', () => {
-    const source = read('src/components/Ec2LearningPath/Ec2TaskRunner.jsx');
-    const nullReturn = source.indexOf('if (!task) {');
-    const lastHook = source.lastIndexOf('useEffect(() =>');
-
-    assert.ok(lastHook >= 0, 'Expected the EC2 runner to contain its synchronization effects');
-    assert.ok(nullReturn > lastHook, 'The EC2 null-task return must remain below all hooks');
-    assert.match(source, /const taskId = task\?\.id \|\| null;/);
-  });
 });

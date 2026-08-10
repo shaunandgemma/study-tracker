@@ -1,0 +1,84 @@
+STEP 84B - NEGATIVE IAM WORDING CORRECTION
+==========================================
+
+1. REPORTED RESULT
+
+The live Step 84B request stopped with:
+
+Step 84B must not create or recommend an IAM policy.
+
+2. SAFETY RESULT
+
+The stop occurred before any Step 84B files were saved.
+
+The real SQS session was checked after the failure:
+
+1. Accepted source count remained 9.
+2. The current alignment remained Step 84A.
+3. Task 1 remained needs_manual_review.
+4. No Step 84B audit file existed.
+5. Nothing was written to Author, Supabase or AWS.
+6. Stage 7 was not started.
+
+3. CAUSE
+
+The IAM-policy guard correctly searched for policy-changing actions, but it
+did not distinguish an unsafe instruction from a safety prohibition.
+
+For example, both of these were treated as unsafe:
+
+1. Create an IAM policy.
+2. Do not create an IAM policy.
+
+The second sentence is safe and follows the approved Step 84B boundary.
+
+4. CORRECTION
+
+The guard now examines the actual Stage 6 instruction fields and distinguishes
+negative safety wording.
+
+Allowed examples:
+
+1. Do not create an IAM policy.
+2. Do not attach an IAM policy.
+3. Never recommend an IAM policy.
+
+Still rejected:
+
+1. Create an IAM policy.
+2. Attach an IAM policy.
+3. Recommend an IAM policy.
+
+5. UNCHANGED SAFETY RULES
+
+1. Exactly two approved AWS sources remain allowed.
+2. They can link only to task 1.
+3. The other five tasks remain protected from changes.
+4. A genuine IAM-policy creation or recommendation remains blocked.
+5. Author, Supabase and AWS writes remain unavailable.
+6. Stage 7 remains locked.
+
+6. VERIFICATION
+
+Focused Steps 84, 84A and 84B tests:
+23 passed, 0 failed.
+
+The focused tests now prove that safe negative IAM wording is accepted while
+an actual policy-creation instruction is rejected.
+
+Full application tests:
+589 passed, 0 failed.
+
+Lint:
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+Passed. Existing Node-version and large-bundle warnings remain.
+
+7. NEXT ACTION
+
+Run the secure Author Assistant again, resume the saved SQS session, and answer
+yes to the approved Step 84B execution prompt.
+
+No new source approval is required.
+

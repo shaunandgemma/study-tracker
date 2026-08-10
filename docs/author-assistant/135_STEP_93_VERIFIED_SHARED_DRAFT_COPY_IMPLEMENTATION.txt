@@ -1,0 +1,131 @@
+STEP 93 - VERIFIED LOCAL-TO-SHARED DRAFT COPY IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Step 93 previews and copies only the verified SQS Local Draft into Shared Drafts.
+
+It keeps the Local Draft unchanged, binds the shared copy to the same signed-in Author, creates only the initial private shared revision, prevents duplicates and conflicts, and stops before Stage 12.
+
+2. EXACT ELIGIBLE DRAFT
+
+Programme:
+Amazon SQS: Basic Message Queue Test
+
+Draft ID:
+author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+Accepted handoff fingerprint:
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+The verified draft ID must contain the complete handoff fingerprint.
+
+3. VERIFIED-HANDOFF GATE
+
+A draft is displayed as a verified Author Assistant handoff only when all of these match:
+
+1. Source type is author_assistant_handoff.
+2. Import step is Step 92.
+3. Accepted stages are exactly 1-11.
+4. Handoff fingerprint is a valid SHA-256 value.
+5. Accepted-content fingerprint is a valid SHA-256 value.
+6. Draft ID is the deterministic ID created from the handoff fingerprint.
+
+4. EXACT PRE-COPY PREVIEW
+
+The Shared Drafts page displays:
+
+1. Programme title.
+2. Local revision.
+3. Verified-handoff status.
+4. Draft ID.
+5. Handoff SHA-256 fingerprint.
+6. Local-content SHA-256 fingerprint.
+7. Five phases.
+8. Six tasks.
+9. Twenty-four separately editable checkboxes.
+10. Seven verification checks.
+11. Four cleanup items.
+12. Eleven official AWS sources.
+13. Copy-ready and conflict counts.
+
+5. REQUIRED HUMAN CONFIRMATION
+
+The copy button stays disabled until the Author checks this exact confirmation:
+
+I confirm that I want to copy this exact verified handoff draft. Keep my local draft.
+
+6. DUPLICATE AND CONFLICT PROTECTION
+
+Before the insert, the app checks:
+
+1. Shared Drafts mode is deliberately selected.
+2. The exact draft ID was confirmed.
+3. The Local Draft still exists.
+4. The Local Draft revision still matches the preview.
+5. No shared draft already uses this draft ID.
+
+The database unique-draft guard also blocks a last-moment duplicate.
+
+After a copy, the same draft appears as a conflict and cannot be copied again.
+
+The page separately reports whether the existing shared content exactly matches the Local Draft fingerprint or differs from it.
+
+7. EXACT-CONTENT VERIFICATION
+
+The app calculates a SHA-256 fingerprint for the complete Local Draft before copying.
+
+After the shared insert, it calculates the complete returned Shared Draft fingerprint.
+
+Success is reported as an exact copy only when both fingerprints match.
+
+8. STORAGE RESULT BOUNDARY
+
+The approved operation creates:
+
+1. Exactly one private Shared Draft.
+2. Exactly one initial shared revision at revision 1.
+3. Ownership for the same signed-in Author.
+
+The Local Draft is not moved, changed or deleted.
+
+9. SHARED-LIST REFRESH
+
+After a successful copy, the Shared Draft list refreshes immediately.
+
+The new shared draft count and revision are visible without switching storage modes or reloading the page.
+
+10. FILES UPDATED OR ADDED
+
+1. src/features/followAlongAuthor/authorStorageCoordinator.js
+2. src/features/followAlongAuthor/AuthorStorageMigrationPanel.jsx
+3. src/features/followAlongAuthor/AuthorHome.jsx
+4. tests/followAlongAuthorStorageCoordinator.test.js
+5. tests/followAlongAuthorVerifiedSharedCopy.test.js
+
+11. AUTOMATED TEST RESULT
+
+Focused Step 93 and storage-coordinator tests: 18 passed, 0 failed.
+Full project tests: 726 passed, 0 failed.
+Production build: passed.
+Lint: passed with no errors; existing unrelated warnings remain.
+
+The build still reports the existing Node 22.9.0 recommendation and large-chunk warning.
+
+12. PROHIBITED ACTIONS
+
+Step 93 does not:
+
+1. Connect to AWS.
+2. Change the accepted SQS content.
+3. Delete or change the Local Draft.
+4. Create more than one Shared Draft.
+5. Create a release candidate.
+6. Generate a candidate ID.
+7. Approve the draft.
+8. Publish the Follow Along.
+9. Begin Stage 12.
+
+13. IMPLEMENTATION STATUS
+
+Step 93 implementation and automated validation are complete.
+The live SQS copy result is recorded separately in document 136.

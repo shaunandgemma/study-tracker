@@ -1,0 +1,81 @@
+161. LAMBDA UPDATE IMPORTED AS A SEPARATE DRAFT - DIAGNOSIS
+
+1. OBSERVED RESULT
+
+The Lambda update appeared as a separate revision 1 Shared Draft.
+
+
+2. EXPECTED RESULT
+
+The original Lambda Shared Draft should remain the same draft and advance from revision 84 to revision 85.
+
+
+3. PACKAGE VERIFICATION
+
+The generated package is correct.
+
+Session:
+author-assistant-lambda-5dec8deb-e16e-4ced-bcfd-de9489872c06
+
+Mode:
+update_existing
+
+Target programme:
+lambda-learning-path
+
+Base published revision:
+84
+
+Package content programme:
+lambda-learning-path
+
+Handoff fingerprint:
+0d8165e5eee4eb9b108f34b46bef58346da44792d495b635e241896f3c9fdb28
+
+
+4. CONCLUSION
+
+The revision 1 result did not come from the new controlled update route.
+The most likely cause is that an older Author browser page processed the package as a new draft import.
+
+
+5. SAFETY ACTION
+
+Do not create a release candidate from the separate revision 1 draft.
+
+Do not delete either Lambda draft until the exact original and unintended draft IDs, ownership, revision, and candidate state have been checked.
+
+
+6. REQUIRED RECOVERY
+
+1. Verify both Lambda Shared Draft rows read-only.
+2. Confirm which revision 1 draft came from the new handoff fingerprint.
+3. Confirm that the unintended draft has no release candidate.
+4. Remove only the verified unintended revision 1 draft after explicit approval.
+5. Restart or fully refresh the Author application.
+6. Select Shared Drafts.
+7. Upload the same verified update package and acceptance file.
+8. Confirm that the comparison shows revision 84 changing to revision 85.
+9. Apply the update only after that comparison is correct.
+
+
+7. SHARED DRAFT LIST EVIDENCE
+
+The Author page now shows two Lambda Shared Drafts:
+
+1. Build and Test Your First AWS Lambda Function - revision 1
+2. Build and Test Your First AWS Lambda Function - revision 87
+
+The revision 87 record is the continuing original draft.
+The revision 1 record is the unintended separate import.
+
+The generated update package was based on published revision 84. It must not overwrite revision 87 until revisions 85 to 87 have been compared with the published candidate content.
+
+
+8. UPDATE-ROUTE CORRECTION REQUIRED
+
+The controlled update route must identify the original draft from the published candidate ID, not only from the programme ID.
+
+If the Shared Draft revision is newer than the published revision, it must compare the current draft with the published candidate snapshot before allowing an update.
+
+If the content differs, the update must stop and require a new baseline.

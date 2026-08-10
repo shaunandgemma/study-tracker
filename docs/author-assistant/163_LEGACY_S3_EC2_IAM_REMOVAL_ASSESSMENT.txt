@@ -1,0 +1,76 @@
+163. LEGACY S3, EC2, AND IAM FOLLOW ALONG REMOVAL ASSESSMENT
+
+1. REPORTED ISSUE
+
+S3 Follow Along, EC2 Follow Along, and IAM Follow Along do not appear in the Author Assistant Update Existing Follow Along list.
+
+
+2. CAUSE
+
+These three programmes are legacy hard-coded application features.
+
+They are not published through the controlled Author, Approver, and publishing workflow. The Author Assistant update list intentionally contains only programmes found in the controlled published-programmes table.
+
+
+3. LEGACY APPLICATION CONTENT FOUND
+
+The three programmes currently own:
+
+1. Three static catalogue cards and routes.
+2. Eighteen service-specific React component files.
+3. Three service-specific learning-path data files.
+4. Three service-specific progress and resource services.
+5. Three large hard-coded task catalogues.
+6. Service-specific automated tests and older catalogue-ownership assertions.
+
+The three hard-coded task catalogue files alone contain approximately 1.34 MB of source content.
+
+
+4. RECOMMENDED APPLICATION REMOVAL
+
+1. Remove only the static S3, EC2, and IAM cards from the legacy catalogue.
+2. Remove only their special routing branches and imports.
+3. Remove only their service-specific progress-summary loading from the landing page.
+4. Delete their eighteen component files.
+5. Delete their three learning-path data files.
+6. Delete their three legacy progress services.
+7. Delete their three hard-coded task catalogue files.
+8. Delete or revise only tests that directly require these retired legacy programmes.
+9. Preserve VPC and every controlled published Follow Along.
+10. Run the complete test, lint, and production-build checks.
+
+
+5. DATABASE AND LEARNER-PROGRESS BOUNDARY
+
+The old S3, EC2, and IAM programmes used these shared database tables:
+
+user_learning_path_progress
+user_learning_path_resources
+
+Their exact programme IDs are:
+
+s3-learning-path
+ec2-learning-path
+iam-learning-path
+
+New script-created replacements are likely to reuse these IDs. Leaving old progress rows could therefore apply old task progress to new content.
+
+The recommended database action is a separate guarded migration that deletes only progress and captured-resource rows for these exact three legacy IDs. It must not delete published programmes, Shared Drafts, candidates, approvals, exam questions, or progress for any other Follow Along.
+
+
+6. REPLACEMENT WORKFLOW
+
+After removal, create each replacement through Author Assistant using New Follow Along:
+
+1. Amazon S3
+2. Amazon EC2
+3. AWS Identity and Access Management
+
+Each replacement will then use the common published Follow Along layout and will appear in the future Update Existing Follow Along list after it is approved and published.
+
+
+7. CURRENT STATUS
+
+This was a read-only application assessment.
+
+No S3, EC2, or IAM file, record, progress row, draft, candidate, approval, or publication was deleted or modified.

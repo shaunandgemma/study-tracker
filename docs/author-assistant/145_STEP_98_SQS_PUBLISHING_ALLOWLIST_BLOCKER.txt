@@ -1,0 +1,78 @@
+STEP 98 - SQS PUBLISHING ALLOW-LIST BLOCKER
+===========================================
+
+1. APPROVED ACTION ATTEMPTED
+
+The exact approved SQS revision 2 History record was selected.
+
+The service-specific confirmation was entered:
+PUBLISH SQS
+
+Only the Publish SQS button inside the SQS card was pressed.
+
+2. SERVER RESULT
+
+The server refused the publication with this message:
+Controlled publishing is not enabled for this service.
+
+3. SAFETY RESULT
+
+SQS was not published.
+No other programme was published.
+No learner progress was changed.
+No draft or candidate content was changed.
+No record was deleted.
+
+The SQS publishing confirmation field was cleared after the refusal, returning the Publish SQS button to its disabled state.
+
+4. CONFIRMED CAUSE
+
+Migration 20260819 created a protected table named:
+follow_along_publishable_programmes
+
+The protected publishing function permits a service only when its exact programme ID and service slug have an enabled row in this table.
+
+The existing migration enabled only:
+
+Programme ID: lambda-learning-path
+Service slug: lambda
+Publish token: LAMBDA
+
+The approved SQS package uses:
+
+Programme ID: sqs-learning-path
+Service slug: sqs
+Publish token required by the UI: SQS
+Service name: Amazon Simple Queue Service
+
+No enabled SQS allow-list row exists, so the database correctly refused the request.
+
+5. REQUIRED SEPARATE FIX
+
+A new migration is required to add only this enabled SQS allow-list row:
+
+Programme ID: sqs-learning-path
+Service slug: sqs
+Publish token: SQS
+Service name: Amazon Simple Queue Service
+Enabled: true
+
+Recommended migration number:
+20260820
+
+The migration must not approve or publish anything. After separate deployment approval, controlled SQS publishing must be attempted again manually with PUBLISH SQS.
+
+6. CURRENT STATE
+
+Candidate decision: approved
+Publication: Not published
+Waiting: 0
+History: 8
+Rejects: 5
+
+7. STOP BOUNDARY
+
+Migration 20260820 has not been created.
+No migration has been deployed.
+No second publishing attempt has been made.
+

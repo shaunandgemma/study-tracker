@@ -1,20 +1,62 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CheckCircle2,
   RefreshCw,
   ShieldCheck,
   UploadCloud,
+  XCircle,
 } from "lucide-react";
 import {
   AUTHOR_APPROVAL_STORAGE_AUTHORITY,
   canApproveAuthorRelease,
 } from "./authorApproval.js";
 import {
-  CONTROLLED_PUBLISHING_CONFIRMATION,
-  CONTROLLED_PUBLISHING_PILOT_CANDIDATE_ID,
   createAuthorSharedStorageService,
+  getControlledPublishingConfirmation,
 } from "./authorSharedStorageService.js";
 import { createPublishedFollowAlongService } from "../followAlongs/published/publishedFollowAlongService.js";
+import { AuthorApproverReadinessPreview } from "./AuthorApproverReadinessPreview.jsx";
+import {
+  buildAuthorApproverReadinessPreview,
+  isStep96SqsCandidate,
+} from "./authorApproverReadiness.js";
+
+const PUBLISHING_TIMEOUT_MS = 15000;
+const QUEUE_TIMEOUT_MS = 15000;
+
+async function withQueueTimeout(operation, label) {
+  let timeoutId;
+  try {
+    return await Promise.race([
+      operation,
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new Error(`${label} did not respond within 15 seconds.`)),
+          QUEUE_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function withPublishingTimeout(operation) {
+  let timeoutId;
+  try {
+    return await Promise.race([
+      operation,
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new Error("Publishing did not respond within 15 seconds. Refresh the queue before trying again.")),
+          PUBLISHING_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 function title(candidate) {
   return (
@@ -27,7 +69,7 @@ function title(candidate) {
 function ControlledPublishingPanel({
   candidate,
   service,
-  published,
+  currentPublication,
   onPublished,
 }) {
   const [confirmation, setConfirmation] = useState("");
@@ -35,44 +77,64 @@ function ControlledPublishingPanel({
   const [busy, setBusy] = useState(false);
   const phaseCount = candidate.snapshot?.phases?.length || 0;
   const taskCount = candidate.snapshot?.tasks?.length || 0;
+  const programme = candidate.snapshot?.programme || {};
+  const programmeId = programme.programmeId;
+  const serviceName = programme.shortName || programme.serviceName || programme.serviceSlug || "service";
+  const requiredConfirmation = getControlledPublishingConfirmation(candidate);
+  const published = currentPublication?.candidate_id === candidate.candidate_id;
+  const olderThanPublished = Number(candidate.source_revision) <= Number(currentPublication?.source_revision || 0);
 
-  if (
-    !service.publishingEnabled ||
-    candidate.candidate_id !== CONTROLLED_PUBLISHING_PILOT_CANDIDATE_ID
-  )
-    return null;
+  if (!service.publishingEnabled || !programmeId || !requiredConfirmation) return null;
   if (published)
     return (
       <section className="rounded-xl border border-cyan-800 bg-cyan-950/20 p-4 text-xs text-cyan-100">
-        <strong>Published safely.</strong> The approved Lambda trial is now
+        <strong>Published safely.</strong> The approved {serviceName} Follow Along is now
         available through the Follow Along page.
+      </section>
+    );
+  if (olderThanPublished)
+    return (
+      <section className="rounded-xl border border-slate-700 bg-slate-950/40 p-4 text-xs text-slate-300">
+        This approved revision is older than the currently published {serviceName} revision {currentPublication.source_revision}. It cannot be published again.
       </section>
     );
 
   const publish = async () => {
     setBusy(true);
     setMessage("");
-    const result = await service.publishReleaseCandidate(
-      candidate.candidate_id,
-      confirmation,
-    );
-    setBusy(false);
-    if (!result.success) {
-      setMessage(result.error);
-      return;
+    try {
+      const draftResult = await withPublishingTimeout(service.loadDraft(candidate.draft_id));
+      if (!draftResult.success) {
+        setMessage(draftResult.error);
+        return;
+      }
+      const currentRevision = Number(draftResult.row?.revision);
+      const candidateRevision = Number(candidate.source_revision);
+      const fingerprintsMatch = draftResult.row?.content_hash === candidate.draft_content_hash;
+      if (currentRevision !== candidateRevision || !fingerprintsMatch) {
+        setMessage(`This approved key is for revision ${candidateRevision}, but the draft is now revision ${currentRevision}. Return to Author and prepare a new candidate key for the latest saved draft.`);
+        return;
+      }
+      const result = await withPublishingTimeout(service.publishReleaseCandidate(candidate.candidate_id, confirmation));
+      if (!result.success) {
+        setMessage(result.error);
+        return;
+      }
+      setConfirmation("");
+      setMessage(`${serviceName} published. Existing learner progress was not changed.`);
+      void onPublished();
+    } catch (error) {
+      setMessage(error?.message || "Controlled publication failed.");
+    } finally {
+      setBusy(false);
     }
-    setConfirmation("");
-    setMessage(
-      "Lambda published. No existing Follow Along or learner progress was changed.",
-    );
-    await onPublished();
   };
 
   return (
     <section className="rounded-xl border border-cyan-800 bg-cyan-950/20 p-4 space-y-4">
       <div>
         <strong className="text-sm text-cyan-100">
-          Step 54 controlled publishing
+          Controlled {serviceName} publishing
         </strong>
         <p className="mt-1 text-xs text-slate-300">
           This is a separate action from approval.
@@ -81,7 +143,7 @@ function ControlledPublishingPanel({
       <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 text-xs text-slate-300">
         <strong className="text-white">Exact change summary</strong>
         <ol className="mt-3 space-y-1.5">
-          <li>1. Add one learner programme: Lambda.</li>
+          <li>1. Publish only the learner programme: {serviceName}.</li>
           <li>
             2. Publish {phaseCount} phases and {taskCount} approved tasks from
             revision {candidate.source_revision}.
@@ -101,7 +163,7 @@ function ControlledPublishingPanel({
       <label className="block text-xs font-semibold text-slate-300">
         Enter{" "}
         <code className="text-cyan-200">
-          {CONTROLLED_PUBLISHING_CONFIRMATION}
+          {requiredConfirmation}
         </code>{" "}
         exactly
         <input
@@ -113,12 +175,12 @@ function ControlledPublishingPanel({
       </label>
       <button
         type="button"
-        disabled={busy || confirmation !== CONTROLLED_PUBLISHING_CONFIRMATION}
+        disabled={busy || confirmation !== requiredConfirmation}
         onClick={() => void publish()}
         className="px-4 py-2.5 rounded-xl bg-cyan-700 disabled:opacity-40 text-xs font-bold text-white inline-flex items-center gap-2"
       >
         <UploadCloud className="w-4 h-4" />{" "}
-        {busy ? "Publishing…" : "Publish only Lambda"}
+        {busy ? "Publishing..." : `Publish ${serviceName}`}
       </button>
       {message && (
         <p role="status" className="text-xs text-cyan-100">
@@ -139,28 +201,72 @@ export function AuthorApprovalQueue({ currentUser }) {
     [],
   );
   const [candidates, setCandidates] = useState([]);
-  const [publishedCandidateIds, setPublishedCandidateIds] = useState(new Set());
+  const [publishedProgrammes, setPublishedProgrammes] = useState(new Map());
   const [confirmations, setConfirmations] = useState({});
+  const [rejectionReasons, setRejectionReasons] = useState({});
+  const [approvalReadiness, setApprovalReadiness] = useState({});
+  const [queueView, setQueueView] = useState("waiting");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [queueAction, setQueueAction] = useState(null);
+  const queueActionRef = useRef(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    const [result, publishedResult] = await Promise.all([
-      service.listReleaseCandidates(),
-      publishedService.listPublishedProgrammes(),
-    ]);
-    setCandidates(result.candidates || []);
-    setPublishedCandidateIds(
-      new Set((publishedResult.rows || []).map((row) => row.candidate_id)),
-    );
-    setMessage(result.success ? "" : result.error);
-    setLoading(false);
+    setMessage("");
+    setApprovalReadiness({});
+    try {
+      const result = await withQueueTimeout(
+        service.listReleaseCandidates(),
+        "The private approval queue",
+      );
+      setCandidates(result.candidates || []);
+      if (!result.success) setMessage(result.error);
+    } catch (error) {
+      setCandidates([]);
+      setMessage(error?.message || "Unable to load the private approval queue.");
+    } finally {
+      setLoading(false);
+    }
+
+    try {
+      const publishedResult = await withQueueTimeout(
+        publishedService.listPublishedProgrammes(),
+        "Published Follow Along history",
+      );
+      if (publishedResult.success) {
+        setPublishedProgrammes(new Map((publishedResult.rows || []).map((row) => [row.programme_id, row])));
+      } else if (!publishedResult.disabled) {
+        setMessage((current) => current || publishedResult.error);
+      }
+    } catch (error) {
+      setMessage((current) => current || error?.message || "Unable to load published Follow Along history.");
+    }
   }, [publishedService, service]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const previewApprovalReadiness = useCallback(
+    async ({ candidate, currentUser: previewUser, currentPublication }) => {
+      const draftResult = await service.loadDraft(candidate.draft_id);
+      if (!draftResult.success) {
+        return {
+          success: false,
+          previewOnly: true,
+          error: draftResult.error || "The protected Shared Draft could not be read.",
+        };
+      }
+      return buildAuthorApproverReadinessPreview({
+        candidate,
+        currentUser: previewUser,
+        draftResult,
+        currentPublication,
+      });
+    },
+    [service],
+  );
 
   const approve = async (candidate) => {
     const access = canApproveAuthorRelease({
@@ -176,19 +282,88 @@ export function AuthorApprovalQueue({ currentUser }) {
       setMessage("Enter the exact candidate ID before approval.");
       return;
     }
-    const result = await service.approveReleaseCandidate(
-      candidate.candidate_id,
-    );
-    if (!result.success) {
-      setMessage(result.error);
+    if (queueActionRef.current) {
+      setMessage("An approval or rejection request is already in progress. Wait for it to finish before trying again.");
       return;
     }
-    setMessage(
-      "Release candidate approved. It remains unpublished until the separate controlled publishing confirmation is completed.",
-    );
-    setConfirmations((values) => ({ ...values, [candidate.candidate_id]: "" }));
-    await refresh();
+    const action = { candidateId: candidate.candidate_id, type: "approve" };
+    queueActionRef.current = action;
+    setQueueAction(action);
+    setMessage("Approval request sent once. Waiting for the protected database decision...");
+    try {
+      const result = await service.approveReleaseCandidate(
+        candidate.candidate_id,
+      );
+      if (!result.success) {
+        setMessage(result.error);
+        return;
+      }
+      setMessage(
+        "Release candidate approved. It remains unpublished until the separate controlled publishing confirmation is completed.",
+      );
+      setConfirmations((values) => ({ ...values, [candidate.candidate_id]: "" }));
+      await refresh();
+    } finally {
+      queueActionRef.current = null;
+      setQueueAction(null);
+    }
   };
+
+  const reject = async (candidate) => {
+    const access = canApproveAuthorRelease({
+      user: currentUser,
+      createdBy: candidate.created_by,
+      storageAuthority: AUTHOR_APPROVAL_STORAGE_AUTHORITY.TRUSTED_SERVER,
+    });
+    if (!access.allowed) {
+      setMessage(access.reason);
+      return;
+    }
+    const reason = String(rejectionReasons[candidate.candidate_id] || "").trim();
+    if (reason.length < 5) {
+      setMessage("Enter a short reason before rejecting this request.");
+      return;
+    }
+    if (queueActionRef.current) {
+      setMessage("An approval or rejection request is already in progress. Wait for it to finish before trying again.");
+      return;
+    }
+    const action = { candidateId: candidate.candidate_id, type: "reject" };
+    queueActionRef.current = action;
+    setQueueAction(action);
+    setMessage("Rejection request sent once. Waiting for the protected database decision...");
+    try {
+      const result = await service.rejectReleaseCandidate(candidate.candidate_id, reason);
+      if (!result.success) {
+        setMessage(result.error);
+        return;
+      }
+      setMessage("Release candidate rejected and moved to Rejects. No record was deleted.");
+      setRejectionReasons((values) => ({ ...values, [candidate.candidate_id]: "" }));
+      setCandidates((values) => values.map((item) => item.candidate_id === candidate.candidate_id ? result.candidate : item));
+      await refresh();
+    } finally {
+      queueActionRef.current = null;
+      setQueueAction(null);
+    }
+  };
+
+  const waitingCandidates = candidates.filter(
+    (candidate) => candidate.status === "awaiting_trusted_approval" && candidate.approval_decision === "pending"
+  );
+  const historyCandidates = candidates.filter(
+    (candidate) => candidate.status === "approved_release_candidate" && candidate.approval_decision === "approved"
+  );
+  const rejectedCandidates = candidates.filter(
+    (candidate) => candidate.status === "superseded"
+  );
+
+  const visibleCandidates =
+    queueView === "history"
+      ? historyCandidates
+      : queueView === "rejects"
+      ? rejectedCandidates
+      : waitingCandidates;
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8 sm:px-6">
@@ -218,11 +393,47 @@ export function AuthorApprovalQueue({ currentUser }) {
             {message}
           </p>
         )}
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setQueueView("waiting")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+                queueView === "waiting"
+                  ? "bg-cyan-700 text-white"
+                  : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              }`}
+            >
+              Waiting ({waitingCandidates.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setQueueView("history")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+                queueView === "history"
+                  ? "bg-cyan-700 text-white"
+                  : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              }`}
+            >
+              History ({historyCandidates.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setQueueView("rejects")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+                queueView === "rejects"
+                  ? "bg-rose-800 text-white"
+                  : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              }`}
+            >
+              Rejects ({rejectedCandidates.length})
+            </button>
+          </div>
           <button
             type="button"
+            disabled={loading || Boolean(queueAction)}
             onClick={() => void refresh()}
-            className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-white inline-flex items-center gap-2"
+            className="px-4 py-2 rounded-xl bg-slate-800 disabled:opacity-40 text-xs font-bold text-white inline-flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" /> Refresh queue
           </button>
@@ -231,19 +442,28 @@ export function AuthorApprovalQueue({ currentUser }) {
           <p className="text-sm text-slate-400">
             Loading the private approval queue...
           </p>
-        ) : candidates.length === 0 ? (
+        ) : visibleCandidates.length === 0 ? (
           <p className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-sm text-slate-400">
-            No release candidates are waiting.
+            {queueView === "rejects"
+              ? "No rejected requests."
+              : queueView === "history"
+              ? "No approved requests."
+              : "No release candidates are waiting."}
           </p>
         ) : (
           <section className="space-y-4">
-            {candidates.map((candidate) => {
+            {visibleCandidates.map((candidate) => {
               const pending =
                 candidate.status === "awaiting_trusted_approval" &&
                 candidate.approval_decision === "pending";
               const approved =
                 candidate.status === "approved_release_candidate" &&
                 candidate.approval_decision === "approved";
+              const rejected = candidate.status === "superseded";
+              const requiresReadiness = isStep96SqsCandidate(candidate);
+              const readinessPassed = Boolean(
+                approvalReadiness[candidate.candidate_id],
+              );
               const access = canApproveAuthorRelease({
                 user: currentUser,
                 createdBy: candidate.created_by,
@@ -273,17 +493,15 @@ export function AuthorApprovalQueue({ currentUser }) {
                     <div>
                       <span className="block text-slate-500">Decision</span>
                       <strong
-                        className={
-                          pending ? "text-amber-300" : "text-emerald-300"
-                        }
+                        className={pending ? "text-amber-300" : rejected ? "text-rose-300" : "text-emerald-300"}
                       >
-                        {candidate.approval_decision}
+                        {rejected ? "rejected" : candidate.approval_decision}
                       </strong>
                     </div>
                     <div>
                       <span className="block text-slate-500">Publication</span>
                       <strong>
-                        {publishedCandidateIds.has(candidate.candidate_id)
+                        {publishedProgrammes.get(candidate.snapshot?.programme?.programmeId)?.candidate_id === candidate.candidate_id
                           ? "Published"
                           : "Not published"}
                       </strong>
@@ -297,11 +515,29 @@ export function AuthorApprovalQueue({ currentUser }) {
                       </code>
                     </div>
                   </div>
+                  {pending && access.allowed && requiresReadiness && (
+                    <AuthorApproverReadinessPreview
+                      candidate={candidate}
+                      currentUser={currentUser}
+                      currentPublication={publishedProgrammes.get(
+                        candidate.snapshot?.programme?.programmeId,
+                      )}
+                      onPreview={previewApprovalReadiness}
+                      onReadinessChange={(ready) =>
+                        setApprovalReadiness((values) => ({
+                          ...values,
+                          [candidate.candidate_id]: ready,
+                        }))
+                      }
+                      setMessage={setMessage}
+                    />
+                  )}
                   {pending && access.allowed && (
                     <div className="space-y-2">
                       <label className="block text-xs font-semibold text-slate-300">
                         Enter the exact candidate ID to confirm approval
                         <input
+                          disabled={Boolean(queueAction)}
                           value={confirmations[candidate.candidate_id] || ""}
                           onChange={(event) =>
                             setConfirmations((values) => ({
@@ -315,14 +551,46 @@ export function AuthorApprovalQueue({ currentUser }) {
                       <button
                         type="button"
                         disabled={
+                          Boolean(queueAction) ||
+                          (requiresReadiness && !readinessPassed) ||
                           confirmations[candidate.candidate_id] !==
                           candidate.candidate_id
                         }
                         onClick={() => void approve(candidate)}
                         className="px-4 py-2.5 rounded-xl bg-emerald-700 disabled:opacity-40 text-xs font-bold text-white inline-flex items-center gap-2"
                       >
-                        <CheckCircle2 className="w-4 h-4" /> Approve release
-                        candidate
+                        <CheckCircle2 className="w-4 h-4" />{" "}
+                        {queueAction?.candidateId === candidate.candidate_id && queueAction.type === "approve"
+                          ? "Approving once..."
+                          : "Approve release candidate"}
+                      </button>
+                      <label className="block text-xs font-semibold text-slate-300 pt-3">
+                        Reason for rejection
+                        <textarea
+                          disabled={Boolean(queueAction)}
+                          value={rejectionReasons[candidate.candidate_id] || ""}
+                          onChange={(event) => setRejectionReasons((values) => ({ ...values, [candidate.candidate_id]: event.target.value }))}
+                          placeholder="Example: Duplicate request"
+                          maxLength={500}
+                          rows={2}
+                          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-white"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        disabled={
+                          Boolean(queueAction) ||
+                          (requiresReadiness && !readinessPassed) ||
+                          (rejectionReasons[candidate.candidate_id] || "").trim()
+                            .length < 5
+                        }
+                        onClick={() => void reject(candidate)}
+                        className="px-4 py-2.5 rounded-xl bg-rose-800 disabled:opacity-40 text-xs font-bold text-white inline-flex items-center gap-2"
+                      >
+                        <XCircle className="w-4 h-4" />{" "}
+                        {queueAction?.candidateId === candidate.candidate_id && queueAction.type === "reject"
+                          ? "Rejecting once..."
+                          : "Reject request"}
                       </button>
                     </div>
                   )}
@@ -336,11 +604,16 @@ export function AuthorApprovalQueue({ currentUser }) {
                       Approved by a separate trusted account.
                     </p>
                   )}
+                  {rejected && (
+                    <p className="rounded-xl border border-rose-900 bg-rose-950/20 p-3 text-xs text-rose-200">
+                      Rejected: {candidate.rejection_reason || "No reason recorded."}
+                    </p>
+                  )}
                   {approved && (
                     <ControlledPublishingPanel
                       candidate={candidate}
                       service={service}
-                      published={publishedCandidateIds.has(candidate.candidate_id)}
+                      currentPublication={publishedProgrammes.get(candidate.snapshot?.programme?.programmeId)}
                       onPublished={refresh}
                     />
                   )}

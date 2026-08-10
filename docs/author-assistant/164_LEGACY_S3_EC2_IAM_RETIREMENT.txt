@@ -1,0 +1,116 @@
+164. LEGACY S3, EC2, AND IAM FOLLOW ALONG RETIREMENT
+
+1. APPROVED SCOPE
+
+Remove only the legacy hard-coded S3, EC2, and IAM Follow Alongs and their dedicated files, routes, services, catalogues, tests, progress rows, and captured-resource rows.
+
+Preserve VPC, controlled published Follow Alongs, Author drafts, release candidates, approvals, publishing records, exam questions, and all unrelated learner data.
+
+Do not create replacement Follow Alongs yet.
+
+
+2. APPLICATION REMOVAL COMPLETED
+
+The following legacy application content was removed:
+
+1. Three static programme cards.
+2. Three special routing branches.
+3. Three service-specific landing-page progress loaders.
+4. Eighteen dedicated React interface files.
+5. Three learning-path data files.
+6. Three progress and resource services.
+7. Three hard-coded task catalogues.
+8. Three direct service test files.
+9. Obsolete exact S3, EC2, and IAM task-ID validation mappings.
+
+Shared validation contracts remain available for future controlled published tasks through explicit task metadata.
+
+
+3. CONTENT PRESERVED
+
+The following remain unchanged and available:
+
+1. VPC Follow Along and its 45 tasks.
+2. The shared controlled published Follow Along runtime.
+3. Every existing controlled published programme.
+4. Author, Approver, candidate, and publishing workflows.
+5. Shared Drafts and release-candidate history.
+6. Exam questions and exam tooling.
+7. The protected AWS validation framework.
+8. Historical Hands On progress archive records.
+
+
+4. DATABASE MIGRATION PREPARED
+
+Migration:
+supabase/migrations/20260826_remove_legacy_s3_ec2_iam_progress.sql
+
+It deletes rows only from:
+
+user_learning_path_progress
+user_learning_path_resources
+
+It deletes only rows whose path_id is exactly:
+
+s3-learning-path
+ec2-learning-path
+iam-learning-path
+
+It creates a metadata audit containing the exact IDs and deleted row counts.
+
+The migration aborts before deleting anything if a controlled published programme already uses any of those three IDs. It contains no deletion from published programmes, Author drafts, revisions, candidates, approvals, exam questions, or other application tables.
+
+
+5. DATABASE DEPLOYMENT STATUS
+
+Migration 20260826 is prepared and tested locally but is not deployed yet.
+
+Run from Windows PowerShell in E:\code\study-tracker:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked --dry-run"
+
+The dry run must list only:
+
+20260826_remove_legacy_s3_ec2_iam_progress.sql
+
+Then run:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked"
+
+
+6. VERIFICATION RESULTS
+
+Full automated tests: 685 passed, 0 failed.
+
+Lint: passed with no errors. Existing unrelated warnings remain.
+
+Production build: passed.
+
+Change-format check: passed. Only existing Windows line-ending notices were reported.
+
+No active application source imports or routes to the retired implementations remain.
+
+
+7. APPLICATION SIZE IMPROVEMENT
+
+The main production JavaScript bundle reduced from approximately 3,432.60 kB to 2,389.44 kB before compression.
+
+That is a reduction of approximately 1,043.16 kB before compression and approximately 167.74 kB after gzip compression.
+
+
+8. RECOVERY INFORMATION
+
+The removed source files are recorded as version-control deletions and can be recovered from earlier repository history or an existing backup if ever required.
+
+The database progress cleanup will be permanent after migration 20260826 is deployed. It is intentionally limited to the three exact legacy programme IDs.
+
+
+9. CURRENT STOP POINT
+
+The legacy application implementations are removed and verified locally.
+
+No S3, EC2, or IAM replacement was created.
+
+No Author draft, candidate, approval, or publication was created or changed.
+
+Migration 20260826 remains the only pending operational step.

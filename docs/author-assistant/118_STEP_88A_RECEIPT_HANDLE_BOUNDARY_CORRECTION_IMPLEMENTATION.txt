@@ -1,0 +1,115 @@
+STEP 88A - RECEIPT-HANDLE BOUNDARY CORRECTION IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Correct only the two learner-facing task goals that incorrectly placed receipt-handle requirements in the Console path.
+
+Preserve receipt-handle guidance only for a possible future CLI/API path, preserve unrelated content, rerun Stage 9, regenerate Stage 10, and stop before Stage 11.
+
+
+2. COMMAND
+
+npm run author-assistant:apply-88a
+
+This command does not use AI and does not require an OpenAI API key.
+
+
+3. EXACT GOAL CORRECTIONS
+
+Task 4 old goal:
+Poll the queue, receive the test message, and retain the receipt handle needed for message deletion.
+
+Task 4 new goal:
+Poll the queue, receive the harmless test message, and inspect its details in the Console.
+
+Task 5 old goal:
+Delete the received test message using its most recently received receipt handle.
+
+Task 5 new goal:
+Select and delete the received harmless test message in the Console.
+
+
+4. CONTENT PRESERVED EXACTLY
+
+- All accepted Stage 6 Console instructions.
+- All 24 separately editable checkboxes.
+- All Stage 7 verification checks and the zero-resource decision.
+- All Stage 8 manual cleanup steps and the single-target boundary.
+- All AWS sources and source links.
+- All programme, phase, and unrelated task content.
+- All warnings and retained findings.
+- All future CLI/API receipt-handle guidance.
+
+
+5. DEPENDENT FINGERPRINT REBASELINE
+
+The following dependency metadata is recalculated because the accepted blueprint changes:
+
+- Blueprint fingerprint.
+- Stage 6 acceptance support fingerprints.
+- Stage 7 acceptance support fingerprints.
+- Stage 8 acceptance support fingerprints.
+- Stage 9 package-integrity fingerprints.
+- Stage 9 acceptance fingerprint.
+- Stage 10 source fingerprint.
+
+The original acceptance records remain identifiable by their existing approval steps. Step 88A creates a separate audit recording the approved correction and old/new fingerprints.
+
+
+6. LIVE PREFLIGHT RESULT
+
+- Both exact old goals were found.
+- Both exact replacement goals were prepared.
+- Accepted Console instructions contained no receipt-handle requirement.
+- Future CLI receipt-handle guidance was present and preserved.
+- Stage 9 rerun: passed with zero errors.
+- Corrected Stage 9 SHA-256 fingerprint: 6d7ef20115ddafdb23e866fe93d3ac08a24c81f7905fab8833573500956e3f30f
+- Corrected learner-preview checkboxes: 24.
+- Stage 11 remained locked.
+
+The live dry run was answered with n, so no real session file was changed.
+
+
+7. FILES WRITTEN AFTER Y
+
+- Corrected author-stages-1-5-blueprint.json
+- Rebaselined Stage 6, Stage 7, and Stage 8 acceptance audits
+- Rerun author-stage-9-authoring-check.json and text preview
+- Rebaselined author-stage-9-acceptance-87a.json
+- Regenerated author-stage-10-learner-preview.json and text preview
+- New author-stage-10-correction-88a.json audit
+- Updated local session.json
+
+
+8. TEST RESULTS
+
+- Automated tests: 667 passed, 0 failed.
+- Focused Step 88A tests: 7 passed.
+- Lint: passed with existing non-blocking warnings.
+- Production build: passed with the existing large-bundle warning.
+
+
+9. FILES ADDED OR UPDATED IN THE APP REPOSITORY
+
+Added:
+
+- scripts/author-assistant/authorAssistantStage88A.mjs
+- scripts/author-assistant/applyStage88A.mjs
+- tests/authorAssistantStage88A.test.js
+- docs/author-assistant/118_STEP_88A_RECEIPT_HANDLE_BOUNDARY_CORRECTION_IMPLEMENTATION.txt
+
+Updated:
+
+- scripts/author-assistant/authorAssistantCore.mjs
+- package.json
+
+
+10. SAFETY BOUNDARY
+
+- Nothing is written to Author.
+- Nothing is written to AWS.
+- Nothing is written to Supabase.
+- No release candidate is prepared.
+- Nothing is published.
+- Stage 10 remains awaiting human review after correction.
+- Stage 11 is not prepared or started.

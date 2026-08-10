@@ -1,0 +1,85 @@
+STEP 87A - LOCAL STAGE 9 ACCEPTANCE IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Accept the complete passed local SQS Stage 9 Authoring Check and record its SHA-256 fingerprint.
+
+The acceptance must preserve Stages 1-8 and the complete Stage 9 report exactly, remain local, and stop before Stage 10.
+
+
+2. LOCAL ACCEPTANCE COMMAND
+
+npm run author-assistant:apply-87a
+
+This command does not use AI and does not require an OpenAI API key.
+
+
+3. ACCEPTANCE REQUIREMENTS
+
+The command accepts only a Stage 9 report that has:
+
+- Passed the Author planning check.
+- Passed the Author content and safety check.
+- Passed the text-encoding check.
+- Passed accepted-package integrity verification.
+- Zero errors.
+- An active IAM limitation.
+- Matching task, checkbox, verification, cleanup, resource, warning, and retained-finding counts.
+- Matching fingerprints for every accepted Stages 1-8 record.
+- Stage 10 still locked and unprepared.
+
+
+4. LIVE PREFLIGHT RESULT
+
+The real SQS Stage 9 report passed the Step 87A acceptance preflight.
+
+- Authoring-check errors: 0
+- Tasks: 6
+- Separate editable checkboxes: 24
+- Verification checks: 7
+- Cleanup items: 4
+- SHA-256 fingerprint: 72327ef19e3d82c6dcf69e74450a5684bff26efb5eb298a99e38ee2a55646138
+
+The preflight was answered with n. The real Stage 9 report remains awaiting human acceptance until the user runs the command and answers y.
+
+
+5. LOCAL RECORDS CREATED OR UPDATED AFTER Y
+
+- author-stage-9-authoring-check.json receives only its acceptance status, time, and fingerprint.
+- author-stage-9-acceptance-87a.json records the human-acceptance audit.
+- session.json records that Stage 9 is accepted.
+
+The reviewed Stage 9 content is not regenerated or changed.
+
+
+6. TEST RESULTS
+
+- Automated tests: 653 passed, 0 failed.
+- Focused Step 87A tests: 7 passed.
+- Lint: passed with existing non-blocking warnings.
+- Production build: passed with the existing large-bundle warning.
+
+
+7. FILES ADDED OR UPDATED
+
+Added:
+
+- scripts/author-assistant/authorAssistantStage87A.mjs
+- scripts/author-assistant/applyStage87A.mjs
+- tests/authorAssistantStage87A.test.js
+- docs/author-assistant/114_STEP_87A_LOCAL_STAGE_9_ACCEPTANCE_IMPLEMENTATION.txt
+
+Updated:
+
+- scripts/author-assistant/authorAssistantCore.mjs
+- package.json
+
+
+8. CURRENT BOUNDARY
+
+- Accepted Stages 1-8 remain unchanged.
+- The real Stage 9 report is still awaiting acceptance.
+- Nothing was written to Author.
+- Nothing was written to AWS.
+- Nothing was written to Supabase.
+- Stage 10 was not prepared or started.

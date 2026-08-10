@@ -21,14 +21,21 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
   const [decisionOpen, setDecisionOpen] = useState(false);
   const [error, setError] = useState('');
 
+  const availableModes = useMemo(() => {
+    const consoleAvailable = task?.modeAvailability?.console?.status === 'supported' && (task?.consoleSteps || []).length > 0;
+    const cliAvailable = task?.modeAvailability?.cli?.status === 'supported' && (task?.cliSteps || []).length > 0;
+    return [consoleAvailable && ['console', 'Console'], cliAvailable && ['cli', 'CLI'], consoleAvailable && cliAvailable && ['both', 'Show Both']].filter(Boolean);
+  }, [task]);
+
   useEffect(() => {
     if (!task) return;
-    setActiveMode(preferredMode);
+    const allowed = new Set(availableModes.map(([mode]) => mode));
+    setActiveMode(allowed.has(preferredMode) ? preferredMode : availableModes[0]?.[0] || 'console');
     setCheckedSteps(stepProgress[task.id] || []);
     setDrafts(Object.fromEntries((task.createdResourceKeys || []).map(key => [key, resources[key]?.value ?? resources[key]?.providerId ?? ''])));
     setDirty(false);
     setError('');
-  }, [preferredMode, resources, stepProgress, task, taskId]);
+  }, [availableModes, preferredMode, resources, stepProgress, task, taskId]);
 
   const buildResources = useCallback((removeKey = null) => {
     const next = removeKey ? removeSavedResourceBinding(resources, removeKey) : { ...resources };
@@ -73,7 +80,8 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
       number: step.number || index + 1,
       title: resolve(step.title), description: resolve(step.description), note: resolve(step.note), warning: resolve(step.warning), expectedResult: resolve(step.expectedResult),
       instructions: (step.instructions || []).map(item => ({ ...item, text: resolve(item.text), label: resolve(item.label), detail: resolve(item.detail) })),
-      commands: (step.commands || []).map(item => ({ ...item, text: resolve(item.text), explanation: resolve(item.explanation), expectedOutput: resolve(item.expectedOutput), warning: resolve(item.warning) }))
+      commands: (step.commands || []).map(item => ({ ...item, text: resolve(item.text), explanation: resolve(item.explanation), expectedOutput: resolve(item.expectedOutput), warning: resolve(item.warning) })),
+      jsonBlocks: (step.jsonBlocks || []).map(item => ({ ...item, title: resolve(item.title), content: resolve(item.content) }))
     };
   }), [config.resources.interpolationAliases, config.resources.variables, resources]);
 
@@ -99,7 +107,7 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
       <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div><div className="flex items-center gap-2"><span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Phase {config.phases.findIndex(item => item.id === task.phaseId) + 1} — Task {index + 1} of {config.tasks.length}</span>{completedTaskIds.includes(task.id) && <span className="text-[10px] text-emerald-300 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Completed</span>}</div><h2 className="text-xl font-extrabold text-white mt-1">{task.title}</h2></div>
-          <div className="bg-slate-950/80 p-1 rounded-xl border border-slate-800 flex gap-1">{[['console', 'Console'], ['cli', 'CLI'], ['both', 'Show Both']].map(([mode, label]) => <button type="button" key={mode} disabled={actionBusy} onClick={() => { setActiveMode(mode); setDirty(true); }} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${activeMode === mode ? 'bg-cyan-600 text-white' : 'text-slate-400'}`}>{label}</button>)}</div>
+          <div className="bg-slate-950/80 p-1 rounded-xl border border-slate-800 flex gap-1">{availableModes.map(([mode, label]) => <button type="button" key={mode} disabled={actionBusy} onClick={() => { setActiveMode(mode); setDirty(true); }} className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${activeMode === mode ? 'bg-cyan-600 text-white' : 'text-slate-400'}`}>{label}</button>)}</div>
         </div>
         <ExtensionSlot slot="runner.beforeObjective" registrations={extensions} context={context} />
         <div className="mt-4 p-4 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300"><strong className="text-cyan-400 block mb-1">Objective:</strong>{task.goal}</div>

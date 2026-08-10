@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Layers, Search, Sparkles, Network, CheckCircle2 } from 'lucide-react';
 import { FOLLOW_ALONG_PROGRAMMES } from '../../data/followAlongProgrammes.js';
 import { getProgrammeProgressSummary } from '../../services/vpcLearningPathService.js';
-import { getEc2ProgrammeProgressSummary } from '../../services/ec2LearningPathService.js';
-import { getS3ProgrammeProgressSummary } from '../../services/s3LearningPathService.js';
-import { getIamProgrammeProgressSummary } from '../../services/iamLearningPathService.js';
 import { FollowAlongCard } from './FollowAlongCard.jsx';
 import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 
@@ -15,9 +12,6 @@ export const FollowAlongLandingPage = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [vpcSummary, setVpcSummary] = useState({ loading: true });
-  const [ec2Summary, setEc2Summary] = useState({ loading: true });
-  const [s3Summary, setS3Summary] = useState({ loading: true });
-  const [iamSummary, setIamSummary] = useState({ loading: true });
   const [programmes, setProgrammes] = useState(FOLLOW_ALONG_PROGRAMMES);
 
   useEffect(() => {
@@ -29,36 +23,22 @@ export const FollowAlongLandingPage = ({
     return () => { active = false; };
   }, []);
 
-  // Fetch VPC, EC2, S3, and IAM progress summaries on mount or user change
+  // Fetch the retained static VPC summary on mount or user change.
   useEffect(() => {
     let isMounted = true;
 
     async function loadSummaries() {
       setVpcSummary({ loading: true });
-      setEc2Summary({ loading: true });
-      setS3Summary({ loading: true });
-      setIamSummary({ loading: true });
       try {
-        const [vSummary, eSummary] = await Promise.all([
-          getProgrammeProgressSummary(currentUser?.id, 'vpc-learning-path'),
-          getEc2ProgrammeProgressSummary(currentUser?.id)
-        ]);
-        const sSummary = getS3ProgrammeProgressSummary([]);
-        const iSummary = getIamProgrammeProgressSummary([]);
+        const vSummary = await getProgrammeProgressSummary(currentUser?.id, 'vpc-learning-path');
 
         if (isMounted) {
           setVpcSummary(vSummary || { loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45 });
-          setEc2Summary(eSummary || { loading: false, status: 'not-started', completedTasks: 0, totalTasks: 34 });
-          setS3Summary(sSummary || { loading: false, status: 'Not Started', completed: 0, total: 34 });
-          setIamSummary(iSummary || { loading: false, status: 'Not Started', completed: 0, total: 23 });
         }
       } catch (err) {
         console.error('[FollowAlongLandingPage] Error loading summaries:', err);
         if (isMounted) {
           setVpcSummary({ loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45, error: err.message });
-          setEc2Summary({ loading: false, status: 'not-started', completedTasks: 0, totalTasks: 34, error: err.message });
-          setS3Summary({ loading: false, status: 'Not Started', completed: 0, total: 34, error: err.message });
-          setIamSummary({ loading: false, status: 'Not Started', completed: 0, total: 23, error: err.message });
         }
       }
     }
@@ -112,7 +92,7 @@ export const FollowAlongLandingPage = ({
               <CheckCircle2 className="w-4 h-4 text-cyan-400" /> Resource Preservation
             </span>
             <span className="flex items-center gap-1.5 text-cyan-300">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" /> Dual Console & CLI Execution
+              <CheckCircle2 className="w-4 h-4 text-cyan-400" /> Console and CLI when available
             </span>
           </div>
         </div>
@@ -173,12 +153,6 @@ export const FollowAlongLandingPage = ({
                 progressSummary={
                   prog.id === 'vpc-learning-path'
                     ? vpcSummary
-                    : prog.id === 'ec2-learning-path'
-                    ? ec2Summary
-                    : prog.id === 's3-learning-path'
-                    ? s3Summary
-                    : prog.id === 'iam-learning-path'
-                    ? iamSummary
                     : null
                 }
                 onSelectProgramme={onSelectProgramme}

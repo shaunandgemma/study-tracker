@@ -3,21 +3,15 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 
 import { DYNAMODB_TASKS } from '../src/features/followAlongs/catalogues/dynamodbFollowAlongTasks.js';
-import { EC2_TASKS } from '../src/features/followAlongs/catalogues/ec2FollowAlongTasks.js';
 import { ELB_TASKS } from '../src/features/followAlongs/catalogues/elbFollowAlongTasks.js';
-import { IAM_TASKS } from '../src/features/followAlongs/catalogues/iamFollowAlongTasks.js';
 import { RDS_TASKS } from '../src/features/followAlongs/catalogues/rdsFollowAlongTasks.js';
-import { S3_TASKS } from '../src/features/followAlongs/catalogues/s3FollowAlongTasks.js';
 import { SYNTHAPP_TASKS } from '../src/features/followAlongs/catalogues/synthappFollowAlongTasks.js';
 import { VPC_TASKS } from '../src/features/followAlongs/catalogues/vpcFollowAlongTasks.js';
 
 const catalogues = [
   { name: 'DynamoDB', tasks: DYNAMODB_TASKS, count: 9, legacy: 'dynamoDbTasks.js', pathData: 'src/data/dynamodbLearningPathData.js', owned: 'dynamodbFollowAlongTasks.js' },
-  { name: 'EC2', tasks: EC2_TASKS, count: 25, legacy: 'ec2Tasks.js', pathData: 'src/data/ec2LearningPathData.js', owned: 'ec2FollowAlongTasks.js' },
   { name: 'ELB', tasks: ELB_TASKS, count: 13, legacy: 'elbTasks.js', pathData: 'src/data/elbLearningPathData.js', owned: 'elbFollowAlongTasks.js' },
-  { name: 'IAM', tasks: IAM_TASKS, count: 22, legacy: 'iamTasks.js', pathData: 'src/data/iamLearningPathData.js', owned: 'iamFollowAlongTasks.js' },
   { name: 'RDS', tasks: RDS_TASKS, count: 7, legacy: 'rdsTasks.js', pathData: 'src/data/rdsLearningPathData.js', owned: 'rdsFollowAlongTasks.js' },
-  { name: 'S3', tasks: S3_TASKS, count: 33, legacy: 's3Tasks.js', pathData: 'src/data/s3LearningPathData.js', owned: 's3FollowAlongTasks.js' },
   { name: 'Synthapp', tasks: SYNTHAPP_TASKS, count: 9, legacy: 'synthappTasks.js', pathData: 'src/data/synthappLearningPathData.js', owned: 'synthappFollowAlongTasks.js' },
   { name: 'VPC', tasks: VPC_TASKS, count: 34, legacy: 'vpcTasks.js', pathData: 'src/data/vpcLearningPathData.js', owned: 'vpcFollowAlongTasks.js' }
 ];

@@ -1,0 +1,166 @@
+STEP 84 LOCAL CHECKBOX INSTRUCTION IMPLEMENTATION
+=================================================
+
+1. APPROVED SCOPE
+
+Use the accepted blueprint and accepted AWS sources to prepare local Author
+Stage 6 checkbox instructions.
+
+Every checkbox instruction must remain separately editable.
+
+Do not write to Author and do not begin Stage 7.
+
+
+2. RESULT
+
+The reusable Step 84 implementation is complete.
+
+The private live SQS Stage 6 generation is ready for the user to run with the
+secure Author Assistant command.
+
+
+3. REUSABLE SERVICE DESIGN
+
+The implementation reads the service, tasks and sources from the active saved
+session. It contains no SQS-specific production instructions, commands or URLs.
+
+The same process can therefore be used for future AWS services after their
+Stages 1-5 blueprint has been accepted.
+
+
+4. AWS DOCUMENTATION BOUNDARY
+
+The AI request can search only:
+
+docs.aws.amazon.com
+
+The output schema permits only the AWS source URLs that the user already
+accepted for the session.
+
+An instruction is rejected unless its source:
+
+1. Was previously accepted by the user.
+2. Is linked to that exact blueprint task.
+3. Was returned by the protected AWS Docs search during the Stage 6 request.
+
+
+5. SEPARATELY EDITABLE CHECKBOXES
+
+Each Console step contains an instructions list.
+
+Every item receives its own locally created stable ID and contains:
+
+1. One short learner action.
+2. Optional separate help text.
+
+The AI does not create the stable IDs. The app's existing Author instruction
+functions create them locally.
+
+
+6. MANUAL REVIEW SAFETY
+
+If accepted AWS documentation does not support an exact safe Console action,
+the task is marked:
+
+needs_manual_review
+
+No guessed checkbox instructions are created for that task. The reason remains
+visible in the local output for human review.
+
+
+7. CONTENT EXCLUDED FROM STEP 84
+
+Step 84 does not prepare:
+
+- CLI commands
+- Resource capture
+- Verification checks
+- Cleanup instructions
+- Stage 7 or later content
+- Author drafts
+- Release candidates
+- Approval or publishing content
+
+
+8. LOCAL OUTPUTS AFTER THE PRIVATE RUN
+
+The accepted service session will receive:
+
+author-stage-6-instructions.json
+author-stage-6-instructions.txt
+
+The JSON file contains the full separately editable instruction structure.
+
+The TXT file contains a short review preview and checkbox count for each task.
+
+
+9. SAFETY BOUNDARIES
+
+The Stage 6 result records:
+
+- Prepared locally: Stage 6 only
+- Not prepared: Stages 7-12
+- Written to Author: no
+- Connected to Supabase: no
+- Connected to AWS: no
+- Candidate prepared: no
+- Published: no
+
+
+10. RESUME BEHAVIOUR
+
+If Stage 6 files already exist, the assistant displays their paths and does not
+repeat the AI request.
+
+If the accepted blueprint exists but Stage 6 does not, the assistant asks:
+
+Prepare local Author Stage 6 checkbox instructions now? (y/N)
+
+No request is made unless the user answers yes.
+
+
+11. PRIVATE LIVE RUN
+
+From E:\code\study-tracker run:
+
+npm run author-assistant:secure
+
+Then:
+
+1. Paste the API key into the hidden prompt.
+2. Answer Y to resume the Amazon SQS session.
+3. Confirm the accepted Stages 1-5 blueprint is displayed.
+4. Answer y when asked to prepare Stage 6 checkbox instructions.
+5. Review the terminal preview and the two saved local files.
+
+One Stage 6 API request is expected. It includes protected AWS Docs search.
+
+
+12. VERIFICATION
+
+- Focused Steps 83-84 checks: 28 passed, 0 failed
+- Complete automated tests: 575 passed, 0 failed
+- Linter: 0 errors
+- Production build: passed
+
+Existing unrelated linter warnings remain.
+
+The existing Node version and bundle-size build warnings remain. They did not
+stop the build.
+
+
+13. OPENAI API REFERENCE
+
+The implementation was checked against official OpenAI documentation for
+GPT-5.6 Terra Responses API, structured outputs and web-search support:
+
+https://developers.openai.com/api/docs/models/gpt-5.6-terra
+
+
+14. CURRENT STOP POINT
+
+Reusable Step 84 implementation: complete.
+Private live SQS Stage 6 output: awaiting the user's secure run.
+Author write: not started.
+Stage 7: not started.
+

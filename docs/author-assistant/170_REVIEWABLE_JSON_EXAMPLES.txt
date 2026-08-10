@@ -1,0 +1,34 @@
+STEP 170 - REVIEWABLE JSON EXAMPLES
+
+1. Problem
+
+The Author Assistant stopped an otherwise complete paid generation when one embedded
+JSON example was not strict machine-parseable JSON.
+
+2. New behaviour
+
+Valid JSON remains a validated JSON block and is shown with Copy JSON.
+
+An imperfect but non-empty JSON-shaped example no longer stops the complete generation.
+It is preserved as an editable reference block, shown with Copy example, and produces a
+non-blocking Author review warning.
+
+3. Safety retained
+
+Empty reference blocks are still rejected.
+
+Credential-like values are still rejected across the complete proposal.
+
+Strict JSON blocks that later become invalid are changed into reviewable reference blocks.
+When corrected to valid JSON, they automatically return to validated JSON status.
+
+4. Scope
+
+This change affects only embedded Console JSON/reference blocks. It does not relax the
+handoff package format, fingerprints, AWS-source checks, Console/CLI completeness rules,
+credential checks, Author identity binding, candidate approval, or publishing controls.
+
+5. User action
+
+Run npm run author-assistant:secure again. The failed API response was not saved as a
+handoff package, so that exact attempt cannot be resumed.

@@ -1,0 +1,62 @@
+STEP 98A - SQS ALLOW-LIST MIGRATION PREPARED
+============================================
+
+1. APPROVED SCOPE
+
+Create, test and deploy only migration 20260820 to enable controlled publishing for sqs-learning-path.
+
+After deployment, retry only the exact approved SQS revision 2 candidate with PUBLISH SQS.
+
+2. MIGRATION CREATED
+
+File:
+supabase/migrations/20260820_enable_sqs_controlled_publishing.sql
+
+The migration inserts or updates only this protected allow-list row:
+
+Programme ID: sqs-learning-path
+Service slug: sqs
+Publish token: SQS
+Service name: Amazon Simple Queue Service
+Enabled: true
+
+3. MIGRATION SAFETY BOUNDARY
+
+The migration does not:
+
+1. Approve a candidate.
+2. Call the publishing function.
+3. Publish a programme.
+4. Change an Author draft.
+5. Change a release candidate.
+6. Change a published programme.
+7. Change Lambda configuration.
+8. Change DynamoDB configuration.
+9. Delete, drop, truncate or alter anything.
+
+4. TEST ADDED
+
+The controlled-publishing regression test now verifies the exact SQS row and rejects any broader behaviour listed above.
+
+Focused result:
+16 tests passed.
+0 tests failed.
+
+Complete result:
+741 tests passed.
+0 tests failed.
+
+Production build:
+Passed.
+
+Linter:
+Passed with no errors. Existing unrelated warnings remain.
+
+5. DEPLOYMENT STATUS
+
+Migration 20260820 is prepared and tested locally.
+
+It has not yet been deployed because the Codex runtime was denied access to WSL and denied network access for a temporary Windows Supabase CLI.
+
+No database change occurred.
+

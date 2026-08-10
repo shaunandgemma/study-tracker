@@ -1,0 +1,33 @@
+155 - SNS CONTROLLED PUBLISHING MIGRATION PREPARED
+Date: 10 August 2026
+
+1. PURPOSE
+
+Enable controlled publishing for only the approved sns-learning-path programme.
+
+2. MIGRATION
+
+supabase/migrations/20260821_enable_sns_controlled_publishing.sql
+
+The migration adds or updates only this allow-list row:
+
+Programme ID: sns-learning-path
+Service slug: sns
+Publish token: SNS
+Service name: Amazon Simple Notification Service
+Enabled: true
+
+3. SAFETY
+
+The migration does not approve or publish anything.
+It does not change the SNS draft or candidate.
+It does not change SQS, Lambda, exam questions, learner progress or Hands On history.
+It contains no delete, drop, truncate or alter operation.
+
+4. DEPLOYMENT
+
+Prepared and tested locally only.
+Not deployed by Codex.
+
+After a successful dry run and deployment, publish the already approved SNS candidate using:
+PUBLISH SNS

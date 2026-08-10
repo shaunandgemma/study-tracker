@@ -44,6 +44,9 @@ test('Follow Along display components', async (t) => {
   const stepModule = await viteServer.ssrLoadModule(
     '/src/features/followAlongs/runtime/FollowAlongStepCard.jsx',
   );
+  const jsonModule = await viteServer.ssrLoadModule(
+    '/src/features/followAlongs/runtime/FollowAlongJsonBlock.jsx',
+  );
   const progressModule = await viteServer.ssrLoadModule(
     '/src/components/FollowAlongs/FollowAlongProgressSummary.jsx',
   );
@@ -51,13 +54,14 @@ test('Follow Along display components', async (t) => {
     '/src/components/FollowAlongs/FollowAlongCard.jsx',
   );
 
-  const { FollowAlongInstructionItem } = instructionModule;
+  const { FollowAlongInstructionItem, copyFollowAlongInstructionText } = instructionModule;
   const {
     FollowAlongCommandBlock,
     copyFollowAlongCommandText,
     isFollowAlongCommandDestructive,
   } = commandModule;
   const { FollowAlongStepCard, isFollowAlongStepComplete } = stepModule;
+  const { formatFollowAlongJsonContent } = jsonModule;
   const { FollowAlongProgressSummary } = progressModule;
   const { FollowAlongCard } = cardModule;
 
@@ -86,6 +90,22 @@ test('Follow Along display components', async (t) => {
     assert.equal(renderToStaticMarkup(createElement(FollowAlongInstructionItem, {
       instruction: { id: 'empty' }, isChecked: false, onToggle: () => {},
     })), '');
+  });
+
+  await t.test('2A. instruction text stays selectable and has one-click structured copying', async () => {
+    let copiedText = '';
+    assert.equal(await copyFollowAlongInstructionText(
+      { text: 'Choose Create policy.', detail: 'Use the JSON editor.' },
+      { writeText: async value => { copiedText = value; } }
+    ), true);
+    assert.equal(copiedText, 'Choose Create policy.\nUse the JSON editor.');
+    const html = renderToStaticMarkup(createElement(FollowAlongInstructionItem, {
+      instruction: { id: 'copy-policy', text: 'Choose Create policy.' },
+      isChecked: false,
+      onToggle: () => {},
+    }));
+    assert.match(html, /select-text/);
+    assert.match(html, /aria-label="Copy instruction"/);
   });
 
   await t.test('3. Command block shows guidance, output, warning, and live copy status', () => {
@@ -124,6 +144,7 @@ test('Follow Along display components', async (t) => {
     description: 'Enter the VPC settings.',
     instructions: [{ id: 'name-vpc', text: 'Enter the name' }],
     commands: [{ id: 'describe', text: 'aws ec2 describe-vpcs' }],
+    jsonBlocks: [{ id: 'policy-json', title: 'Example IAM policy', content: '{\n  "Version": "2012-10-17"\n}' }],
     note: 'Keep the default tenancy.',
     warning: 'Check the CIDR range.',
     expectedResult: 'The new VPC appears in the list.',
@@ -139,8 +160,17 @@ test('Follow Along display components', async (t) => {
     for (const expected of [
       'Step 2', 'Create the VPC', 'Enter the VPC settings.', 'Enter the name',
       'aws ec2 describe-vpcs', 'Keep the default tenancy.', 'Check the CIDR range.',
+      'Example IAM policy', '&quot;Version&quot;', 'Copy JSON',
       'The new VPC appears in the list.', 'Mark Step Done',
     ]) assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  });
+
+  await t.test('5A. minified JSON is displayed and copied with readable indentation', () => {
+    assert.equal(
+      formatFollowAlongJsonContent('{"Version":"2012-10-17","Statement":[{"Effect":"Allow"}]}'),
+      '{\n  "Version": "2012-10-17",\n  "Statement": [\n    {\n      "Effect": "Allow"\n    }\n  ]\n}'
+    );
+    assert.equal(formatFollowAlongJsonContent('{ illustrative JSON }'), '{ illustrative JSON }');
   });
 
   await t.test('6. Step completion and main-step callback remain compatible', () => {
@@ -164,7 +194,6 @@ test('Follow Along display components', async (t) => {
     const runnerFiles = [
       'src/components/FollowAlongs/shared/FollowAlongTaskRunner.jsx',
       'src/components/VpcLearningPath/VpcTaskRunner.jsx',
-      'src/components/Ec2LearningPath/Ec2TaskRunner.jsx',
     ];
     for (const file of runnerFiles) {
       const source = readFileSync(file, 'utf8');
@@ -176,6 +205,7 @@ test('Follow Along display components', async (t) => {
       'src/features/followAlongs/runtime/FollowAlongStepCard.jsx',
       'src/features/followAlongs/runtime/FollowAlongInstructionItem.jsx',
       'src/features/followAlongs/runtime/FollowAlongCommandBlock.jsx',
+      'src/features/followAlongs/runtime/FollowAlongJsonBlock.jsx',
     ];
     for (const file of featureFiles) {
       const source = readFileSync(file, 'utf8');
@@ -183,7 +213,7 @@ test('Follow Along display components', async (t) => {
     }
   });
 
-  await t.test('8. shared progress display accepts every current service summary shape', () => {
+  await t.test('8. shared progress display accepts the published programme summary shape', () => {
     const s3Html = renderToStaticMarkup(createElement(FollowAlongProgressSummary, {
       summary: { status: 'Not Started', completed: 0, total: 34, percentage: 0, loading: false },
     }));
@@ -191,21 +221,21 @@ test('Follow Along display components', async (t) => {
     assert.match(s3Html, /0 of 34 tasks completed/);
     assert.doesNotMatch(s3Html, /0 of 45 tasks completed/);
 
-    const iamCardHtml = renderToStaticMarkup(createElement(FollowAlongCard, {
+    const publishedCardHtml = renderToStaticMarkup(createElement(FollowAlongCard, {
       programme: {
-        id: 'iam-learning-path',
-        title: 'IAM Follow Along',
-        category: 'Security & Identity',
-        description: 'IAM test programme',
-        service: 'AWS IAM',
+        id: 'published-learning-path',
+        title: 'Published Follow Along',
+        category: 'AWS Services',
+        description: 'Published test programme',
+        service: 'AWS Service',
         status: 'available',
         taskCount: 23,
         phaseCount: 6,
       },
       progressSummary: { status: 'Not Started', completed: 0, total: 23, percentage: 0, loading: false },
     }));
-    assert.match(iamCardHtml, /0 of 23 tasks completed/);
-    assert.match(iamCardHtml, /Start Follow Along/);
-    assert.doesNotMatch(iamCardHtml, /Resume Follow Along/);
+    assert.match(publishedCardHtml, /0 of 23 tasks completed/);
+    assert.match(publishedCardHtml, /Start Follow Along/);
+    assert.doesNotMatch(publishedCardHtml, /Resume Follow Along/);
   });
 });

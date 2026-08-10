@@ -7,12 +7,14 @@ import {
   addAuthorCleanupStep,
   addAuthorInstructionItem,
   addAuthorInstructionStep,
+  addAuthorJsonBlock,
   addAuthorResource,
   addAuthorSource,
   addAuthorVerification,
   removeAuthorCleanupStep,
   removeAuthorInstructionItem,
   removeAuthorInstructionStep,
+  removeAuthorJsonBlock,
   removeAuthorResource,
   removeAuthorSource,
   removeAuthorVerification,
@@ -22,6 +24,7 @@ import {
   updateAuthorCleanupStep,
   updateAuthorInstructionItem,
   updateAuthorInstructionStep,
+  updateAuthorJsonBlock,
   updateAuthorResource,
   updateAuthorSource,
   updateAuthorVerification
@@ -92,6 +95,43 @@ function ConsoleCheckboxEditor({ draft, taskId, step, apply, setMessage }) {
   </section>;
 }
 
+function JsonBlockEditor({ draft, taskId, step, apply, setMessage }) {
+  const [form, setForm] = useState({ title: '', content: '' });
+  const run = result => { if (result.success) apply(result.draft); else setMessage(result.error); };
+  const add = event => {
+    event.preventDefault();
+    const result = addAuthorJsonBlock(draft, taskId, step.id, form);
+    if (!result.success) { setMessage(result.error); return; }
+    apply(result.draft);
+    setForm({ title: '', content: '' });
+    setMessage('Validated JSON block added.');
+  };
+  const validity = content => {
+    try { const parsed = JSON.parse(content); return parsed && typeof parsed === 'object'; } catch { return false; }
+  };
+
+  return <section className="rounded-lg border border-violet-900/60 bg-violet-950/10 p-3 space-y-3">
+    <div>
+      <strong className="text-xs text-violet-200">Structured JSON boxes</strong>
+      <p className="text-[11px] text-slate-500 mt-1">Use these for IAM policies or other official AWS JSON. Real credentials must never be entered.</p>
+    </div>
+    {(step.jsonBlocks || []).map((block, index) => <article key={block.id} className="rounded-lg border border-slate-800 bg-slate-950 p-3 space-y-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-[11px] font-bold text-slate-400">JSON box {index + 1}</span>
+        <RemoveButton label="Remove JSON block" onClick={() => run(removeAuthorJsonBlock(draft, taskId, step.id, block.id))} />
+      </div>
+      <input value={block.title} onChange={event => run(updateAuthorJsonBlock(draft, taskId, step.id, block.id, { title: event.target.value }))} placeholder="IAM policy title" className={inputClass} />
+      <textarea value={block.content} onChange={event => run(updateAuthorJsonBlock(draft, taskId, step.id, block.id, { content: event.target.value }))} placeholder={'{\n  "Version": "2012-10-17",\n  "Statement": []\n}'} rows={12} spellCheck="false" className={`${inputClass} font-mono text-xs`} />
+      <span className={`block text-[10px] ${validity(block.content) ? 'text-emerald-400' : 'text-amber-300'}`}>{validity(block.content) ? 'Valid JSON' : 'Editable reference example — review the syntax before learner use'}</span>
+    </article>)}
+    <form onSubmit={add} className="rounded-lg bg-slate-950 p-3 space-y-2">
+      <input value={form.title} onChange={event => setForm(value => ({ ...value, title: event.target.value }))} placeholder="JSON box title, for example RDS lab IAM policy" className={inputClass} />
+      <textarea value={form.content} onChange={event => setForm(value => ({ ...value, content: event.target.value }))} placeholder="Paste valid JSON here" rows={10} spellCheck="false" className={`${inputClass} font-mono text-xs`} />
+      <RunButton>Add Validated JSON Box</RunButton>
+    </form>
+  </section>;
+}
+
 function InstructionModeEditor({ draft, task, mode, apply, setMessage }) {
   const isConsole = mode === 'console';
   const field = isConsole ? 'consoleSteps' : 'cliSteps';
@@ -130,6 +170,7 @@ function InstructionModeEditor({ draft, task, mode, apply, setMessage }) {
           {isConsole ? <>
             <input value={step.title} onChange={event => run(updateAuthorInstructionStep(draft, task.id, mode, step.id, { title: event.target.value }))} placeholder="Step title" className={inputClass} />
             <ConsoleCheckboxEditor draft={draft} taskId={task.id} step={step} apply={apply} setMessage={setMessage} />
+            <JsonBlockEditor draft={draft} taskId={task.id} step={step} apply={apply} setMessage={setMessage} />
             <textarea value={step.expectedResult} onChange={event => run(updateAuthorInstructionStep(draft, task.id, mode, step.id, { expectedResult: event.target.value }))} placeholder="What the learner should see" rows={2} className={inputClass} />
             <input value={step.warning} onChange={event => run(updateAuthorInstructionStep(draft, task.id, mode, step.id, { warning: event.target.value }))} placeholder="Optional warning" className={inputClass} />
           </> : <>

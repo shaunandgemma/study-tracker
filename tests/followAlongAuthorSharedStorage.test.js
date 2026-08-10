@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createAuthorDraft } from '../src/features/followAlongAuthor/authorDraftService.js';
+import { buildAuthorReleaseSnapshot } from '../src/features/followAlongAuthor/authorApproval.js';
 import {
   AUTHOR_SHARED_STORAGE_FLAG,
   AUTHOR_SHARED_STORAGE_TABLES,
@@ -139,20 +140,66 @@ test('Follow Along Author disabled shared-storage foundation', async t => {
   await t.test('12. Candidate storage binds the package to the server draft hash and revision', async () => {
     const calls = [];
     let inserted;
+    const draft = privateDraft();
+    draft.draft.revision = 3;
+    draft.review.reviewStatus = 'ready_for_approval';
+    const snapshot = buildAuthorReleaseSnapshot(draft);
     const client = { from(name) {
-      if (name === AUTHOR_SHARED_STORAGE_TABLES.drafts) return builder({ data: { content_hash: 'server-draft-hash', revision: 3, status: 'ready_for_approval', owner_id: 'author' }, error: null }, calls);
+      if (name === AUTHOR_SHARED_STORAGE_TABLES.drafts) return builder({ data: { content_hash: 'server-draft-hash', revision: 3, status: 'ready_for_approval', owner_id: 'author', content: draft }, error: null }, calls);
       assert.equal(name, AUTHOR_SHARED_STORAGE_TABLES.candidates);
       const q = builder(() => ({ data: inserted, error: null }), calls);
       const original = q.insert;
       q.insert = function (value) { inserted = value; return original.call(this, value); };
       return q;
     } };
-    const candidate = { candidateId: 'candidate-1', sourceDraftId: 'draft-1', sourceRevision: 3, createdBy: 'author', snapshot: { programme: { publicationVisibility: 'unpublished' }, publication: { publishStatus: 'not_published' } } };
+    const candidate = { candidateId: 'candidate-1', sourceDraftId: draft.draft.draftId, sourceRevision: 3, createdBy: draft.draft.createdBy, snapshot };
     const result = await createAuthorSharedStorageService(client, { enabled: true }).storeReleaseCandidate(candidate);
     assert.equal(result.success, true);
     assert.equal(inserted.draft_content_hash, 'server-draft-hash');
     assert.equal(inserted.source_revision, 3);
     assert.equal(inserted.snapshot.publication.publishStatus, 'not_published');
+  });
+
+  await t.test('12A. Exact duplicate candidate preparation reuses the immutable server row', async () => {
+    const draft = privateDraft();
+    draft.draft.revision = 3;
+    draft.review.reviewStatus = 'ready_for_approval';
+    const snapshot = buildAuthorReleaseSnapshot(draft);
+    const candidate = { candidateId: 'candidate-1', sourceDraftId: draft.draft.draftId, sourceRevision: 3, createdBy: draft.draft.createdBy, snapshot };
+    const existing = { candidate_id: 'candidate-1', draft_id: draft.draft.draftId, source_revision: 3, created_by: draft.draft.createdBy, snapshot, draft_content_hash: 'server-draft-hash' };
+    let candidateCalls = 0;
+    const client = { from(name) {
+      if (name === AUTHOR_SHARED_STORAGE_TABLES.drafts) return builder({ data: { content_hash: 'server-draft-hash', revision: 3, status: 'ready_for_approval', owner_id: draft.draft.createdBy, content: draft }, error: null });
+      candidateCalls += 1;
+      return candidateCalls === 1
+        ? builder({ data: null, error: { code: '23505', message: 'duplicate' } })
+        : builder({ data: existing, error: null });
+    } };
+    const result = await createAuthorSharedStorageService(client, { enabled: true }).storeReleaseCandidate(candidate);
+    assert.equal(result.success, true);
+    assert.equal(result.reused, true);
+    assert.equal(result.candidate, existing);
+  });
+
+  await t.test('12B. A duplicate ID with different immutable content remains blocked', async () => {
+    const draft = privateDraft();
+    draft.draft.revision = 3;
+    draft.review.reviewStatus = 'ready_for_approval';
+    const snapshot = buildAuthorReleaseSnapshot(draft);
+    const candidate = { candidateId: 'candidate-1', sourceDraftId: draft.draft.draftId, sourceRevision: 3, createdBy: draft.draft.createdBy, snapshot };
+    const existing = { candidate_id: 'candidate-1', draft_id: draft.draft.draftId, source_revision: 3, created_by: draft.draft.createdBy, snapshot: { ...snapshot, programme: { ...snapshot.programme, displayName: 'Different' } }, draft_content_hash: 'server-draft-hash' };
+    let candidateCalls = 0;
+    const client = { from(name) {
+      if (name === AUTHOR_SHARED_STORAGE_TABLES.drafts) return builder({ data: { content_hash: 'server-draft-hash', revision: 3, status: 'ready_for_approval', owner_id: draft.draft.createdBy, content: draft }, error: null });
+      candidateCalls += 1;
+      return candidateCalls === 1
+        ? builder({ data: null, error: { code: '23505', message: 'duplicate' } })
+        : builder({ data: existing, error: null });
+    } };
+    const result = await createAuthorSharedStorageService(client, { enabled: true }).storeReleaseCandidate(candidate);
+    assert.equal(result.success, false);
+    assert.equal(result.conflict, true);
+    assert.match(result.error, /different immutable release candidate/i);
   });
 
   await t.test('13. Trusted approval service calls only the protected database function', async () => {

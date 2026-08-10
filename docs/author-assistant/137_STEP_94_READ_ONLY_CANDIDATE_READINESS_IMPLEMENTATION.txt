@@ -1,0 +1,154 @@
+STEP 94 - READ-ONLY CANDIDATE-READINESS IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Step 94 adds a read-only Stage 12 readiness checkpoint for only the exact verified SQS Shared Draft.
+
+It verifies ownership, revision, saved content, fingerprints, content counts, review state and duplicate-candidate state.
+
+It does not generate or store a candidate key.
+
+2. EXACT SQS TARGET
+
+Programme:
+Amazon SQS: Basic Message Queue Test
+
+Draft ID:
+author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+Accepted handoff fingerprint:
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+The preview rejects any other draft before performing a server read.
+
+3. EXACT-HANDOFF REQUIREMENTS
+
+The preview requires:
+
+1. The deterministic SQS draft ID.
+2. Amazon Simple Queue Service.
+3. The sqs service slug.
+4. Author Assistant handoff source type.
+5. Step 92 import record.
+6. Accepted Stages 1-11 record.
+7. Exact accepted handoff fingerprint.
+8. Valid Step 90A acceptance fingerprint.
+9. Valid accepted-content fingerprint.
+
+4. READ-ONLY SERVER OPERATIONS
+
+The preview performs only:
+
+1. One read of the selected saved Shared Draft.
+2. One read of the signed-in Author's visible release-candidate records.
+
+Candidate writes: 0.
+Draft writes: 0.
+Approvals: 0.
+Publications: 0.
+
+5. FOURTEEN READINESS CHECKS
+
+The preview checks:
+
+1. Exact verified SQS handoff.
+2. Private Shared Draft storage.
+3. Saved server draft identity.
+4. Signed-in Author ownership.
+5. Open and saved revision match.
+6. Open content and saved Shared Draft SHA-256 match.
+7. Protected database content fingerprint exists.
+8. Draft is Ready for Approval.
+9. Planning validation passed.
+10. Content and safety validation passed.
+11. Structured review validation passed.
+12. Approval decision remains pending.
+13. Programme remains unpublished.
+14. No release candidate exists for the current revision.
+
+6. VISIBLE OWNERSHIP AND REVISION EVIDENCE
+
+The preview displays:
+
+1. Signed-in Author email.
+2. Protected server owner ID.
+3. Current Shared Draft revision.
+4. Total candidate records for the draft.
+5. Candidate records for the current revision.
+
+7. VISIBLE FINGERPRINT EVIDENCE
+
+The preview displays:
+
+1. Step 90 handoff SHA-256.
+2. Accepted-content SHA-256.
+3. Open Stage 12 draft SHA-256.
+4. Saved Shared Draft SHA-256.
+5. Protected database content SHA-256.
+
+The open and saved complete-draft fingerprints must match exactly.
+
+8. VISIBLE CONTENT COUNTS
+
+The preview displays:
+
+1. Phases.
+2. Tasks.
+3. Separate editable checkboxes.
+4. Verification checks.
+5. Cleanup items.
+6. Learner resource values.
+7. Official AWS sources.
+
+9. DUPLICATE-CANDIDATE RULE
+
+If any immutable candidate already uses the current draft revision, readiness is blocked.
+
+The existing candidate is only reported. It is not changed, reused, rejected or deleted.
+
+10. MANUAL CANDIDATE BOUNDARY
+
+For this verified SQS draft, the existing candidate-generation button is disabled until the read-only preview passes.
+
+Passing the preview enables the existing manual button but does not press it.
+
+Candidate generation remains a separate, later user-approved action.
+
+11. FILES ADDED OR UPDATED
+
+1. src/features/followAlongAuthor/authorCandidateReadiness.js
+2. src/features/followAlongAuthor/AuthorCandidateReadinessPreview.jsx
+3. src/features/followAlongAuthor/authorStorageCoordinator.js
+4. src/features/followAlongAuthor/authorSharedStorageService.js
+5. src/features/followAlongAuthor/AuthorHome.jsx
+6. src/features/followAlongAuthor/AuthorDraftEditor.jsx
+7. src/features/followAlongAuthor/AuthorTrustedApprovalStage.jsx
+8. tests/followAlongAuthorCandidateReadinessStep94.test.js
+
+12. AUTOMATED TEST RESULT
+
+Step 94 test file: 7 passed, 0 failed.
+Broader focused readiness, shared-storage and approval group: 33 passed, 0 failed.
+Full project tests: 733 passed, 0 failed.
+Production build: passed.
+Lint: passed with no errors; existing unrelated warnings remain.
+
+The build still reports the existing Node 22.9.0 recommendation and large-chunk warning.
+
+13. PROHIBITED ACTIONS
+
+Step 94 does not:
+
+1. Generate a candidate ID.
+2. Create a release candidate.
+3. Change or save the SQS draft.
+4. Create a new draft revision.
+5. Approve anything.
+6. Publish anything.
+7. Connect to AWS.
+8. Change the Local Draft.
+
+14. IMPLEMENTATION STATUS
+
+Step 94 implementation and automated validation are complete.
+The live SQS readiness result is recorded separately in document 138.

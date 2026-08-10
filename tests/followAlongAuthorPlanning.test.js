@@ -204,4 +204,15 @@ test('Follow Along Author programme, phase and task planning', async t => {
     assert.match(source, /Private browser draft/);
     assert.match(source, /Shared draft/);
   });
+
+  await t.test('13. Programme and task durations are optional and non-blocking', () => {
+    let draft = completeProgramme();
+    draft = { ...draft, programme: { ...draft.programme, estimatedMinutes: null } };
+    draft = addPhase(draft, 'Foundation');
+    draft = addTask(draft, draft.phases[0].id, 'Create the VPC', { estimatedMinutes: null });
+    assert.equal(draft.tasks[0].estimatedMinutes, null);
+    assert.equal(validateAuthorPlanning(draft).valid, true);
+    const updated = updateAuthorTask(draft, draft.tasks[0].id, { estimatedMinutes: '' });
+    assert.equal(updated.draft.tasks[0].estimatedMinutes, null);
+  });
 });

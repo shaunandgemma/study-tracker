@@ -78,14 +78,7 @@ test('Follow Along AWS validation display boundary', async (t) => {
     assert.equal(getFollowAlongConnectionMode({ status: 'disconnected', backendVerified: true }), 'disconnected');
   });
 
-  await t.test('5. EC2 now uses the Follow Along-owned validation panel', () => {
-    const runnerSource = readFileSync('src/components/Ec2LearningPath/Ec2TaskRunner.jsx', 'utf8');
-    assert.match(runnerSource, /features\/followAlongs\/runtime\/FollowAlongAwsValidationPanel/);
-    assert.match(runnerSource, /<FollowAlongAwsValidationPanel task=\{task\} \/>/);
-    assert.doesNotMatch(runnerSource, /HandsOnTasks\/AwsValidationPanel/);
-  });
-
-  await t.test('6. The boundary preserves existing AWS services and resets between tasks', () => {
+  await t.test('5. The boundary preserves existing AWS services and resets between tasks', () => {
     const panelSource = readFileSync(
       'src/features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx',
       'utf8',

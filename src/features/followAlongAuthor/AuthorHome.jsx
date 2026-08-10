@@ -1,12 +1,32 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Cloud, FilePlus2, FolderOpen, HardDrive, ShieldCheck } from 'lucide-react';
+import { Cloud, FilePlus2, FolderOpen, HardDrive, ShieldCheck, Trash2 } from 'lucide-react';
 import { createAuthorDraft } from './authorDraftService.js';
 import { AuthorDraftEditor } from './AuthorDraftEditor.jsx';
+import { AuthorHandoffImportPreview } from './AuthorHandoffImportPreview.jsx';
+import { executeAuthorHandoffControlledImport } from './authorHandoffControlledImport.js';
+import { executeAuthorHandoffControlledUpdate } from './authorHandoffControlledUpdate.js';
 import { AuthorStorageMigrationPanel } from './AuthorStorageMigrationPanel.jsx';
 import { AUTHOR_STORAGE_MODE, createAuthorStorageCoordinator } from './authorStorageCoordinator.js';
 import { isAuthorSharedStorageEnabled } from './authorSharedStorageService.js';
 
 const emptyForm = { serviceName: '', shortName: '', displayName: '', description: '' };
+
+function AuthorDraftRow({ draft, storageLabel, isLive, liveStatusKnown, onOpen, onDelete }) {
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const deletionProtected = isLive || !liveStatusKnown;
+  const remove = async () => {
+    setDeleting(true);
+    const result = await onDelete(draft);
+    setDeleting(false);
+    if (result?.success) setConfirmingDelete(false);
+  };
+  return <div className={`p-5 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between ${deletionProtected ? 'bg-slate-950/70 text-slate-500' : ''}`}>
+    <div><div className="flex items-center gap-2"><strong className={deletionProtected ? 'text-slate-300' : 'text-white'}>{draft.programme.displayName}</strong>{isLive && <span className="inline-flex items-center gap-1 rounded-full border border-emerald-800 bg-emerald-950/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300"><span className="h-2 w-2 rounded-full bg-emerald-400" />Live</span>}</div><span className="mt-1 block text-xs text-slate-400">{draft.programme.serviceName || 'Service not named'} · Revision {draft.draft.revision} · {draft.draft.status.replaceAll('_', ' ')}</span><span className="mt-1 block text-[11px] text-slate-500">Storage: {storageLabel} · Learner visibility: {isLive ? 'live production version protected' : 'hidden'}</span></div>
+    <div className="flex flex-wrap items-center gap-2"><button type="button" onClick={() => onOpen(draft)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-700"><FolderOpen className="h-4 w-4" />Continue Draft</button>{!deletionProtected && !confirmingDelete && <button type="button" onClick={() => setConfirmingDelete(true)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-800 bg-rose-950/30 px-4 py-2.5 text-xs font-bold text-rose-200"><Trash2 className="h-4 w-4" />Delete Draft</button>}{deletionProtected && <span className="rounded-lg border border-slate-700 px-3 py-2 text-[10px] font-semibold text-slate-500">{isLive ? 'Deletion disabled' : 'Live status unavailable · deletion disabled'}</span>}</div>
+    {confirmingDelete && <div className="w-full rounded-xl border border-rose-800 bg-rose-950/30 p-3 text-xs text-rose-100"><strong className="block">Delete this unwanted draft permanently?</strong><span className="mt-1 block text-rose-200/80">This is allowed only when no release candidate or live publication is connected to it.</span><div className="mt-3 flex gap-2"><button type="button" disabled={deleting} onClick={() => void remove()} className="rounded-lg bg-rose-700 px-3 py-2 font-bold text-white disabled:opacity-50">{deleting ? 'Deleting safely...' : 'Confirm Delete Draft'}</button><button type="button" disabled={deleting} onClick={() => setConfirmingDelete(false)} className="rounded-lg bg-slate-800 px-3 py-2 font-bold text-slate-200">Cancel</button></div></div>}
+  </div>;
+}
 
 export const AuthorHome = ({ currentUser }) => {
   const sharedFeatureEnabled = isAuthorSharedStorageEnabled();
@@ -18,12 +38,20 @@ export const AuthorHome = ({ currentUser }) => {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState('');
   const [loadingDrafts, setLoadingDrafts] = useState(false);
+  const [publishedDraftIds, setPublishedDraftIds] = useState(new Set());
+  const [liveStatusKnown, setLiveStatusKnown] = useState(false);
+  const [releaseCandidates, setReleaseCandidates] = useState([]);
 
   const refresh = useCallback(async () => {
     setLoadingDrafts(true);
-    const result = await coordinator.listDrafts();
+    const [result, published, candidates] = await Promise.all([
+      coordinator.listDrafts(), coordinator.listPublishedDrafts(), coordinator.listReleaseCandidates()
+    ]);
     setDrafts(result.drafts || []);
-    setError(result.success ? '' : result.error);
+    setPublishedDraftIds(new Set(published.publishedDraftIds || []));
+    setLiveStatusKnown(published.success === true);
+    setReleaseCandidates(candidates.candidates || []);
+    setError(!result.success ? result.error : !published.success ? published.error : !candidates.success ? candidates.error : '');
     setLoadingDrafts(false);
   }, [coordinator]);
 
@@ -58,7 +86,56 @@ export const AuthorHome = ({ currentUser }) => {
     setActiveDraft(result.draft);
   };
 
-  if (activeDraft) return <AuthorDraftEditor initialDraft={activeDraft} userId={currentUser.id} storageMode={storageMode} onSaveDraft={values => coordinator.saveDraft(values)} onStoreReleaseCandidate={candidate => coordinator.storeReleaseCandidate(candidate)} onCancel={() => { setActiveDraft(null); void refresh(); }} onSavedAndExit={() => { setActiveDraft(null); void refresh(); }} />;
+  const deleteDraft = async selectedDraft => {
+    const draftId = selectedDraft?.draft?.draftId;
+    if (coordinator.getMode() === AUTHOR_STORAGE_MODE.SHARED && !liveStatusKnown) {
+      const result = { success: false, error: 'Live production status could not be verified, so deletion remains disabled.' };
+      setError(result.error);
+      return result;
+    }
+    if (publishedDraftIds.has(draftId)) {
+      const result = { success: false, error: 'This exact draft is live in production and cannot be deleted.' };
+      setError(result.error);
+      return result;
+    }
+    const result = await coordinator.deleteDraft({ draftId, expectedRevision: selectedDraft.draft.revision, confirmation: `DELETE ${draftId}` });
+    setError(result.success ? '' : result.error);
+    if (result.success) await refresh();
+    return result;
+  };
+
+  const importPrivateHandoffDraft = useCallback(async values => {
+    if (storageMode !== AUTHOR_STORAGE_MODE.LOCAL || coordinator.getMode() !== AUTHOR_STORAGE_MODE.LOCAL) {
+      return { success: false, wrongStorageMode: true, error: 'Select Local Drafts before importing this package.' };
+    }
+    const result = await executeAuthorHandoffControlledImport({
+      ...values,
+      currentUser: { id: currentUser.id, email: currentUser.email },
+      storageMode,
+      listDrafts: () => coordinator.listDrafts(),
+      storeDraft: draft => coordinator.storeNewDraft(draft)
+    });
+    if (result.success) await refresh();
+    return result;
+  }, [coordinator, currentUser.email, currentUser.id, refresh, storageMode]);
+
+  const updateSharedHandoffDraft = useCallback(async values => {
+    if (storageMode !== AUTHOR_STORAGE_MODE.SHARED || coordinator.getMode() !== AUTHOR_STORAGE_MODE.SHARED) {
+      return { success: false, wrongStorageMode: true, error: 'Select Shared Drafts before applying this update.' };
+    }
+    const result = await executeAuthorHandoffControlledUpdate({
+      ...values,
+      currentUser: { id: currentUser.id, email: currentUser.email },
+      storageMode,
+      listDrafts: () => coordinator.listDrafts(),
+      listReleaseCandidates: () => coordinator.listReleaseCandidates(),
+      saveDraft: valuesToSave => coordinator.saveDraft(valuesToSave)
+    });
+    if (result.success) await refresh();
+    return result;
+  }, [coordinator, currentUser.email, currentUser.id, refresh, storageMode]);
+
+  if (activeDraft) return <AuthorDraftEditor initialDraft={activeDraft} userId={currentUser.id} authorEmail={currentUser.email} storageMode={storageMode} onSaveDraft={values => coordinator.saveDraft(values)} onPreviewCandidateReadiness={values => coordinator.previewReleaseCandidateReadiness(values)} onStoreReleaseCandidate={candidate => coordinator.storeReleaseCandidate(candidate)} onCancel={() => { setActiveDraft(null); void refresh(); }} onSavedAndExit={() => { setActiveDraft(null); void refresh(); }} />;
 
   const isShared = storageMode === AUTHOR_STORAGE_MODE.SHARED;
   const storageLabel = isShared ? 'Shared Drafts' : 'Local Drafts';
@@ -78,6 +155,16 @@ export const AuthorHome = ({ currentUser }) => {
           coordinator={coordinator}
           featureEnabled={sharedFeatureEnabled}
           storageMode={storageMode}
+          onCopied={refresh}
+        />
+
+        <AuthorHandoffImportPreview
+          currentUser={currentUser}
+          storageMode={storageMode}
+          existingDrafts={drafts}
+          releaseCandidates={releaseCandidates}
+          onCreatePrivateDraft={importPrivateHandoffDraft}
+          onUpdateSharedDraft={updateSharedHandoffDraft}
         />
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,7 +176,7 @@ export const AuthorHome = ({ currentUser }) => {
 
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-800"><h2 className="font-bold text-white">{storageLabel}</h2><span className="text-[11px] text-slate-500">Learner visibility: hidden</span></div>
-          {loadingDrafts ? <p className="p-6 text-sm text-slate-400">Loading {storageLabel.toLowerCase()}...</p> : drafts.length === 0 ? <p className="p-6 text-sm text-slate-400">No drafts in this mode.</p> : <div className="divide-y divide-slate-800">{drafts.map(draft => <div key={draft.draft.draftId} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><strong className="text-sm text-white">{draft.programme.displayName}</strong><span className="block text-xs text-slate-400 mt-1">{draft.programme.serviceName || 'Service not named'} · Revision {draft.draft.revision} · {draft.draft.status.replaceAll('_', ' ')}</span><span className="block text-[11px] text-slate-500 mt-1">Storage: {storageLabel} · Learner visibility: hidden</span></div><button type="button" onClick={() => openDraft(draft)} className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white inline-flex items-center justify-center gap-2"><FolderOpen className="w-4 h-4" /> Continue Draft</button></div>)}</div>}
+          {loadingDrafts ? <p className="p-6 text-sm text-slate-400">Loading {storageLabel.toLowerCase()}...</p> : drafts.length === 0 ? <p className="p-6 text-sm text-slate-400">No drafts in this mode.</p> : <div className="divide-y divide-slate-800">{drafts.map(draft => <AuthorDraftRow key={draft.draft.draftId} draft={draft} storageLabel={storageLabel} isLive={publishedDraftIds.has(draft.draft.draftId)} liveStatusKnown={!isShared || liveStatusKnown} onOpen={openDraft} onDelete={deleteDraft} />)}</div>}
         </section>
       </div>
     </main>

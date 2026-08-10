@@ -1,0 +1,112 @@
+STEP 95 - HOSTED CANDIDATE RECOVERY AND VERIFICATION
+
+1. APPROVED PURPOSE
+
+Step 95 allows the Author to generate the candidate manually, then verifies the exact hosted candidate without approving or publishing it.
+
+2. INITIAL DISPLAY FINDING
+
+The first visible page was using Private Author stages.
+
+It displayed this Local Package ID:
+
+release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r3-ca2aa134109f
+
+That value was not the hosted Candidate Approval Key.
+
+It was a local browser package for Local Draft revision 3.
+It could not enter trusted approval and performed no candidate-database write.
+
+3. PROTECTED SERVER FINDING
+
+A separate read of the protected Shared Draft records confirmed:
+
+1. Exactly one SQS candidate existed.
+2. It belonged to Shared Draft revision 2.
+3. It was awaiting trusted approval.
+4. Its approval decision was pending.
+5. No second candidate could be generated for that revision.
+
+4. KEY RECOVERY CORRECTION
+
+Stage 12 now recovers an existing hosted Candidate Approval Key from the protected candidate record after a reload.
+
+The Author no longer depends on the temporary in-page candidate state to retrieve the key.
+
+The recovered key is displayed only for the signed-in Author who can read their own protected candidate record.
+
+5. LOCAL-PACKAGE WORDING CORRECTION
+
+Local packages now display:
+
+1. Local Package ID.
+2. Local package only - approval unavailable.
+3. Prepare New Local Package.
+
+They no longer display wording that can be mistaken for a hosted approval candidate.
+
+6. TWO HASH BOUNDARIES
+
+The app and protected database use two valid SHA-256 representations for different purposes:
+
+1. The app canonical snapshot hash creates and verifies the Candidate Approval Key suffix.
+2. The protected database JSONB hash protects the stored immutable candidate snapshot.
+
+The verifier now checks each hash against its correct boundary instead of comparing the two different representations directly.
+
+7. RECOVERED-CANDIDATE CHECKS
+
+The recovered candidate must pass:
+
+1. Candidate key suffix matches the app canonical snapshot hash.
+2. Protected server snapshot hash is a valid SHA-256 value.
+3. Candidate snapshot matches the current Shared Draft release snapshot.
+4. Candidate source revision matches the current saved revision.
+5. Candidate creator matches the signed-in Author.
+6. Candidate draft-content hash matches the protected saved Shared Draft hash.
+7. Candidate status is awaiting trusted approval.
+8. Candidate approval decision is pending.
+
+8. DUPLICATE PROTECTION
+
+After the existing candidate is found:
+
+1. The readiness panel says an immutable candidate already exists.
+2. The candidate-generation button is disabled.
+3. The existing key is recovered and verified.
+4. No second insert is attempted.
+
+9. FILES UPDATED
+
+1. src/features/followAlongAuthor/authorCandidateReadiness.js
+2. src/features/followAlongAuthor/AuthorCandidateReadinessPreview.jsx
+3. src/features/followAlongAuthor/AuthorTrustedApprovalStage.jsx
+4. tests/followAlongAuthorCandidateReadinessStep94.test.js
+
+10. AUTOMATED TEST RESULT
+
+Candidate readiness and recovery test file: 7 passed, 0 failed.
+Focused readiness and trusted-approval tests: 16 passed, 0 failed.
+Full project tests: 733 passed, 0 failed.
+Production build: passed.
+Lint: passed with no errors; existing unrelated warnings remain.
+
+The build still reports the existing Node 22.9.0 recommendation and large-chunk warning.
+
+11. PROHIBITED ACTIONS
+
+Step 95 does not:
+
+1. Create a second SQS candidate.
+2. Change the immutable candidate.
+3. Change or save the Shared Draft.
+4. Approve the candidate.
+5. Reject the candidate.
+6. Publish the candidate.
+7. Connect to AWS.
+
+12. IMPLEMENTATION STATUS
+
+The hosted-key recovery, correct hash-boundary verification and local-package wording correction are complete.
+
+The live SQS candidate result is recorded separately in document 140.

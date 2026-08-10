@@ -1,0 +1,37 @@
+156 - AUTOMATIC PUBLISHING REGISTRATION PREPARED
+Date: 10 August 2026
+
+1. RESULT
+
+One permanent migration now removes the need to create a publishing migration for each new AWS service.
+
+Migration:
+supabase/migrations/20260822_auto_register_approved_follow_along_publishing.sql
+
+2. NEW FLOW
+
+Generate Follow Along.
+Import private Author draft.
+Copy to Shared Drafts.
+Prepare candidate.
+Separate Approver approves candidate.
+The database automatically registers that programme for controlled publishing.
+Approver publishes with PUBLISH followed by the service name.
+
+3. PROTECTION
+
+Automatic registration occurs only during the existing pending-to-approved trusted approval transition.
+The candidate must have a valid programme ID, matching service slug and official service name.
+The trigger does not publish anything.
+It does not bypass the separate Approver or exact publish confirmation.
+It grants no browser access to the protected allow-list table or trigger function.
+
+4. EXISTING CONTENT
+
+Published SNS, SQS and Lambda content is unchanged.
+Existing drafts, candidates, learner progress, exam questions and Hands On history are unchanged.
+
+5. DEPLOYMENT
+
+This migration must be deployed once.
+After that, future valid services require no service-specific publishing migration.

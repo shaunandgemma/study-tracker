@@ -7,8 +7,6 @@
  */
 
 import { VPC_LEARNING_PATH_PHASES, VPC_PATH_TASKS } from './vpcLearningPathData.js';
-import { S3_LEARNING_PATH_PHASES, getS3PathTasks } from './s3LearningPathData.js';
-import { IAM_LEARNING_PATH_PHASES, getIamPathTasks } from './iamLearningPathData.js';
 
 export const FOLLOW_ALONG_PROGRAMMES = [
   {
@@ -28,60 +26,6 @@ export const FOLLOW_ALONG_PROGRAMMES = [
     difficulty: 'Intermediate to Advanced',
     estimatedHours: '6 - 8 hours',
     pathId: 'vpc-learning-path'
-  },
-  {
-    id: 's3-learning-path',
-    slug: 's3',
-    title: 'S3 Follow Along',
-    shortTitle: 'S3',
-    subtitle: 'Simple Storage Service',
-    description: 'Build secure, versioned, multi-region, and highly available object storage architectures with lifecycle rules and replication.',
-    service: 'Amazon S3',
-    status: 'available',
-    taskCount: getS3PathTasks().length,
-    phaseCount: S3_LEARNING_PATH_PHASES.length,
-    supportedModes: ['console', 'cli', 'both'],
-    icon: 'HardDrive',
-    category: 'Storage',
-    difficulty: 'Beginner to Intermediate',
-    estimatedHours: '3 - 4 hours',
-    pathId: 's3-learning-path'
-  },
-  {
-    id: 'ec2-learning-path',
-    slug: 'ec2',
-    title: 'EC2 Follow Along',
-    shortTitle: 'EC2',
-    subtitle: 'Elastic Compute Cloud',
-    description: 'Provision compute workloads, configure custom AMIs, EBS volume management, placement groups, and instance recovery.',
-    service: 'Amazon EC2',
-    status: 'available',
-    taskCount: 34,
-    phaseCount: 8,
-    supportedModes: ['console', 'cli', 'both'],
-    icon: 'Cpu',
-    category: 'Compute',
-    difficulty: 'Intermediate',
-    estimatedHours: '4 - 5 hours',
-    pathId: 'ec2-learning-path'
-  },
-  {
-    id: 'iam-learning-path',
-    slug: 'iam',
-    title: 'IAM Follow Along',
-    shortTitle: 'IAM',
-    subtitle: 'Identity & Access Management',
-    description: 'Design least-privilege IAM policies, role delegation, cross-account access, permission boundaries, and SCPs.',
-    service: 'AWS IAM',
-    status: 'available',
-    taskCount: getIamPathTasks().length,
-    phaseCount: IAM_LEARNING_PATH_PHASES.length,
-    supportedModes: ['console', 'cli', 'both'],
-    icon: 'ShieldCheck',
-    category: 'Security & Identity',
-    difficulty: 'Intermediate to Advanced',
-    estimatedHours: '4 - 5 hours',
-    pathId: 'iam-learning-path'
   },
   {
     id: 'rds-learning-path',

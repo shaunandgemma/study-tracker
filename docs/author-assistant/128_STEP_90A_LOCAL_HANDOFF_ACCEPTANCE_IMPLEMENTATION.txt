@@ -1,0 +1,119 @@
+STEP 90A - LOCAL HANDOFF ACCEPTANCE IMPLEMENTATION
+
+1. PURPOSE
+
+Step 90A records human acceptance of the exact verified local Author handoff package.
+
+It does not change the handoff package and does not begin Stage 12.
+
+
+2. COMMAND
+
+From:
+E:\code\study-tracker
+
+Run:
+npm run author-assistant:apply-90a
+
+This command does not require an OpenAI API key.
+
+
+3. APPROVED HANDOFF FINGERPRINT
+
+SHA-256:
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+The real SQS package was dry-verified against this exact fingerprint.
+
+The dry run was answered No, so no acceptance audit was created during testing.
+
+
+4. WHAT STEP 90A VERIFIES
+
+- The local handoff package belongs to the current session.
+- The package is waiting for human handoff review.
+- The handoff package fingerprint still matches its complete content.
+- The accepted Stages 1-11 record manifest remains present.
+- The Author draft content remains present.
+- The signed-in Author identity remains unassigned.
+- The Author draft ID and revision remain unassigned.
+- No Author, Supabase, AWS, candidate, approval, publishing or Stage 12 boundary is open.
+
+
+5. ACCEPTANCE AUDIT
+
+After the user answers y, Step 90A creates:
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-acceptance-90a.json
+
+The audit contains:
+
+- The exact accepted handoff fingerprint
+- A fingerprint of the Author draft content
+- A fingerprint of the accepted-record manifest
+- A fingerprint of the acceptance audit itself
+- The accepted package counts
+- Explicit false values for every external write, identity, candidate, approval, publishing and Stage 12 action
+
+
+6. PACKAGE PRESERVATION
+
+Step 90A does not rewrite:
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-package.json
+
+The complete package bytes and original handoff fingerprint remain unchanged.
+
+
+7. LOCAL SESSION UPDATE
+
+After successful acceptance, only the local session state changes to:
+
+- Status: handoff_package_accepted
+- Current step: local_author_handoff_package_accepted
+- Handoff package accepted: true
+- Stage 12 prepared: false
+- Author draft written: false
+- Candidate prepared: false
+- Published: false
+
+
+8. DUPLICATE PROTECTION
+
+If a verified Step 90A acceptance audit already exists, the command reports it and does not create another audit.
+
+If an existing audit does not match the handoff package, the command stops safely.
+
+
+9. SAFETY BOUNDARIES
+
+- No AI request is made.
+- No Author identity is bound.
+- Nothing is written to Author.
+- Nothing is written to Supabase.
+- Nothing is written to AWS.
+- No release candidate is prepared.
+- No candidate ID is generated.
+- No approval is performed.
+- Nothing is published.
+- Stage 12 does not start.
+
+
+10. TEST RESULT
+
+- Focused Step 90A tests passed: 8
+- Full application tests passed: 703
+- Focused Step 90A lint completed with no errors.
+- Production build completed successfully.
+- The real SQS package passed the Step 90A dry verification.
+- The exact approved fingerprint was displayed.
+- The handoff counts remained 6 tasks, 24 checkboxes, 7 verification checks and 4 cleanup items.
+
+
+11. CURRENT POSITION
+
+The Step 90A implementation is complete.
+
+Run the command in section 2 and answer y to create only the local human-acceptance audit.
+
+Stage 12 and the controlled Author draft-write step remain separate and require later approval.

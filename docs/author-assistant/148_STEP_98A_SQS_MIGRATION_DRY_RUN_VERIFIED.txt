@@ -1,0 +1,39 @@
+STEP 98A - SQS MIGRATION DRY RUN VERIFIED
+==========================================
+
+1. COMMAND RUN
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked --dry-run"
+
+2. CONNECTION RESULT
+
+The Supabase CLI initialised the login role and connected to the linked remote database successfully.
+
+3. EXACT PENDING MIGRATION
+
+The dry run listed exactly one migration:
+
+20260820_enable_sqs_controlled_publishing.sql
+
+No earlier migration and no unrelated migration was listed.
+
+4. DRY-RUN SAFETY RESULT
+
+The CLI explicitly confirmed that migrations were not pushed.
+
+No database change occurred during the dry run.
+
+5. VERIFIED NEXT ACTION
+
+The same linked db push command may now be run without --dry-run.
+
+It must still show only migration 20260820 before confirmation.
+
+6. CURRENT STATE
+
+Migration prepared: yes
+Migration tested: yes
+Dry run verified: yes
+Migration deployed: no
+SQS published: no
+

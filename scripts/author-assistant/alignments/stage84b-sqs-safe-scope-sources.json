@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "kind": "approved_stage_6_source_amendment",
+  "alignmentId": "step-84b-sqs-safe-scope-sources-v1",
+  "approvalStep": "84B",
+  "service": {
+    "officialName": "Amazon Simple Queue Service",
+    "shortName": "SQS"
+  },
+  "affectedTaskIds": [
+    "task-sqs-confirm-safe-scope-and-required-access-001"
+  ],
+  "taskBoundaries": {
+    "task-sqs-confirm-safe-scope-and-required-access-001": {
+      "consoleGoal": "Create short Console prerequisite checkboxes that tell the learner to select eu-west-2, use a non-confidential queue name, and confirm they are signed in with an account or role already authorized for the required SQS Console actions. Do not create, attach, recommend or edit an IAM policy.",
+      "futureCliGuidance": "A future CLI path may use --region eu-west-2 and must still rely on access already granted by the learner's administrator.",
+      "stage8CleanupGuidance": ""
+    }
+  },
+  "approvedSources": [
+    {
+      "sourceType": "service_guide",
+      "documentTitle": "Choosing your Region - AWS Management Console",
+      "url": "https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html",
+      "supports": [
+        "Choosing an AWS Region from the AWS Management Console navigation bar.",
+        "Why a resource might not appear when the Console is displaying a different Region."
+      ],
+      "whyThisSourceApplies": "It provides the exact Console Region-selection guidance needed for eu-west-2."
+    },
+    {
+      "sourceType": "service_guide",
+      "documentTitle": "Using policies with Amazon SQS",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-using-identity-based-policies.html",
+      "supports": [
+        "Minimum permissions are required to use Amazon SQS through the Console.",
+        "The Console can require list and view permissions in addition to the intended SQS actions."
+      ],
+      "whyThisSourceApplies": "It explains SQS Console permission requirements without requiring the Follow Along to create or recommend an IAM policy."
+    }
+  ],
+  "canonicalManualReviewFindings": [
+    "An exact least-privilege policy must not be inferred. The learner must use an account or role already authorized for the required SQS Console actions.",
+    "Standard queues use at-least-once delivery and can occasionally return messages out of order; use one harmless test message and do not claim exactly-once or ordered delivery.",
+    "A Console-retrieved message is not deleted automatically and must be selected and deleted after verification.",
+    "FIFO-only requirements remain outside this standard-queue Follow Along.",
+    "Receipt-handle capture is preserved only for a future CLI path and is not required by the Console instructions.",
+    "Stage 6 provides queue lifecycle awareness only; actual manual queue deletion belongs to Stage 8 cleanup."
+  ],
+  "pendingSourceCandidates": [],
+  "boundaries": {
+    "writeToAuthor": false,
+    "connectToSupabase": false,
+    "connectToAws": false,
+    "beginStage7": false,
+    "createOrRecommendIamPolicy": false
+  }
+}

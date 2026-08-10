@@ -1,0 +1,491 @@
+HOW TO USE THE AUTHOR ASSISTANT HANDOFF PREVIEW AND CONTROLLED IMPORT
+
+FULL STEP-BY-STEP WALKTHROUGH
+
+1. WHAT THIS WALKTHROUGH COVERS
+
+This walkthrough explains how to open the Author page and safely preview a completed Author Assistant package.
+
+The preview checks the package and its human-acceptance audit.
+It does not create a draft, bind an Author, connect to AWS, approve anything or publish anything.
+
+2. PAGES YOU MAY NEED
+
+Author page:
+http://127.0.0.1:5173/#author
+
+Approver page:
+http://127.0.0.1:5173/#author/approvals
+
+Use only the Author page for this walkthrough.
+The Approver page is not needed for the read-only handoff preview.
+
+3. BEFORE YOU START
+
+Confirm all of the following:
+
+1. The Study Tracker app is running.
+2. You can open http://127.0.0.1:5173/#author.
+3. You are signed in with an account that has the Author role.
+4. The Author Assistant service session has completed Steps 80 to 90A.
+5. You have not edited either of the two accepted JSON files.
+
+For the current SQS package, the Author account used for the successful test was:
+shaun19862010@hotmail.co.uk
+
+4. IF THE SITE IS NOT REACHABLE
+
+1. Open Windows PowerShell.
+2. Go to the project folder:
+
+E:\code\study-tracker
+
+3. Start the app using the normal project start command:
+
+npm run dev
+
+4. Keep the PowerShell window open while using the app.
+5. Open the Author URL shown above.
+
+If the app displays a different local port, use the displayed port in the URL.
+
+5. WHERE THE AUTHOR ASSISTANT FILES ARE SAVED
+
+All Author Assistant sessions are stored outside the app repository in:
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant
+
+The short Windows form of the same location is:
+
+%LOCALAPPDATA%\StudyTracker\AuthorAssistant
+
+Nothing in this folder is automatically uploaded to Author, Supabase or AWS.
+
+6. HOW TO OPEN THE SAVED-FILES FOLDER
+
+1. Open Windows File Explorer.
+2. Click the address bar at the top.
+3. Paste this path:
+
+%LOCALAPPDATA%\StudyTracker\AuthorAssistant
+
+4. Press Enter.
+5. Open the folder for the service session you want to preview.
+
+Each service session has its own folder.
+The folder name contains the service name and a unique session ID.
+
+7. CURRENT SQS SESSION FOLDER
+
+The completed SQS session is saved here:
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c
+
+You may paste that complete path directly into the File Explorer address bar.
+
+8. THE TWO SQS FILES TO USE
+
+FILE 1 - ACCEPTED STEP 90 HANDOFF PACKAGE
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-package.json
+
+FILE 2 - STEP 90A HUMAN-ACCEPTANCE AUDIT
+
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-acceptance-90a.json
+
+Both files must come from the same service-session folder.
+Do not select accepted-sources.json, a Stage 6 file, a preview text file or any other JSON file.
+
+9. OPEN THE AUTHOR PAGE
+
+1. Open:
+
+http://127.0.0.1:5173/#author
+
+2. Sign in with the Author-role account.
+3. Confirm the page heading says:
+
+Follow Along Author
+
+4. Find the section named:
+
+Preview an accepted Author Assistant package
+
+The section also shows:
+
+Step 91 - Read-only handoff preview
+
+10. SELECT THE STEP 90 HANDOFF PACKAGE
+
+1. Find the first file selector named:
+
+1. Step 90 handoff package
+
+2. Click the file selector.
+3. In the Windows file window, paste the complete FILE 1 path into the File name box.
+4. Choose Open.
+5. Confirm the Author page now displays:
+
+author-local-handoff-package.json
+
+No validation is performed yet.
+
+11. SELECT THE STEP 90A ACCEPTANCE AUDIT
+
+1. Find the second file selector named:
+
+2. Step 90A acceptance audit
+
+2. Click the file selector.
+3. In the Windows file window, paste the complete FILE 2 path into the File name box.
+4. Choose Open.
+5. Confirm the Author page now displays:
+
+author-local-handoff-acceptance-90a.json
+
+12. RUN THE READ-ONLY VALIDATION
+
+1. Confirm both correct filenames are visible.
+2. Choose:
+
+Validate Read-Only Preview
+
+3. Wait for the browser check to finish.
+4. Do not close or refresh the page while it is checking.
+
+13. EXPECTED SUCCESS MESSAGE
+
+The successful result says:
+
+Fingerprints verified - read-only preview ready
+
+If that message is displayed, the package and its Step 90A audit match.
+
+14. EXPECTED SQS PROGRAMME DETAILS
+
+Programme:
+Amazon SQS: Basic Message Queue Test
+
+Expected counts:
+
+Phases: 5
+Tasks: 6
+Checkboxes: 24
+Verification checks: 7
+Cleanup items: 4
+Resource values: 0
+AWS sources: 11
+Stage 12: Not started
+
+15. EXPECTED AUTHOR DETAILS
+
+The preview displays a section named:
+
+Intended future draft owner - not yet bound
+
+It should display the currently signed-in Author email and account ID.
+
+For the completed SQS test, the displayed email was:
+
+shaun19862010@hotmail.co.uk
+
+This is only a preview of the intended future owner.
+The account is not attached to a draft by Step 91.
+
+16. EXPECTED SQS HANDOFF FINGERPRINT
+
+The displayed Handoff SHA-256 must be:
+
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+If one character is different, stop and do not continue with that package.
+
+17. WHAT THE BROWSER CHECKS
+
+The browser checks all of the following before showing the preview:
+
+1. The complete handoff-package fingerprint.
+2. The accepted content fingerprint.
+3. The accepted-manifest fingerprint.
+4. The Step 90A acceptance-audit fingerprint.
+5. Each accepted manifest entry.
+6. The programme counts calculated from the actual package content.
+7. The signed-in Author required for the intended-owner display.
+8. The read-only and no-write safety boundaries.
+
+The preview stops if any required value does not match.
+
+18. WHAT STEP 91 DOES NOT DO
+
+Step 91 does not:
+
+1. Bind the signed-in Author identity.
+2. Create a Local Draft.
+3. Create a Shared Draft.
+4. Change an existing draft.
+5. Write anything to Supabase.
+6. Connect to or change AWS.
+7. Create a release candidate or candidate ID.
+8. Send anything to the Approver page.
+9. Approve or publish a Follow Along.
+10. Begin Author Stage 12.
+
+Seeing zero drafts after validation is correct.
+
+19. HOW TO CLEAR THE PREVIEW
+
+1. Choose Clear in the Step 91 preview section.
+2. Confirm both selected filenames disappear.
+3. Confirm the verified preview details disappear.
+
+Clearing the preview does not delete the saved JSON files.
+
+20. IF AUTHOR ACCESS IS RESTRICTED
+
+Message:
+This signed-in account does not have a server-managed Author or Admin role.
+
+Fix:
+
+1. Return to Study Tracker.
+2. Choose Sign Out / Switch Account.
+3. Sign in with the Author-role account.
+4. Open http://127.0.0.1:5173/#author again.
+
+Do not use the Approver account for this page.
+
+21. IF THE PREVIEW ASKS FOR BOTH FILES
+
+Cause:
+Only one file was selected, or one selection was cleared.
+
+Fix:
+
+1. Select author-local-handoff-package.json in the first selector.
+2. Select author-local-handoff-acceptance-90a.json in the second selector.
+3. Run the validation again.
+
+22. IF A FINGERPRINT DOES NOT MATCH
+
+Possible causes:
+
+1. The package and audit came from different service-session folders.
+2. One file was edited after acceptance.
+3. The wrong JSON file was selected.
+4. An older package was paired with a newer audit.
+
+Safe fix:
+
+1. Choose Clear.
+2. Return to the correct service-session folder.
+3. Select the exact final handoff package and matching acceptance audit from that same folder.
+4. Do not edit either file.
+5. Validate again.
+
+Do not attempt to manually change a fingerprint.
+
+23. IF A FILE IS REJECTED
+
+The preview rejects invalid JSON, unsupported records and files larger than its safety limit.
+
+Fix:
+
+1. Confirm the file ends in .json.
+2. Confirm it is one of the two final accepted files listed above.
+3. Confirm it came directly from the Author Assistant session folder.
+4. Do not copy text into a newly created replacement file.
+
+24. USING THE PREVIEW FOR A FUTURE AWS SERVICE
+
+The Author Assistant is reusable for other AWS services.
+
+For a future service:
+
+1. Run the Author Assistant for that service.
+2. Complete and accept each local stage through the final handoff acceptance.
+3. Note the service-session folder printed by the script.
+4. Open that folder under:
+
+%LOCALAPPDATA%\StudyTracker\AuthorAssistant
+
+5. Select the final accepted handoff package in the first Step 91 selector.
+6. Select its matching human-acceptance audit in the second selector.
+7. Make sure both files came from the same folder.
+8. Choose Validate Read-Only Preview.
+9. Review the service name, counts, Author and fingerprint.
+
+The future service will have a different session folder, programme details and fingerprint.
+Never reuse the SQS audit with another service package.
+
+25. IMPORTANT FILE-SAFETY RULES
+
+1. Keep each service package with its matching audit.
+2. Do not edit accepted JSON files.
+3. Do not email or publicly share private programme content unnecessarily.
+4. Do not place OpenAI keys, AWS credentials or Supabase secrets in these files.
+5. Keep the Author Assistant session folder until the Follow Along is safely completed.
+6. Do not delete any accepted record while a later stage still relies on it.
+
+26. CURRENT WORKFLOW BOUNDARY
+
+Step 91 is a trusted preview only.
+
+A later separately approved step is required before the app may:
+
+1. Bind the signed-in Author.
+2. Create or update an Author draft.
+3. Prepare a release candidate.
+4. Send anything for approval.
+5. Publish the Follow Along.
+
+27. CURRENT SQS RESULT
+
+The SQS package was successfully validated in the protected Author page.
+
+Browser errors: 0
+Drafts created: 0
+Supabase writes: 0
+AWS writes: 0
+Candidates created: 0
+Stage 12 started: no
+
+28. QUICK REFERENCE
+
+Author URL:
+http://127.0.0.1:5173/#author
+
+SQS session folder:
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c
+
+First file:
+author-local-handoff-package.json
+
+Second file:
+author-local-handoff-acceptance-90a.json
+
+Button:
+Validate Read-Only Preview
+
+Success message:
+Fingerprints verified - read-only preview ready
+
+Expected fingerprint:
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+Expected final status:
+Stage 12 - Not started
+
+29. STEP 92 - CREATE THE PRIVATE AUTHOR DRAFT
+
+After the Step 91 fingerprint result succeeds, the page displays:
+
+Step 92 - Controlled private draft import
+
+It also displays an exact pre-import comparison.
+
+30. REVIEW THE EXACT COMPARISON
+
+Confirm all of the following before creating the draft:
+
+1. The programme name is correct.
+2. Storage says Local Drafts - private browser storage.
+3. Owner to bind is the signed-in Author.
+4. The new draft says Revision 1 - unpublished.
+5. The draft count increases by exactly one.
+6. The programme counts match the accepted package.
+7. The page says Content unchanged.
+8. The page says Stage 12 not started.
+
+For the first SQS import, the comparison was:
+
+Before: 0 Local Drafts
+After: 1 Local Draft
+
+31. CONFIRM THE ONE-DRAFT CREATION
+
+1. Read the complete comparison.
+2. Check the confirmation box beginning:
+
+I confirm this exact comparison
+
+3. Confirm the displayed email is your Author account.
+4. Choose:
+
+Create One Private Author Draft
+
+5. Wait for the result.
+
+32. EXPECTED SUCCESS RESULT
+
+The successful result says:
+
+Exactly one private Author draft created
+
+The Local Drafts count increases by one.
+The new draft appears under Local Drafts with learner visibility hidden.
+
+33. OPEN THE IMPORTED DRAFT
+
+1. Find the new programme under Local Drafts.
+2. Choose Continue Draft.
+3. Use the numbered Author stage buttons to review the imported content.
+4. Do not choose Stage 12 unless a later step has been separately approved.
+
+34. WHAT TO CHECK IN THE IMPORTED DRAFT
+
+1. Stage 1 - programme and service details.
+2. Stage 2 - phases.
+3. Stage 3 - tasks and prerequisites.
+4. Stage 5 - accepted AWS sources.
+5. Stage 6 - separate checkbox instructions.
+6. Stage 7 - resources and verification checks.
+7. Stage 8 - manual cleanup.
+8. Stage 9 - Authoring Check.
+9. Stage 10 - Learner Preview.
+10. Stage 11 - structured review and retained advisories.
+
+35. DUPLICATE PROTECTION
+
+If the same package and audit are selected again, the comparison remains at the same draft count and says:
+
+This accepted handoff package has already been imported. A second draft will not be created.
+
+Do not try to change the JSON files or fingerprint to bypass this protection.
+
+36. WHERE THE CREATED DRAFT IS SAVED
+
+The Step 92 draft is saved in private browser storage for the signed-in Author.
+
+It is listed under Local Drafts on:
+
+http://127.0.0.1:5173/#author
+
+It is not written to the Author Assistant session folder.
+The original Step 90 and Step 90A JSON files remain unchanged in the session folder.
+
+37. CURRENT SQS DRAFT
+
+Programme:
+Amazon SQS: Basic Message Queue Test
+
+Draft ID:
+author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+Revision: 1
+Storage: Local Drafts
+Learner visibility: hidden
+Stage 12: not started
+
+38. STEP 92 SAFETY BOUNDARY
+
+Step 92 creates the one private draft only.
+
+It does not:
+
+1. Write the draft to Supabase.
+2. Connect to AWS.
+3. Create a release candidate.
+4. Approve the draft.
+5. Publish the Follow Along.
+6. Make the Follow Along visible to learners.
+7. Begin Stage 12.

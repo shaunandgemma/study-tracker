@@ -1,0 +1,79 @@
+STEP 84 SEARCH EVIDENCE READER CORRECTION
+=========================================
+
+1. REPORTED PROBLEM
+
+The Stage 6 retry still stopped with:
+
+Protected AWS Docs search returned no sources for Stage 6.
+
+
+2. UPDATED CAUSE
+
+The Stage 6 request now requires web search, but the evidence reader understood
+only a search action containing action.sources.
+
+Official OpenAI documentation explains that reasoning models can also return:
+
+- open_page actions
+- find_in_page actions
+- URL citation annotations
+
+The required search could therefore run successfully while its page evidence
+was stored in a different supported response field.
+
+
+3. CORRECTION
+
+The protected evidence reader now recognizes:
+
+- action.sources URLs
+- open-page action URLs
+- find-in-page page URLs
+- returned result URLs
+- flat URL citation annotations
+- nested URL citation annotations
+
+URL fragments and query strings are removed before comparison so the evidence
+can be matched safely to the exact accepted AWS documentation page.
+
+
+4. SAFETY RULES RETAINED
+
+Recognizing additional official response shapes does not make new sources
+acceptable.
+
+Every instruction URL must still:
+
+1. Match a source previously accepted by the user.
+2. Belong to the exact blueprint task.
+3. Be present in protected web-search evidence.
+4. Use the docs.aws.amazon.com boundary.
+
+If no readable protected URL is returned, the run still stops safely and now
+reports which search-action types were seen.
+
+
+5. OFFICIAL REFERENCE
+
+https://developers.openai.com/api/docs/guides/tools-web-search
+
+
+6. SAVED SESSION STATUS
+
+The failed run did not create Stage 6 content.
+
+The accepted SQS Stages 1-5 session remains safe to retry.
+
+
+7. VERIFICATION
+
+- Focused Stage 81 and 84 checks: 24 passed, 0 failed
+- Complete automated tests: 577 passed, 0 failed
+- Linter: 0 errors
+- Production build: passed
+
+Existing unrelated linter warnings remain.
+
+The existing Node version and bundle-size warnings remain. They did not stop
+the build.

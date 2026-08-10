@@ -1,0 +1,121 @@
+STEP 84C - LOCAL CONSISTENCY CORRECTION
+=======================================
+
+1. APPROVED SCOPE
+
+Step 84C was approved to:
+
+1. Change only the task 1 queue name from beginner-test-queue to
+   sqs-beginner-test.
+2. Preserve every other instruction exactly.
+3. Preserve the historical Region-source finding and mark it resolved.
+4. Keep the IAM warning active.
+5. Create a local audit.
+6. Keep Stage 6 waiting for human acceptance.
+7. Stop before Stage 7.
+
+2. IMPLEMENTATION
+
+A dedicated local command was added:
+
+npm run author-assistant:apply-84c
+
+This command does not use AI, the OpenAI API or an API key.
+
+3. EXACT INSTRUCTION CHANGE
+
+Old queue name:
+
+beginner-test-queue
+
+Canonical queue name:
+
+sqs-beginner-test
+
+The command changes the text field of exactly one task 1 checkbox and rebuilds
+only that checkbox step's matching combined instruction text.
+
+4. REGION FINDING RESOLUTION
+
+The original Region-source finding remains in manualReviewFindings as the
+historical record.
+
+A new manualReviewResolutions entry records that the finding was resolved by
+the exact AWS Management Console Region-selection source accepted in Step 84B.
+
+5. IAM WARNING
+
+The existing least-privilege IAM warning must remain present and active.
+
+The save stops if that warning is missing.
+
+6. PRESERVATION CHECKS
+
+The local save stops if:
+
+1. The completed Step 84B boundary is missing.
+2. The expected queue-name checkbox has already changed.
+3. Step 84C has already been applied.
+4. Any other Stage 6 task changes.
+5. Any accepted source or historical finding changes.
+6. The active IAM warning is removed.
+7. Stage 6 becomes accepted.
+8. Author or Stage 7 boundaries change.
+
+7. LOCAL AUDIT
+
+After the user's local run, this file will be created in the private SQS
+session folder:
+
+author-stage-6-consistency-correction-84c.json
+
+It records the exact checkbox ID, old and canonical queue names, preserved
+historical finding, active IAM warning, and unchanged safety boundaries.
+
+8. CODEX WRITE RESTRICTION
+
+Codex attempted to apply the approved local command, but the managed workspace
+does not permit Codex to write into the user's private Windows AppData folder.
+
+The attempt stopped on creation of the first temporary file before any saved
+session file was replaced.
+
+Post-stop checks confirmed:
+
+1. The old queue name remains in the live task 1 file.
+2. No Step 84C resolution entry was written.
+3. No Step 84C audit file exists.
+4. No temporary file remains.
+
+The user must run the dedicated command from their own PowerShell session.
+
+9. FILES ADDED OR UPDATED
+
+scripts/author-assistant/authorAssistantStage84C.mjs
+scripts/author-assistant/applyStage84C.mjs
+scripts/author-assistant/authorAssistantCore.mjs
+tests/authorAssistantStage84C.test.js
+package.json
+
+10. VERIFICATION
+
+Focused Steps 84B and 84C tests:
+13 passed, 0 failed.
+
+Full application tests:
+595 passed, 0 failed.
+
+Lint:
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+Passed. Existing Node-version and large-bundle warnings remain.
+
+11. CURRENT STATUS
+
+Step 84C implementation: ready
+Live Step 84C application: waiting for the user's local command
+Stage 6 acceptance: not performed
+Author write: not performed
+Stage 7: not started
+

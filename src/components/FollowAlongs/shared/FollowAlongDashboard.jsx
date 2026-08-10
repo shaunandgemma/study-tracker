@@ -26,6 +26,9 @@ export const FollowAlongDashboard = ({
   const context = { config, metrics, resources, completedTaskIds };
   const accentColor = config.presentation.accentColor || '#0891b2';
   const iconLabel = config.presentation.iconLabel || config.identity.serviceName.slice(0, 2).toUpperCase();
+  const hasConsole = config.tasks.some(task => task.modeAvailability?.console?.status === 'supported' && (task.consoleSteps || []).length > 0);
+  const hasCli = config.tasks.some(task => task.modeAvailability?.cli?.status === 'supported' && (task.cliSteps || []).length > 0);
+  const availableModes = [hasConsole && ['console', 'Console'], hasCli && ['cli', 'CLI'], hasConsole && hasCli && ['both', 'Show Both']].filter(Boolean);
 
   return (
     <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-6 backdrop-blur-xl shadow-xl">
@@ -49,7 +52,7 @@ export const FollowAlongDashboard = ({
 
         <div className="flex items-center gap-3 flex-wrap">
           <div className="bg-slate-950/80 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
-            {[['console', 'Console'], ['cli', 'CLI'], ['both', 'Show Both']].map(([mode, label]) => (
+            {availableModes.map(([mode, label]) => (
               <button
                 key={mode}
                 type="button"

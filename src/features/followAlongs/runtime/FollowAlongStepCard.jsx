@@ -1,6 +1,7 @@
 import React from 'react';
 import { FollowAlongInstructionItem } from './FollowAlongInstructionItem';
 import { FollowAlongCommandBlock } from './FollowAlongCommandBlock';
+import { FollowAlongJsonBlock } from './FollowAlongJsonBlock';
 import { CheckCircle2, AlertTriangle, Info, Check } from 'lucide-react';
 
 const EMPTY_CALLBACK = () => {};
@@ -24,6 +25,7 @@ export const FollowAlongStepCard = ({
 
   const instructions = step.instructions || [];
   const commands = step.commands || [];
+  const jsonBlocks = step.jsonBlocks || [];
   const completedSet = new Set(completedItemIds);
   const isStepComplete = isFollowAlongStepComplete(step, completedItemIds);
   const handleMainCheckboxChange = event => onToggleMainStep(step.id, event.target.checked);
@@ -59,6 +61,10 @@ export const FollowAlongStepCard = ({
 
       {commands.length > 0 && <div className="my-3">
         {commands.map(command => <FollowAlongCommandBlock key={command.id || command.text} command={command} />)}
+      </div>}
+
+      {jsonBlocks.length > 0 && <div className="my-3 space-y-3">
+        {jsonBlocks.map(block => <FollowAlongJsonBlock key={block.id || block.title} block={block} />)}
       </div>}
 
       {step.note && <div className="mt-3 p-3 rounded-lg bg-indigo-950/30 border border-indigo-800/40 text-xs text-indigo-200 flex items-start gap-2.5">

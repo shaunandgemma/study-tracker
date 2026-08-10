@@ -1,0 +1,58 @@
+STEP 98A - MANUAL LEDGER CHECK AND DEPLOYMENT
+==============================================
+
+1. WHY THIS MANUAL ACTION IS REQUIRED
+
+The installed project Supabase CLI contains a Linux binary.
+
+This Codex runtime was denied permission to start WSL. Restricted network access also prevented installing a temporary Windows copy.
+
+The migration cannot be deployed from this runtime without bypassing its permission boundary, so no deployment was attempted through another route.
+
+2. OPEN POWERSHELL
+
+Use the existing PowerShell terminal where WSL works.
+
+The commands below change to the exact study-tracker project inside WSL.
+
+3. DRY RUN FIRST
+
+Run:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked --dry-run"
+
+Continue only if the output lists exactly this one pending migration:
+
+20260820_enable_sqs_controlled_publishing.sql
+
+If any other migration is listed, stop and send the complete output back for review.
+
+4. DEPLOY ONLY THE VERIFIED PENDING MIGRATION
+
+After the dry run lists only migration 20260820, run:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked"
+
+If asked for confirmation, verify again that only migration 20260820 is listed before entering y.
+
+5. SEND THE RESULT BACK
+
+Copy the complete deployment output into this task.
+
+Do not press Publish SQS yet.
+
+After the deployment output is verified, the exact SQS allow-list row can be checked and the controlled publishing attempt can continue.
+
+6. OFFICIAL COMMAND REFERENCE
+
+https://supabase.com/docs/reference/cli/supabase-orgs-list
+
+Supabase documents that db push --dry-run displays which migrations would be applied and that a linked db push records successfully applied migration versions in the remote migration-history table.
+
+7. CURRENT SAFE STATE
+
+SQS candidate decision: approved
+SQS publication: Not published
+Publishing confirmation: empty
+Publish SQS button: disabled
+

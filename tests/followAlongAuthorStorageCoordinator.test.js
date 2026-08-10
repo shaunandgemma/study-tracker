@@ -156,7 +156,7 @@ test('Follow Along Author local-to-shared storage coordinator', async t => {
     const panel = readFileSync('src/features/followAlongAuthor/AuthorStorageMigrationPanel.jsx', 'utf8');
     const home = readFileSync('src/features/followAlongAuthor/AuthorHome.jsx', 'utf8');
     assert.match(panel, /if \(!featureEnabled\) return null/);
-    assert.match(panel, /copy this exact draft/);
+    assert.match(panel, /copy this exact .*draft/);
     assert.match(panel, /storageMode === AUTHOR_STORAGE_MODE\.SHARED/);
     assert.match(panel, /Select Shared Drafts above/);
     assert.doesNotMatch(panel, /createAuthorStorageCoordinator|selectSharedMode|returnToLocalMode|Enter Shared Preparation|Return to Local Mode/);

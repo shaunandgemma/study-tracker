@@ -1,0 +1,129 @@
+83. AUTHOR ASSISTANT - STEP 82 HTTP 429 DIAGNOSIS AND RETRY PREPARATION
+
+Date: 9 August 2026
+
+1. PILOT RESULT
+
+The secure launcher accepted the API key locally and started correctly.
+
+The SQS session was created successfully:
+
+author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c
+
+OpenAI rejected the first research request with HTTP 429 before any research result was created.
+
+2. SAVED SESSION SAFETY CHECK
+
+The pilot session contains only:
+
+session.json
+research-request.json
+
+The session status remains:
+
+input_complete
+
+No research-result.json exists.
+No accepted-sources.json exists.
+
+The saved safety flags confirm:
+
+AI result saved: No
+AWS connected: No
+Supabase connected: No
+Candidate prepared: No
+Published: No
+
+3. WHAT HTTP 429 CAN MEAN
+
+Official OpenAI documentation lists these main HTTP 429 causes:
+
+1. API credit balance exhausted.
+2. Request rate limit reached.
+3. Organization spend limit reached.
+4. Project spend limit reached.
+5. Organization usage limit reached.
+
+Official guidance:
+
+https://developers.openai.com/api/docs/guides/error-codes
+
+4. IMPORTANT LIMITATION OF THE FIRST ATTEMPT
+
+The first script version displayed only HTTP 429.
+
+It did not preserve the safe OpenAI error code, so this first attempt cannot prove which 429 cause applied.
+
+No blind automatic retry was performed.
+
+5. DIAGNOSTIC IMPROVEMENT
+
+The script now reads only the safe error code and gives matching guidance.
+
+Examples:
+
+credit_balance_exhausted
+project_spend_limit_exceeded
+organization_spend_limit_exceeded
+organization_usage_limit_exceeded
+insufficient_quota
+rate_limit_exceeded
+
+The raw provider message is not copied into saved session data.
+
+6. LAUNCHER IMPROVEMENT
+
+A failed request now ends with a short safe message.
+
+The long red PowerShell stack trace has been removed.
+
+The key remains:
+
+1. Hidden during entry.
+2. Outside the browser.
+3. Outside the repository.
+4. Outside session files.
+5. Cleared from the temporary launcher process.
+
+7. VERIFICATION AFTER THE FIX
+
+Focused diagnostic checks: 18 passed, 0 failed.
+Complete application test suite: 542 passed, 0 failed.
+Linter: 0 errors. Existing unrelated warnings remain.
+Production build: passed.
+Git whitespace check: passed. Line-ending notices are informational.
+
+8. WHAT TO CHECK BEFORE RETRYING
+
+Start with the OpenAI API account because this was the first research request:
+
+1. Confirm the API account has available credits or billing.
+2. Confirm the selected project has a usable spend limit.
+3. Confirm the organization has a usable spend limit.
+4. If credits and limits are available, retry once and read the new exact error code.
+
+9. CONTROLLED RETRY
+
+Run:
+
+npm run author-assistant:secure
+
+Then:
+
+1. Enter the key privately again.
+2. Choose Yes to resume the saved SQS session.
+3. Choose Yes to start read-only research.
+4. If research succeeds, review each official AWS source.
+5. If it fails, record only the displayed error code and never share the key.
+
+The script will not repeat the five SQS setup questions when the saved session is resumed.
+
+10. STEP 82 STATUS
+
+Secure key entry: Complete.
+Protected live request attempted: Complete.
+Live AWS Docs research result: Blocked by HTTP 429.
+Human source acceptance: Not started.
+Author draft changes: None.
+
+Step 82 remains incomplete until one live protected research result is accepted.

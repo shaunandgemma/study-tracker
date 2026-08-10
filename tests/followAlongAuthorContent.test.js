@@ -6,15 +6,18 @@ import { addAuthorPhase, addAuthorTask } from '../src/features/followAlongAuthor
 import {
   addAuthorCleanupStep,
   addAuthorInstructionStep,
+  addAuthorJsonBlock,
   addAuthorResource,
   addAuthorSource,
   addAuthorVerification,
   isOfficialAwsDocumentationUrl,
   removeAuthorInstructionStep,
+  removeAuthorJsonBlock,
   removeAuthorResource,
   removeAuthorSource,
   setAuthorSourceTaskLink,
   setAuthorTaskMode,
+  updateAuthorJsonBlock,
   updateAuthorSource,
   validateAuthorContent
 } from '../src/features/followAlongAuthor/authorContent.js';
@@ -95,6 +98,27 @@ test('Follow Along Author sources, instructions, verification and cleanup', asyn
     const result = validateAuthorContent(draft);
     assert.ok(result.errors.some(item => /credential-like text/i.test(item.message)));
     assert.ok(result.warnings.some(item => /chained CLI command/i.test(item.message)));
+  });
+
+  await t.test('4A. Author stores valid JSON and keeps imperfect edited examples reviewable without accepting secrets', () => {
+    let draft = addCompleteConsolePath(addLinkedSource(plannedDraft()));
+    const taskId = draft.tasks[0].id;
+    const stepId = draft.tasks[0].consoleSteps[0].id;
+    const policy = JSON.stringify({ Version: '2012-10-17', Statement: [{ Effect: 'Allow', Action: ['ec2:DescribeVpcs'], Resource: '*' }] }, null, 2);
+    const added = addAuthorJsonBlock(draft, taskId, stepId, { title: 'Read-only VPC policy', content: policy });
+    assert.equal(added.success, true);
+    draft = added.draft;
+    assert.equal(draft.tasks[0].consoleSteps[0].jsonBlocks[0].language, 'json');
+    assert.equal(addAuthorJsonBlock(draft, taskId, stepId, { title: 'Broken', content: '{broken' }).success, false);
+
+    const blockId = draft.tasks[0].consoleSteps[0].jsonBlocks[0].id;
+    draft = updateAuthorJsonBlock(draft, taskId, stepId, blockId, { content: '{broken' }).draft;
+    assert.equal(draft.tasks[0].consoleSteps[0].jsonBlocks[0].language, 'text');
+    assert.ok(validateAuthorContent(draft).warnings.some(item => /editable JSON-shaped guidance/i.test(item.message)));
+    draft = updateAuthorJsonBlock(draft, taskId, stepId, blockId, { content: policy }).draft;
+    assert.equal(draft.tasks[0].consoleSteps[0].jsonBlocks[0].language, 'json');
+    draft = removeAuthorJsonBlock(draft, taskId, stepId, blockId).draft;
+    assert.equal(draft.tasks[0].consoleSteps[0].jsonBlocks.length, 0);
   });
 
   await t.test('5. Every task requires a source, a usable path and verification', () => {

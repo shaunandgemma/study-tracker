@@ -1,0 +1,82 @@
+STEP 88B - CORRECTED STAGE 10 ACCEPTANCE IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Accept the corrected local SQS Stage 10 Learner Preview, record its SHA-256 fingerprint, preserve the Step 88A boundary correction, and stop before Stage 11.
+
+
+2. COMMAND
+
+npm run author-assistant:apply-88b
+
+This command does not use AI and does not require an OpenAI API key.
+
+
+3. REQUIRED ACCEPTANCE CHECKS
+
+- The corrected Stage 9 report remains accepted and its fingerprint matches.
+- The Step 88A correction audit matches the current Stage 9 and Stage 10 records.
+- Both corrected Console goals exclude receipt-handle wording.
+- Future CLI receipt-handle guidance remains preserved by Step 88A.
+- Learner-facing fields only are present in the preview content.
+- Private findings, AI data, future CLI content, command execution, and saved progress remain excluded.
+- The task, checkbox, verification, and cleanup counts match the learner content.
+- Console remains the only available learner mode.
+- Stage 11 remains locked.
+
+
+4. LIVE PREFLIGHT RESULT
+
+- Tasks: 6
+- Separate editable checkboxes: 24
+- Verification checks: 7
+- Cleanup items: 4
+- Receipt handles excluded from Console goals: yes
+- Future CLI receipt-handle guidance preserved: yes
+- SHA-256 fingerprint: 26e9f3bdbb01a4ac5111d5222a8d31675c92d6797bc8e1fb299e03099dd7fdf1
+
+The live preflight was answered with n, so Stage 10 remains awaiting human acceptance.
+
+
+5. LOCAL RECORDS AFTER Y
+
+- author-stage-10-learner-preview.json receives only its acceptance status, time, and fingerprint.
+- author-stage-10-acceptance-88b.json records the human-acceptance audit.
+- session.json records that local Stage 10 is accepted.
+
+The reviewed learner-preview content is not changed.
+
+
+6. TEST RESULTS
+
+- Automated tests: 674 passed, 0 failed.
+- Focused Step 88B tests: 7 passed.
+- Lint: passed with existing non-blocking warnings.
+- Production build: passed with the existing large-bundle warning.
+
+
+7. FILES ADDED OR UPDATED
+
+Added:
+
+- scripts/author-assistant/authorAssistantStage88B.mjs
+- scripts/author-assistant/applyStage88B.mjs
+- tests/authorAssistantStage88B.test.js
+- docs/author-assistant/120_STEP_88B_CORRECTED_STAGE_10_ACCEPTANCE_IMPLEMENTATION.txt
+
+Updated:
+
+- scripts/author-assistant/authorAssistantCore.mjs
+- package.json
+
+
+8. SAFETY BOUNDARY
+
+- Accepted Stages 1-9 remain unchanged.
+- Corrected Stage 10 remains unchanged until accepted.
+- Nothing is written to Author.
+- Nothing is written to AWS.
+- Nothing is written to Supabase.
+- No release candidate is prepared.
+- Nothing is published.
+- Stage 11 is not prepared or started.

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "kind": "approved_stage_6_instruction_boundary_alignment",
+  "alignmentId": "step-84a-sqs-console-boundary-v1",
+  "approvalStep": "84A",
+  "service": {
+    "officialName": "Amazon Simple Queue Service",
+    "shortName": "SQS"
+  },
+  "affectedTaskIds": [
+    "task-sqs-receive-and-inspect-the-test-message-004",
+    "task-sqs-delete-the-received-test-message-005",
+    "task-sqs-review-queue-deletion-effects-006"
+  ],
+  "taskBoundaries": {
+    "task-sqs-receive-and-inspect-the-test-message-004": {
+      "consoleGoal": "Use the AWS Console to poll for the harmless test message, select it and inspect its visible details. Do not require the learner to copy or retain a receipt handle.",
+      "futureCliGuidance": "A future CLI path must retain the ReceiptHandle returned by receive-message for the later delete-message command.",
+      "stage8CleanupGuidance": ""
+    },
+    "task-sqs-delete-the-received-test-message-005": {
+      "consoleGoal": "Use the AWS Console to select and delete the retrieved harmless test message. Do not require the learner to enter a receipt handle.",
+      "futureCliGuidance": "A future CLI path must use the most recently returned ReceiptHandle with delete-message.",
+      "stage8CleanupGuidance": ""
+    },
+    "task-sqs-review-queue-deletion-effects-006": {
+      "consoleGoal": "Provide lifecycle-awareness checkboxes only: explain that queue deletion is permanent and that the temporary queue will be removed during Stage 8. Do not instruct the learner to delete the queue in Stage 6.",
+      "futureCliGuidance": "A future CLI cleanup path may use delete-queue only in Stage 8.",
+      "stage8CleanupGuidance": "Actual queue deletion belongs to Stage 8 cleanup and remains manual-only."
+    }
+  },
+  "canonicalManualReviewFindings": [
+    "The accepted sources do not yet provide the exact AWS Management Console Region-selection steps for eu-west-2.",
+    "An exact least-privilege policy must not be inferred. The learner must use an account or role already authorized for the required SQS Console actions.",
+    "Standard queues use at-least-once delivery and can occasionally return messages out of order; use one harmless test message and do not claim exactly-once or ordered delivery.",
+    "A Console-retrieved message is not deleted automatically and must be selected and deleted after verification.",
+    "FIFO-only requirements remain outside this standard-queue Follow Along.",
+    "Receipt-handle capture is preserved only for a future CLI path and is not required by the Console instructions.",
+    "Stage 6 provides queue lifecycle awareness only; actual manual queue deletion belongs to Stage 8 cleanup."
+  ],
+  "pendingSourceCandidates": [
+    {
+      "documentTitle": "Choosing your Region - AWS Management Console",
+      "url": "https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html",
+      "supports": "Exact Console Region-selection guidance for eu-west-2.",
+      "status": "pending_human_approval"
+    },
+    {
+      "documentTitle": "Using policies with Amazon SQS",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-using-identity-based-policies.html",
+      "supports": "SQS Console permission requirements without inventing an exact learner policy.",
+      "status": "pending_human_approval"
+    }
+  ],
+  "boundaries": {
+    "writeToAuthor": false,
+    "connectToSupabase": false,
+    "connectToAws": false,
+    "beginStage7": false
+  }
+}

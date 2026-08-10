@@ -1,0 +1,76 @@
+SQS CLI SECTION GAP - CAUSE AND RECOMMENDATION
+===============================================
+
+1. WHAT THE USER FOUND
+
+The published SQS Follow Along displays a CLI section, but no CLI commands are present.
+
+2. CONFIRMED DATA STATE
+
+All six accepted SQS tasks contain:
+
+Console status: available
+Console instructions: present
+CLI status: not_applicable
+CLI steps: 0
+
+The CLI content was not lost during Author import, Shared Draft copy, candidate creation, approval or publishing.
+
+It was never generated during the SQS pilot.
+
+3. WHY CLI WAS NOT GENERATED
+
+The approved SQS work intentionally restricted the pilot to AWS Console instructions:
+
+1. Step 84 prepared only Stage 6 Console checkbox instructions.
+2. Step 84A preserved receipt-handle guidance only for a future command-line/API path.
+3. Step 85 kept Console and future CLI boundaries separate.
+4. Step 85A used only task-linked accepted Console AWS sources.
+5. Step 86 preserved future CLI cleanup guidance without creating CLI commands.
+6. Step 88A kept receipt-handle guidance outside the Console path.
+7. Stage 10 explicitly excluded future CLI guidance from the learner preview.
+
+The script therefore records this reason on every task:
+
+CLI instructions are outside approved Step 84.
+
+4. MISLEADING USER INTERFACE
+
+The Follow Along catalogue card currently displays Console & CLI as fixed text for every programme.
+
+The task runner also displays Console, CLI and Show Both buttons for every programme, even when CLI is marked not_applicable.
+
+The SQS programme metadata also retained console, cli and both as general supported modes while its accepted tasks were Console-only.
+
+This means the empty CLI section is intentional content-wise, but the learner-facing label and tab are misleading.
+
+5. CORRECT FIX
+
+Do not invent CLI commands and do not copy Console wording into the CLI tab.
+
+The recommended fix is:
+
+1. Add a separate Author Assistant CLI preparation stage.
+2. Research only task-linked official AWS CLI Command Reference sources.
+3. Generate short editable CLI commands and expected results.
+4. Keep receipt-handle and resource-value requirements separate from Console instructions.
+5. Never execute the generated AWS commands.
+6. Require human review and fingerprint acceptance before import.
+7. Make the catalogue label and runner tabs derive from actual task mode availability.
+8. Hide or clearly mark CLI unavailable when a programme has no accepted CLI path.
+9. Apply the same generic rules to every future AWS service.
+
+6. SQS SAFETY
+
+The currently published SQS revision 2 must not be silently changed.
+
+Adding CLI content requires a new SQS draft revision, a new immutable candidate, separate approval and controlled publication.
+
+The existing published Console instructions must remain available until that later revision is fully approved.
+
+7. RECOMMENDED NEXT DEVELOPMENT STEP
+
+Build the reusable service-independent workflow and the separate local CLI-content stage together.
+
+First test the new CLI stage locally without changing Author, Supabase, AWS or the published SQS revision.
+

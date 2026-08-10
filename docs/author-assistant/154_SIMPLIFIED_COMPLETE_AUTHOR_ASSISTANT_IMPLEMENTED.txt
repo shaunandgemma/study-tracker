@@ -1,0 +1,71 @@
+154 - SIMPLIFIED COMPLETE AUTHOR ASSISTANT IMPLEMENTED
+Date: 10 August 2026
+
+1. OUTCOME
+
+The Author Assistant now has one primary guided command instead of a chain of numbered preparation commands.
+
+Run:
+npm run author-assistant:secure
+
+2. WHAT ONE RUN DOES
+
+1. Asks for the AWS service, short name, learner level, outcome and Region.
+2. Searches only official docs.aws.amazon.com pages.
+3. Creates the phases and tasks in the established Follow Along layout.
+4. Creates short, separately editable Console checkboxes.
+5. Creates separate AWS CLI commands with explanations and expected results.
+6. Creates verification checks, manual cleanup and AWS source links.
+7. Runs the existing Author planning, content and review checks.
+8. Displays and saves one complete preview.
+9. Asks once whether the complete preview should be accepted for controlled Author import.
+
+3. SAVED FILES
+
+Each run creates its own folder under:
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\
+
+The files needed by the Author import panel are:
+author-local-handoff-package.json
+author-local-handoff-acceptance-90a.json
+
+The easy-to-read copy is:
+complete-follow-along-preview.txt
+
+4. SAFETY BOUNDARY
+
+The command does not connect to AWS, Supabase or the Author page.
+It does not execute AWS CLI commands.
+It does not create a candidate, approve content or publish content.
+Importing and publishing remain separate deliberate actions in the app.
+
+5. OLD WORKFLOW
+
+The earlier multi-command pilot remains available only as:
+npm run author-assistant:legacy:secure
+
+It is no longer the normal command.
+
+6. CONSOLE AND CLI DISPLAY CORRECTION
+
+Programme cards and task mode buttons now reflect the content that actually exists.
+A Console-only publication no longer claims that CLI instructions exist.
+A newly generated complete programme displays Console, CLI and Show Both because both paths are populated.
+
+7. VERIFICATION
+
+Focused simplified-workflow tests: passed.
+Full project test suite: 748 tests passed, 0 failed.
+Production build: passed.
+Linter: passed with existing warnings only and no errors.
+
+8. PUBLISHED SQS SAFETY
+
+Published SQS revision 2 was not edited, replaced or republished.
+No database migration was created or deployed.
+
+9. FIRST SNS RETRY CORRECTION
+
+The first SNS run cited an official protected AWS page inside a learner step but omitted that same page from the summary source list.
+The assistant now adds such a cited protected page to the summary automatically.
+It still rejects pages that were not returned by the protected AWS Docs search.

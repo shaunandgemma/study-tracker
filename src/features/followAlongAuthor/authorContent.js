@@ -92,6 +92,7 @@ export function addAuthorInstructionStep(draft, taskId, mode, input = {}) {
           instructions: clean(input.instruction)
             ? [{ id: `${id}-instruction-1`, text: clean(input.instruction), detail: clean(input.detail) }]
             : [],
+          jsonBlocks: [],
           commands: [],
           expectedResult: clean(input.expectedResult),
           warning: clean(input.warning)
@@ -186,6 +187,51 @@ export function removeAuthorInstructionItem(draft, taskId, stepId, instructionId
   return updateConsoleInstructionItems(draft, taskId, stepId, items => items.filter(item => item.id !== instructionId));
 }
 
+function parseJsonContainer(value) {
+  try {
+    const parsed = JSON.parse(clean(value));
+    return parsed && typeof parsed === 'object' ? { success: true, value: parsed } : { success: false };
+  } catch {
+    return { success: false };
+  }
+}
+
+function updateConsoleJsonBlocks(draft, taskId, stepId, updater) {
+  return updateTask(draft, taskId, task => ({
+    ...task,
+    consoleSteps: (task.consoleSteps || []).map(step => step.id === stepId
+      ? { ...step, jsonBlocks: updater(step.jsonBlocks || []) }
+      : step)
+  }));
+}
+
+export function addAuthorJsonBlock(draft, taskId, stepId, input = {}) {
+  const title = clean(input.title);
+  const content = clean(input.content);
+  if (!title) return { success: false, error: 'Enter a title for the JSON block.' };
+  if (!parseJsonContainer(content).success) return { success: false, error: 'Enter valid JSON containing an object or array.' };
+  let added;
+  const result = updateConsoleJsonBlocks(draft, taskId, stepId, blocks => {
+    const id = uniqueId(`${stepId}-json-${blocks.length + 1}-${slugify(title)}`, new Set(blocks.map(block => block.id)));
+    added = { id, title, content, language: 'json', sourceIds: [...new Set(input.sourceIds || [])] };
+    return [...blocks, added];
+  });
+  return result.success ? { ...result, jsonBlock: added } : result;
+}
+
+export function updateAuthorJsonBlock(draft, taskId, stepId, blockId, changes = {}) {
+  return updateConsoleJsonBlocks(draft, taskId, stepId, blocks => blocks.map(block => block.id === blockId
+    ? (() => {
+      const content = changes.content === undefined ? block.content : changes.content;
+      return { ...block, ...changes, id: block.id, language: parseJsonContainer(content).success ? 'json' : 'text', title: changes.title === undefined ? block.title : clean(changes.title), content };
+    })()
+    : block));
+}
+
+export function removeAuthorJsonBlock(draft, taskId, stepId, blockId) {
+  return updateConsoleJsonBlocks(draft, taskId, stepId, blocks => blocks.filter(block => block.id !== blockId));
+}
+
 export function removeAuthorInstructionStep(draft, taskId, mode, stepId) {
   const field = mode === 'console' ? 'consoleSteps' : mode === 'cli' ? 'cliSteps' : '';
   if (!field) return { success: false, error: 'Choose Console or CLI instructions.' };
@@ -265,7 +311,16 @@ export function removeAuthorCleanupStep(draft, taskId, stepId) {
 }
 
 function containsCredential(command) {
-  return /AKIA[0-9A-Z]{12,}|aws_secret_access_key\s*=|-----BEGIN [A-Z ]*PRIVATE KEY-----/i.test(command);
+  return /AKIA[0-9A-Z]{12,}|aws_secret_access_key\s*=|aws_session_token\s*=|-----BEGIN [A-Z ]*PRIVATE KEY-----/i.test(command);
+}
+
+export function isDeferredAuthorContent(value) {
+  const text = clean(value);
+  if (!text) return false;
+  return /\b(?:catalogue\s+(?:scope|only)|placeholder\s+(?:content|instruction|step)|coming\s+soon|tbd|todo)\b/i.test(text)
+    || /\bdefer(?:red|ring)?\b.{0,100}\b(?:console|cli|instruction|step|command|content)\b/i.test(text)
+    || /\b(?:console|cli|instruction|step|command|content)s?\b.{0,80}\b(?:will|shall)\s+be\s+(?:added|written|provided|completed)\s+later\b/i.test(text)
+    || /\bto\s+be\s+(?:added|written|provided|completed)\s+later\b/i.test(text);
 }
 
 export function validateAuthorContent(draft) {
@@ -311,12 +366,22 @@ export function validateAuthorContent(draft) {
         if (mode === 'console') {
           const instructions = Array.isArray(step.instructions) ? step.instructions : [];
           if (!clean(step.title) || !clean(step.expectedResult) || !instructions.length) errors.push({ section: 'instructions', id: task.id, message: `Complete the title, expected result and at least one checkbox instruction in ${task.title || 'the task'} Console step ${index + 1}.` });
+          if ([step.title, step.expectedResult, ...instructions.map(item => item.text)].some(isDeferredAuthorContent)) errors.push({ section: 'instructions', id: task.id, message: `${task.title || 'A task'} Console step ${index + 1} contains placeholder or deferred content.` });
           if (new Set(instructions.map(item => item.id)).size !== instructions.length || instructions.some(item => !clean(item.id))) errors.push({ section: 'instructions', id: task.id, message: `${task.title || 'A task'} Console step ${index + 1} needs unique stable checkbox IDs.` });
           instructions.forEach((item, itemIndex) => {
             if (!clean(item.text)) errors.push({ section: 'instructions', id: task.id, message: `Checkbox instruction ${itemIndex + 1} in ${task.title || 'the task'} Console step ${index + 1} needs exact learner text.` });
           });
+          const jsonBlocks = Array.isArray(step.jsonBlocks) ? step.jsonBlocks : [];
+          if (new Set(jsonBlocks.map(block => block.id)).size !== jsonBlocks.length || jsonBlocks.some(block => !clean(block.id))) errors.push({ section: 'instructions', id: task.id, message: `${task.title || 'A task'} Console step ${index + 1} needs unique stable JSON block IDs.` });
+          jsonBlocks.forEach((block, blockIndex) => {
+            if (!clean(block.title) || !clean(block.content)) errors.push({ section: 'instructions', id: task.id, message: `JSON block ${blockIndex + 1} in ${task.title || 'the task'} Console step ${index + 1} needs a title and JSON content.` });
+            else if (block.language !== 'text' && !parseJsonContainer(block.content).success) errors.push({ section: 'instructions', id: task.id, message: `JSON block ${blockIndex + 1} in ${task.title || 'the task'} Console step ${index + 1} is not valid JSON.` });
+            else if (block.language === 'text') warnings.push({ section: 'instructions', id: task.id, message: `${block.title || `Reference block ${blockIndex + 1}`} in ${task.title || 'the task'} is editable JSON-shaped guidance rather than strict JSON; review it before learner use.` });
+            if (containsCredential(block.content)) errors.push({ section: 'safety', id: task.id, message: `${task.title || 'A task'} contains credential-like text in a JSON block.` });
+          });
         }
         if (mode === 'cli' && (!clean(step.command) || !clean(step.explanation) || !clean(step.expectedResult))) errors.push({ section: 'instructions', id: task.id, message: `Complete every field in ${task.title || 'the task'} CLI step ${index + 1}.` });
+        if (mode === 'cli' && [step.command, step.explanation, step.expectedResult].some(isDeferredAuthorContent)) errors.push({ section: 'instructions', id: task.id, message: `${task.title || 'A task'} CLI step ${index + 1} contains placeholder or deferred content.` });
         if (mode === 'cli' && containsCredential(step.command)) errors.push({ section: 'safety', id: task.id, message: `${task.title || 'A task'} contains credential-like text in a CLI command.` });
         if (mode === 'cli' && /\s(&&|;|\|)\s/.test(step.command)) warnings.push({ section: 'safety', id: task.id, message: `${task.title || 'A task'} has a chained CLI command; split it into easier steps.` });
       });

@@ -11,9 +11,6 @@ test('Step 59 Hands On progress archive policy', async (t) => {
   const migrationSource = read('supabase/migrations/20260801_hands_on_tasks.sql');
   const followAlongSources = [
     read('src/services/vpcLearningPathService.js'),
-    read('src/services/ec2LearningPathService.js'),
-    read('src/services/s3LearningPathService.js'),
-    read('src/services/iamLearningPathService.js'),
     read('src/features/followAlongs/published/publishedFollowAlongService.js')
   ].join('\n');
 

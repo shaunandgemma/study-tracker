@@ -1,0 +1,73 @@
+STEP 169 - IAM POLICY JSON BOXES
+
+1. PURPOSE
+
+Allow the Author Assistant to create properly sourced IAM policy JSON when a Follow Along genuinely needs it.
+
+2. AI RULE CHANGE
+
+The old combined rule that prevented IAM policy generation has been removed.
+
+The Author Assistant may now create IAM policy JSON when:
+
+1. the learner task requires it;
+2. the policy is supported by official AWS documentation;
+3. the actions and resources are explained; and
+4. least privilege is used where practical.
+
+3. CREDENTIAL SAFETY
+
+Real credentials are still prohibited.
+
+The generator and Author validation continue to reject:
+
+1. AWS access key values;
+2. AWS secret access key values;
+3. AWS session-token values; and
+4. private keys.
+
+The AI must use clear placeholders for learner-specific values.
+
+4. AUTHOR JSON BOX
+
+Every Console instruction step can now contain separately editable JSON boxes.
+
+The Author can:
+
+1. enter a JSON-box title;
+2. paste or edit JSON in a large monospaced field;
+3. see whether the JSON is valid;
+4. remove an unwanted JSON box; and
+5. correct invalid JSON before approval.
+
+Invalid JSON blocks the Author content check.
+
+5. LEARNER DISPLAY
+
+Published learners see the JSON in a separate code-style panel with a Copy JSON button.
+
+6. EXISTING FOLLOW ALONGS
+
+The change is backward-compatible.
+
+Existing drafts and published Follow Alongs without JSON boxes continue to work unchanged.
+
+7. DATABASE IMPACT
+
+No Supabase migration is required.
+
+The JSON boxes are stored inside the existing draft and published runtime-content JSON.
+
+8. VERIFICATION
+
+1. Focused tests passed: 39.
+2. Full application tests passed: 692.
+3. Production build passed.
+4. Lint completed with zero errors and only existing warnings.
+
+9. BOUNDARIES
+
+1. No Author draft was changed automatically.
+2. Nothing was written to Supabase or AWS.
+3. No release candidate was created.
+4. Nothing was approved or published.

@@ -50,6 +50,12 @@ export const FollowAlongCard = ({
     .replace(/\s+/g, '-');
   const isNotStarted = !progressSummary || normalizedProgressStatus === 'not-started';
   const buttonText = isNotStarted ? 'Start Follow Along' : 'Resume Follow Along';
+  const supportedModes = programme.supportedModes || [];
+  const modeLabel = supportedModes.includes('console') && supportedModes.includes('cli')
+    ? 'Console & CLI'
+    : supportedModes.includes('cli')
+      ? 'CLI'
+      : 'Console';
 
   return (
     <div
@@ -115,7 +121,7 @@ export const FollowAlongCard = ({
           )}
           <span className="px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 flex items-center gap-1">
             <Terminal className="w-3 h-3 text-cyan-400" />
-            Console & CLI
+            {modeLabel}
           </span>
         </div>
 

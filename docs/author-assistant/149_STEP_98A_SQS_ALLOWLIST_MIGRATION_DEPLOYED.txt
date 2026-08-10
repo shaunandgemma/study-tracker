@@ -1,0 +1,49 @@
+STEP 98A - SQS ALLOW-LIST MIGRATION DEPLOYED
+=============================================
+
+1. DEPLOYMENT COMMAND
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked"
+
+2. REMOTE CONFIRMATION
+
+The Supabase CLI connected to the linked remote database.
+
+The confirmation listed exactly one migration:
+
+20260820_enable_sqs_controlled_publishing.sql
+
+The operator selected Yes.
+
+3. DEPLOYMENT RESULT
+
+The CLI reported:
+
+Applying migration 20260820_enable_sqs_controlled_publishing.sql...
+Finished supabase db push.
+
+4. EXACT DATABASE CHANGE
+
+The protected controlled-publishing allow-list now contains the approved SQS configuration:
+
+Programme ID: sqs-learning-path
+Service slug: sqs
+Publish token: SQS
+Service name: Amazon Simple Queue Service
+Enabled: true
+
+5. SAFETY BOUNDARY
+
+No other migration was applied.
+The migration did not approve or publish anything.
+The migration did not edit a candidate or Shared Draft.
+The migration did not change Lambda or DynamoDB configuration.
+
+6. CURRENT STATUS
+
+Migration prepared: yes
+Migration tested: yes
+Dry run verified: yes
+Migration deployed: yes
+SQS publication retry: not yet performed
+

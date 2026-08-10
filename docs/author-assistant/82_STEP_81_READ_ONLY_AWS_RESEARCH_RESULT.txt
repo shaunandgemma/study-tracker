@@ -1,0 +1,157 @@
+82. AUTHOR ASSISTANT - STEP 81 READ-ONLY AWS RESEARCH RESULT
+
+Date: 9 August 2026
+
+1. RESULT
+
+Step 81 is implemented.
+
+The Author Assistant can now perform protected, read-only AWS documentation research after Step 80 creates or resumes a session.
+
+2. HOW TO RUN IT
+
+Open a terminal in:
+
+E:\code\study-tracker
+
+Run:
+
+npm run author-assistant
+
+The same command now runs Steps 80 and 81.
+
+3. STEP 81 FLOW
+
+1. Create or resume an Author Assistant session.
+2. Choose whether to start read-only research.
+3. Stop safely if the AI key is unavailable.
+4. Search only official AWS documentation when the key is available.
+5. Save the proposed research to the same session.
+6. Display each proposed source separately.
+7. Ask whether to keep each source.
+8. Save accepted and rejected source decisions separately.
+9. Make no Author draft changes.
+
+4. OFFICIAL AWS DOMAIN CONTROL
+
+The API request allows exactly:
+
+docs.aws.amazon.com
+
+A proposed URL is rejected unless:
+
+1. It uses HTTPS.
+2. It is under docs.aws.amazon.com.
+3. It was returned by the protected API web search.
+4. It is not a duplicate.
+
+5. REQUIRED SOURCE COVERAGE
+
+The research must include:
+
+1. An AWS service guide for Console instructions.
+2. The AWS CLI Command Reference for commands and parameters.
+3. The AWS Service Authorization Reference for IAM permissions.
+
+Missing coverage stops the result from being accepted as complete.
+
+6. AI KEY SAFETY
+
+The script reads OPENAI_API_KEY only from the local process environment.
+
+The key is:
+
+1. Not placed in the browser app.
+2. Not placed in a VITE variable.
+3. Not written into the request body.
+4. Not written into session files.
+5. Used only in the private Authorization header.
+
+The API request also sets storage to false.
+
+7. SAVED FILES
+
+Before research:
+
+session.json
+research-request.json
+
+After protected research:
+
+research-result.json
+
+After human source decisions:
+
+accepted-sources.json
+
+All files remain inside the same Author Assistant session folder.
+
+8. RESUME SAFETY
+
+If research completed but source review was interrupted, the next run resumes the saved source review.
+
+It does not repeat the AI request.
+It does not create a duplicate session.
+
+If accepted sources already exist, the script reports that they are complete and does not repeat research.
+
+9. FILES CHANGED
+
+scripts\author-assistant\authorAssistant.mjs
+scripts\author-assistant\authorAssistantCore.mjs
+
+10. FILES ADDED
+
+scripts\author-assistant\authorAssistantResearch.mjs
+tests\authorAssistantResearchStep81.test.js
+docs\author-assistant\82_STEP_81_READ_ONLY_AWS_RESEARCH_RESULT.txt
+
+11. VERIFICATION
+
+Focused Steps 80 and 81 checks: 15 passed, 0 failed.
+Complete application test suite: 532 passed, 0 failed.
+Linter: 0 errors. Existing unrelated warnings remain.
+Production build: passed.
+Missing-key interactive safety test: passed.
+Temporary safety-test data: removed.
+Git whitespace check: passed. Line-ending notices are informational.
+
+12. LIVE-RESEARCH STATUS
+
+OPENAI_API_KEY was not available during verification.
+
+No live AI request was made.
+No API cost was incurred by these tests.
+
+The request format and response handling were tested with a simulated Responses API result containing official AWS documentation sources.
+
+13. SAFETY BOUNDARY PRESERVED
+
+Step 81 did not:
+
+1. Connect to AWS.
+2. Use AWS credentials.
+3. Run AWS commands.
+4. Create or delete AWS resources.
+5. Connect to Supabase.
+6. Change an Author draft.
+7. Prepare a candidate ID.
+8. Approve or publish anything.
+9. Change learner progress.
+
+14. OFFICIAL OPENAI DOCUMENTATION BASIS
+
+Responses API web-search domain filtering:
+
+https://developers.openai.com/api/docs/guides/tools-web-search
+
+Structured JSON outputs:
+
+https://developers.openai.com/api/docs/guides/structured-outputs
+
+15. NEXT CONTROLLED STEP
+
+Step 82 should configure the AI key outside the browser and conduct one small live AWS Docs research pilot.
+
+The pilot should stop after source acceptance.
+It must not begin creating Author stages or saving an Author draft.

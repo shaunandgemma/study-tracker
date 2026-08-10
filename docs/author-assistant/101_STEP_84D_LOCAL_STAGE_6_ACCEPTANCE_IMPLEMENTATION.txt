@@ -1,0 +1,125 @@
+STEP 84D - LOCAL STAGE 6 ACCEPTANCE IMPLEMENTATION
+==================================================
+
+1. APPROVED SCOPE
+
+Step 84D was approved to:
+
+1. Accept the complete local SQS Stage 6 instruction set.
+2. Record a human-acceptance audit with an instruction fingerprint.
+3. Preserve all six tasks and 24 checkboxes exactly.
+4. Preserve every supporting record exactly.
+5. Keep everything local.
+6. Avoid any Author write.
+7. Stop before Stage 7.
+
+2. LOCAL COMMAND
+
+The following dedicated command was added:
+
+npm run author-assistant:apply-84d
+
+It does not use AI, the OpenAI API or an API key.
+
+3. PRE-ACCEPTANCE CHECKS
+
+Acceptance stops unless all of the following are true:
+
+1. The matching SQS session is at stage_6_ready_for_review.
+2. The Stages 1-5 blueprint has its human acceptance.
+3. The Step 84B source amendment audit exists.
+4. The Step 84C consistency-correction audit exists.
+5. All six Stage 6 tasks have status prepared.
+6. Exactly 24 separate checkboxes are present.
+7. sqs-beginner-test is present.
+8. beginner-test-queue is absent.
+9. The Region-source finding is marked resolved.
+10. The least-privilege IAM warning remains active.
+11. Author and Stage 7 safety boundaries remain closed.
+
+4. INSTRUCTION FINGERPRINT
+
+The accepted instruction content receives a deterministic SHA-256 fingerprint.
+
+Fingerprint format:
+
+sha256-json-v1
+
+The fingerprint covers:
+
+1. All six task records and their checkbox instructions.
+2. The protected AWS source URLs used by Stage 6.
+3. The active Stage 6 review findings.
+4. The approved instruction-boundary alignment history.
+
+Changing any covered content causes fingerprint verification to fail.
+
+5. SUPPORTING RECORD FINGERPRINTS
+
+The acceptance audit also records SHA-256 fingerprints for:
+
+1. accepted-sources.json
+2. author-stages-1-5-blueprint.json
+3. author-stages-1-5-acceptance.json
+4. author-stage-6-source-amendment-84b.json
+5. author-stage-6-consistency-correction-84c.json
+
+These supporting files are read and fingerprinted but are not rewritten.
+
+6. ACCEPTANCE WRITES
+
+The local command writes only:
+
+1. author-stage-6-instructions.json
+   Status changes to human_accepted and receives the acceptance fingerprint.
+
+2. author-stage-6-acceptance-84d.json
+   Records the explicit human decision, counts, fingerprints and safety state.
+
+3. session.json
+   Status changes to stage_6_accepted while Stage 7 remains false.
+
+No task, checkbox or supporting content is changed.
+
+7. SAFETY BOUNDARY
+
+After acceptance:
+
+Stage 6 prepared: true
+Stage 6 accepted: true
+Stage 7 prepared: false
+Author draft written: false
+AWS connected: false
+Supabase connected: false
+Candidate prepared: false
+Published: false
+
+8. FILES ADDED OR UPDATED
+
+scripts/author-assistant/authorAssistantStage84D.mjs
+scripts/author-assistant/applyStage84D.mjs
+scripts/author-assistant/authorAssistantCore.mjs
+tests/authorAssistantStage84D.test.js
+package.json
+
+9. VERIFICATION
+
+Focused Steps 84C and 84D tests:
+13 passed, 0 failed.
+
+Full application tests:
+602 passed, 0 failed.
+
+Lint:
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+Passed. Existing Node-version and large-bundle warnings remain.
+
+10. CURRENT STATUS
+
+Step 84D implementation: ready
+Live Stage 6 acceptance: waiting for the user's local command
+Author write: not performed
+Stage 7: not started
+

@@ -1,0 +1,102 @@
+STEP 91 - READ-ONLY AUTHOR HANDOFF IMPORT PREVIEW
+
+1. PURPOSE
+
+Step 91 adds a safe preview panel to the protected Author home page.
+It lets the signed-in Author select the accepted local handoff package and its Step 90A acceptance audit.
+
+2. WHERE TO FIND IT
+
+Open the Author page:
+http://127.0.0.1:5173/#author
+
+Sign in with the account that has the server-managed Author role.
+The panel is named "Read-Only Handoff Import Preview".
+
+3. FILES TO SELECT
+
+Step 90 handoff package:
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-package.json
+
+Step 90A acceptance audit:
+C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c\author-local-handoff-acceptance-90a.json
+
+4. HOW TO USE IT
+
+1. Select the Step 90 handoff package.
+2. Select the Step 90A acceptance audit.
+3. Choose "Validate Read-Only Preview".
+4. Review the programme, counts, fingerprints and intended signed-in Author.
+
+5. VALIDATION PERFORMED IN THE BROWSER
+
+The preview independently recalculates and checks:
+
+1. The complete handoff-package SHA-256 fingerprint.
+2. The accepted content fingerprint.
+3. The accepted-manifest fingerprint.
+4. The Step 90A acceptance-audit fingerprint.
+5. Every accepted manifest entry.
+6. The programme counts from the actual package content.
+7. The signed-in Author identity required for the intended-owner display.
+8. Every read-only and no-write safety boundary.
+
+Expected SQS handoff fingerprint:
+8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+6. EXPECTED PROGRAMME COUNTS
+
+Phases: 5
+Tasks: 6
+Separate editable checkboxes: 24
+Verification checks: 7
+Cleanup items: 4
+Learner resource values: 0
+Official AWS sources: 11
+
+7. SAFETY BOUNDARIES
+
+This preview cannot:
+
+1. Bind the signed-in identity.
+2. Save or change an Author draft.
+3. Write to Supabase.
+4. Connect to or change AWS.
+5. Create a release candidate.
+6. Approve or publish anything.
+7. Begin Author Stage 12.
+
+The selected files remain browser-local and are used only for validation and display.
+
+8. FILES ADDED OR UPDATED
+
+1. src/features/followAlongAuthor/authorHandoffPreview.js
+2. src/features/followAlongAuthor/AuthorHandoffImportPreview.jsx
+3. src/features/followAlongAuthor/AuthorHome.jsx
+4. tests/followAlongAuthorHandoffPreview.test.js
+
+9. TEST RESULTS
+
+Focused Step 91 tests: 8 passed, 0 failed.
+Full project tests: 711 passed, 0 failed.
+Production build: passed.
+Lint: passed with no errors; existing unrelated warnings remain.
+Change-format check: passed; existing Windows line-ending notices remain.
+
+10. LIVE PROTECTED-PAGE CHECK
+
+The Author page opened successfully on port 5173.
+The saved Approver account was correctly refused access to the Author page because it does not have the Author role.
+This confirms the existing server-managed role boundary remains active.
+
+The Author-role account then signed in successfully as shaun19862010@hotmail.co.uk.
+The accepted Step 90 package and Step 90A audit were selected in the browser.
+The browser independently verified every fingerprint and displayed the expected programme counts.
+The Author was displayed only as the intended future draft owner and remained unbound.
+The page displayed Stage 12 as not started, reported no browser errors and still showed zero Local Drafts.
+No identity was bound and no draft, Supabase, AWS, candidate, approval or publication write occurred.
+
+11. CURRENT STATUS
+
+Step 91 implementation, automated testing and the live Author-role browser check are complete.
+Stage 12 has not started.

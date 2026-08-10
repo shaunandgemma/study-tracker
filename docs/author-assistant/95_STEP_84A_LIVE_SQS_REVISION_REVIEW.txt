@@ -1,0 +1,121 @@
+STEP 84A - LIVE SQS REVISION REVIEW
+===================================
+
+1. REVIEW PURPOSE
+
+This document records the detailed review of the live Step 84A SQS revision.
+The saved JSON instructions and session boundary were inspected after the
+successful secure run.
+
+This review did not change the saved session, Author, Supabase or AWS.
+Stage 7 was not started.
+
+2. LIVE RESULT
+
+The controlled revision completed successfully.
+
+Total tasks: 6
+Prepared tasks: 5
+Tasks needing manual review: 1
+Separate editable checkboxes: 21
+Accepted AWS sources used by prepared instructions: 4
+
+3. PRESERVED TASKS
+
+The following previously prepared tasks were preserved:
+
+1. Create a standard queue - 5 checkboxes.
+2. Send one harmless test message - 5 checkboxes.
+
+Their existing instruction blocks were not regenerated.
+
+4. CORRECTED TASKS
+
+1. Receive and inspect the test message - 6 checkboxes.
+
+The learner opens SQS, chooses the queue, opens Send and receive messages,
+polls, and selects the harmless test message. No receipt-handle action appears
+in the Console instructions.
+
+2. Delete the received test message - 3 checkboxes.
+
+The learner selects the retrieved message and confirms its deletion through
+the Console. No receipt handle is requested.
+
+3. Review queue deletion effects - 2 checkboxes.
+
+The learner acknowledges the permanent effect and that actual queue deletion
+is deferred to Stage 8. The warning explicitly says not to delete the queue in
+Stage 6.
+
+5. FUTURE CLI GUIDANCE
+
+Receipt-handle requirements remain saved only as future CLI guidance:
+
+1. receive-message returns the ReceiptHandle.
+2. delete-message must use the most recently returned ReceiptHandle.
+3. delete-queue remains a future Stage 8 cleanup action.
+
+No CLI commands were generated.
+
+6. CONSOLIDATED REVIEW FINDINGS
+
+The previous repeated review notes were consolidated into seven distinct
+findings. Their safety and technical meaning was retained.
+
+7. REMAINING INCOMPLETE TASK
+
+Confirm safe scope and required access still needs manual review.
+
+Reason:
+
+The currently accepted source set does not contain exact Console Region
+selection guidance or enough SQS Console permission context to turn this task
+into simple sourced checkboxes without inventing an IAM policy.
+
+8. PENDING OFFICIAL AWS SOURCES
+
+The following two sources remain pending and unused:
+
+1. Choosing your Region - AWS Management Console
+   https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html
+
+2. Using policies with Amazon SQS
+   https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-using-identity-based-policies.html
+
+These sources were not added to accepted-sources.json and were not used by the
+Step 84A AI request.
+
+9. SAFETY BOUNDARY CONFIRMED
+
+1. Session status remains stage_6_ready_for_review.
+2. Author Stages 1-6 are local only.
+3. Stage 7 remains unprepared.
+4. No Author draft was written.
+5. No AWS account was connected or changed.
+6. No Supabase connection or write occurred.
+7. No candidate was prepared.
+8. Nothing was approved or published.
+
+10. REVIEW DECISION
+
+The Step 84A correction is successful and its three corrected tasks are
+suitable for the beginner Console path.
+
+Full Stage 6 acceptance is not recommended yet because task 1 remains without
+checkbox instructions.
+
+11. RECOMMENDED NEXT CONTROLLED STEP
+
+Step 84B should:
+
+1. Accept only the two displayed official AWS source candidates.
+2. Link them only to the safe-scope/access task.
+3. Preserve the existing five prepared tasks exactly.
+4. Regenerate only task 1 as short, separately editable checkboxes.
+5. Explain required access without creating or recommending an exact IAM
+   policy.
+6. Keep every write local.
+7. Test and document the change.
+8. Stop before Stage 7.
+

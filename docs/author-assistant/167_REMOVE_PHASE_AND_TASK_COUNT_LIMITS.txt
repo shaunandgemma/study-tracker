@@ -1,0 +1,59 @@
+167. REMOVE PHASE AND TASK COUNT LIMITS
+
+1. REQUEST
+
+Remove the fixed maximum number of phases and tasks from generated Follow Alongs.
+
+
+2. CHANGE COMPLETED
+
+The main Author Assistant no longer limits a generated Follow Along to:
+
+1. Seven phases.
+2. Twelve tasks.
+
+The legacy blueprint path also no longer limits a generated Follow Along to:
+
+1. Six phases.
+2. Twelve tasks.
+
+
+3. NEW GENERATION RULE
+
+The AI is explicitly told:
+
+1. There is no fixed maximum number of phases or tasks.
+2. Use as many phases and tasks as the requested learner scope genuinely requires.
+3. Do not compress separate requested labs merely to satisfy an arbitrary count.
+
+
+4. MINIMUM STRUCTURE PRESERVED
+
+A generated complete Follow Along must still contain:
+
+1. At least one phase.
+2. At least three tasks.
+
+These minimums prevent an empty or unusably small generated package. They do not impose a maximum.
+
+
+5. PRACTICAL TECHNICAL BOUNDARIES
+
+There is now no application-defined maximum phase or task count.
+
+A very large request is still naturally constrained by the AI model response size and the browser's protected upload-size check. Those safeguards cannot guarantee that an unlimited amount of content will fit into one AI response.
+
+
+6. VERIFICATION RESULTS
+
+1. Full automated test suite: 689 passed, 0 failed.
+2. Production build: passed.
+3. Linter: passed with no errors. Existing unrelated warnings remain.
+4. A test confirms that neither the phase schema nor task schema contains a maximum count.
+
+
+7. SAFETY BOUNDARY
+
+Nothing was written to Author, Supabase, or AWS.
+
+No draft, candidate, approval, or publication was created.

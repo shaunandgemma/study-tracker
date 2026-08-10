@@ -1,0 +1,151 @@
+STEP 92 - CONTROLLED AUTHOR IMPORT IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Step 92 converts an exact browser-verified Author Assistant handoff into one private Author draft.
+
+It must show an exact comparison first, bind only the signed-in Author, prevent duplicates and stop before Stage 12.
+
+2. IMPORTED CONTENT
+
+The accepted Author Stages 1-11 content is copied unchanged:
+
+1. Programme details.
+2. Phases.
+3. Tasks and prerequisites.
+4. AWS documentation sources.
+5. Separate checkbox instructions.
+6. Resource-value definitions.
+7. Verification checks.
+8. Manual cleanup.
+9. Authoring checks.
+10. Learner preview state.
+11. Structured review and retained findings.
+
+Only the new private draft envelope is added.
+
+3. PRIVATE DRAFT ENVELOPE
+
+The envelope contains:
+
+1. Deterministic draft ID.
+2. Revision 1.
+3. Draft status.
+4. Signed-in Author ID.
+5. Created and updated timestamps.
+6. Source session ID.
+7. Handoff fingerprint.
+8. Step 90A audit fingerprint.
+9. Accepted-content fingerprint.
+10. Step 92 import audit label.
+
+4. DETERMINISTIC DUPLICATE IDENTITY
+
+The SQS draft ID is:
+
+author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec
+
+The complete accepted handoff fingerprint is part of the draft ID.
+The same accepted package therefore always points to the same draft identity.
+
+Duplicate checks also compare the source session ID and full handoff fingerprint.
+
+5. EXACT PRE-IMPORT COMPARISON
+
+Before enabling the create button, Author displays:
+
+1. Draft count before import.
+2. Draft count after import.
+3. Programme name.
+4. Private Local Drafts storage.
+5. Signed-in Author to bind.
+6. Revision 1 and unpublished status.
+7. Deterministic draft ID.
+8. Phase, task, checkbox, check, cleanup and source counts.
+9. Accepted-content unchanged status.
+10. Stage 12 not started status.
+11. Prepared private-draft SHA-256 fingerprint.
+
+6. REQUIRED HUMAN ACTION
+
+The create button remains disabled until the Author checks this confirmation:
+
+I confirm this exact comparison and want to create exactly one private Local Draft owned by the displayed Author.
+
+7. SAFETY GATES BEFORE STORAGE
+
+Immediately before storage, the app repeats:
+
+1. Step 90 package fingerprint verification.
+2. Step 90A acceptance-audit verification.
+3. Accepted-manifest verification.
+4. Programme-count verification.
+5. Read-only source-boundary verification.
+6. Current Author planning validation.
+7. Current Author content validation.
+8. Current Author review validation.
+9. Signed-in Author comparison.
+10. Prepared-plan fingerprint comparison.
+11. Local Drafts storage check.
+12. Fresh duplicate check against current drafts.
+
+Only after all checks pass is the local storage function called once.
+
+8. DUPLICATE PROTECTION
+
+Duplicate protection runs:
+
+1. While preparing the comparison.
+2. Again immediately before storage.
+3. Inside the existing private-draft storage service by deterministic draft ID.
+
+If another import appears between the comparison and confirmation, the write stops.
+
+9. STORAGE BOUNDARY
+
+Step 92 creates only a Local Draft in private browser storage.
+
+It cannot import while Shared Drafts is selected.
+It does not call Supabase during the import.
+
+10. FILES ADDED OR UPDATED
+
+1. src/features/followAlongAuthor/authorHandoffControlledImport.js
+2. src/features/followAlongAuthor/authorHandoffPreview.js
+3. src/features/followAlongAuthor/AuthorHandoffImportPreview.jsx
+4. src/features/followAlongAuthor/AuthorHome.jsx
+5. tests/followAlongAuthorHandoffControlledImport.test.js
+6. tests/followAlongAuthorHandoffPreview.test.js
+
+11. AUTOMATED TEST RESULT
+
+Focused Step 91 and Step 92 tests: 17 passed, 0 failed.
+Full project tests: 720 passed, 0 failed.
+Production build: passed.
+Lint: passed with no errors; existing unrelated warnings remain.
+Change-format check: passed; existing Windows line-ending notices remain.
+
+12. REAL SQS PACKAGE VALIDATION
+
+Planning validation: passed with 0 errors and 0 warnings.
+Content validation: passed with 0 errors and 0 warnings.
+Review validation: passed with 0 errors and the 1 accepted IAM advisory.
+
+Accepted content unchanged: yes.
+
+13. PROHIBITED ACTIONS
+
+Step 92 does not:
+
+1. Write to Supabase.
+2. Connect to AWS.
+3. Create a release candidate.
+4. Generate a candidate ID.
+5. Approve the draft.
+6. Publish the Follow Along.
+7. Begin Stage 12.
+
+14. IMPLEMENTATION STATUS
+
+Step 92 implementation and automated validation are complete.
+The live result is recorded separately in document 134.

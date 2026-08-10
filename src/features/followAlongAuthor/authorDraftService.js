@@ -282,3 +282,23 @@ export function saveAuthorDraft({ userId, draft, expectedRevision, storage, now 
     return { success: false, error: error?.message || 'Unable to save the private draft.' };
   }
 }
+
+export function deleteAuthorDraft({ userId, draftId, expectedRevision, confirmation, storage } = {}) {
+  const target = resolveStorage(storage);
+  if (!target) return { success: false, error: 'Private draft storage is unavailable.' };
+  const requestedId = clean(draftId);
+  if (!requestedId || confirmation !== `DELETE ${requestedId}`) return { success: false, confirmationRequired: true, error: 'Confirm the exact draft before deleting it.' };
+  const loaded = loadAuthorDrafts({ userId, storage: target });
+  if (!loaded.success) return loaded;
+  const index = loaded.drafts.findIndex(item => item.draft.draftId === requestedId);
+  if (index < 0) return { success: false, notFound: true, error: 'The private draft could not be found.' };
+  const draft = loaded.drafts[index];
+  if (draft.draft.createdBy !== userId) return { success: false, error: 'This draft does not belong to the signed-in author.' };
+  if (Number(draft.draft.revision) !== Number(expectedRevision)) return { success: false, conflict: true, error: `The draft changed to revision ${draft.draft.revision}. Review it again before deleting.` };
+  try {
+    writeDrafts(target, userId, loaded.drafts.filter((_, draftIndex) => draftIndex !== index));
+    return { success: true, deletedDraftId: requestedId, deletedRevision: Number(draft.draft.revision), storageMode: 'private_local_browser' };
+  } catch (error) {
+    return { success: false, error: error?.message || 'Unable to delete the private draft.' };
+  }
+}

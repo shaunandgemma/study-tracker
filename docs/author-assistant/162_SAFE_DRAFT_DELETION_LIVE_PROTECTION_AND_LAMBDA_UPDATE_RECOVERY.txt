@@ -1,0 +1,116 @@
+162. SAFE DRAFT DELETION, LIVE PROTECTION, AND LAMBDA UPDATE RECOVERY
+
+1. APPROVED SCOPE
+
+Step 162 was limited to the two known Lambda Shared Draft IDs, their candidate and production state, the confirmed unused revision-1 duplicate, and the Author update route.
+
+No release candidate was created, approved, rejected, or published.
+
+
+2. EXACT LAMBDA RECORDS
+
+Original continuing draft:
+author-draft-e6dee7a5-5868-423f-bcfe-7c74d92b3ad6
+
+Published baseline candidate:
+release-author-draft-e6dee7a5-5868-423f-bcfe-7c74d92b3ad6-r84-f22215ad2662
+
+Confirmed accidental revision-1 draft:
+author-draft-import-0d8165e5eee4eb9b108f34b46bef58346da44792d495b635e241896f3c9fdb28
+
+The database migration stops without deleting anything if these exact identities, revisions, ownership, handoff fingerprint, candidate state, or production state do not match the approved facts.
+
+
+3. DELETE DRAFT BUTTON
+
+Unpublished drafts with no release-candidate history now have a Delete Draft button.
+
+Deletion requires a second Confirm Delete Draft action.
+
+The database also checks:
+
+1. The user is a signed-in Author.
+2. The Author owns the exact draft.
+3. The displayed revision is still current.
+4. The exact confirmation matches the draft ID.
+5. The draft has no release-candidate history.
+6. The draft is not live in production.
+
+Only the exact draft and its own revision records are removed. A small metadata-only deletion audit is retained. No draft content is copied into that audit.
+
+
+4. LIVE DRAFT DISPLAY
+
+The Shared Draft list reads the published candidate IDs and connects each live programme to its exact source draft.
+
+A live draft is:
+
+1. Greyed out.
+2. Marked with a green light and Live label.
+3. Shown with Deletion disabled.
+4. Still available through Continue Draft so a controlled future update can use the original draft.
+
+If production status cannot be verified, Shared Draft deletion fails closed and remains disabled.
+
+
+5. LAMBDA UPDATE ROUTE
+
+The update route now finds the original draft from the exact published candidate ID. It no longer selects a draft merely because the programme name matches.
+
+For the Lambda update:
+
+1. The published baseline is revision 84.
+2. The continuing Shared Draft is revision 87 or newer.
+3. The route compares the editable content of the current draft with the immutable published candidate snapshot.
+4. A safe rebase is allowed only when that editable content is unchanged.
+5. Any real content difference blocks the update.
+6. A repeated import with the same handoff fingerprint is blocked as a duplicate.
+
+
+6. DATABASE MIGRATION
+
+Prepared migration:
+supabase/migrations/20260825_safe_author_draft_deletion_and_lambda_duplicate_cleanup.sql
+
+The migration adds the protected deletion action and performs the one-time, exact Lambda duplicate cleanup only after all guards pass.
+
+The migration was successfully deployed to the linked Supabase database on 10 August 2026 after a successful dry run that listed only migration 20260825.
+
+
+7. REQUIRED DEPLOYMENT COMMANDS
+
+Run from Windows PowerShell in E:\code\study-tracker:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked --dry-run"
+
+The dry run must list only:
+
+20260825_safe_author_draft_deletion_and_lambda_duplicate_cleanup.sql
+
+Then run:
+
+wsl -e bash -lc "cd /mnt/e/code/study-tracker && ./node_modules/.bin/supabase db push --linked"
+
+After deployment, refresh the Author page and select Shared Drafts.
+
+
+8. TEST RESULTS
+
+Full automated tests: 763 passed, 0 failed.
+
+Lint: passed with no errors. Existing warnings remain outside this change.
+
+Production build: passed.
+
+Change-format check: passed. Only existing Windows line-ending notices were reported.
+
+The build also reports that Node.js 22.9.0 is older than Vite's requested 22.12 or newer, but the production build completed successfully.
+
+
+9. CURRENT STOP POINT
+
+The application code and guarded migration are prepared, tested, and deployed.
+
+The migration completed successfully. Its guarded cleanup either removed the exact verified accidental Lambda revision-1 draft or safely performed no deletion if that exact draft was already absent. Any mismatch would have stopped and rolled back the migration instead of reporting success.
+
+No candidate, approval, or publication action was performed.

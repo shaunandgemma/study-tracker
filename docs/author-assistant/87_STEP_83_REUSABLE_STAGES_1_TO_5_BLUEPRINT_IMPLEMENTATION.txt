@@ -1,0 +1,167 @@
+87. AUTHOR ASSISTANT - STEP 83 REUSABLE STAGES 1 TO 5 BLUEPRINT IMPLEMENTATION
+
+Date: 9 August 2026
+
+1. RESULT
+
+Step 83 is implemented as a reusable service-independent Author Assistant stage.
+
+It is not an SQS generator.
+
+SQS remains the first accepted live session that can use the new stage.
+
+2. PURPOSE
+
+After official AWS sources are accepted, the Author Assistant can now prepare a local
+human-reviewable blueprint for:
+
+1. Author Stage 1 - Programme.
+2. Author Stage 2 - Phases.
+3. Author Stage 3 - Tasks.
+4. Author Stage 4 - Planning Check.
+5. Author Stage 5 - Accepted AWS Sources and task links.
+
+3. REUSABLE SERVICE FLOW
+
+The implementation reads service information from the active saved session:
+
+1. Official AWS service name.
+2. Short service name.
+3. Learner level.
+4. Requested learner outcome.
+5. Preferred AWS Region.
+6. Human-accepted AWS documentation sources.
+
+No AWS service name, SQS action or SQS URL is hardcoded in production logic.
+
+A separate SNS test service proves the same code works without SQS-specific content.
+
+4. AI BOUNDARY
+
+The blueprint uses one structured OpenAI Responses API request.
+
+The request:
+
+1. Uses GPT-5.6 Terra by default.
+2. Keeps store set to false.
+3. Has no web search tool.
+4. Receives only the already accepted source records.
+5. Allows only exact accepted source URLs in task source links.
+6. Does not request detailed commands, instructions, cleanup or publishing content.
+
+Official structured-output reference:
+
+https://developers.openai.com/api/docs/guides/structured-outputs
+
+5. LOCAL VALIDATION
+
+Before a blueprint can be saved, the script checks:
+
+1. Source acceptance belongs to the same session.
+2. Every source is an approved docs.aws.amazon.com URL.
+3. Phase numbers are sequential.
+4. Every phase has at least one task.
+5. Task numbers are sequential.
+6. Tasks follow the phase order.
+7. Prerequisites refer only to earlier tasks.
+8. Task source links are unique and accepted.
+9. Every accepted source supports at least one task.
+10. Durations and difficulty values are valid.
+11. The complete result passes the app's existing Author planning validator.
+
+6. STABLE IDS
+
+The AI does not control app IDs.
+
+Stable phase, task and source IDs are created locally with the existing Author
+planning and content functions.
+
+This prevents duplicate or invented IDs from entering the blueprint.
+
+7. LOCAL OUTPUTS
+
+After a successful live run, the service session will receive:
+
+author-stages-1-5-blueprint.json
+author-stages-1-5-blueprint.txt
+
+The JSON file is the detailed local blueprint.
+
+The TXT file is a short human-readable phase and task preview.
+
+These are not automatically imported into Author.
+
+8. RESUME BEHAVIOUR
+
+If the blueprint already exists, the script displays its paths and does not repeat
+the API request.
+
+If sources are accepted but the blueprint does not exist, the script asks:
+
+Prepare a local Author Stages 1-5 blueprint now? (y/N)
+
+No request is made unless the user answers yes.
+
+9. SAFETY BOUNDARY
+
+Step 83 does not:
+
+1. Write to the Author page.
+2. Create a private or shared Author draft.
+3. Connect to Supabase.
+4. Connect to AWS.
+5. Use AWS credentials.
+6. Run AWS commands.
+7. Prepare Stage 6 instructions.
+8. Prepare resources or cleanup.
+9. Prepare a release candidate.
+10. Approve or publish anything.
+
+10. VERIFICATION
+
+Focused final Step 83 checks:
+
+13 passed, 0 failed.
+
+Complete application checks:
+
+560 passed, 0 failed.
+
+Linter:
+
+0 errors. Existing unrelated warnings remain.
+
+Production build:
+
+Passed. Existing Node version and bundle-size warnings remain.
+
+Git whitespace check:
+
+Passed. Existing line-ending notices are informational.
+
+11. CONTROLLED LIVE SQS TEST
+
+Run:
+
+npm run author-assistant:secure
+
+Then:
+
+1. Enter the API key privately.
+2. Answer Y to resume the accepted SQS session.
+3. The script will confirm the accepted sources already exist.
+4. Answer y to prepare the local Stages 1-5 blueprint.
+5. Read the short terminal preview.
+6. Review the saved JSON and TXT files before approving any later step.
+
+One API request is expected for this blueprint.
+
+The AWS documentation research will not be repeated.
+
+12. STATUS
+
+Reusable Step 83 implementation: Complete.
+Generic non-SQS verification: Complete.
+Live SQS blueprint generation: Awaiting the user's private-key run.
+Author write: Not started.
+Stage 6: Not started.

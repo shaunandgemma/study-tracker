@@ -54,9 +54,6 @@ test('Step 57 Generator retirement', async t => {
     for (const relativePath of [
       'src/data/followAlongProgrammes.js',
       'src/data/vpcLearningPathData.js',
-      'src/data/s3LearningPathData.js',
-      'src/data/ec2LearningPathData.js',
-      'src/data/iamLearningPathData.js',
       'src/features/followAlongs/published/publishedFollowAlongService.js'
     ]) assert.equal(fs.existsSync(path.join(root, relativePath)), true, `${relativePath} must remain.`);
   });

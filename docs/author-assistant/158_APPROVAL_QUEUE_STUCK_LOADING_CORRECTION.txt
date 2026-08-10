@@ -1,0 +1,23 @@
+158 - APPROVAL QUEUE STUCK LOADING CORRECTION
+Date: 10 August 2026
+
+1. ISSUE
+
+The Approver page showed Waiting 0, History 0 and Rejects 0 while remaining on Loading.
+
+2. CAUSE
+
+Candidate history and published-programme history were loaded as one combined request.
+If either request stalled or threw, loading never ended and an available candidate result could remain hidden.
+
+3. CORRECTION
+
+The candidate queue now loads independently from published-programme history.
+Both reads have a 15-second limit.
+The loading state always ends and a readable error is shown if the candidate read fails.
+
+4. DATA SAFETY
+
+This is a read-only UI correction.
+It does not create, approve, reject, delete or publish a candidate.
+The existing CloudFront candidate ID is unchanged.

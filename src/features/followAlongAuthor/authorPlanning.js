@@ -13,6 +13,12 @@ function clean(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+function optionalMinutes(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const minutes = Number(value);
+  return Number.isFinite(minutes) && minutes > 0 ? Math.round(minutes) : null;
+}
+
 function slugify(value) {
   return clean(value)
     .toLowerCase()
@@ -95,7 +101,7 @@ export function addAuthorTask(draft, input = {}) {
     goal: clean(input.goal),
     whyItMatters: clean(input.whyItMatters),
     difficulty: AUTHOR_TASK_DIFFICULTIES.includes(input.difficulty) ? input.difficulty : 'Medium',
-    estimatedMinutes: Number(input.estimatedMinutes) || 15,
+    estimatedMinutes: optionalMinutes(input.estimatedMinutes),
     region: clean(input.region || draft.programme?.defaultRegion),
     status: 'draft',
     phaseId: phase.id,
@@ -135,7 +141,7 @@ export function updateAuthorTask(draft, taskId, changes = {}) {
     phaseId: nextPhaseId,
     prerequisites: Array.isArray(changes.prerequisites) ? [...new Set(changes.prerequisites)] : current.prerequisites,
     isOptional: changes.isOptional === undefined ? current.isOptional : Boolean(changes.isOptional),
-    estimatedMinutes: changes.estimatedMinutes === undefined ? current.estimatedMinutes : Number(changes.estimatedMinutes)
+    estimatedMinutes: changes.estimatedMinutes === undefined ? current.estimatedMinutes : optionalMinutes(changes.estimatedMinutes)
   };
 
   let phases = draft.phases;
@@ -187,7 +193,6 @@ export function validateAuthorPlanning(draft) {
   if (!AUTHOR_PROGRAMME_DIFFICULTIES.includes(programme.difficulty)) errors.push({ section: 'programme', field: 'difficulty', message: 'Choose a supported programme difficulty.' });
   if (!AUTHOR_REGION_SCOPES.includes(programme.regionScope)) errors.push({ section: 'programme', field: 'regionScope', message: 'Choose regional, global or mixed.' });
   if (programme.regionScope !== 'global' && !clean(programme.defaultRegion)) errors.push({ section: 'programme', field: 'defaultRegion', message: 'Enter the example AWS Region.' });
-  if (!Number.isFinite(Number(programme.estimatedMinutes)) || Number(programme.estimatedMinutes) <= 0) errors.push({ section: 'programme', field: 'estimatedMinutes', message: 'Enter a positive programme duration.' });
 
   const phases = draft.phases || [];
   const tasks = draft.tasks || [];
@@ -219,7 +224,6 @@ export function validateAuthorPlanning(draft) {
     if (!clean(task.whyItMatters)) errors.push({ section: 'tasks', id: task.id, message: `${task.title || 'A task'} needs a why-it-matters explanation.` });
     if (!clean(task.feature)) errors.push({ section: 'tasks', id: task.id, message: `${task.title || 'A task'} needs an AWS feature.` });
     if (!AUTHOR_TASK_DIFFICULTIES.includes(task.difficulty)) errors.push({ section: 'tasks', id: task.id, message: `${task.title || 'A task'} has an unsupported difficulty.` });
-    if (!Number.isFinite(Number(task.estimatedMinutes)) || Number(task.estimatedMinutes) <= 0) errors.push({ section: 'tasks', id: task.id, message: `${task.title || 'A task'} needs a positive duration.` });
   });
 
   const ordered = getOrderedAuthorTasks(draft);

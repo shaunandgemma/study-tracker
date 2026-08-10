@@ -170,6 +170,10 @@ export function buildPublishedProgrammeCard(row) {
   const snapshot = row?.runtime_content;
   const programme = snapshot?.programme;
   if (!programme) return null;
+  const tasks = snapshot.tasks || [];
+  const hasConsole = tasks.some(task => task.modeAvailability?.console?.status === 'available' && (task.consoleSteps || []).length > 0);
+  const hasCli = tasks.some(task => task.modeAvailability?.cli?.status === 'available' && (task.cliSteps || []).length > 0);
+  const supportedModes = [hasConsole && 'console', hasCli && 'cli', hasConsole && hasCli && 'both'].filter(Boolean);
   return {
     id: programme.programmeId,
     slug: programme.serviceSlug,
@@ -181,7 +185,7 @@ export function buildPublishedProgrammeCard(row) {
     status: 'available',
     taskCount: snapshot.tasks?.length || 0,
     phaseCount: snapshot.phases?.length || 0,
-    supportedModes: programme.supportedModes || snapshot.progress?.supportedModes || ['console', 'cli', 'both'],
+    supportedModes,
     icon: programme.shortName === 'Lambda' ? 'Zap' : 'Layers',
     category: programme.category || 'AWS Services',
     difficulty: programme.difficulty || 'Guided',

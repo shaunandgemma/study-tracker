@@ -1,0 +1,29 @@
+157 - AUTOMATIC REGISTRATION PROGRAMME ID FIX
+Date: 10 August 2026
+
+1. ISSUE
+
+CloudFront approval reported:
+record "new" has no field "programme_id"
+
+The automatic registration trigger incorrectly expected programme_id to be a column on the release-candidate table.
+That table stores the programme identity inside the immutable candidate snapshot.
+
+2. CORRECTION
+
+Migration:
+supabase/migrations/20260823_fix_automatic_publishing_programme_identity.sql
+
+The trigger now reads programmeId, serviceSlug and serviceName only from NEW.snapshot.programme.
+It verifies programmeId equals serviceSlug followed by -learning-path before registration.
+
+3. DATA SAFETY
+
+The failed CloudFront approval transaction was rolled back by PostgreSQL.
+The candidate remains pending and unpublished.
+The correction does not approve or publish the candidate itself.
+No existing published programme, draft or learner progress is changed.
+
+4. NEXT ACTION
+
+Deploy migration 20260823 once, refresh the Approver queue and approve the same CloudFront candidate again.

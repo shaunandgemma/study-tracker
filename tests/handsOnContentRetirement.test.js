@@ -69,8 +69,6 @@ test('Step 62 legacy Hands On content and tooling retirement', async (t) => {
 
   await t.test('6. Follow Along ownership and AWS validation safeguards remain', () => {
     for (const retainedPath of [
-      'src/features/followAlongs/catalogues/s3FollowAlongTasks.js',
-      'src/features/followAlongs/catalogues/ec2FollowAlongTasks.js',
       'src/features/followAlongs/catalogues/vpcFollowAlongTasks.js',
       'src/features/followAlongAuthor',
       'src/services/awsConnectionService.js',

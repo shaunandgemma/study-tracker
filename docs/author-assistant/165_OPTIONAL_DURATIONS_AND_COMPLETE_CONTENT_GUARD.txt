@@ -1,0 +1,93 @@
+165. OPTIONAL DURATIONS AND COMPLETE CONTENT GUARD
+
+1. APPROVED SCOPE
+
+Make programme and task durations optional and non-blocking.
+
+Display Self-paced when a Follow Along has no useful estimate.
+
+Reject incomplete, placeholder, or deferred Console and CLI content before a local handoff package can be saved.
+
+Preserve the credential and no-invented-IAM-policy safety boundaries.
+
+Do not write to Author, Supabase, or AWS.
+
+
+2. DURATION CHANGE
+
+1. The AI schema now accepts either a positive duration or no duration.
+2. Author planning no longer requires programme or task minutes.
+3. Blank, zero, negative, or invalid task values are safely stored as no estimate.
+4. The Author programme duration field is labelled optional.
+5. Existing task duration fields can be cleared without blocking planning.
+6. New Author tasks start without a duration.
+7. The simple preview, legacy blueprint preview, learner preview, and published Follow Along card display Self-paced when there is no estimate.
+
+
+3. COMPLETE CONTENT GUARD
+
+Before content can be saved, every generated task must still contain both:
+
+1. Usable AWS Console checkbox instructions.
+2. Usable AWS CLI commands.
+
+The guard rejects:
+
+1. Blank Console actions or results.
+2. Blank CLI commands, explanations, or results.
+3. Catalogue-only wording.
+4. TBD or TODO wording.
+5. Coming-soon wording.
+6. Instructions that say content will be added later.
+7. Instructions that defer Console or CLI work to a later stage.
+
+Real value placeholders such as <resource-id> remain allowed when they represent output obtained earlier in the Follow Along.
+
+
+4. SAFETY BOUNDARIES PRESERVED
+
+1. The assistant still rejects credential-like content.
+2. The assistant is still told never to include credentials.
+3. The assistant is still told never to invent or recommend an IAM policy.
+4. AWS documentation sources remain restricted to official docs.aws.amazon.com results.
+5. CLI command chaining remains blocked.
+6. No command was run against AWS.
+7. No Author or Supabase record was created or changed.
+
+
+5. FILES CHANGED
+
+1. scripts/author-assistant/authorAssistantSimple.mjs
+2. scripts/author-assistant/authorAssistantBlueprint.mjs
+3. scripts/author-assistant/authorAssistantLearnerPreview.mjs
+4. src/features/followAlongAuthor/authorPlanning.js
+5. src/features/followAlongAuthor/authorContent.js
+6. src/features/followAlongAuthor/AuthorDraftEditor.jsx
+7. tests/authorAssistantSimple.test.js
+8. tests/followAlongAuthorPlanning.test.js
+
+
+6. VERIFICATION RESULTS
+
+1. Full automated test suite: 688 passed, 0 failed.
+2. Production build: passed.
+3. Linter: passed with no errors. Existing unrelated warnings remain.
+4. Change-format check: passed. Only existing Windows line-ending notices were reported.
+
+
+7. SIMPLE RESULT
+
+You no longer need to provide a timer for a Follow Along or its tasks.
+
+If no estimate is provided, the learner sees Self-paced.
+
+The assistant will stop safely instead of saving Console or CLI content that has been postponed or left unfinished.
+
+
+8. CURRENT STOP POINT
+
+Step 165 is complete locally.
+
+Nothing was written to Author, Supabase, or AWS.
+
+No draft, release candidate, approval, or publication was created.

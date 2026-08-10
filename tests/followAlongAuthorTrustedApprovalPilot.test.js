@@ -86,4 +86,12 @@ test('Step 53 trusted approval pilot', async t => {
     assert.match(queue, /publishReleaseCandidate/);
     assert.doesNotMatch(`${entry}\n${queue}\n${stage}`, /publishDraft|registerProgramme|FOLLOW_ALONG_PROGRAMMES|HandsOn|TaskContext|generator_v2/);
   });
+
+  await t.test('8. Author clearly labels and copies the candidate approval key', () => {
+    const stage = readFileSync('src/features/followAlongAuthor/AuthorTrustedApprovalStage.jsx', 'utf8');
+    assert.match(stage, /Candidate Approval Key/);
+    assert.match(stage, /Copy Candidate Approval Key/);
+    assert.match(stage, /navigator\?\.clipboard\?\.writeText\(candidate\.candidateId\)/);
+    assert.match(stage, /http:\/\/127\.0\.0\.1:5173\/#author\/approvals/);
+  });
 });

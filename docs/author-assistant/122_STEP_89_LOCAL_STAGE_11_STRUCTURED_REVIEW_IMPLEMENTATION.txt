@@ -1,0 +1,96 @@
+STEP 89 - LOCAL STAGE 11 STRUCTURED REVIEW IMPLEMENTATION
+
+1. APPROVED PURPOSE
+
+Prepare only the local Author Stage 11 Structured Review from the human-accepted Stages 1-10 SQS package.
+
+The review must use the app's real review rules, remain local, perform no approval or publishing, and stop before Stage 12.
+
+
+2. COMMAND
+
+npm run author-assistant:stage-89
+
+This command does not use AI and does not require an OpenAI API key.
+
+
+3. APP REVIEW WORKFLOW USED
+
+- Rerun the Author planning validation.
+- Rerun the Author content and safety validation.
+- Mark the accepted learner preview as reviewed in the temporary local review model.
+- Consolidate overlapping IAM limitations into one numbered advisory finding.
+- Mark the other findings as resolved by accepted Stages 6-10 content.
+- Set only the local review-preparation state to ready_for_approval.
+- Keep the final approval decision pending.
+- Keep the programme unpublished.
+
+
+4. LIVE SQS PREFLIGHT RESULT
+
+- Planning: passed
+- Content and safety: passed
+- Structured review: passed
+- Open blocking findings: 0
+- Open advisory findings: 1
+- Resolved retained findings: 8
+- Original retained findings reviewed: 10
+
+The two overlapping IAM findings were consolidated into one advisory.
+
+The live preflight was answered with n, so Stage 11 was not saved and the real session remained unchanged.
+
+
+5. OPEN ADVISORY
+
+Approver should confirm that the learner uses an account or role already authorized by an administrator for the required SQS Console actions. No IAM policy is created or recommended.
+
+This is advisory, not blocking. A trusted human approver can consider it during the later approval boundary.
+
+
+6. SAVED RECORDS AFTER Y
+
+- author-stage-11-structured-review.json
+- author-stage-11-structured-review.txt
+- session.json advances only to local Stage 11 review
+
+
+7. SAFETY BOUNDARY
+
+- No final approval is performed.
+- No release candidate is prepared.
+- Nothing is published.
+- Nothing is written to Author.
+- Nothing is written to AWS.
+- Nothing is written to Supabase.
+- Stage 12 remains locked and unprepared.
+
+
+8. TEST RESULTS
+
+- Automated tests: 681 passed, 0 failed.
+- Focused Step 89 tests: 7 passed.
+- Lint: passed with existing non-blocking warnings.
+- Production build: passed with the existing large-bundle warning.
+
+
+9. FILES ADDED OR UPDATED
+
+Added:
+
+- scripts/author-assistant/authorAssistantStructuredReview.mjs
+- scripts/author-assistant/prepareStage89.mjs
+- tests/authorAssistantStage89.test.js
+- docs/author-assistant/122_STEP_89_LOCAL_STAGE_11_STRUCTURED_REVIEW_IMPLEMENTATION.txt
+
+Updated:
+
+- scripts/author-assistant/authorAssistantCore.mjs
+- package.json
+
+
+10. CURRENT POSITION
+
+- Local Stages 1-10 remain human accepted.
+- Stage 11 has passed its complete preflight but is not yet saved or accepted.
+- Stage 12 has not started.

@@ -1,0 +1,95 @@
+159. DUPLICATE APPROVAL CONNECTION EXHAUSTION RECOVERY
+
+1. INCIDENT
+
+The CloudFront approval button sent multiple approval RPC requests while the
+first request was still running.
+
+Database evidence showed nine concurrent authenticator sessions calling
+approve_follow_along_release_candidate. One request held the candidate row and
+the others waited on tuple or transaction locks. This exhausted the project's
+REST connections and caused the Approval Queue and published Follow Along list
+to disappear.
+
+2. DATA SAFETY RESULT
+
+The CloudFront candidate remained:
+
+- status: awaiting_trusted_approval
+- approval_decision: pending
+- snapshot size: 12 kB
+
+Lambda revision 84, SQS revision 2 and SNS revision 1 remained published.
+No candidate or published programme was deleted or changed by this correction.
+
+3. CONTROLLED SESSION RECOVERY
+
+Only active authenticator sessions whose query calls
+approve_follow_along_release_candidate may be terminated. Their unfinished
+transactions roll back automatically.
+
+4. BROWSER PROTECTION
+
+AuthorApprovalQueue now:
+
+- uses an immediate ref guard before an approval or rejection request starts;
+- permits only one approval/rejection request at a time;
+- disables confirmation, rejection and refresh controls during that request;
+- displays Approving once... or Rejecting once... while waiting;
+- tells the Approver that the protected database decision is pending.
+
+5. DATABASE PROTECTION
+
+Migration 20260824_prevent_duplicate_follow_along_approval_requests.sql:
+
+- obtains a transaction-scoped advisory lock for the exact candidate ID;
+- uses FOR UPDATE NOWAIT for the candidate row;
+- returns SQLSTATE 55P03 immediately when an approval is already in progress;
+- retains the existing identity, role, author-separation, fingerprint, revision
+  and immutable-candidate checks;
+- performs no publishing, deletion or learner-progress change.
+
+6. VERIFICATION
+
+- Focused controlled-publishing test: passed (21 tests)
+- Complete JavaScript test suite: passed (754 tests)
+- Production build: passed
+- Linter: completed with pre-existing warnings and no reported new error
+
+7. DEPLOYMENT BOUNDARY
+
+The browser protection is local code.
+Migration 20260824 is prepared but must be dry-run and deployed separately.
+CloudFront must not be approved again until:
+
+1. blocked approval sessions are terminated;
+2. the REST lists respond again;
+3. migration 20260824 is deployed;
+4. the corrected local page is hard-refreshed.
+
+Only one approval click is then permitted.
+
+8. CLOUDFRONT CANDIDATE VALIDATION RESULT
+
+The protected database validation confirmed:
+
+- candidate source revision: 1
+- current Shared Draft revision: 2
+- candidate fingerprint: valid for its immutable revision 1 snapshot
+- current draft hash matches candidate draft hash: false
+- candidate state after the failed attempt: awaiting_trusted_approval / pending
+
+The revision 1 candidate is therefore stale and must not be approved. The
+database correctly rejected it because the Shared Draft changed after candidate
+preparation. The old request should be rejected as superseded, then the Author
+must prepare one new immutable candidate from saved Shared Draft revision 2.
+
+9. FINAL CLOUDFRONT RESULT
+
+- The stale revision 1 candidate was rejected and retained in Rejects.
+- The Author prepared a new immutable revision 2 candidate.
+- The separate Approver approved revision 2 with one request.
+- The approved revision moved from Waiting to History correctly.
+- Controlled publishing completed with PUBLISH CLOUDFRONT.
+- CloudFront is now published without changing Lambda, SQS, SNS or learner
+  progress.
