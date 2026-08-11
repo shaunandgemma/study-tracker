@@ -1,0 +1,69 @@
+STEP 174 - CLI CHAINING AUTOMATIC REVIEW CORRECTION
+
+1. REPORTED ISSUE
+
+The EC2 Follow Along generation completed its protected AWS Docs research with
+97 returned sources, then stopped before the beginner-quality review with:
+
+A CLI command contains command chaining.
+
+
+2. CAUSE
+
+The AI placed more than one shell operation in a single CLI command by using a
+pipe, double ampersand or semicolon.
+
+The safety rule was correct, but it ran too early. It stopped the package before
+the new AI quality reviewer could correct the affected task.
+
+
+3. CORRECTION
+
+CLI chaining is now treated as a correctable pre-review finding.
+
+The script now:
+
+1. Keeps the original rule that one CLI item contains exactly one command.
+2. Identifies the exact task and CLI step containing chaining.
+3. Sends that finding to the separate beginner-quality AI review.
+4. Requires the reviewer to mark that task as failed.
+5. Requires a complete corrected replacement for only that task.
+6. Requires chained operations to become separate CLI steps.
+7. Runs the original strict no-chaining rule again after the review.
+8. Refuses to save the package if any chaining remains.
+
+
+4. SAFETY BOUNDARIES
+
+The change does not permit chained commands. It moves the failure to the
+controlled correction stage and then applies the strict rule again.
+
+Nothing was written to Author, Supabase or AWS.
+
+No AWS command was executed.
+
+The failed EC2 generation was not saved and cannot be recovered from the ended
+terminal process. Run the Author Assistant again using the same EC2 outline.
+
+
+5. VERIFICATION
+
+1. A generated piped CLI command reached the reviewer in the automated test.
+2. Only its affected task was replaced.
+3. The corrected task contained two separate CLI steps.
+4. The final strict check confirmed zero chained commands.
+5. Focused Author Assistant tests: 20 passed.
+6. Complete application test suite: 698 tests passed.
+7. Linter completed with no new errors; existing unrelated warnings remain.
+8. Production build completed successfully.
+
+
+6. IMPLEMENTED FILES
+
+E:\code\study-tracker\scripts\author-assistant\authorAssistantBeginnerQuality.mjs
+
+E:\code\study-tracker\scripts\author-assistant\authorAssistantSimple.mjs
+
+E:\code\study-tracker\tests\authorAssistantSimple.test.js
+
+E:\code\study-tracker\docs\author-assistant\174_CLI_CHAINING_AUTOMATIC_REVIEW_CORRECTION.txt

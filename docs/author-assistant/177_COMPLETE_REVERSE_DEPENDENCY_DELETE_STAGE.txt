@@ -1,0 +1,96 @@
+STEP 177 - COMPLETE REVERSE-DEPENDENCY DELETE STAGE
+
+1. REPORTED PROBLEM
+
+The RDS CLI Follow Along created a complete multi-tier environment but its final
+Delete stage contained only a few teardown items. Cleanup text previously had
+no structured connection to the resources created earlier in the programme.
+
+
+2. RESOURCE INVENTORY
+
+Every generated Follow Along must now contain an internal resource inventory.
+Each created resource records:
+
+1. A stable resource key.
+2. Its AWS resource type.
+3. Its exact fixed name or recorded learner placeholder.
+4. The exact task that creates it.
+5. Other created resources it depends on.
+
+Each task separately declares the inventory keys it creates. Unknown, missing,
+duplicate or incorrectly assigned keys are reported for manual review without
+discarding an otherwise usable paid generation.
+
+
+3. COMPLETE CLEANUP COVERAGE
+
+Every inventory key should have exactly one final cleanup entry. Missing,
+unknown or duplicated cleanup is reported to the quality review and retained as
+a manual finding if it remains unresolved.
+
+The generation instructions explicitly include commonly forgotten secondary
+resources such as listeners, rules, registrations, target groups, alarms,
+snapshots, access keys, policies, attachments, roles, instance profiles,
+Elastic IPs, NAT gateways, routes, associations, security-group rules, subnet
+groups, log groups, event mappings and local CLI profiles when created.
+
+
+4. CORRECT DELETE ORDER
+
+Cleanup is validated in strict reverse dependency order. A child must be
+removed before the resource it depends on. Examples include:
+
+1. Listener rules and listeners before the load balancer.
+2. Target registrations before the target group.
+3. RDS and EC2 resources before their security groups and subnets.
+4. NAT gateway before its Elastic IP is released.
+5. Routes and associations before route tables.
+6. Subnets and gateways before the VPC.
+7. IAM attachments and access keys before policies, roles and users.
+
+An incorrect parent-before-child order is reported locally for correction.
+
+
+5. BOTH LEARNER ROUTES
+
+Every final cleanup entry now contains:
+
+1. Short separately ordered Console actions.
+2. Separate CLI commands with one command per item.
+3. A visible verification that the exact resource is gone.
+
+Command chaining is reported for correction. Wait commands can be supplied as separate
+commands when AWS must finish an asynchronous deletion before dependencies can
+be removed.
+
+Cleanup findings are non-blocking during paid Author Assistant generation. They
+are sent to the existing quality-review request. If the review does not correct
+them, the complete generated package is still saved and the exact unresolved
+items are recorded as manual-review findings. The initial paid generation is
+not discarded and no extra generation retry is purchased.
+
+
+6. SAFETY BOUNDARY
+
+Cleanup may target only resources explicitly created by the Follow Along. It
+must never delete default, shared, pre-existing or unrelated learner resources.
+The Author Assistant still performs no AWS action itself.
+
+
+7. EXISTING PUBLISHED RDS CONTENT
+
+This change protects newly generated or updated packages. It does not silently
+rewrite the currently published RDS Follow Along. To correct that programme,
+run an RDS update through the Author Assistant or manually complete its Delete
+stage in Author, review it, then publish the new revision.
+
+
+8. VERIFICATION COMPLETED
+
+1. Focused Author Assistant tests: 22 passed.
+2. Complete application test suite: 700 tests passed.
+3. Linter: passed with existing unrelated warnings only.
+4. Production build: passed.
+5. No live AI generation was purchased or performed.
+6. Nothing was written to Author, Supabase or AWS.

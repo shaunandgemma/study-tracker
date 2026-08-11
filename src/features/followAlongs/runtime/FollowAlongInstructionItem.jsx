@@ -1,16 +1,5 @@
 import React from 'react';
-import { Check, Copy } from 'lucide-react';
-
-export const copyFollowAlongInstructionText = async (instruction, clipboard = globalThis.navigator?.clipboard) => {
-  const text = [instruction?.text || instruction?.label || '', instruction?.detail || ''].filter(Boolean).join('\n');
-  if (!text || !clipboard?.writeText) return false;
-  try {
-    await clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-};
+import { Check } from 'lucide-react';
 
 export const FollowAlongInstructionItem = ({ instruction, isChecked, onToggle }) => {
   if (!instruction) return null;
@@ -24,8 +13,6 @@ export const FollowAlongInstructionItem = ({ instruction, isChecked, onToggle })
     }
     return null;
   }
-
-  const copy = () => { void copyFollowAlongInstructionText(instruction); };
 
   return (
     <div className="flex items-start gap-3 p-2 my-1 rounded-lg hover:bg-slate-900/50 transition-colors group">
@@ -49,11 +36,6 @@ export const FollowAlongInstructionItem = ({ instruction, isChecked, onToggle })
           }`}>{detailText}</span>}
       </div>
 
-      <button type="button" onClick={copy} aria-label="Copy instruction" title="Copy instruction"
-        className="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950 px-2 py-1.5 text-[10px] font-semibold text-slate-400 hover:text-white hover:border-slate-600 select-none">
-        <Copy className="w-3.5 h-3.5" />
-        <span className="hidden sm:inline">Copy</span>
-      </button>
     </div>
   );
 };

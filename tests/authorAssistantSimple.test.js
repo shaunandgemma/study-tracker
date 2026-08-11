@@ -5,13 +5,23 @@ import { webcrypto } from 'node:crypto';
 import {
   acceptSimpleHandoff,
   buildAuthorDraftContent,
+  buildBeginnerQualityReviewPayload,
   buildCompleteGenerationPayload,
   buildSimpleHandoff,
+  findCleanupCoverageFindings,
   formatSimplePreview,
   reconcileProtectedSourceList,
+  requestCompleteFollowAlong,
   SIMPLE_AUTHOR_ASSISTANT_MODE,
   validateCompleteProposal
 } from '../scripts/author-assistant/authorAssistantSimple.mjs';
+import {
+  applyBeginnerQualityReview,
+  buildBeginnerGoldStandardReference,
+  findBeginnerQualityFindings,
+  findReviewableProposalFindings,
+  validateBeginnerQuality
+} from '../scripts/author-assistant/authorAssistantBeginnerQuality.mjs';
 import { loadPublishedFollowAlongCatalogue, parseAuthorAssistantEnv } from '../scripts/author-assistant/authorAssistantPublishedCatalogue.mjs';
 import { validateAuthorHandoffImportPreview } from '../src/features/followAlongAuthor/authorHandoffPreview.js';
 import { validateAuthorContent } from '../src/features/followAlongAuthor/authorContent.js';
@@ -29,6 +39,14 @@ const urls = [
   'https://docs.aws.amazon.com/service-authorization/latest/reference/list_example.html'
 ];
 
+function qualityReference() {
+  return {
+    kind: 'author_assistant_beginner_gold_standard', programmeId: 'rds-learning-path', displayName: 'RDS Gold Standard', sourceRevision: 9, contentHash: 'f'.repeat(64),
+    useBoundary: 'Writing depth only.', requiredStandard: ['Explain exact Console navigation.'],
+    completeConsoleAndCliReference: { phases: [], tasks: [{ title: 'Create a database', consoleSteps: [{ title: 'Open RDS', instructions: ['In the AWS Management Console search bar, enter RDS.', 'Under Services, choose RDS.'] }], cliSteps: [{ command: 'aws rds describe-db-instances', explanation: 'Inspect the database.', expectedResult: 'The database is listed.' }], verification: [], cleanup: [] }], finalCleanup: [], warnings: {} }
+  };
+}
+
 function proposal() {
   return {
     programme: { displayName: 'Amazon Example: Safe Test', subtitle: 'Create and inspect one example resource', category: 'Testing', description: 'A short safe example Follow Along.', learningOutcome: 'Create and test one example resource.', difficulty: 'Beginner', regionScope: 'regional', estimatedMinutes: 30 },
@@ -39,15 +57,18 @@ function proposal() {
       { title: 'Finish', description: 'Finish and clean up the test.', isOptional: false },
       { title: 'Review', description: 'Review the completed learner journey.', isOptional: true }
     ],
+    resourceInventory: [
+      { resourceKey: 'example-resource', resourceType: 'other', resourceNameOrPlaceholder: 'example-training-resource', createdByTaskNumber: 2, dependsOnResourceKeys: [] }
+    ],
     tasks: ['Prepare access', 'Create resource', 'Verify resource'].map((title, index) => ({
       phaseNumber: index + 1, title, feature: 'Example resources', goal: `${title} safely.`, whyItMatters: 'It keeps the learner journey safe and verifiable.', difficulty: 'Easy', estimatedMinutes: 10, isOptional: false,
-      prerequisiteTaskNumbers: index ? [index] : [], sourceUrls: urls,
-      consoleSteps: [{ title, instructions: [`Complete ${title.toLowerCase()} in the AWS Console.`], jsonBlocks: [], expectedResult: `${title} is visibly complete.`, warning: '', sourceUrls: [urls[0]] }],
+      prerequisiteTaskNumbers: index ? [index] : [], sourceUrls: urls, createdResourceKeys: index === 1 ? ['example-resource'] : [],
+      consoleSteps: [{ title, instructions: [`In the AWS Management Console search bar, enter Example, then under Services choose Example.`, `Choose ${title}, enter example-training-resource when a name is requested, and choose Confirm.`], jsonBlocks: [], expectedResult: `${title} is visibly complete.`, warning: '', sourceUrls: [urls[0]] }],
       cliSteps: [{ command: `aws example ${index ? 'describe-resource' : 'get-status'} --region eu-west-2`, explanation: `Use one documented command for ${title.toLowerCase()}.`, expectedResult: 'AWS returns the expected test result.', warning: '', sourceUrls: [urls[1]] }],
       verification: [{ title: `Check ${title}`, instruction: `Inspect the result of ${title.toLowerCase()}.`, expectedResult: 'The expected harmless test state is visible.', mode: 'either' }],
       cleanup: []
     })),
-    finalCleanup: [{ title: 'Remove the test resource', instruction: 'Delete only the example test resource created by this Follow Along.', verification: 'The example test resource is no longer listed.', sourceUrls: [urls[0]] }],
+    finalCleanup: [{ resourceKey: 'example-resource', title: 'Remove the test resource', consoleInstructions: ['Select only example-training-resource.', 'Choose Delete and confirm the exact name.'], cliCommands: ['aws example delete-resource --resource-name example-training-resource --region eu-west-2'], verification: 'The example test resource is no longer listed.', sourceUrls: [urls[0]] }],
     warnings: { cost: 'Review current AWS pricing before starting.', safety: 'Delete only the named test resource during cleanup.', credentials: 'Never paste or save AWS credentials in the Follow Along.', region: 'Use eu-west-2 throughout this regional exercise.' },
     manualReviewFindings: []
   };
@@ -55,10 +76,114 @@ function proposal() {
 
 test('simplified Author Assistant creates one import-ready Console and CLI package', async t => {
   await t.test('1. request is restricted to official AWS Docs and asks for both modes', () => {
-    const payload = buildCompleteGenerationPayload(inputs);
+    const payload = buildCompleteGenerationPayload(inputs, { qualityReference: qualityReference() });
     assert.deepEqual(payload.tools[0].filters.allowed_domains, ['docs.aws.amazon.com']);
     assert.match(payload.instructions, /both AWS Console checkbox instructions and separate AWS CLI commands/i);
     assert.equal(payload.store, false);
+    assert.match(payload.instructions, /RDS COMPLETE CONSOLE AND CLI GOLD STANDARD REFERENCE/);
+    assert.match(payload.instructions, /Assume there is no existing learner infrastructure/);
+  });
+
+  await t.test('1A. the whole published RDS Console and CLI programme becomes the service-independent gold standard', () => {
+    const reference = buildBeginnerGoldStandardReference({
+      programmeId: 'rds-learning-path', displayName: 'Perfected RDS Follow Along', sourceRevision: 12, contentHash: 'a'.repeat(64),
+      runtimeContent: { tasks: [
+        { title: 'Create the database', consoleSteps: [{ title: 'Open RDS and create the database', instructions: [{ text: 'In the AWS Management Console search bar, enter RDS.' }, { text: 'Under Services, choose RDS.' }, { text: 'Choose Create database.' }], jsonBlocks: [], expectedResult: 'The database creation page is visible.', warning: '' }], cliSteps: [{ command: 'aws rds create-db-instance --db-instance-identifier training', explanation: 'Create the training database.', expectedResult: 'The database enters creating state.', warning: '' }], verification: [], cleanup: [] },
+        { title: 'Inspect the database', consoleSteps: [{ title: 'Inspect RDS', instructions: [{ text: 'Choose Databases.' }], jsonBlocks: [], expectedResult: 'The database is listed.', warning: '' }], cliSteps: [{ command: 'aws rds describe-db-instances', explanation: 'Inspect the database.', expectedResult: 'The database is returned.', warning: '' }], verification: [], cleanup: [] }
+      ] }
+    });
+    assert.equal(reference.sourceRevision, 12);
+    assert.equal(reference.completeConsoleAndCliReference.tasks.length, 2);
+    assert.equal(reference.completeConsoleAndCliReference.tasks[0].consoleSteps[0].instructions[1], 'Under Services, choose RDS.');
+    assert.equal(reference.completeConsoleAndCliReference.tasks[0].cliSteps[0].command, 'aws rds create-db-instance --db-instance-identifier training');
+    assert.match(reference.useBoundary, /Never copy RDS resources/);
+    assert.throws(() => buildBeginnerGoldStandardReference({ programmeId: 'other-learning-path' }), /gold-standard Follow Along is unavailable/);
+    assert.throws(() => buildBeginnerGoldStandardReference({ programmeId: 'rds-learning-path', runtimeContent: { tasks: [{ consoleSteps: [], cliSteps: [] }] } }), /complete Console and CLI task content/);
+  });
+
+  await t.test('1B. vague beginner instructions are blocked and the AI review can replace only weak tasks', () => {
+    const weak = proposal();
+    weak.tasks[0].consoleSteps[0].instructions = ['Open Users.', 'Choose a suitable existing user.'];
+    assert.ok(findBeginnerQualityFindings(weak).length >= 2);
+    assert.throws(() => validateBeginnerQuality(weak), /beginner-quality review did not resolve/);
+    const correctedTask = structuredClone(proposal().tasks[0]);
+    const taskReviews = weak.tasks.map((task, index) => ({ taskNumber: index + 1, passed: index !== 0, findings: index === 0 ? ['Navigation was vague.'] : [], revisedTask: index === 0 ? correctedTask : null }));
+    const corrected = applyBeginnerQualityReview(weak, { passed: false, taskReviews });
+    assert.equal(validateBeginnerQuality(corrected), corrected);
+    const reviewPayload = buildBeginnerQualityReviewPayload(inputs, weak, urls.map(url => ({ url })), qualityReference());
+    assert.match(reviewPayload.instructions, /final beginner-quality reviewer/);
+    assert.equal(reviewPayload.text.format.schema.properties.taskReviews.items.properties.revisedTask.anyOf[0].properties.consoleSteps.minItems, 1);
+    assert.equal(Object.hasOwn(reviewPayload.text.format.schema.properties.taskReviews, 'minItems'), false);
+    assert.equal(reviewPayload.text.format.schema.properties.taskReviews.maxItems, weak.tasks.length);
+    assert.deepEqual(reviewPayload.text.format.schema.properties.taskReviews.items.properties.taskNumber.enum, [1, 2, 3]);
+  });
+
+  await t.test('1C. generation always completes a separate beginner-quality AI review before returning content', async () => {
+    const generated = proposal();
+    const review = { passed: true, taskReviews: generated.tasks.map((_task, index) => ({ taskNumber: index + 1, passed: true, findings: [], revisedTask: null })) };
+    const responses = [
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url, title: 'AWS source' })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
+      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(review) }] }] }
+    ];
+    const requests = [];
+    const result = await requestCompleteFollowAlong({
+      inputs, apiKey: 'test-key', qualityReference: qualityReference(),
+      fetchImpl: async (_url, options) => {
+        requests.push(JSON.parse(options.body));
+        return { ok: true, json: async () => responses.shift() };
+      }
+    });
+    assert.equal(result.tasks.length, 3);
+    assert.equal(requests.length, 2);
+    assert.equal(requests[0].tools[0].type, 'web_search');
+    assert.equal(requests[1].tools, undefined);
+    assert.match(requests[1].instructions, /Review every task/);
+  });
+
+  await t.test('1D. a chained generated command reaches the reviewer and is replaced with separate safe CLI steps', async () => {
+    const generated = proposal();
+    generated.tasks[1].cliSteps[0].command = 'aws example get-status --region eu-west-2 | ConvertFrom-Json';
+    const correctedTask = structuredClone(generated.tasks[1]);
+    correctedTask.cliSteps = [
+      { ...correctedTask.cliSteps[0], command: 'aws example get-status --region eu-west-2', explanation: 'Return the documented status without a shell pipeline.' },
+      { ...correctedTask.cliSteps[0], command: 'aws example describe-resource --region eu-west-2', explanation: 'Inspect the resource with a separate documented AWS command.' }
+    ];
+    const review = { passed: false, taskReviews: generated.tasks.map((_task, index) => ({ taskNumber: index + 1, passed: index !== 1, findings: index === 1 ? ['Split the shell pipeline.'] : [], revisedTask: index === 1 ? correctedTask : null })) };
+    const responses = [
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
+      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(review) }] }] }
+    ];
+    const requests = [];
+    const result = await requestCompleteFollowAlong({
+      inputs, apiKey: 'test-key', qualityReference: qualityReference(),
+      fetchImpl: async (_url, options) => { requests.push(JSON.parse(options.body)); return { ok: true, json: async () => responses.shift() }; }
+    });
+    assert.equal(findReviewableProposalFindings(result).length, 0);
+    assert.equal(result.tasks[1].cliSteps.length, 2);
+    assert.match(requests[1].input, /Task 2 CLI step 1 contains more than one shell operation/);
+  });
+
+  await t.test('1E. an incomplete reviewer response preserves unreviewed tasks as manual findings without another API request', async () => {
+    const generated = proposal();
+    generated.resourceInventory[0].resourceNameOrPlaceholder = 'exact-resource-name-not-returned-by-cleanup';
+    const incomplete = { passed: true, taskReviews: [{ taskNumber: 1, passed: true, findings: [], revisedTask: null }] };
+    const responses = [
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
+      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(incomplete) }] }] }
+    ];
+    const requests = [];
+    const progress = [];
+    const result = await requestCompleteFollowAlong({
+      inputs, apiKey: 'test-key', qualityReference: qualityReference(), onProgress: message => progress.push(message),
+      fetchImpl: async (_url, options) => { requests.push(JSON.parse(options.body)); return { ok: true, json: async () => responses.shift() }; }
+    });
+    assert.equal(result.tasks.length, 3);
+    assert.equal(requests.length, 2);
+    assert.equal(requests.filter(item => item.tools?.[0]?.type === 'web_search').length, 1);
+    assert.ok(result.manualReviewFindings.some(message => /task number\(s\): 2, 3/i.test(message)));
+    assert.ok(result.manualReviewFindings.some(message => /Cleanup for resource example-resource does not name its exact target/i.test(message)));
+    assert.deepEqual(result.tasks[1], generated.tasks[1]);
+    assert.equal(progress.some(message => /initial generation will not be repeated/i.test(message)), false);
   });
 
   await t.test('2. protected sources, unchained commands, and both modes are required', () => {
@@ -70,6 +195,41 @@ test('simplified Author Assistant creates one import-ready Console and CLI packa
     const chained = proposal();
     chained.tasks[0].cliSteps[0].command += ' && echo unsafe';
     assert.throws(() => validateCompleteProposal(chained, returned), /command chaining/);
+  });
+
+  await t.test('2AA. every created resource has one reverse-dependency cleanup with Console and CLI teardown', () => {
+    const complete = proposal();
+    complete.resourceInventory = [
+      { resourceKey: 'parent-vpc', resourceType: 'network', resourceNameOrPlaceholder: 'example-vpc', createdByTaskNumber: 1, dependsOnResourceKeys: [] },
+      { resourceKey: 'child-subnet', resourceType: 'network', resourceNameOrPlaceholder: 'example-subnet', createdByTaskNumber: 2, dependsOnResourceKeys: ['parent-vpc'] }
+    ];
+    complete.tasks[0].createdResourceKeys = ['parent-vpc'];
+    complete.tasks[1].createdResourceKeys = ['child-subnet'];
+    complete.finalCleanup = [
+      { resourceKey: 'child-subnet', title: 'Delete subnet', consoleInstructions: ['Select example-subnet.', 'Choose Delete subnet.'], cliCommands: ['aws ec2 delete-subnet --subnet-id example-subnet --region eu-west-2'], verification: 'The subnet is absent.', sourceUrls: [urls[0]] },
+      { resourceKey: 'parent-vpc', title: 'Delete VPC', consoleInstructions: ['Select example-vpc.', 'Choose Delete VPC.'], cliCommands: ['aws ec2 delete-vpc --vpc-id example-vpc --region eu-west-2'], verification: 'The VPC is absent.', sourceUrls: [urls[0]] }
+    ];
+    assert.deepEqual(findCleanupCoverageFindings(complete), []);
+    assert.equal(validateCompleteProposal(complete, urls.map(url => ({ url }))), complete);
+    const missing = structuredClone(complete);
+    missing.finalCleanup.shift();
+    assert.ok(findCleanupCoverageFindings(missing).some(finding => /child-subnet must have exactly one final cleanup/i.test(finding)));
+    const wrongOrder = structuredClone(complete);
+    wrongOrder.finalCleanup.reverse();
+    assert.ok(findCleanupCoverageFindings(wrongOrder).some(finding => /child-subnet must be removed before dependency parent-vpc/i.test(finding)));
+    const chainedCleanup = structuredClone(complete);
+    chainedCleanup.finalCleanup[0].cliCommands = ['aws ec2 delete-subnet --subnet-id example-subnet && echo done'];
+    assert.ok(findCleanupCoverageFindings(chainedCleanup).some(finding => /command chaining/i.test(finding)));
+    const vagueTarget = structuredClone(complete);
+    vagueTarget.finalCleanup[0].consoleInstructions = ['Select the subnet.', 'Choose Delete subnet.'];
+    vagueTarget.finalCleanup[0].cliCommands = ['aws ec2 delete-subnet --subnet-id [SUBNET_ID] --region eu-west-2'];
+    vagueTarget.finalCleanup[0].verification = 'The subnet is absent.';
+    assert.ok(findCleanupCoverageFindings(vagueTarget).some(finding => /does not name its exact target example-subnet/i.test(finding)));
+    assert.throws(() => validateCompleteProposal(vagueTarget, urls.map(url => ({ url }))), /final Delete stage is incomplete/i);
+    assert.equal(validateCompleteProposal(vagueTarget, urls.map(url => ({ url })), { allowReviewableQuality: true }), vagueTarget);
+    const payload = buildCompleteGenerationPayload(inputs, { qualityReference: qualityReference() });
+    assert.match(payload.instructions, /exactly one finalCleanup entry for every resourceInventory key/i);
+    assert.match(payload.instructions, /strict reverse dependency order/i);
   });
 
   await t.test('2B. durations are optional while deferred Console and CLI content is rejected', () => {
@@ -168,7 +328,10 @@ test('simplified Author Assistant creates one import-ready Console and CLI packa
     detailed.tasks[0].cliSteps = Array.from({ length: 10 }, (_, index) => ({ ...structuredClone(cliStepValue), command: `aws example get-status --item ${index + 1} --region eu-west-2` }));
     detailed.tasks[0].verification = Array.from({ length: 10 }, (_, index) => ({ ...structuredClone(verificationValue), title: `Verification ${index + 1}` }));
     detailed.tasks[0].cleanup = Array.from({ length: 10 }, (_, index) => ({ title: `Cleanup ${index + 1}`, instruction: `Remove test item ${index + 1}.`, verification: `Test item ${index + 1} is absent.`, sourceUrls: [urls[0]] }));
-    detailed.finalCleanup = Array.from({ length: 10 }, (_, index) => ({ title: `Final cleanup ${index + 1}`, instruction: `Confirm cleanup item ${index + 1}.`, verification: `Cleanup item ${index + 1} is complete.`, sourceUrls: [urls[0]] }));
+    detailed.resourceInventory = Array.from({ length: 10 }, (_, index) => ({ resourceKey: `resource-${index + 1}`, resourceType: 'other', resourceNameOrPlaceholder: `example-resource-${index + 1}`, createdByTaskNumber: 1, dependsOnResourceKeys: [] }));
+    detailed.tasks[0].createdResourceKeys = detailed.resourceInventory.map(item => item.resourceKey);
+    detailed.tasks[1].createdResourceKeys = [];
+    detailed.finalCleanup = detailed.resourceInventory.map((item, index) => ({ resourceKey: item.resourceKey, title: `Final cleanup ${index + 1}`, consoleInstructions: [`Select example-resource-${index + 1}.`, 'Choose Delete.'], cliCommands: [`aws example delete-resource --resource-name example-resource-${index + 1} --region eu-west-2`], verification: `Cleanup item ${index + 1} is complete.`, sourceUrls: [urls[0]] }));
     assert.equal(validateCompleteProposal(detailed, urls.map(url => ({ url }))).tasks[0].consoleSteps.length, 10);
   });
 

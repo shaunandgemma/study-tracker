@@ -8,6 +8,13 @@ import { validateAuthorReview } from '../../src/features/followAlongAuthor/autho
 import { formatOpenAiRequestError, OPENAI_RESPONSES_URL, DEFAULT_AUTHOR_ASSISTANT_MODEL } from './authorAssistantResearch.mjs';
 import { fingerprintJson } from './authorAssistantStage84D.mjs';
 import { buildStage90ALocalAcceptance } from './authorAssistantStage90A.mjs';
+import {
+  applyBeginnerQualityReview,
+  buildBeginnerQualityReviewSchema,
+  findBeginnerQualityFindings,
+  findReviewableProposalFindings,
+  validateBeginnerQuality
+} from './authorAssistantBeginnerQuality.mjs';
 
 export const SIMPLE_AUTHOR_ASSISTANT_KIND = 'author_assistant_complete_generation';
 export const SIMPLE_AUTHOR_ASSISTANT_ALLOWED_DOMAIN = 'docs.aws.amazon.com';
@@ -118,6 +125,18 @@ export function buildCompleteGenerationSchema(sourceUrls = null) {
           required: ['title', 'description', 'isOptional'], additionalProperties: false
         }
       },
+      resourceInventory: {
+        type: 'array', minItems: 1,
+        items: {
+          type: 'object',
+          properties: {
+            resourceKey: { type: 'string' }, resourceType: { type: 'string' }, resourceNameOrPlaceholder: { type: 'string' },
+            createdByTaskNumber: { type: 'integer' }, dependsOnResourceKeys: { type: 'array', items: { type: 'string' } }
+          },
+          required: ['resourceKey', 'resourceType', 'resourceNameOrPlaceholder', 'createdByTaskNumber', 'dependsOnResourceKeys'],
+          additionalProperties: false
+        }
+      },
       tasks: {
         type: 'array', minItems: 3,
         items: {
@@ -127,6 +146,7 @@ export function buildCompleteGenerationSchema(sourceUrls = null) {
             whyItMatters: { type: 'string' }, difficulty: { type: 'string', enum: TASK_DIFFICULTIES },
             estimatedMinutes: { type: ['integer', 'null'] }, isOptional: { type: 'boolean' },
             prerequisiteTaskNumbers: { type: 'array', items: { type: 'integer' } }, sourceUrls: sourceUrlsArray,
+            createdResourceKeys: { type: 'array', items: { type: 'string' } },
             consoleSteps: { type: 'array', minItems: 1, items: consoleStep },
             cliSteps: { type: 'array', minItems: 1, items: cliStep },
             verification: {
@@ -146,7 +166,7 @@ export function buildCompleteGenerationSchema(sourceUrls = null) {
               }
             }
           },
-          required: ['phaseNumber', 'title', 'feature', 'goal', 'whyItMatters', 'difficulty', 'estimatedMinutes', 'isOptional', 'prerequisiteTaskNumbers', 'sourceUrls', 'consoleSteps', 'cliSteps', 'verification', 'cleanup'],
+          required: ['phaseNumber', 'title', 'feature', 'goal', 'whyItMatters', 'difficulty', 'estimatedMinutes', 'isOptional', 'prerequisiteTaskNumbers', 'sourceUrls', 'createdResourceKeys', 'consoleSteps', 'cliSteps', 'verification', 'cleanup'],
           additionalProperties: false
         }
       },
@@ -154,8 +174,13 @@ export function buildCompleteGenerationSchema(sourceUrls = null) {
         type: 'array', minItems: 1,
         items: {
           type: 'object',
-          properties: { title: { type: 'string' }, instruction: { type: 'string' }, verification: { type: 'string' }, sourceUrls: sourceUrlsArray },
-          required: ['title', 'instruction', 'verification', 'sourceUrls'], additionalProperties: false
+          properties: {
+            resourceKey: { type: 'string' }, title: { type: 'string' },
+            consoleInstructions: { type: 'array', minItems: 1, items: { type: 'string' } },
+            cliCommands: { type: 'array', minItems: 1, items: { type: 'string' } },
+            verification: { type: 'string' }, sourceUrls: sourceUrlsArray
+          },
+          required: ['resourceKey', 'title', 'consoleInstructions', 'cliCommands', 'verification', 'sourceUrls'], additionalProperties: false
         }
       },
       warnings: {
@@ -165,12 +190,12 @@ export function buildCompleteGenerationSchema(sourceUrls = null) {
       },
       manualReviewFindings: { type: 'array', items: { type: 'string' } }
     },
-    required: ['programme', 'sources', 'phases', 'tasks', 'finalCleanup', 'warnings', 'manualReviewFindings'],
+    required: ['programme', 'sources', 'phases', 'resourceInventory', 'tasks', 'finalCleanup', 'warnings', 'manualReviewFindings'],
     additionalProperties: false
   };
 }
 
-export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_ASSISTANT_MODEL, sourceUrls = null } = {}) {
+export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_ASSISTANT_MODEL, sourceUrls = null, qualityReference = null } = {}) {
   const protectedList = sourceUrls ? `Use only these protected source URLs:\n${JSON.stringify(sourceUrls)}` : '';
   const updateTarget = inputs.generationMode === SIMPLE_AUTHOR_ASSISTANT_MODE.UPDATE ? inputs.updateTarget : null;
   return {
@@ -182,6 +207,10 @@ export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_
     include: sourceUrls ? undefined : ['web_search_call.action.sources'],
     instructions: [
       'Create one complete AWS Follow Along modelled on a short, beginner-friendly VPC-style learner journey.',
+      'Treat the supplied RDS gold standard as the minimum writing depth for beginners. Use it only for style and completeness; never copy its RDS resources, permissions, names or architecture into another service.',
+      'Assume there is no existing learner infrastructure. Create every required VPC, subnet, security group, IAM identity, role, policy, service resource and integration before a later instruction refers to it, unless the requested scope explicitly says otherwise.',
+      'For the Console path, tell the learner how to reach the service from the AWS Console, then give the exact visible menu, button, tab, field and value. Never use vague shortcuts such as Open Subnets, configure as needed, choose a suitable resource, or select an existing resource.',
+      'When a value must be recorded, identify the exact page, section or response field where it is shown and the placeholder name used later.',
       'There is no fixed maximum number of phases or tasks. Use as many as the requested learner scope genuinely requires, without compressing separate labs merely to meet an arbitrary count.',
       'Use at least four phases. There is no fixed maximum for Console steps, checkbox instructions, CLI steps, verification checks, task cleanup steps, or final programme cleanup steps; use however many the learner journey genuinely requires.',
       'Use only official AWS documentation returned by the protected search. Never invent URLs, Console labels, commands, permissions, or expected results.',
@@ -191,6 +220,10 @@ export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_
       'Never return catalogue-only, placeholder, deferred, future, TBD, TODO, or coming-soon Console or CLI content. Every Console checkbox and CLI command must be usable now.',
       'Use harmless fixed test names and non-confidential sample data.',
       'Do not execute anything. Cleanup must be manual, narrowly identify only resources created by this Follow Along, and appear after verification.',
+      'Build resourceInventory while writing the Follow Along. Every AWS resource created by either route must have one stable resourceKey, its exact fixed name or recorded placeholder, the task that creates it, and the resource keys it depends on. Each task createdResourceKeys must list exactly the inventory resources that task creates.',
+      'The final Delete stage must contain exactly one finalCleanup entry for every resourceInventory key. Do not omit secondary resources such as listeners, listener rules, target groups, alarms, snapshots, access keys, policies, policy attachments, roles, instance profiles, Elastic IPs, NAT gateways, route-table associations, routes, security-group rules, subnet groups, log groups, event mappings or local CLI profiles when the Follow Along creates them.',
+      'Order finalCleanup in strict reverse dependency order: remove associations, registrations and child resources before their parents; stop or delete service resources before networking; release addresses only after gateways; delete security groups before subnets and the VPC; remove IAM attachments and access keys before policies, roles and users. Never delete a shared, default, pre-existing or learner-owned resource that the Follow Along did not create.',
+      'Every finalCleanup entry must include short one-action Console instructions, separate one-command CLI commands, and a visible verification that the exact named resource is gone. Include wait commands where AWS requires deletion to finish before its dependencies can be removed.',
       'Keep Console steps and CLI commands separate. Add --region where the service operation is regional.',
       'Use placeholders only where output from an earlier command is genuinely required, and explain that dependency plainly.',
       'Every source URL must be copied exactly from protected results and every task, step, command, and cleanup action must cite supporting source URLs.',
@@ -199,6 +232,7 @@ export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_
       'Never include real access key IDs, secret access keys, session tokens, passwords, private keys, or other credential values. Use clearly named placeholders where a learner-specific value is required.',
       'Put any uncertainty in manualReviewFindings rather than guessing.',
       updateTarget ? 'Revise the supplied existing Follow Along. Preserve its exact AWS service identity and programme identity while applying the requested update. Return a complete replacement package, not a partial patch.' : '',
+      qualityReference ? `RDS COMPLETE CONSOLE AND CLI GOLD STANDARD REFERENCE:\n${JSON.stringify(qualityReference)}` : '',
       protectedList
     ].filter(Boolean).join(' '),
     input: [
@@ -217,6 +251,37 @@ export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_
       ] : [])
     ].join('\n'),
     text: { format: { type: 'json_schema', name: 'complete_aws_follow_along', strict: true, schema: buildCompleteGenerationSchema(sourceUrls) } }
+  };
+}
+
+export function buildBeginnerQualityReviewPayload(inputs, proposal, returnedSources, qualityReference, { model = DEFAULT_AUTHOR_ASSISTANT_MODEL, localFindings = [] } = {}) {
+  const sourceUrls = returnedSources.map(item => normalizedUrl(item.url));
+  const completeSchema = buildCompleteGenerationSchema(sourceUrls);
+  return {
+    model,
+    store: false,
+    reasoning: { effort: 'medium' },
+    instructions: [
+      'Act as the final beginner-quality reviewer for an AWS Follow Along.',
+      'Review every task. A beginner has no existing infrastructure and may never have used this AWS service.',
+      'A task passes only when its Console path explains how to navigate there, identifies exact visible controls and field values, creates prerequisites before use, explains every recorded value or placeholder, supplies referenced JSON, and includes visible expected results and verification.',
+      'Console and CLI routes must remain separate and technically consistent. Never invent AWS facts or cite a URL outside the supplied protected list.',
+      'Use the complete RDS Console and CLI reference as the minimum standard for writing depth, route completeness and beginner guidance. Inspect every RDS task in the reference, not merely selected examples. Never copy RDS-specific names, permissions or architecture.',
+      'A CLI route must be independently usable. If it refers to supplied JSON, user data, a trust policy or another local file, place the complete content in the same task and clearly tell the learner how and where to save it.',
+      'Return one review for every task in exact task-number order. For a passed task return revisedTask as null. For a failed task return a complete corrected replacement task and preserve its intended scope, phase, prerequisites and official source citations.',
+      'Every task named in the local findings must be marked failed and returned as a corrected replacement. Split chained CLI operations into separate CLI steps; never remove required behaviour merely to make the warning disappear.',
+      'Do not shorten already complete instructions.'
+    ].filter(Boolean).join(' '),
+    input: [
+      `Target service: ${inputs.serviceName}`,
+      `Learner level: ${inputs.learnerLevel}`,
+      `Preferred Region: ${inputs.preferredRegion}`,
+      `Protected source URLs: ${JSON.stringify(sourceUrls)}`,
+      `RDS beginner gold standard: ${JSON.stringify(qualityReference)}`,
+      `Mandatory local findings to correct: ${JSON.stringify(localFindings)}`,
+      `Generated Follow Along to review: ${JSON.stringify(proposal)}`
+    ].join('\n'),
+    text: { format: { type: 'json_schema', name: 'beginner_quality_review', strict: true, schema: buildBeginnerQualityReviewSchema(completeSchema, proposal.tasks.length) } }
   };
 }
 
@@ -295,11 +360,57 @@ export function reconcileProtectedSourceList(proposal, returnedSources) {
   return reconciled;
 }
 
-export function validateCompleteProposal(proposal, returnedSources) {
+export function findCleanupCoverageFindings(proposal) {
+  const findings = [];
+  const inventory = Array.isArray(proposal?.resourceInventory) ? proposal.resourceInventory : [];
+  const cleanup = Array.isArray(proposal?.finalCleanup) ? proposal.finalCleanup : [];
+  const tasks = Array.isArray(proposal?.tasks) ? proposal.tasks : [];
+  if (!inventory.length) return ['The Follow Along has no resource inventory for final teardown.'];
+  const inventoryKeys = inventory.map(item => clean(item.resourceKey));
+  if (inventoryKeys.some(key => !key) || new Set(inventoryKeys).size !== inventoryKeys.length) findings.push('Resource inventory keys must be non-empty and unique.');
+  const inventorySet = new Set(inventoryKeys);
+  const declaredByTasks = tasks.flatMap((task, taskIndex) => (task.createdResourceKeys || []).map(resourceKey => ({ resourceKey: clean(resourceKey), taskNumber: taskIndex + 1 })));
+  for (const item of inventory) {
+    const key = clean(item.resourceKey);
+    if (!clean(item.resourceType) || !clean(item.resourceNameOrPlaceholder)) findings.push(`Resource ${key || '(missing key)'} is missing its type or exact name/placeholder.`);
+    if (!Number.isInteger(item.createdByTaskNumber) || item.createdByTaskNumber < 1 || item.createdByTaskNumber > tasks.length) findings.push(`Resource ${key || '(missing key)'} has an invalid creation task.`);
+    const declarations = declaredByTasks.filter(entry => entry.resourceKey === key);
+    if (declarations.length !== 1 || declarations[0]?.taskNumber !== item.createdByTaskNumber) findings.push(`Resource ${key || '(missing key)'} must be declared by exactly its recorded creation task.`);
+    for (const dependency of item.dependsOnResourceKeys || []) {
+      if (!inventorySet.has(clean(dependency)) || clean(dependency) === key) findings.push(`Resource ${key || '(missing key)'} has an invalid dependency ${clean(dependency) || '(missing key)'}.`);
+    }
+  }
+  for (const declaration of declaredByTasks) if (!inventorySet.has(declaration.resourceKey)) findings.push(`Task ${declaration.taskNumber} declares unknown created resource ${declaration.resourceKey || '(missing key)'}.`);
+  const cleanupKeys = cleanup.map(item => clean(item.resourceKey));
+  for (const key of inventoryKeys) if (cleanupKeys.filter(item => item === key).length !== 1) findings.push(`Resource ${key} must have exactly one final cleanup entry.`);
+  for (const key of cleanupKeys) if (!inventorySet.has(key)) findings.push(`Final cleanup refers to unknown resource ${key || '(missing key)'}.`);
+  for (const item of inventory) {
+    const cleanupItem = cleanup.find(entry => clean(entry.resourceKey) === clean(item.resourceKey));
+    const exactTarget = clean(item.resourceNameOrPlaceholder);
+    const cleanupText = cleanupItem ? [cleanupItem.title, ...(cleanupItem.consoleInstructions || []), ...(cleanupItem.cliCommands || []), cleanupItem.verification].join(' ') : '';
+    if (cleanupItem && exactTarget && !cleanupText.includes(exactTarget)) findings.push(`Cleanup for resource ${item.resourceKey} does not name its exact target ${exactTarget}.`);
+  }
+  cleanup.forEach((item, index) => {
+    if (!clean(item.title) || !clean(item.verification) || !(item.consoleInstructions || []).length || (item.consoleInstructions || []).some(instruction => !clean(instruction))) findings.push(`Final cleanup item ${index + 1} has incomplete Console teardown or verification.`);
+    if (!(item.cliCommands || []).length || (item.cliCommands || []).some(command => !clean(command))) findings.push(`Final cleanup item ${index + 1} has no complete CLI teardown command.`);
+    if ((item.cliCommands || []).some(command => /\s(?:&&|;|\|)\s/.test(clean(command)))) findings.push(`Final cleanup item ${index + 1} contains command chaining instead of separate CLI commands.`);
+  });
+  const cleanupPosition = new Map(cleanupKeys.map((key, index) => [key, index]));
+  for (const item of inventory) for (const dependency of item.dependsOnResourceKeys || []) {
+    const childPosition = cleanupPosition.get(clean(item.resourceKey));
+    const parentPosition = cleanupPosition.get(clean(dependency));
+    if (Number.isInteger(childPosition) && Number.isInteger(parentPosition) && childPosition >= parentPosition) findings.push(`Resource ${item.resourceKey} must be removed before dependency ${dependency}.`);
+  }
+  return [...new Set(findings)];
+}
+
+export function validateCompleteProposal(proposal, returnedSources, { beginnerQuality = false, allowReviewableQuality = false } = {}) {
   const allowed = new Set((returnedSources || []).map(item => normalizedUrl(item.url)));
   if (!proposal?.tasks?.length || !proposal?.phases?.length || !proposal?.sources?.length) throw new Error('The complete Follow Along is missing phases, tasks, or sources.');
   if (proposal.phases.length < 4) throw new Error('The complete Follow Along must contain at least four phases.');
   if (proposal.tasks.length < 3) throw new Error('The complete Follow Along must contain at least three tasks.');
+  const cleanupFindings = findCleanupCoverageFindings(proposal);
+  if (cleanupFindings.length && !allowReviewableQuality) throw new Error(`The final Delete stage is incomplete or out of order. ${cleanupFindings.slice(0, 4).join(' ')}`);
   const sourceUrls = proposal.sources.map(item => normalizedUrl(item.url));
   if (new Set(sourceUrls).size !== sourceUrls.length) throw new Error('The complete Follow Along contains duplicate AWS sources.');
   for (const url of allCitedUrls(proposal)) {
@@ -322,28 +433,50 @@ export function validateCompleteProposal(proposal, returnedSources) {
       if ([step.command, step.explanation, step.expectedResult].some(isDeferredAuthorContent)) throw new Error(`Task ${taskIndex + 1} CLI step ${stepIndex + 1} contains placeholder or deferred content.`);
     });
   });
-  if (proposal.tasks.some(task => task.cliSteps.some(step => /\s(?:&&|;|\|)\s/.test(step.command)))) throw new Error('A CLI command contains command chaining.');
+  if (!allowReviewableQuality && proposal.tasks.some(task => task.cliSteps.some(step => /\s(?:&&|;|\|)\s/.test(step.command)))) throw new Error('A CLI command contains command chaining.');
   if (/AKIA[0-9A-Z]{12,}|aws_secret_access_key\s*=|aws_session_token\s*=|-----BEGIN [A-Z ]*PRIVATE KEY-----/i.test(JSON.stringify(proposal))) throw new Error('Credential-like content was rejected.');
   proposal.tasks.forEach((task, index) => {
     if (!Number.isInteger(task.phaseNumber) || task.phaseNumber < 1 || task.phaseNumber > proposal.phases.length) throw new Error(`Task ${index + 1} has an invalid phase.`);
     if (task.prerequisiteTaskNumbers.some(number => !Number.isInteger(number) || number < 1 || number > index)) throw new Error(`Task ${index + 1} has an invalid prerequisite.`);
   });
+  if (beginnerQuality) validateBeginnerQuality(proposal);
   return proposal;
 }
 
-export async function requestCompleteFollowAlong({ inputs, apiKey, model = DEFAULT_AUTHOR_ASSISTANT_MODEL, fetchImpl = globalThis.fetch } = {}) {
+export async function requestCompleteFollowAlong({ inputs, apiKey, qualityReference, model = DEFAULT_AUTHOR_ASSISTANT_MODEL, fetchImpl = globalThis.fetch, onProgress = () => {} } = {}) {
   if (!clean(apiKey)) throw new Error('OPENAI_API_KEY is not configured. No AI request was made.');
-  const firstResponse = await request(buildCompleteGenerationPayload(inputs, { model }), apiKey, fetchImpl);
+  if (!qualityReference) throw new Error('The RDS beginner gold-standard reference is required. No AI request was made.');
+  const firstResponse = await request(buildCompleteGenerationPayload(inputs, { model, qualityReference }), apiKey, fetchImpl);
   const returned = protectedSources(firstResponse);
   if (returned.length < 3) throw new Error('Protected AWS Docs search returned fewer than three usable official sources.');
+  onProgress(`Initial generation completed with ${returned.length} protected AWS source(s).`);
   let proposal = reconcileProtectedSourceList(parseProposal(firstResponse), returned);
-  try { return validateCompleteProposal(proposal, returned); }
+  try { validateCompleteProposal(proposal, returned, { allowReviewableQuality: true }); }
   catch (error) {
     if (!/source was not returned|cited AWS source|duplicate AWS sources/i.test(error.message)) throw error;
-    const correctionResponse = await request(buildCompleteGenerationPayload(inputs, { model, sourceUrls: returned.map(item => item.url) }), apiKey, fetchImpl);
+    const correctionResponse = await request(buildCompleteGenerationPayload(inputs, { model, sourceUrls: returned.map(item => item.url), qualityReference }), apiKey, fetchImpl);
     proposal = reconcileProtectedSourceList(parseProposal(correctionResponse), returned);
-    return validateCompleteProposal(proposal, returned);
+    validateCompleteProposal(proposal, returned, { allowReviewableQuality: true });
   }
+  const localFindings = [...findReviewableProposalFindings(proposal), ...findCleanupCoverageFindings(proposal)];
+  if (localFindings.length) onProgress(`The local check found ${localFindings.length} reviewable quality or cleanup item(s). Sending them to the quality review instead of stopping.`);
+  onProgress('Running the separate beginner-quality AI review. Only weak tasks may be rewritten.');
+  const reviewResponse = await request(buildBeginnerQualityReviewPayload(inputs, proposal, returned, qualityReference, { model, localFindings }), apiKey, fetchImpl);
+  let reviewed;
+  try {
+    reviewed = applyBeginnerQualityReview(proposal, parseProposal(reviewResponse), { allowPartial: true });
+  } catch {
+    reviewed = structuredClone(proposal);
+    reviewed.manualReviewFindings = [...(reviewed.manualReviewFindings || []), 'The AI beginner-quality review response could not be applied. All original generated tasks were preserved for manual review before creating a release candidate.'];
+  }
+  const unresolved = [...findReviewableProposalFindings(reviewed), ...findBeginnerQualityFindings(reviewed), ...findCleanupCoverageFindings(reviewed)];
+  if (unresolved.length) {
+    reviewed.manualReviewFindings = [...(reviewed.manualReviewFindings || []), ...unresolved.map(finding => `Manual beginner-quality correction required: ${finding}`)];
+    onProgress(`Beginner-quality review completed with ${unresolved.length} item(s) retained for manual correction in Author.`);
+  } else {
+    onProgress('Beginner-quality AI review completed. Running final local checks.');
+  }
+  return validateCompleteProposal(reviewed, returned, { allowReviewableQuality: true });
 }
 
 function uniqueSlug(value, used, fallback) {
@@ -437,7 +570,15 @@ export function buildAuthorDraftContent(inputs, proposal) {
     capabilities: {}, phases, tasks: authorTasks,
     resources: { schema: [], interpolationAliases: {}, chargeableResourceKeys: [], variables: { region: clean(inputs.preferredRegion) } },
     warnings: { ...proposal.warnings },
-    cleanup: { steps: proposal.finalCleanup.map((step, index) => ({ id: `programme-cleanup-${index + 1}`, stepNumber: index + 1, title: clean(step.title), instruction: clean(step.instruction), description: clean(step.instruction), verification: clean(step.verification), resourceKeys: [], sourceIds: sourceIdsFor(step.sourceUrls) })), completionGate: 'acknowledgement', manualOnly: true, ordering: 'reverse_dependency' },
+    cleanup: { steps: proposal.finalCleanup.map((step, index) => {
+      const instruction = [
+        'Console:',
+        ...step.consoleInstructions.map(item => `- ${clean(item)}`),
+        'CLI:',
+        ...step.cliCommands.map(command => `- ${clean(command)}`)
+      ].join('\n');
+      return { id: `programme-cleanup-${index + 1}`, stepNumber: index + 1, title: clean(step.title), instruction, description: instruction, verification: clean(step.verification), resourceKeys: [], sourceIds: sourceIdsFor(step.sourceUrls) };
+    }), completionGate: 'acknowledgement', manualOnly: true, ordering: 'reverse_dependency' },
     extensions: { registrations: [] },
     review: { validationStatus: 'passed', validationErrors: [], validationWarnings: [], sourceReviewStatus: 'reviewed', learnerPreviewStatus: 'reviewed', approvalDecision: 'pending', reviewStatus: 'ready_for_approval', findings: proposal.manualReviewFindings.map((message, index) => ({ id: `finding-${index + 1}`, findingNumber: index + 1, section: 'instructions', priority: 'advisory', message: clean(message), status: 'open' })) },
     publication: { publishStatus: 'not_published', targetProgrammeId: programmeId, proposedChanges: [] }

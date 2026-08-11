@@ -54,7 +54,7 @@ test('Follow Along display components', async (t) => {
     '/src/components/FollowAlongs/FollowAlongCard.jsx',
   );
 
-  const { FollowAlongInstructionItem, copyFollowAlongInstructionText } = instructionModule;
+  const { FollowAlongInstructionItem } = instructionModule;
   const {
     FollowAlongCommandBlock,
     copyFollowAlongCommandText,
@@ -92,20 +92,14 @@ test('Follow Along display components', async (t) => {
     })), '');
   });
 
-  await t.test('2A. instruction text stays selectable and has one-click structured copying', async () => {
-    let copiedText = '';
-    assert.equal(await copyFollowAlongInstructionText(
-      { text: 'Choose Create policy.', detail: 'Use the JSON editor.' },
-      { writeText: async value => { copiedText = value; } }
-    ), true);
-    assert.equal(copiedText, 'Choose Create policy.\nUse the JSON editor.');
+  await t.test('2A. instruction text stays selectable without adding a row copy button', () => {
     const html = renderToStaticMarkup(createElement(FollowAlongInstructionItem, {
       instruction: { id: 'copy-policy', text: 'Choose Create policy.' },
       isChecked: false,
       onToggle: () => {},
     }));
     assert.match(html, /select-text/);
-    assert.match(html, /aria-label="Copy instruction"/);
+    assert.doesNotMatch(html, /Copy instruction/);
   });
 
   await t.test('3. Command block shows guidance, output, warning, and live copy status', () => {

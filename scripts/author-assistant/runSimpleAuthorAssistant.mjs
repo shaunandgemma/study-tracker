@@ -11,6 +11,7 @@ import {
 } from './authorAssistantSimple.mjs';
 import { DEFAULT_AUTHOR_ASSISTANT_MODEL } from './authorAssistantResearch.mjs';
 import { loadPublishedFollowAlongCatalogue } from './authorAssistantPublishedCatalogue.mjs';
+import { buildBeginnerGoldStandardReference, RDS_GOLD_STANDARD_PROGRAMME_ID } from './authorAssistantBeginnerQuality.mjs';
 
 const terminal = createInterface({ input, output });
 
@@ -40,9 +41,11 @@ async function requiredWithDefault(question, defaultValue) {
 try {
   output.write('\nAUTHOR ASSISTANT - COMPLETE FOLLOW ALONG\n');
   output.write('One run creates a complete Console and CLI preview from official AWS Docs.\n');
+  output.write('A second AI request reviews every task against the complete published RDS Console and CLI standard and rewrites only weak tasks.\n');
   output.write('It performs only a read-only published-list check and does not write to AWS, Supabase or Author. It cannot publish.\n\n');
   const modeIndex = await numberedChoice('What do you want to do?', ['New Follow Along', 'Update Existing Follow Along']);
   let inputs;
+  let programmes = null;
   if (modeIndex === 0) {
     inputs = {
       generationMode: SIMPLE_AUTHOR_ASSISTANT_MODE.NEW,
@@ -54,7 +57,7 @@ try {
     };
   } else {
     output.write('\nLoading updateable Follow Alongs from the controlled published list...\n');
-    const programmes = await loadPublishedFollowAlongCatalogue();
+    programmes = await loadPublishedFollowAlongCatalogue();
     const selectedIndex = await numberedChoice('Which Follow Along do you want to update?', programmes.map(item => `${item.displayName} (${item.programmeId}, published revision ${item.sourceRevision})`));
     const selected = programmes[selectedIndex];
     const learnerLevel = selected.runtimeContent?.programme?.difficulty || 'Beginner';
@@ -78,8 +81,20 @@ try {
   } else {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('OPENAI_API_KEY is not configured. No AI request was made.');
+    if (!programmes) {
+      output.write('\nLoading the complete published RDS Console and CLI Golden Standard...\n');
+      programmes = await loadPublishedFollowAlongCatalogue();
+    }
+    const qualityReference = buildBeginnerGoldStandardReference(programmes.find(item => item.programmeId === RDS_GOLD_STANDARD_PROGRAMME_ID));
+    output.write(`Using the complete Console and CLI content from ${qualityReference.displayName}, published revision ${qualityReference.sourceRevision}, as the Golden Standard.\n`);
     output.write('\nResearching official AWS Docs and preparing Console, CLI, checks and cleanup...\n');
-    const proposal = await requestCompleteFollowAlong({ inputs, apiKey, model: process.env.AUTHOR_ASSISTANT_MODEL || DEFAULT_AUTHOR_ASSISTANT_MODEL });
+    const proposal = await requestCompleteFollowAlong({
+      inputs,
+      apiKey,
+      qualityReference,
+      model: process.env.AUTHOR_ASSISTANT_MODEL || DEFAULT_AUTHOR_ASSISTANT_MODEL,
+      onProgress: message => output.write(`${message}\n`)
+    });
     const { content } = buildAuthorDraftContent(inputs, proposal);
     const { session, handoffPackage } = buildSimpleHandoff({ inputs, proposal, authorDraftContent: content });
     const previewText = formatSimplePreview(handoffPackage);

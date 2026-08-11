@@ -1,0 +1,88 @@
+STEP 175 - NON-BLOCKING PARTIAL AI QUALITY REVIEW
+
+1. APPROVED BEHAVIOUR
+
+The beginner-quality AI review improves generated content but must not prevent a
+usable local Follow Along package merely because it reviewed fewer tasks than
+requested.
+
+
+2. PARTIAL REVIEW HANDLING
+
+The script now:
+
+1. Applies each valid corrected task returned by the reviewer.
+2. Preserves every original task that the reviewer did not return.
+3. Preserves an original task when the reviewer reports a problem but supplies
+   no corrected replacement.
+4. Preserves an original task when the review record is inconsistent.
+5. Records missing task numbers as visible manual-review findings.
+6. Performs no additional paid reviewer retry.
+7. Continues to create the local preview and handoff package.
+
+
+3. UNRESOLVED BEGINNER FINDINGS
+
+Unresolved vague Console wording, missing Console navigation, unexplained
+recorded values, missing JSON blocks and chained CLI content are retained as
+visible advisory findings for correction in Author.
+
+The generated content remains editable before candidate creation.
+
+
+4. FAILURES THAT REMAIN BLOCKING
+
+The script can still stop when the generated package is fundamentally unusable
+or unsafe, including:
+
+1. Real AWS credentials or private-key material.
+2. Sources outside the protected official AWS documentation results.
+3. Missing required phases, tasks, sources, Console content or CLI content.
+4. Invalid task phase or prerequisite relationships.
+5. An OpenAI API, account-credit or network failure.
+
+These are not ordinary writing-quality findings and must not be imported as a
+normal draft.
+
+
+5. COST BEHAVIOUR
+
+Normal successful generation uses:
+
+1. One initial protected AWS Docs generation request.
+2. One beginner-quality review request.
+
+An incomplete review does not trigger a third paid request.
+
+
+6. SAFETY BOUNDARIES
+
+1. No AWS command is executed.
+2. Nothing is written to AWS.
+3. Nothing is written to Supabase.
+4. Nothing is written to Author automatically.
+5. The OpenAI API key remains memory-only.
+6. Manual findings remain visible before candidate creation.
+
+
+7. VERIFICATION
+
+1. A simulated partial one-of-three-task review completed successfully.
+2. The two unreviewed original tasks were preserved exactly.
+3. Missing task numbers 2 and 3 were recorded for manual review.
+4. No additional API request was made.
+5. Focused Author Assistant tests: 21 passed.
+6. Complete application test suite: 699 tests passed.
+7. Linter completed with no new errors; existing unrelated warnings remain.
+8. Production build completed successfully.
+
+
+8. IMPLEMENTED FILES
+
+E:\code\study-tracker\scripts\author-assistant\authorAssistantBeginnerQuality.mjs
+
+E:\code\study-tracker\scripts\author-assistant\authorAssistantSimple.mjs
+
+E:\code\study-tracker\tests\authorAssistantSimple.test.js
+
+E:\code\study-tracker\docs\author-assistant\175_NON_BLOCKING_PARTIAL_AI_QUALITY_REVIEW.txt

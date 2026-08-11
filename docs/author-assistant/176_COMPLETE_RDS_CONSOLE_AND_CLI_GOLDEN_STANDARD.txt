@@ -1,0 +1,67 @@
+STEP 176 - COMPLETE RDS CONSOLE AND CLI GOLDEN STANDARD
+
+1. REQUEST
+
+Use the fully updated published RDS Follow Along as the Author Assistant Golden
+Standard for both Console and CLI learning routes.
+
+
+2. PREVIOUS BEHAVIOUR
+
+The reference recorded the published RDS revision but extracted only four
+strong Console examples. It did not include the whole Console journey and did
+not include the RDS CLI journey.
+
+
+3. NEW BEHAVIOUR
+
+Every published RDS task now contributes:
+
+1. Task purpose, goal and beginner explanation.
+2. All Console steps and separately editable instructions.
+3. All JSON and structured text blocks with their complete content.
+4. All CLI commands, explanations, warnings and expected results.
+5. All verification checks.
+6. All task cleanup and final programme cleanup guidance.
+
+Both the initial generation request and the separate quality-review request use
+this same complete reference.
+
+
+4. REQUIRED ROUTE INDEPENDENCE
+
+If a CLI instruction refers to supplied JSON, user data, a trust policy or a
+local file, the generated task must contain the complete referenced content and
+explain how and where the learner saves it. The CLI route must not depend on
+content that appears only in the Console route.
+
+
+5. SOURCE OF TRUTH
+
+The script still loads programme ID rds-learning-path from the read-only
+controlled published Follow Along list. It automatically uses the currently
+published revision and fingerprint.
+
+Unpublished Shared Draft changes are not used. Publish the completed RDS
+revision before starting another Author Assistant generation if those changes
+must become the active Golden Standard.
+
+
+6. SAFETY BOUNDARIES
+
+1. The Golden Standard load remains read-only.
+2. No AWS command is executed.
+3. Nothing is written to AWS, Supabase or Author.
+4. No draft, candidate, approval or publication is created.
+5. RDS-specific resources and architecture must not be copied into unrelated
+   AWS services; the reference controls quality and completeness.
+
+
+7. VERIFICATION COMPLETED
+
+1. Focused Author Assistant tests: 21 passed.
+2. Complete application test suite: 699 tests passed.
+3. Linter: passed with existing unrelated warnings only.
+4. Production build: passed.
+5. No live OpenAI request was purchased or performed.
+6. No Author, Supabase or AWS data was changed.
