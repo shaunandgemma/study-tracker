@@ -10,7 +10,9 @@ import {
   addAuthorResource,
   addAuthorSource,
   addAuthorVerification,
+  isApprovedAuthorDocumentationUrl,
   isOfficialAwsDocumentationUrl,
+  isOfficialTerraformDocumentationUrl,
   removeAuthorInstructionStep,
   removeAuthorJsonBlock,
   removeAuthorResource,
@@ -62,6 +64,21 @@ test('Follow Along Author sources, instructions, verification and cleanup', asyn
     assert.equal(isOfficialAwsDocumentationUrl('http://docs.aws.amazon.com/vpc/'), false);
     assert.equal(isOfficialAwsDocumentationUrl('https://example.com/aws-vpc'), false);
     assert.equal(addAuthorSource(plannedDraft(), { title: 'Unofficial', url: 'https://example.com', purpose: 'No' }).success, false);
+  });
+
+  await t.test('1A. Official Terraform documentation is accepted without opening the source boundary', () => {
+    const terraformUrl = 'https://developer.hashicorp.com/terraform/language/backend/s3';
+    assert.equal(isOfficialTerraformDocumentationUrl(terraformUrl), true);
+    assert.equal(isApprovedAuthorDocumentationUrl(terraformUrl), true);
+    assert.equal(isOfficialTerraformDocumentationUrl('https://developer.hashicorp.com/vault/docs'), false);
+    assert.equal(isOfficialTerraformDocumentationUrl('https://terraform.io/docs'), false);
+    assert.equal(isOfficialTerraformDocumentationUrl('http://developer.hashicorp.com/terraform/language'), false);
+    const added = addAuthorSource(plannedDraft(), { title: 'S3 backend', url: terraformUrl, purpose: 'Configure Terraform state.' });
+    assert.equal(added.success, true);
+    assert.equal(added.source.publisher, 'HashiCorp');
+    const updated = updateAuthorSource(added.draft, added.source.id, { url: 'https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html' });
+    assert.equal(updated.success, true);
+    assert.equal(updated.draft.sources[0].publisher, 'AWS');
   });
 
   await t.test('2. Source IDs remain stable and task links are stored on both sides', () => {
@@ -123,7 +140,7 @@ test('Follow Along Author sources, instructions, verification and cleanup', asyn
 
   await t.test('5. Every task requires a source, a usable path and verification', () => {
     const result = validateAuthorContent(plannedDraft());
-    assert.ok(result.errors.some(item => /official AWS source/i.test(item.message)));
+    assert.ok(result.errors.some(item => /official documentation source/i.test(item.message)));
     assert.ok(result.errors.some(item => /Console or CLI learning path/i.test(item.message)));
     assert.ok(result.errors.some(item => /verification check/i.test(item.message)));
   });

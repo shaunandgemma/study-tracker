@@ -36,27 +36,47 @@ export function isOfficialAwsDocumentationUrl(value) {
   }
 }
 
+export function isOfficialTerraformDocumentationUrl(value) {
+  try {
+    const url = new URL(clean(value));
+    return url.protocol === 'https:'
+      && url.hostname === 'developer.hashicorp.com'
+      && (url.pathname === '/terraform' || url.pathname.startsWith('/terraform/'));
+  } catch {
+    return false;
+  }
+}
+
+export function isApprovedAuthorDocumentationUrl(value) {
+  return isOfficialAwsDocumentationUrl(value) || isOfficialTerraformDocumentationUrl(value);
+}
+
+function documentationPublisher(value) {
+  return isOfficialTerraformDocumentationUrl(value) ? 'HashiCorp' : 'AWS';
+}
+
 export function addAuthorSource(draft, input = {}) {
   const title = clean(input.title);
   const url = clean(input.url);
-  if (!title) return { success: false, error: 'Enter the AWS document title.' };
-  if (!isOfficialAwsDocumentationUrl(url)) return { success: false, error: 'Use an official HTTPS AWS documentation link.' };
+  if (!title) return { success: false, error: 'Enter the official document title.' };
+  if (!isApprovedAuthorDocumentationUrl(url)) return { success: false, error: 'Use an approved official AWS or HashiCorp Terraform documentation link.' };
   const sources = draft.sources || [];
   const id = uniqueId(`source-${slugify(title)}`, new Set(sources.map(source => source.id)));
-  const source = { id, title, url, publisher: 'AWS', sourceType: 'official_documentation', purpose: clean(input.purpose), taskIds: [] };
+  const source = { id, title, url, publisher: documentationPublisher(url), sourceType: 'official_documentation', purpose: clean(input.purpose), taskIds: [] };
   return { success: true, source, draft: { ...draft, sources: [...sources, source] } };
 }
 
 export function updateAuthorSource(draft, sourceId, changes = {}) {
   const current = (draft.sources || []).find(source => source.id === sourceId);
-  if (!current) return { success: false, error: 'The AWS source could not be found.' };
-  if (changes.url !== undefined && !isOfficialAwsDocumentationUrl(changes.url)) return { success: false, error: 'Use an official HTTPS AWS documentation link.' };
-  const source = { ...current, ...changes, id: current.id, publisher: 'AWS', sourceType: 'official_documentation', taskIds: current.taskIds || [] };
+  if (!current) return { success: false, error: 'The documentation source could not be found.' };
+  if (changes.url !== undefined && !isApprovedAuthorDocumentationUrl(changes.url)) return { success: false, error: 'Use an approved official AWS or HashiCorp Terraform documentation link.' };
+  const nextUrl = changes.url === undefined ? current.url : changes.url;
+  const source = { ...current, ...changes, id: current.id, publisher: documentationPublisher(nextUrl), sourceType: 'official_documentation', taskIds: current.taskIds || [] };
   return { success: true, draft: { ...draft, sources: draft.sources.map(item => item.id === sourceId ? source : item) } };
 }
 
 export function setAuthorSourceTaskLink(draft, sourceId, taskId, linked) {
-  if (!(draft.sources || []).some(source => source.id === sourceId)) return { success: false, error: 'The AWS source could not be found.' };
+  if (!(draft.sources || []).some(source => source.id === sourceId)) return { success: false, error: 'The documentation source could not be found.' };
   if (!(draft.tasks || []).some(task => task.id === taskId)) return { success: false, error: 'The task could not be found.' };
   const sources = draft.sources.map(source => source.id === sourceId ? { ...source, taskIds: linked ? [...new Set([...(source.taskIds || []), taskId])] : (source.taskIds || []).filter(id => id !== taskId) } : source);
   const tasks = draft.tasks.map(task => task.id === taskId ? { ...task, sourceIds: linked ? [...new Set([...(task.sourceIds || []), sourceId])] : (task.sourceIds || []).filter(id => id !== sourceId) } : task);
@@ -65,7 +85,7 @@ export function setAuthorSourceTaskLink(draft, sourceId, taskId, linked) {
 
 export function removeAuthorSource(draft, sourceId) {
   const source = (draft.sources || []).find(item => item.id === sourceId);
-  if (!source) return { success: false, error: 'The AWS source could not be found.' };
+  if (!source) return { success: false, error: 'The documentation source could not be found.' };
   if ((source.taskIds || []).length) return { success: false, error: 'Unlink this source from every task before removing it.' };
   return { success: true, draft: { ...draft, sources: draft.sources.filter(item => item.id !== sourceId) } };
 }
@@ -333,10 +353,10 @@ export function validateAuthorContent(draft) {
   const resources = draft.resources?.schema || [];
   const resourceKeys = new Set(resources.map(resource => resource.key));
 
-  if (!sources.length) errors.push({ section: 'sources', message: 'Add at least one official AWS documentation source.' });
+  if (!sources.length) errors.push({ section: 'sources', message: 'Add at least one approved official documentation source.' });
   sources.forEach(source => {
-    if (!clean(source.title)) errors.push({ section: 'sources', id: source.id, message: 'Every AWS source needs a title.' });
-    if (!isOfficialAwsDocumentationUrl(source.url)) errors.push({ section: 'sources', id: source.id, message: `${source.title || 'A source'} must use an official HTTPS AWS link.` });
+    if (!clean(source.title)) errors.push({ section: 'sources', id: source.id, message: 'Every documentation source needs a title.' });
+    if (!isApprovedAuthorDocumentationUrl(source.url)) errors.push({ section: 'sources', id: source.id, message: `${source.title || 'A source'} must use an approved official AWS or HashiCorp Terraform link.` });
     if (!clean(source.purpose)) errors.push({ section: 'sources', id: source.id, message: `${source.title || 'A source'} needs a short reason for using it.` });
     if (!(source.taskIds || []).length) warnings.push({ section: 'sources', id: source.id, message: `${source.title || 'A source'} is not linked to a task.` });
     (source.taskIds || []).forEach(taskId => {
@@ -346,7 +366,7 @@ export function validateAuthorContent(draft) {
   });
 
   tasks.forEach(task => {
-    if (!(task.sourceIds || []).length) errors.push({ section: 'sources', id: task.id, message: `${task.title || 'A task'} needs an official AWS source.` });
+    if (!(task.sourceIds || []).length) errors.push({ section: 'sources', id: task.id, message: `${task.title || 'A task'} needs an approved official documentation source.` });
     (task.sourceIds || []).forEach(sourceId => {
       if (!sourceIds.has(sourceId)) errors.push({ section: 'sources', id: task.id, message: `${task.title || 'A task'} references an unknown source.` });
       else if (!(sources.find(source => source.id === sourceId)?.taskIds || []).includes(task.id)) errors.push({ section: 'sources', id: task.id, message: `${task.title || 'A task'} has a one-sided source link.` });

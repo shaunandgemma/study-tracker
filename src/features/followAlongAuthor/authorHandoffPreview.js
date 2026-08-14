@@ -41,6 +41,7 @@ function acceptanceFingerprintContent(acceptance) {
 
 function countContent(content) {
   const tasks = content?.tasks || [];
+  const sources = content?.sources || [];
   return {
     phaseCount: (content?.phases || []).length,
     taskCount: tasks.length,
@@ -48,7 +49,7 @@ function countContent(content) {
     verificationCheckCount: tasks.flatMap(task => task.verification || []).length,
     cleanupItemCount: tasks.flatMap(task => task.cleanup || []).length + (content?.cleanup?.steps || []).length,
     learnerResourceValueCount: content?.resources?.schema?.length || 0,
-    officialAwsSourceCount: (content?.sources || []).length
+    officialAwsSourceCount: sources.filter(source => source?.publisher === 'AWS').length
   };
 }
 
