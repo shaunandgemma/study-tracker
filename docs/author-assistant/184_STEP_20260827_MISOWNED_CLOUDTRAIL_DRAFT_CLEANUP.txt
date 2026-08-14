@@ -1,0 +1,61 @@
+STEP 20260827 - MISOWNED CLOUDTRAIL SHARED DRAFT CLEANUP
+========================================================
+
+1. CAUSE
+
+An external AG helper selected the first Supabase user instead of the signed-in
+Author. It created the CloudTrail Shared Draft under the separate Approver
+account and changed that account's protected role to Author.
+
+2. VERIFIED ERRONEOUS RECORD
+
+Draft ID:
+author-draft-import-9c389609207da8d022aa672f7b27a1d7574c85825a5329545367489eeedf9bde
+
+Programme ID:
+cloudtrail-learning-path
+
+Incorrect owner:
+shaunbristol1986@outlook.com
+0a70410c-912f-4a67-a0ad-a8543b6bf6d4
+
+Intended Author:
+shaun19862010@hotmail.co.uk
+667ad4ce-312b-4f78-a3fa-366c8b669477
+
+Verified database state before implementation:
+- Shared revision: 1
+- Status: ready_for_approval
+- Release candidates: 0
+- Revision-history rows: 1
+- Publication visibility: unpublished
+- Publish status: not_published
+
+3. MIGRATION SCOPE
+
+Migration 20260827 removes only the exact wrongly owned Shared Draft and its
+single matching revision-history row. It first records the correction in the
+existing Author-draft deletion audit.
+
+The migration stops if the owner, intended Author, programme, revision,
+fingerprint, embedded ownership, unpublished state, candidate state,
+publication state or revision count differs from the verified values.
+
+4. PRESERVED DATA
+
+- The correct browser Local Draft is not stored in the affected database
+  tables and is untouched.
+- No release candidate is deleted.
+- No published Follow Along is deleted or changed.
+- No other Shared Draft or revision is deleted.
+- No AWS resource, exam question or learner progress is changed.
+
+5. AFTER DEPLOYMENT
+
+The signed-in Author can return to Shared-storage preparation and copy the
+existing correct CloudTrail Local Draft. The normal browser flow will then
+create revision 1 under the correct Author identity.
+
+6. DEPLOYMENT STATUS
+
+Not deployed. Creation and local testing only were approved.

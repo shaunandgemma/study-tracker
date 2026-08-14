@@ -1,3 +1,7 @@
+import { AWS_SAA_C03_EXAM } from './exams/awsSaaC03Exam.js';
+import { COMPTIA_SECURITY_PLUS_EXAM } from './exams/comptiaSecurityPlusExam.js';
+import { TERRAFORM_ASSOCIATE_EXAM } from './exams/terraformAssociateExam.js';
+
 /**
  * Centralized Exam Configuration & Practice Question Data Bank
  * 
@@ -8,13 +12,7 @@
 
 export const DEFAULT_EXAMS = [
   {
-    "id": "aws-saa-c03",
-    "code": "AWS SAA-C03",
-    "title": "AWS Certified Solutions Architect - Associate",
-    "description": "Validates technical expertise in designing and deploying scalable, highly available, and fault-tolerant systems on AWS.",
-    "passingScore": 72,
-    "timeLimitMinutes": 130,
-    "badgeColor": "from-amber-500 to-orange-600",
+    ...AWS_SAA_C03_EXAM,
     "topics": [
       {
         "id": "topic-vpc",
@@ -6925,13 +6923,10 @@ export const DEFAULT_EXAMS = [
     "questions": []
   },
   {
-    "id": "comptia-sec-plus",
-    "code": "CompTIA Security+",
-    "title": "CompTIA Security+ (SY0-701)",
-    "description": "Establishes core cybersecurity knowledge for infrastructure security, threat management, and identity controls.",
-    "passingScore": 75,
-    "timeLimitMinutes": 90,
-    "badgeColor": "from-emerald-500 to-teal-600",
+    ...TERRAFORM_ASSOCIATE_EXAM
+  },
+  {
+    ...COMPTIA_SECURITY_PLUS_EXAM,
     "topics": [
       {
         "id": "topic-sec-crypto",

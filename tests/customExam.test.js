@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   prepareExamQuestions,
   prepareFullMockQuestions,
+  prepareFullMockForExam,
   allocateCustomExamDomainQuotas,
   selectCustomExamQuestions,
   prepareCustomExamQuestions
@@ -217,6 +218,21 @@ test('20. Existing Full Mock fixed allocation remains 19, 17, 16, 13', () => {
     'domain-3': 16,
     'domain-4': 13
   });
+});
+
+test('20A. non-AWS Full Mock uses every available question without AWS domain rules', () => {
+  const terraformQuestions = Array.from({ length: 16 }, (_, index) => ({
+    id: `q-tf-${index + 1}`,
+    topicId: `tf-topic-${(index % 8) + 1}`,
+    type: 'single',
+    options: ['A', 'B', 'C', 'D'],
+    correctAnswer: 0,
+    correctAnswers: null
+  }));
+
+  const prepared = prepareFullMockForExam('terraform-associate-004', terraformQuestions, seededRandom(20));
+  assert.equal(prepared.length, 16);
+  assert.equal(new Set(prepared.map(question => question.id)).size, 16);
 });
 
 // 21. Targeted Topic Quiz remains unchanged

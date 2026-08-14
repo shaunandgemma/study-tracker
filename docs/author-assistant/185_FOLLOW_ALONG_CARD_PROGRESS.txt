@@ -1,0 +1,52 @@
+FOLLOW ALONG CARD PROGRESS
+==========================
+
+1. REQUEST
+
+Show saved learner progress directly on every available published Follow Along
+card.
+
+2. IMPLEMENTATION
+
+Each published card now loads progress using that programme's existing unique
+path ID and progress-storage configuration.
+
+The card displays:
+- Not Started, In Progress, Completed or Resources Retained.
+- Completed tasks out of the programme's total tasks.
+- A percentage progress bar after progress begins.
+- The current or next task title when available.
+- Start Follow Along or Resume Follow Along as appropriate.
+
+3. STORAGE
+
+No new storage or database table was created. Signed-in learners use the
+existing user_learning_path_progress records. Signed-out learners use the
+existing per-programme browser progress key.
+
+4. SAFETY
+
+Progress is matched by each exact published programme/path ID. Follow Along
+content, Author drafts, candidates, approvals and publications are unchanged.
+
+If progress cannot be loaded, the card safely displays zero completed tasks
+instead of blocking the Follow Along catalogue.
+
+5. REVISION-SAFE COUNTING
+
+Saved progress can contain task IDs from an older published revision. Card
+totals count only unique task IDs that still exist in the current published
+Follow Along. Retired task IDs are ignored, completed status is withheld when
+new current tasks remain, and the displayed percentage cannot exceed 100%.
+
+6. CONSISTENT CARD HEIGHT
+
+Every card uses the same expanded fixed height so longer titles and badges do
+not hide the current-task line or Start/Resume button. The action footer cannot
+shrink when the progress summary is present.
+
+7. CATEGORY FILTER LAYOUT
+
+The expanding row of category buttons was replaced with one compact accessible
+category dropdown. All categories remains first and the remaining unique
+categories are sorted alphabetically. The existing search field is unchanged.

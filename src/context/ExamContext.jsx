@@ -13,7 +13,8 @@ import {
   getStoredTheme,
   saveStoredTheme,
   exportBackupJSON,
-  importBackupJSON
+  importBackupJSON,
+  removeRetiredCustomExams
 } from '../utils/storage';
 import { fetchAttemptsFromSupabase } from '../services/attemptService';
 
@@ -28,7 +29,7 @@ export const normalizeMainViewMode = (mode) => (
 export const ExamProvider = ({ children }) => {
   const [exams, setExams] = useState(() => loadExams());
   const [activeExamId, setActiveExamIdState] = useState(() => loadActiveExamId());
-  const [viewModeRaw, setViewModeRaw] = useState('checklist'); // 'checklist' | 'prep-exam' | 'follow-alongs'
+  const [viewModeRaw, setViewModeRaw] = useState('app-home'); // 'app-home' | 'exam-home' | exam tools
   const [legacyAutoOpenProgrammeId, setLegacyAutoOpenProgrammeId] = useState(null);
 
   const setViewMode = useCallback((mode) => {
@@ -106,8 +107,9 @@ export const ExamProvider = ({ children }) => {
   const updateExamsState = (updater) => {
     setExams(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      saveExams(updated);
-      return updated;
+      const retained = removeRetiredCustomExams(updated);
+      saveExams(retained);
+      return retained;
     });
   };
 

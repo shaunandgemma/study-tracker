@@ -174,6 +174,14 @@ export function buildPublishedProgrammeCard(row) {
   const hasConsole = tasks.some(task => task.modeAvailability?.console?.status === 'available' && (task.consoleSteps || []).length > 0);
   const hasCli = tasks.some(task => task.modeAvailability?.cli?.status === 'available' && (task.cliSteps || []).length > 0);
   const supportedModes = [hasConsole && 'console', hasCli && 'cli', hasConsole && hasCli && 'both'].filter(Boolean);
+  const assignedTask = tasks.find(task => task.examId || task.examCode);
+  const inferredExamId = programme.programmeId === 'cloudformation-terraform-learning-path'
+    ? 'terraform-associate-004'
+    : '';
+  const examId = clean(programme.examId || programme.examCode)
+    || clean(assignedTask?.examId || assignedTask?.examCode)
+    || inferredExamId
+    || 'aws-saa-c03';
   return {
     id: programme.programmeId,
     slug: programme.serviceSlug,
@@ -193,7 +201,8 @@ export function buildPublishedProgrammeCard(row) {
     pathId: programme.pathId,
     publishedAt: row.published_at,
     sourceRevision: row.source_revision,
-    candidateId: row.candidate_id
+    candidateId: row.candidate_id,
+    examId
   };
 }
 

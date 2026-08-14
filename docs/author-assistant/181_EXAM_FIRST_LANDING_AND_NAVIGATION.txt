@@ -1,0 +1,49 @@
+181. EXAM-FIRST LANDING AND NAVIGATION
+
+1. Purpose
+Give the app a general landing page, move exam selection out of the top bar, and give every selected exam its own page for choosing Checklist, Prep Exam, or Follow Alongs.
+
+2. New app flow
+1. Open ExamPulse.
+2. Read the general app introduction.
+3. Choose an exam from the side panel.
+4. Open the selected exam landing page.
+5. Choose Checklist, Prep Exam, or Follow Alongs.
+6. Use Back to return to the selected exam page or Exams to return to the general landing page.
+
+3. Independently editable built-in exam files
+- src/data/exams/awsSaaC03Exam.js
+- src/data/exams/comptiaSecurityPlusExam.js
+- src/data/exams/examDefinitions.js
+
+These files own the built-in exam title, code, description, intended audience, benefits, score, duration, colour, and Follow Along assignment metadata. The existing detailed checklist content remains in src/data/examData.js and imports these definitions.
+
+4. Navigation changes
+- The top bar no longer displays exam titles.
+- The top bar no longer displays Checklist, Prep Exam, or Follow Alongs.
+- The old mobile bottom tool bar is no longer mounted by the app.
+- The top bar retains only the brand/home action, account actions, backup/restore, and theme control.
+
+5. Exam ownership
+- Checklist continues to use the selected active exam.
+- Prep Exam continues to load questions and history using the selected exam ID.
+- Follow Alongs now receive the selected exam ID and filter their cards by that assignment.
+- Existing published AWS Follow Alongs default safely to aws-saa-c03 because historical published packages predate explicit exam assignment.
+- A different exam therefore cannot accidentally display the existing AWS SAA-C03 Follow Alongs.
+- Empty Follow Along pages use the selected exam name instead of displaying AWS-specific wording for a non-AWS exam.
+
+6. Preserved boundaries
+- Existing checklist data and saved progress were not deleted or renamed.
+- Existing exam questions and attempt history were not changed.
+- Follow Along drafts, candidates, approvals, published content, learner progress, and resources were not changed.
+- Author, Supabase, AWS connection, authentication, backup, and publishing behaviour were not changed.
+- No database migration is required.
+
+7. Verification
+- Independent exam definition tests.
+- General landing and exam landing routing tests.
+- Top-navigation removal tests.
+- Active-exam feature connection tests.
+- Follow Along exam-isolation tests.
+- Complete app test suite, lint, and production build.
+- Final result: 709 tests passed, the production build passed, and the rendered desktop and mobile landing flows showed no browser errors or horizontal overflow.

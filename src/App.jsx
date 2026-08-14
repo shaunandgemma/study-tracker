@@ -6,28 +6,29 @@ import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAcces
 import { AwsConnectionProvider } from './features/awsConnection/AwsConnectionContext';
 import { useAwsConnection } from './features/awsConnection/useAwsConnection.js';
 import { Navbar } from './components/Navbar';
-import { MobileBottomNav } from './components/MobileBottomNav';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
 import { QuizEngine } from './components/PrepExam/QuizEngine';
 import { ExamResults } from './components/PrepExam/ExamResults';
 import { AwsSetupGuide } from './features/awsConnection/AwsSetupGuide.jsx';
-import { VpcLearningPathView } from './components/VpcLearningPath/VpcLearningPathView';
 import { FollowAlongsView } from './components/FollowAlongs/FollowAlongsView';
+import { AppLandingPage } from './components/Landing/AppLandingPage.jsx';
+import { ExamLandingPage } from './components/Landing/ExamLandingPage.jsx';
+import { ExamWorkspaceHeader } from './components/Landing/ExamWorkspaceHeader.jsx';
 import { AddExamModal } from './components/Modals/AddExamModal';
 import { ImportExportModal } from './components/Modals/ImportExportModal';
 import { AuthModal } from './components/Modals/AuthModal';
 
 import {
   prepareExamQuestions,
-  prepareFullMockQuestions,
+  prepareFullMockForExam,
   prepareCustomExamQuestions
 } from './utils/examUtils';
 import { saveAttemptToSupabase, QUESTION_BANK_VERSION } from './services/attemptService';
 import { getDomainForQuestion } from './data/saaC03DomainMapping';
 
 const MainContent = () => {
-  const { viewMode, setViewMode, activeExam, activeExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
+  const { exams, viewMode, setViewMode, activeExam, activeExamId, setActiveExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
   const { isSetupOpen, closeSetup } = useAwsConnection();
 
   // Main navigation remains usable while the shared AWS setup screen is open.
@@ -58,6 +59,23 @@ const MainContent = () => {
     setAttemptSaveError(false);
   };
 
+  const handleSelectExam = (examId) => {
+    setActiveExamId(examId);
+    setPrepState('setup');
+    setPresetConfig(null);
+    setViewMode('exam-home');
+  };
+
+  const handleSelectExamTool = (toolId) => {
+    if (toolId === 'prep-exam') {
+      setPrepState('setup');
+      setPresetConfig(null);
+      setIsReadOnly(false);
+      setAttemptSaveError(false);
+    }
+    setViewMode(toolId);
+  };
+
   // Handler when user clicks Start Exam on Setup screen
   const handleStartExam = (config) => {
     clearFlags(activeExamId);
@@ -74,7 +92,7 @@ const MainContent = () => {
         const pool = activeQuizConfig.fullPool || activeQuizConfig.questions;
         let preparedQuestions = [];
         if (activeQuizConfig.mode === 'full') {
-          preparedQuestions = prepareFullMockQuestions(pool);
+          preparedQuestions = prepareFullMockForExam(activeExamId, pool);
         } else if (activeQuizConfig.mode === 'custom' && activeQuizConfig.fullPool) {
           const res = prepareCustomExamQuestions(activeQuizConfig.fullPool, {
             count: activeQuizConfig.requestedQuestionCount || activeQuizConfig.questions.length,
@@ -255,7 +273,7 @@ const MainContent = () => {
       
       {/* Top Navbar Header */}
       <Navbar
-        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onGoHome={() => setViewMode('app-home')}
         onOpenBackupModal={() => setIsBackupModalOpen(true)}
       />
 
@@ -265,18 +283,43 @@ const MainContent = () => {
           <AwsSetupGuide />
         ) : (
           <>
+            {viewMode === 'app-home' && (
+              <AppLandingPage
+                exams={exams}
+                onSelectExam={handleSelectExam}
+                onAddExam={() => setIsAddModalOpen(true)}
+              />
+            )}
+
+            {viewMode === 'exam-home' && (
+              <ExamLandingPage
+                exam={activeExam}
+                onBack={() => setViewMode('app-home')}
+                onSelectTool={handleSelectExamTool}
+              />
+            )}
+
             {viewMode === 'checklist' && (
-              <ChecklistView onLaunchPrepExam={handleLaunchPrepExam} />
+              <>
+                <ExamWorkspaceHeader exam={activeExam} viewMode={viewMode} onBack={() => setViewMode('exam-home')} />
+                <ChecklistView onLaunchPrepExam={handleLaunchPrepExam} />
+              </>
             )}
 
             {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
-              <FollowAlongsView
-                initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
-              />
+              <>
+                <ExamWorkspaceHeader exam={activeExam} viewMode="follow-alongs" onBack={() => setViewMode('exam-home')} />
+                <FollowAlongsView
+                  examId={activeExamId}
+                  examCode={activeExam?.code}
+                  initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
+                />
+              </>
             )}
 
             {viewMode === 'prep-exam' && (
               <div>
+                <ExamWorkspaceHeader exam={activeExam} viewMode={viewMode} onBack={() => setViewMode('exam-home')} />
                 {prepState === 'setup' && (
                   <ExamSetup
                     onStartExam={handleStartExam}
@@ -308,9 +351,6 @@ const MainContent = () => {
           </>
         )}
       </main>
-
-      {/* Mobile Fixed Bottom Navigation Bar */}
-      <MobileBottomNav />
 
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">

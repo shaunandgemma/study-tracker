@@ -244,7 +244,8 @@ test('Follow Along display components', async (t) => {
         phaseCount: 4,
       },
     }));
-    assert.match(cardWithoutProgressHtml, /h-\[24rem\]/);
+    assert.match(cardWithoutProgressHtml, /h-\[28rem\]/);
+    assert.match(cardWithoutProgressHtml, /shrink-0/);
     assert.match(cardWithoutProgressHtml, /line-clamp-2/);
     assert.match(cardWithoutProgressHtml, /line-clamp-3/);
     assert.doesNotMatch(cardWithoutProgressHtml, /animate-pulse/);

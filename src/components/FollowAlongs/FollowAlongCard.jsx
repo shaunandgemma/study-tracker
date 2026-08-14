@@ -60,7 +60,7 @@ export const FollowAlongCard = ({
 
   return (
     <div
-      className={`h-[24rem] rounded-2xl border transition-all duration-300 flex flex-col overflow-hidden relative ${
+      className={`h-[28rem] rounded-2xl border transition-all duration-300 flex flex-col overflow-hidden relative ${
         isAvailable
           ? 'bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950/90 border-slate-800 hover:border-cyan-500/50 hover:shadow-xl hover:shadow-cyan-950/20 group'
           : 'bg-slate-950/40 border-slate-800/60 opacity-80'
@@ -142,7 +142,7 @@ export const FollowAlongCard = ({
       </div>
 
       {/* Footer / Action Section */}
-      <div className="p-4 bg-slate-950/80 border-t border-slate-800/80">
+      <div className="shrink-0 p-4 bg-slate-950/80 border-t border-slate-800/80">
         {isAvailable ? (
           <button
             onClick={() => onSelectProgramme(programme.id)}

@@ -25,7 +25,8 @@ export const FOLLOW_ALONG_PROGRAMMES = [
     category: 'Networking & Content Delivery',
     difficulty: 'Intermediate to Advanced',
     estimatedHours: '6 - 8 hours',
-    pathId: 'vpc-learning-path'
+    pathId: 'vpc-learning-path',
+    examId: 'aws-saa-c03'
   },
   {
     id: 'rds-learning-path',
@@ -188,6 +189,13 @@ export const HIDDEN_FOLLOW_ALONG_PROGRAMME_IDS = Object.freeze(['vpc-learning-pa
 
 export function isFollowAlongProgrammeVisible(programme) {
   return Boolean(programme?.id) && !HIDDEN_FOLLOW_ALONG_PROGRAMME_IDS.includes(programme.id);
+}
+
+export function isFollowAlongProgrammeForExam(programme, examId) {
+  if (!programme || !examId) return false;
+  const assignedExamIds = Array.isArray(programme.examIds) ? programme.examIds : [];
+  if (assignedExamIds.length) return assignedExamIds.includes(examId);
+  return (programme.examId || 'aws-saa-c03') === examId;
 }
 
 export const FOLLOW_ALONG_LANDING_PROGRAMMES = FOLLOW_ALONG_PROGRAMMES.filter(isFollowAlongProgrammeVisible);

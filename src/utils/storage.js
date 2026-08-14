@@ -1,4 +1,4 @@
-import { DEFAULT_EXAMS } from '../data/examData';
+import { DEFAULT_EXAMS } from '../data/examData.js';
 import {
   readLocalHandsOnProgressArchive,
   restoreLocalHandsOnProgressArchiveFromBackup
@@ -11,6 +11,45 @@ const KEYS = {
   HISTORY: 'exampulse_history_v1',
   ACTIVE_EXAM: 'exampulse_active_exam_v1',
   THEME: 'exampulse_theme_v1'
+};
+
+export const RETIRED_CUSTOM_EXAM_TITLES = Object.freeze([
+  'Terraform Associate',
+  'Terraform Associate Certification'
+]);
+
+const normalizeExamTitle = value => String(value || '').trim().toLocaleLowerCase('en-GB');
+const retiredCustomExamTitles = new Set(RETIRED_CUSTOM_EXAM_TITLES.map(normalizeExamTitle));
+
+export const isRetiredCustomExam = exam => retiredCustomExamTitles.has(normalizeExamTitle(exam?.title));
+
+export const removeRetiredCustomExams = exams => (
+  Array.isArray(exams) ? exams.filter(exam => !isRetiredCustomExam(exam)) : []
+);
+
+const removeRetiredExamBrowserData = (retiredExamIds) => {
+  if (!retiredExamIds.size) return;
+
+  [KEYS.CHECKLIST, KEYS.FLAGGED].forEach(key => {
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const stored = JSON.parse(raw);
+    retiredExamIds.forEach(examId => delete stored[examId]);
+    localStorage.setItem(key, JSON.stringify(stored));
+  });
+
+  const rawHistory = localStorage.getItem(KEYS.HISTORY);
+  if (rawHistory) {
+    const history = JSON.parse(rawHistory);
+    const retainedHistory = Array.isArray(history)
+      ? history.filter(entry => !retiredExamIds.has(entry?.examId) && !retiredExamIds.has(entry?.examCode))
+      : [];
+    localStorage.setItem(KEYS.HISTORY, JSON.stringify(retainedHistory));
+  }
+
+  if (retiredExamIds.has(localStorage.getItem(KEYS.ACTIVE_EXAM))) {
+    localStorage.setItem(KEYS.ACTIVE_EXAM, 'aws-saa-c03');
+  }
 };
 
 export const getStoredTheme = () => {
@@ -34,9 +73,17 @@ export const loadExams = () => {
     const customExams = localStorage.getItem(KEYS.EXAMS);
     if (!customExams) return DEFAULT_EXAMS;
     const parsed = JSON.parse(customExams);
+    const retiredExamIds = new Set(parsed.filter(isRetiredCustomExam).map(exam => exam.id).filter(Boolean));
+    const retainedExams = removeRetiredCustomExams(parsed);
+
+    if (retiredExamIds.size) {
+      localStorage.setItem(KEYS.EXAMS, JSON.stringify(retainedExams));
+      removeRetiredExamBrowserData(retiredExamIds);
+    }
+
     // Merge defaults with custom exams to ensure updates are present
     const defaultIds = new Set(DEFAULT_EXAMS.map(e => e.id));
-    const customOnly = parsed.filter(e => !defaultIds.has(e.id));
+    const customOnly = retainedExams.filter(e => !defaultIds.has(e.id));
     return [...DEFAULT_EXAMS, ...customOnly];
   } catch (e) {
     console.error('Error loading exams from storage:', e);
@@ -46,7 +93,7 @@ export const loadExams = () => {
 
 export const saveExams = (exams) => {
   try {
-    localStorage.setItem(KEYS.EXAMS, JSON.stringify(exams));
+    localStorage.setItem(KEYS.EXAMS, JSON.stringify(removeRetiredCustomExams(exams)));
   } catch (e) {
     console.error('Error saving exams to storage:', e);
   }

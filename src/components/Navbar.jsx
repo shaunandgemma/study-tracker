@@ -1,371 +1,71 @@
 import React, { useState } from 'react';
+import { Database, Home, LogOut, Menu, Moon, Sparkles, Sun, User, X } from 'lucide-react';
 import { useExam } from '../context/ExamContext';
 import { useAuth } from '../features/auth/useAuth.js';
-import { 
-  CheckSquare, 
-  FileText, 
-  PlusCircle, 
-  Moon, 
-  Sun, 
-  Sparkles, 
-  Award,
-  Database,
-  Network,
-  Menu,
-  X,
-  User,
-  LogOut
-} from 'lucide-react';
 
-export const Navbar = ({ onOpenAddModal, onOpenBackupModal }) => {
-  const { 
-    exams, 
-    activeExamId, 
-    setActiveExamId, 
-    activeExam, 
-    viewMode, 
-    setViewMode, 
-    theme, 
-    toggleTheme,
-    checklist,
-    examHistory
-  } = useExam();
-
+export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) => {
+  const { theme, toggleTheme } = useExam();
   const { currentUser, openAuthModal, signOut: signOutUser } = useAuth();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  // Calculate active exam overall checklist progress %
-  let totalTasks = 0;
-  let completedTasks = 0;
-
-  if (activeExam && activeExam.domains) {
-    activeExam.domains.forEach(domain => {
-      domain.subtopics.forEach(sub => {
-        sub.tasks.forEach(task => {
-          totalTasks++;
-          if (checklist[activeExamId]?.[task.id]) {
-            completedTasks++;
-          }
-        });
-      });
-    });
-  }
-
-  const checklistPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-  // Calculate last score for active exam
-  const activeHistory = examHistory.filter(h => h.examId === activeExamId);
-  const lastAttempt = activeHistory[0];
-
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-slate-900/90 border-b border-slate-800 text-slate-100 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-3">
-          
-          {/* Brand Logo */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400 animate-pulse" />
-              </div>
-            </div>
-            <div>
-              <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
-                ExamPulse
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-950/80 text-indigo-300 border border-indigo-800/50">
-                Prep AI
-              </span>
-            </div>
-          </div>
-
-          {/* Desktop Exam Category Switcher (Tabs) */}
-          <div className="hidden md:flex items-center gap-1.5 p-1 bg-slate-950/60 rounded-xl border border-slate-800/80 overflow-x-auto max-w-md">
-            {exams.map(exam => {
-              const isActive = exam.id === activeExamId;
-              return (
-                <button
-                  key={exam.id}
-                  onClick={() => setActiveExamId(exam.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
-                    isActive 
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20' 
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
-                >
-                  <Award className="w-3.5 h-3.5" />
-                  {exam.code}
-                </button>
-              );
-            })}
-            <button
-              onClick={onOpenAddModal}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/50 transition-colors flex items-center gap-1 border border-dashed border-indigo-800/50"
-              title="Add Custom Exam"
-            >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Add</span>
-            </button>
-          </div>
-
-          {/* Desktop View Mode Switcher */}
-          <div className="hidden md:flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
-            <button
-              onClick={() => setViewMode('checklist')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                viewMode === 'checklist'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <CheckSquare className="w-4 h-4" />
-              <span>Checklist</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                viewMode === 'checklist' 
-                  ? 'bg-indigo-800 text-indigo-100' 
-                  : 'bg-slate-800 text-slate-400'
-              }`}>
-                {checklistPercent}%
-              </span>
-            </button>
-
-            <button
-              onClick={() => setViewMode('prep-exam')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                viewMode === 'prep-exam'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>Prep Exam</span>
-              {lastAttempt && (
-                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  lastAttempt.passed ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'
-                }`}>
-                  {Math.round(lastAttempt.scorePercentage)}%
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setViewMode('follow-alongs')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                viewMode === 'follow-alongs'
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-cyan-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Network className="w-4 h-4 text-cyan-400" />
-              <span>Follow Alongs</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                viewMode === 'follow-alongs'
-                  ? 'bg-cyan-800 text-cyan-100'
-                  : 'bg-slate-800 text-slate-400'
-              }`}>
-                13
-              </span>
-            </button>
-          </div>
-
-          {/* Desktop Actions & Utilities */}
-          <div className="hidden md:flex items-center gap-2">
-            {currentUser ? (
-              <div className="flex items-center gap-2">
-                <span className="hidden xl:inline-block text-xs font-medium px-2.5 py-1 rounded-lg bg-indigo-950/80 border border-indigo-800/60 text-indigo-300 max-w-[150px] truncate">
-                  {currentUser.email}
-                </span>
-                <button
-                  onClick={signOutUser}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/80 hover:text-rose-300 text-slate-300 text-xs font-semibold border border-slate-700 hover:border-rose-800 transition-all flex items-center gap-1.5"
-                  title="Sign Out"
-                >
-                  <span>Sign Out</span>
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => openAuthModal()}
-                className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/20 transition-all flex items-center gap-1.5"
-              >
-                <span>Sign In</span>
-              </button>
-            )}
-
-            <button
-              onClick={onOpenBackupModal}
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/50"
-              title="Backup / Restore JSON Data"
-            >
-              <Database className="w-4 h-4" />
-            </button>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/50"
-              title="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
-            </button>
-          </div>
-
-          {/* Mobile Right Controls: Active Exam Badge & Mobile Menu Hamburger */}
-          <div className="flex md:hidden items-center gap-2">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-950/80 text-indigo-300 border border-indigo-800/60 max-w-[110px] truncate">
-              {activeExam?.code || 'SAA-C03'}
+    <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900/90 text-slate-100 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <button type="button" onClick={onGoHome} className="flex shrink-0 items-center gap-2.5" aria-label="Open ExamPulse home">
+          <span className="rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/20">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-slate-950 sm:h-10 sm:w-10">
+              <Sparkles className="h-4 w-4 text-indigo-400 sm:h-5 sm:w-5" />
             </span>
+          </span>
+          <span className="text-lg font-bold tracking-tight text-white sm:text-xl">ExamPulse</span>
+          <span className="hidden rounded-full border border-indigo-800/50 bg-indigo-950/80 px-2 py-0.5 text-xs font-semibold text-indigo-300 sm:inline-block">Prep AI</span>
+        </button>
 
-            <button
-              onClick={() => setIsMobileDrawerOpen(true)}
-              className="p-2 rounded-xl bg-slate-800 text-slate-200 hover:text-white active:scale-95 transition-all border border-slate-700/60"
-              aria-label="Open mobile menu"
-            >
-              <Menu className="w-5 h-5 text-indigo-400" />
-            </button>
-          </div>
-
+        <div className="hidden items-center gap-2 md:flex">
+          <button type="button" onClick={onGoHome} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-bold text-slate-300 transition hover:text-white">
+            <Home className="h-4 w-4 text-indigo-400" /> Exams
+          </button>
+          {currentUser ? (
+            <>
+              <span className="hidden max-w-48 truncate rounded-lg border border-indigo-800/60 bg-indigo-950/80 px-2.5 py-1.5 text-xs font-medium text-indigo-300 lg:inline-block">{currentUser.email}</span>
+              <button type="button" onClick={signOutUser} className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-rose-800 hover:text-rose-300">Sign Out</button>
+            </>
+          ) : (
+            <button type="button" onClick={() => openAuthModal()} className="rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white transition hover:bg-indigo-500">Sign In</button>
+          )}
+          <button type="button" onClick={onOpenBackupModal} className="rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300" title="Backup / Restore JSON Data"><Database className="h-4 w-4" /></button>
+          <button type="button" onClick={toggleTheme} className="rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300" title="Toggle Theme">
+            {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-400" />}
+          </button>
         </div>
+
+        <button type="button" onClick={() => setIsMobileDrawerOpen(true)} className="rounded-xl border border-slate-700 bg-slate-800 p-2 text-indigo-300 md:hidden" aria-label="Open mobile menu"><Menu className="h-5 w-5" /></button>
       </div>
 
-      {/* Slide-Over Mobile Drawer */}
       {isMobileDrawerOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex justify-end">
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
-            onClick={() => setIsMobileDrawerOpen(false)}
-          />
-
-          {/* Drawer Content */}
-          <div className="relative w-full max-w-xs bg-slate-900 border-l border-slate-800 h-full p-5 flex flex-col justify-between shadow-2xl z-10 overflow-y-auto">
-            <div>
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-indigo-400" />
-                  <span className="font-bold text-slate-100 text-base">Menu & Settings</span>
-                </div>
-                <button
-                  onClick={() => setIsMobileDrawerOpen(false)}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Exam Selection List */}
-              <div className="py-4 border-b border-slate-800">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
-                  Select Exam
-                </h3>
-                <div className="space-y-1.5">
-                  {exams.map(exam => {
-                    const isActive = exam.id === activeExamId;
-                    return (
-                      <button
-                        key={exam.id}
-                        onClick={() => {
-                          setActiveExamId(exam.id);
-                          setIsMobileDrawerOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
-                          isActive 
-                            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md' 
-                            : 'bg-slate-950/60 text-slate-300 hover:bg-slate-800'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Award className="w-4 h-4 text-indigo-300" />
-                          <span>{exam.title || exam.code}</span>
-                        </div>
-                        {isActive && <span className="w-2 h-2 rounded-full bg-emerald-400" />}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    onClick={() => {
-                      setIsMobileDrawerOpen(false);
-                      onOpenAddModal();
-                    }}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-semibold text-indigo-400 bg-indigo-950/40 hover:bg-indigo-900/40 border border-dashed border-indigo-800/60 flex items-center gap-2"
-                  >
-                    <PlusCircle className="w-4 h-4" />
-                    <span>Add Custom Exam</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Actions & Utilities */}
-              <div className="py-4 space-y-2">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
-                  Utilities & Data
-                </h3>
-                
-                <button
-                  onClick={() => {
-                    setIsMobileDrawerOpen(false);
-                    onOpenBackupModal();
-                  }}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/60 text-slate-300 hover:bg-slate-800 text-xs font-semibold flex items-center gap-2 border border-slate-800"
-                >
-                  <Database className="w-4 h-4 text-indigo-400" />
-                  <span>Backup / Restore JSON Data</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                  }}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950/60 text-slate-300 hover:bg-slate-800 text-xs font-semibold flex items-center justify-between border border-slate-800"
-                >
-                  <div className="flex items-center gap-2">
-                    {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
-                    <span>Theme ({theme === 'dark' ? 'Dark' : 'Light'})</span>
-                  </div>
-                  <span className="text-[10px] text-slate-500">Toggle</span>
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex justify-end md:hidden">
+          <button type="button" aria-label="Close mobile menu" className="fixed inset-0 bg-slate-950/80" onClick={() => setIsMobileDrawerOpen(false)} />
+          <div className="relative flex h-full w-full max-w-xs flex-col bg-slate-900 p-5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <span className="font-bold text-white">Menu & Settings</span>
+              <button type="button" onClick={() => setIsMobileDrawerOpen(false)} className="rounded-lg bg-slate-800 p-1.5 text-slate-300"><X className="h-5 w-5" /></button>
             </div>
-
-            {/* Footer Account Section */}
-            <div className="pt-4 border-t border-slate-800">
-              {currentUser ? (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-950/80 border border-slate-800">
-                    <User className="w-4 h-4 text-indigo-400 shrink-0" />
-                    <span className="text-xs font-medium text-slate-200 truncate">
-                      {currentUser.email}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setIsMobileDrawerOpen(false);
-                      signOutUser();
-                    }}
-                    className="w-full px-3 py-2.5 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 text-xs font-bold border border-rose-800/60 flex items-center justify-center gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    setIsMobileDrawerOpen(false);
-                    openAuthModal();
-                  }}
-                  className="w-full px-3 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
-                >
-                  <User className="w-4 h-4" />
-                  <span>Sign In / Create Account</span>
-                </button>
-              )}
+            <div className="flex-1 space-y-2 py-5">
+              <button type="button" onClick={() => { setIsMobileDrawerOpen(false); onGoHome(); }} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200"><Home className="h-4 w-4 text-indigo-400" /> Choose an exam</button>
+              <button type="button" onClick={() => { setIsMobileDrawerOpen(false); onOpenBackupModal(); }} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200"><Database className="h-4 w-4 text-indigo-400" /> Backup / Restore</button>
+              <button type="button" onClick={toggleTheme} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200">{theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-400" />} Toggle theme</button>
             </div>
-
+            {currentUser ? (
+              <div className="space-y-2 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2 rounded-xl bg-slate-950/70 px-3 py-2 text-xs text-slate-300"><User className="h-4 w-4 text-indigo-400" /><span className="truncate">{currentUser.email}</span></div>
+                <button type="button" onClick={() => { setIsMobileDrawerOpen(false); signOutUser(); }} className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-800/60 bg-rose-950/50 px-3 py-2.5 text-xs font-bold text-rose-300"><LogOut className="h-4 w-4" /> Sign Out</button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => { setIsMobileDrawerOpen(false); openAuthModal(); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3 py-2.5 text-xs font-bold text-white"><User className="h-4 w-4" /> Sign In / Create Account</button>
+            )}
           </div>
         </div>
       )}
-
     </header>
   );
 };

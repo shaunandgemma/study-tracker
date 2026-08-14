@@ -165,24 +165,32 @@ export function createFollowAlongPersistence(config, options = {}) {
     const state = await load(userId);
     if (state?.error) throw new Error(state.error);
     const progress = state?.progress;
-    const completedTasks = progress?.completedTaskIds?.length || 0;
-    const totalTasks = config.tasks?.length || 0;
+    const tasks = Array.isArray(config.tasks) ? config.tasks : [];
+    const currentTaskIds = new Set(tasks.map(task => task.id));
+    const completedTaskIds = new Set(
+      (progress?.completedTaskIds || []).filter(taskId => currentTaskIds.has(taskId))
+    );
+    const completedTasks = completedTaskIds.size;
+    const totalTasks = tasks.length;
     const completionStatus = progress?.completionStatus;
+    const allCurrentTasksCompleted = totalTasks > 0 && completedTasks === totalTasks;
     const status = !progress
       ? 'not-started'
-      : completionStatus === 'completed_cleaned'
+      : completionStatus === 'completed_cleaned' && allCurrentTasksCompleted
         ? 'completed'
-        : completionStatus === 'completed_retained'
+        : completionStatus === 'completed_retained' && allCurrentTasksCompleted
           ? 'resources-retained'
           : 'in-progress';
-    const currentTask = config.tasks?.find(task => task.id === progress?.currentTaskId);
+    const currentTask = tasks.find(task => task.id === progress?.currentTaskId)
+      || tasks.find(task => !completedTaskIds.has(task.id))
+      || tasks[0];
     return {
       loading: false,
       status,
       completedTasks,
       totalTasks,
       completionPercentage: totalTasks > 0
-        ? Math.round((completedTasks / totalTasks) * 100)
+        ? Math.min(100, Math.round((completedTasks / totalTasks) * 100))
         : 0,
       currentTaskTitle: currentTask?.title,
       resourcesRetained: completionStatus === 'completed_retained',

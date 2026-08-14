@@ -1,0 +1,82 @@
+﻿182. AWS CLOUDTRAIL FOLLOW ALONG SHARED DRAFT
+
+1. REQUEST
+Create a new complete AWS CloudTrail Follow Along (cloudtrail-learning-path) through the existing Study Tracker Author programme using official AWS documentation from docs.aws.amazon.com.
+Follow the Golden Standard set by the RDS, EC2, and Application Load Balancer Follow Alongs for structure, beginner detail, visible JSON blocks, verification, resource recording, and teardown quality.
+Do not create a hard-coded React Follow Along, dedicated route, catalogue file, or separate runtime. Do not directly insert or delete Supabase rows, and do not bypass Author validation, fingerprinting, draft ownership, revision, approval, or publishing controls.
+Stop with the completed CloudTrail Shared Draft ready for human Author review.
+
+2. CLOUDTRAIL FOLLOW ALONG CONTENT SUMMARY
+- Programme ID: cloudtrail-learning-path
+- Service Slug: cloudtrail
+- Service Name: AWS CloudTrail
+- Short Name: CloudTrail
+- Exam ID: aws-saa-c03
+- Primary Region: eu-west-2 (London)
+- Phases: 6
+- Tasks: 7
+- Console Checkbox Instructions: 114
+- CLI Commands: 46
+- Verification Checks: 12
+- Teardown Items: 22
+- Official AWS Documentation Sources: 8
+
+3. PROGRAMME PHASES & TASKS
+Phase 1: Administrator Bootstrap, Narrow IAM Policy & Learner Setup
+- Task 1: Administrator Bootstrap, Training User fa-cloudtrail-user & AWS CLI Setup
+
+Phase 2: Multi-Region Trail, KMS Encryption, Private S3 Bucket & CloudWatch Logs
+- Task 2: KMS CMK & Dedicated Private S3 Log Bucket Creation
+- Task 3: CloudWatch Logs Log Group & Multi-Region Trail Deployment
+
+Phase 3: S3 Data Events, Activity Generation & CloudWatch Logs Insights Search
+- Task 4: Advanced Data-Event Selectors & Data Event Analysis
+
+Phase 4: S3 Digest Validation, Security Metric Filter, SNS & Alarm Verification
+- Task 5: CLI Log Validation, Security Alarms & SNS Notification Verification
+
+Phase 5: CloudTrail Governance, Insights, Lake & SAA-C03 Architecture Comparisons
+- Task 6: CloudTrail Governance, Insights, Lake & Architectural Comparisons
+
+Phase 6: Reverse-Dependency Infrastructure Teardown
+- Task 7: Complete Teardown in Strict Reverse Order with Identity Switch
+
+4. TECHNICAL IMPLEMENTATION DETAILS
+- IAM Training User: fa-cloudtrail-user (no AdministratorAccess attached).
+- Customer Managed Policy: fa-cloudtrail-training-policy containing strictly required permissions, sts:GetCallerIdentity, role lifecycle permissions for fa-cloudtrail-cw-role, and PassRole restricted to arn:aws:iam::[ACCOUNT_ID]:role/fa-cloudtrail-cw-role with iam:PassedToService = cloudtrail.amazonaws.com.
+- KMS Key & Alias: Customer Managed Key fa-cloudtrail-key and alias alias/fa-cloudtrail-key created with key policy JSON allowing cloudtrail.amazonaws.com. SSE-KMS encryption verified on trail.
+- S3 Bucket Policy: Complete S3 bucket policy JSON on fa-cloudtrail-logs-[ACCOUNT_ID] enforcing aws:SourceArn and s3:x-amz-acl = bucket-owner-full-control.
+- Log Retention: 14 days retention set on /aws/cloudtrail/fa-cloudtrail-logs via aws logs put-retention-policy.
+- S3 Advanced Event Selector: Configured with eventCategory = Data, resources.type = AWS::S3::Object, and resources.ARN StartsWith arn:aws:s3:::fa-cloudtrail-test-[ACCOUNT_ID]/. ReadOnly field omitted to capture both read and write data events.
+- Data Event Search Boundary: Clarified that Event History (lookup-events) does not return data events. S3 object data events are queried via CloudWatch Logs Insights or raw S3 log JSON files.
+- Predictable AccessDenied Test: Triggered via aws iam list-users --profile fa-cloudtrail (omitted from policy) to reliably trigger CloudWatch security alarm fa-cloudtrail-unauthorized-api-alarm without unexpected errors.
+- Reverse Teardown Order: Learner removes all lab AWS resources -> Deletes KMS alias alias/fa-cloudtrail-key -> Disables KMS key fa-cloudtrail-key and schedules 7-day deletion window -> Switches to administrator identity -> Deletes access key -> Detaches policy -> Deletes fa-cloudtrail-user -> Deletes fa-cloudtrail-training-policy -> Removes [fa-cloudtrail] section from ~/.aws/credentials and [profile fa-cloudtrail] section from ~/.aws/config last.
+
+5. GENERATED HANDOFF FILES & FINGERPRINTS
+- Session Directory: C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-cloudtrail-019ec42c-2d16-49eb-90f9-7479f81d56bd
+- Handoff Package: C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-cloudtrail-019ec42c-2d16-49eb-90f9-7479f81d56bd\author-local-handoff-package.json
+- Acceptance Audit (Step 90A): C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\author-assistant-cloudtrail-019ec42c-2d16-49eb-90f9-7479f81d56bd\author-local-handoff-acceptance-90a.json
+- Local Draft ID: author-draft-import-9c389609207da8d022aa672f7b27a1d7574c85825a5329545367489eeedf9bde
+- Shared Draft ID: author-draft-import-9c389609207da8d022aa672f7b27a1d7574c85825a5329545367489eeedf9bde
+- Shared Draft Revision: 1
+- Shared Draft Status: draft (unpublished)
+- Handoff Fingerprint (SHA-256): 9c389609207da8d022aa672f7b27a1d7574c85825a5329545367489eeedf9bde
+
+6. PRESERVED SYSTEM BOUNDARIES
+- 0 hardcoded React Follow Along components created.
+- 0 dedicated routes or catalogue files created.
+- 0 release candidates prepared.
+- 0 approvals or publications performed.
+- 0 database migrations deployed.
+- 0 changes to existing published Follow Alongs, exam questions, or user progress records.
+
+7. VERIFICATION RESULTS
+- Author Planning Validation: Passed
+- Author Content Validation: Passed
+- Author Review Validation: Passed
+- Stage 91 Read-Only Preview Validation: Passed
+- Stage 92 Local Draft Creation & Duplicate Prevention: Passed
+- Stage 93 Shared Draft Copy: Passed
+- Unit Tests (npm test): 709 passed out of 709
+- Linter (npm run lint): 0 errors
+- Production Build (npm run build): Passed cleanly

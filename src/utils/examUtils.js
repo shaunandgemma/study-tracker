@@ -216,6 +216,16 @@ export function prepareFullMockQuestions(questions, random = Math.random) {
 }
 
 /**
+ * Prepares a Full Mock for the selected exam. SAA-C03 keeps its fixed official
+ * 65-question domain allocation; every other exam uses its complete available
+ * local question bank without applying AWS-specific domain rules.
+ */
+export function prepareFullMockForExam(examId, questions, random = Math.random) {
+  if (examId === 'aws-saa-c03') return prepareFullMockQuestions(questions, random);
+  return prepareExamQuestions(questions, null, random);
+}
+
+/**
  * Prepares questions for an exam attempt:
  * 1. Randomly shuffles the order of questions in the array.
  * 2. Optionally selects a maximum number of questions (e.g. 65 for full mock).

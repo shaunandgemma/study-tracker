@@ -20,7 +20,8 @@ test('Step 58 Hands On entry-point retirement', async (t) => {
 
   await t.test('2. desktop navigation has no Hands On entry or progress dependency', () => {
     assert.doesNotMatch(navbarSource, /hands-on-tasks|Hands-On Tasks|useTask|calculateTaskProgress/);
-    assert.match(navbarSource, /setViewMode\('follow-alongs'\)/);
+    assert.doesNotMatch(navbarSource, /Checklist|Prep Exam|Follow Alongs/);
+    assert.match(appSource, /onSelectTool=\{handleSelectExamTool\}/);
   });
 
   await t.test('3. mobile navigation has no Hands On entry or progress dependency', () => {

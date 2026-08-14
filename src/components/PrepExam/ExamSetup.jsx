@@ -21,7 +21,7 @@ import {
 
 import {
   prepareExamQuestions,
-  prepareFullMockQuestions,
+  prepareFullMockForExam,
   prepareCustomExamQuestions
 } from '../../utils/examUtils';
 
@@ -172,7 +172,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
   
   let activeQuestionsCount = 0;
   if (mode === 'full') {
-    activeQuestionsCount = Math.min(65, bankTotal);
+    activeQuestionsCount = activeExam.id === 'aws-saa-c03' ? Math.min(65, bankTotal) : bankTotal;
   } else if (mode === 'domain') {
     activeQuestionsCount = topicQuestions.length;
   } else if (mode === 'custom') {
@@ -196,7 +196,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
 
     try {
       if (mode === 'full') {
-        const preparedQuestions = prepareFullMockQuestions(fullExamQuestions);
+        const preparedQuestions = prepareFullMockForExam(activeExam.id, fullExamQuestions);
         onStartExam({
           mode: 'full',
           domainId: null,
@@ -292,16 +292,18 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
             </div>
             <h3 className="text-lg font-bold text-slate-100">Full Mock Exam</h3>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-              Covers all service topics in official weighted proportions. Draws 65 questions from the bank.
+              {activeExam.id === 'aws-saa-c03'
+                ? 'Covers all service topics in official weighted proportions. Draws 65 questions from the bank.'
+                : `Covers every available topic using all ${bankTotal} questions in this exam bank.`}
             </p>
           </div>
           <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs font-semibold text-slate-400">
             <span className="flex items-center gap-1 text-indigo-300 font-extrabold">
               <HelpCircle className="w-3.5 h-3.5 text-indigo-400" /> 
-              65 Questions
+              {activeExam.id === 'aws-saa-c03' ? 65 : bankTotal} Questions
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-purple-400" /> 130 Mins
+              <Clock className="w-3.5 h-3.5 text-purple-400" /> {activeExam.timeLimitMinutes || 130} Mins
             </span>
           </div>
         </div>

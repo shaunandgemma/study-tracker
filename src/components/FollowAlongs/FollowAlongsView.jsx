@@ -4,7 +4,7 @@ import { VpcLearningPathView } from '../VpcLearningPath/VpcLearningPathView.jsx'
 import { useAuth } from '../../features/auth/useAuth.js';
 import { PublishedFollowAlongView } from './PublishedFollowAlongView.jsx';
 
-export const FollowAlongsView = ({ initialProgrammeId = null }) => {
+export const FollowAlongsView = ({ initialProgrammeId = null, examId = 'aws-saa-c03', examCode = 'AWS SAA-C03' }) => {
   const { currentUser } = useAuth();
   const [selectedProgrammeId, setSelectedProgrammeId] = useState(initialProgrammeId);
 
@@ -32,6 +32,8 @@ export const FollowAlongsView = ({ initialProgrammeId = null }) => {
   return (
     <FollowAlongLandingPage
       currentUser={currentUser}
+      examId={examId}
+      examCode={examCode}
       onSelectProgramme={(progId) => setSelectedProgrammeId(progId)}
     />
   );

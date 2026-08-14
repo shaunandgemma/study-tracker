@@ -1,0 +1,19 @@
+190. REMOVE THE TWO TERRAFORM EXAMS
+
+1. Scope
+Remove only the old browser-created custom exams named "Terraform Associate" and "Terraform Associate Certification".
+
+2. Storage location
+These were browser-local custom exams stored under exampulse_exams_v1. They were not built-in exam files and were not Supabase exam records.
+
+3. Removal behaviour
+When the app loads, it removes those two exact exam titles from browser storage. Their local checklist, flagged-question and exam-history records are also removed. If one was selected, the app safely returns to AWS SAA-C03.
+
+4. Preserved content
+All other exams remain. Terraform Follow Alongs, including the CloudFormation and Terraform Follow Along, remain unchanged.
+
+5. Prevention
+Old backups or browser data cannot restore either retired custom exam into the visible exam list. A separately maintained built-in Terraform Associate (004) exam may use its own unique ID and official title.
+
+6. Verification
+The focused exam-navigation tests, linter and production build pass. Existing unrelated linter warnings remain unchanged.

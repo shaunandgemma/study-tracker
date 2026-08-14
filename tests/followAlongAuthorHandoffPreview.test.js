@@ -41,7 +41,7 @@ function fixture() {
       phases: [{ id: 'phase-1' }],
       tasks: [{ id: 'task-1', consoleSteps: [{ id: 'step-1', instructions: [{ id: 'check-1', text: 'Open the Console.' }] }], verification: [{ id: 'verify-1' }], cleanup: [{ id: 'cleanup-1' }] }],
       resources: { schema: [] },
-      sources: [{ id: 'source-1' }],
+      sources: [{ id: 'source-1', publisher: 'AWS' }],
       cleanup: { steps: [{ id: 'cleanup-ack' }] }
     },
     identityBinding: { status: 'required_before_author_write', assignedAuthorId: null, assignedDraftId: null, assignedRevision: null, rule: 'Bind later.' },
