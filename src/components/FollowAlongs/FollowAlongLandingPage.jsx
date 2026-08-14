@@ -5,6 +5,7 @@ import { FollowAlongCard } from './FollowAlongCard.jsx';
 import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 import { createPublishedProgressLoadingSummaries, loadPublishedFollowAlongProgressSummaries } from '../../features/followAlongs/published/publishedFollowAlongProgress.js';
 import { ALL_FOLLOW_ALONG_CATEGORIES, getSortedFollowAlongCategories } from '../../features/followAlongs/published/followAlongCategoryFilter.js';
+import { getTerraformFollowAlongNumber, sortTerraformFollowAlongs } from '../../features/followAlongs/published/terraformFollowAlongOrder.js';
 
 export const FollowAlongLandingPage = ({
   currentUser = null,
@@ -48,9 +49,16 @@ export const FollowAlongLandingPage = ({
     return matchesSearch && matchesCategory;
   });
 
-  const availableProgrammes = filteredProgrammes.filter(p => p.status === 'available');
+  const availableProgrammes = examId === 'terraform-associate-004'
+    ? sortTerraformFollowAlongs(filteredProgrammes.filter(p => p.status === 'available'))
+    : filteredProgrammes.filter(p => p.status === 'available');
   const comingSoonProgrammes = filteredProgrammes.filter(p => p.status !== 'available');
   const isAwsExam = examId.startsWith('aws-');
+  const numberedProgrammeIds = examId === 'terraform-associate-004'
+    ? new Map(programmes
+      .filter(programme => programme.status === 'available')
+      .map(programme => [programme.id, getTerraformFollowAlongNumber(programme.id, programmes)]))
+    : new Map();
 
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
@@ -144,6 +152,7 @@ export const FollowAlongLandingPage = ({
               <FollowAlongCard
                 key={prog.id}
                 programme={prog}
+                cardNumber={numberedProgrammeIds.get(prog.id) ?? null}
                 progressSummary={progressSummaries[prog.id] || null}
                 onSelectProgramme={onSelectProgramme}
               />
@@ -173,6 +182,7 @@ export const FollowAlongLandingPage = ({
             <FollowAlongCard
               key={prog.id}
               programme={prog}
+              cardNumber={numberedProgrammeIds.get(prog.id) ?? null}
               onSelectProgramme={onSelectProgramme}
             />
           ))}

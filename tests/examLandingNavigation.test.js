@@ -24,6 +24,7 @@ test('exam-first landing navigation', async t => {
   const appLanding = read('src/components/Landing/AppLandingPage.jsx');
   const examLanding = read('src/components/Landing/ExamLandingPage.jsx');
   const followAlongLanding = read('src/components/FollowAlongs/FollowAlongLandingPage.jsx');
+  const terraformFollowAlongOrder = read('src/features/followAlongs/published/terraformFollowAlongOrder.js');
 
   await t.test('1. built-in exam titles are independently editable files', () => {
     assert.equal(existsSync('src/data/exams/awsSaaC03Exam.js'), true);
@@ -107,7 +108,12 @@ test('exam-first landing navigation', async t => {
         tasks: []
       }
     });
-    assert.equal(terraformCard.examId, 'terraform-associate-004');
+    assert.equal(terraformCard.examId, 'aws-saa-c03');
+    assert.equal(isFollowAlongProgrammeForExam(terraformCard, 'terraform-associate-004'), false);
+    assert.equal(isFollowAlongProgrammeForExam(terraformCard, 'aws-saa-c03'), true);
+    assert.match(terraformFollowAlongOrder, /terraform-configuration-foundations-learning-path/);
+    assert.match(followAlongLanding, /sortTerraformFollowAlongs/);
+    assert.match(followAlongLanding, /cardNumber=\{numberedProgrammeIds\.get\(prog\.id\) \?\? null\}/);
   });
 
   await t.test('6. retired Terraform custom exams are removed without affecting Terraform Follow Alongs', () => {

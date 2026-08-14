@@ -1,0 +1,3106 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-terraform-state-codex-20260814-001",
+  "preparedAt": "2026-08-14T22:00:00.000Z",
+  "generationMode": "new",
+  "service": {
+    "officialName": "HashiCorp Terraform on AWS",
+    "shortName": "Terraform State"
+  },
+  "acceptedFingerprintChain": {
+    "stage6": {
+      "algorithm": "sha256-json-v1",
+      "value": "bb85fe0677c29155b15b8f3034fecc3ad19cc9a69b3185a022c59468782e12d6"
+    },
+    "stage7": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "stage8": {
+      "algorithm": "sha256-json-v1",
+      "value": "477ff12cebb5d74f20641ed51e7efd28cf9f9757c20b226d93b58a5f5ec98cce"
+    },
+    "stage9": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "stage10": {
+      "algorithm": "sha256-json-v1",
+      "value": "9c119e9eb0decfd75ac271334d17882cb78a505a80de70f84b517de2cd860210"
+    },
+    "stage11": {
+      "algorithm": "sha256-json-v1",
+      "value": "cfff8e582698e746a960efd5ccd76b3676ee65ee90cae33de68a11e30ef80291"
+    }
+  },
+  "acceptedRecordManifest": {
+    "planning": {
+      "algorithm": "sha256-json-v1",
+      "value": "2377e42d8088ba82844e7373b8c9c60fade616126fa27eafb6cb9d8f6f72a64e"
+    },
+    "instructions": {
+      "algorithm": "sha256-json-v1",
+      "value": "bb85fe0677c29155b15b8f3034fecc3ad19cc9a69b3185a022c59468782e12d6"
+    },
+    "resourcesAndChecks": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "cleanup": {
+      "algorithm": "sha256-json-v1",
+      "value": "477ff12cebb5d74f20641ed51e7efd28cf9f9757c20b226d93b58a5f5ec98cce"
+    },
+    "authoringCheck": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "learnerPreview": {
+      "algorithm": "sha256-json-v1",
+      "value": "9c119e9eb0decfd75ac271334d17882cb78a505a80de70f84b517de2cd860210"
+    },
+    "structuredReview": {
+      "algorithm": "sha256-json-v1",
+      "value": "cfff8e582698e746a960efd5ccd76b3676ee65ee90cae33de68a11e30ef80291"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "codex-local-handoff"
+    },
+    "programme": {
+      "serviceSlug": "terraform-state-backend",
+      "serviceName": "HashiCorp Terraform on AWS",
+      "shortName": "Terraform State",
+      "displayName": "Terraform State and Remote Backend Follow Along",
+      "subtitle": "Migrate, lock, inspect, refresh, isolate and import Terraform state safely on AWS.",
+      "description": "Start with no lab infrastructure. Create dedicated training access, build a local-state configuration, migrate it to a private versioned S3 backend with native locking, inspect drift, use workspaces, import an existing resource and remove everything in the correct order.",
+      "learningOutcome": "Safely manage Terraform state throughout its lifecycle and explain the state, backend, locking, refresh-only, workspace and import concepts tested by Terraform Associate.",
+      "programmeId": "terraform-state-backend-learning-path",
+      "pathId": "terraform-state-backend-learning-path",
+      "componentNamespace": "",
+      "category": "Terraform State and Backends",
+      "difficulty": "Beginner to Intermediate",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished",
+      "examId": "terraform-associate-004"
+    },
+    "sources": [
+      {
+        "id": "source-iam-best",
+        "title": "Security best practices in IAM",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Use a dedicated temporary training identity instead of root.",
+        "taskIds": [
+          "task-terraform-state-001-create-dedicated-terraform-state-training-access"
+        ]
+      },
+      {
+        "id": "source-cli-config",
+        "title": "Configure the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Configure and verify a named local profile without storing credentials in Terraform.",
+        "taskIds": [
+          "task-terraform-state-001-create-dedicated-terraform-state-training-access"
+        ]
+      },
+      {
+        "id": "source-s3-start",
+        "title": "Getting started with Amazon S3 using the AWS CLI",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GettingStartedS3CLI.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create the backend and import buckets and enable versioning.",
+        "taskIds": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket",
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform",
+          "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend"
+        ]
+      },
+      {
+        "id": "source-s3-public",
+        "title": "Blocking public access to Amazon S3 storage",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Keep the state bucket private.",
+        "taskIds": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket"
+        ]
+      },
+      {
+        "id": "source-s3-versioning",
+        "title": "Using versioning in S3 buckets",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Protect state versions and explain final version cleanup.",
+        "taskIds": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket",
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking",
+          "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend"
+        ]
+      },
+      {
+        "id": "source-tf-backend",
+        "title": "Terraform S3 backend",
+        "url": "https://developer.hashicorp.com/terraform/language/backend/s3",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Configure remote S3 state and native lockfiles.",
+        "taskIds": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket",
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking",
+          "task-terraform-state-006-create-and-remove-an-isolated-development-workspace"
+        ]
+      },
+      {
+        "id": "source-tf-init",
+        "title": "Terraform init command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/init",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Initialize locally and migrate state to and from the backend.",
+        "taskIds": [
+          "task-terraform-state-002-create-the-first-configuration-and-local-state",
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking",
+          "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend"
+        ]
+      },
+      {
+        "id": "source-tf-state-purpose",
+        "title": "Purpose of Terraform state",
+        "url": "https://developer.hashicorp.com/terraform/language/state/purpose",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explain why Terraform maps configuration to remote objects.",
+        "taskIds": [
+          "task-terraform-state-002-create-the-first-configuration-and-local-state",
+          "task-terraform-state-005-detect-drift-and-use-refresh-only-safely"
+        ]
+      },
+      {
+        "id": "source-tf-state-inspect",
+        "title": "Inspect Terraform state",
+        "url": "https://developer.hashicorp.com/terraform/cli/state/inspect",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use state list and state show safely.",
+        "taskIds": [
+          "task-terraform-state-002-create-the-first-configuration-and-local-state",
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking",
+          "task-terraform-state-005-detect-drift-and-use-refresh-only-safely",
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform"
+        ]
+      },
+      {
+        "id": "source-tf-plan",
+        "title": "Terraform plan command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Review saved normal and refresh-only plans.",
+        "taskIds": [
+          "task-terraform-state-002-create-the-first-configuration-and-local-state",
+          "task-terraform-state-005-detect-drift-and-use-refresh-only-safely",
+          "task-terraform-state-006-create-and-remove-an-isolated-development-workspace",
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform"
+        ]
+      },
+      {
+        "id": "source-tf-workspaces",
+        "title": "Manage workspaces",
+        "url": "https://developer.hashicorp.com/terraform/cli/workspaces",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Create, select and delete an isolated development workspace.",
+        "taskIds": [
+          "task-terraform-state-006-create-and-remove-an-isolated-development-workspace"
+        ]
+      },
+      {
+        "id": "source-tf-import",
+        "title": "Terraform import command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/import",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Bring an existing S3 bucket under Terraform state.",
+        "taskIds": [
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform"
+        ]
+      },
+      {
+        "id": "source-tf-destroy",
+        "title": "Terraform destroy command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Remove managed workload resources before deleting the backend.",
+        "taskIds": [
+          "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#7c3aed",
+      "iconLabel": "TF2",
+      "iconName": "Layers",
+      "badgeText": "Terraform Card 2"
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-terraform-state-001-create-dedicated-terraform-state-training-access",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-safe-identity-and-local-state",
+        "phaseNumber": 1,
+        "title": "Safe identity and local state",
+        "description": "Prepare temporary access and observe Terraform state in a new working folder.",
+        "taskIds": [
+          "task-terraform-state-001-create-dedicated-terraform-state-training-access",
+          "task-terraform-state-002-create-the-first-configuration-and-local-state"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-protected-remote-backend",
+        "phaseNumber": 2,
+        "title": "Protected remote backend",
+        "description": "Create a private versioned S3 bucket and migrate state with native locking.",
+        "taskIds": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket",
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-state-aware-operations",
+        "phaseNumber": 3,
+        "title": "State-aware operations",
+        "description": "Inspect state, detect drift and understand refresh-only plans.",
+        "taskIds": [
+          "task-terraform-state-005-detect-drift-and-use-refresh-only-safely"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-environment-isolation",
+        "phaseNumber": 4,
+        "title": "Environment isolation",
+        "description": "Use a second workspace without overwriting the default workspace state.",
+        "taskIds": [
+          "task-terraform-state-006-create-and-remove-an-isolated-development-workspace"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-adopt-existing-infrastructure",
+        "phaseNumber": 5,
+        "title": "Adopt existing infrastructure",
+        "description": "Import a manually created AWS resource and reach a no-change plan.",
+        "taskIds": [
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-6-complete-teardown",
+        "phaseNumber": 6,
+        "title": "Complete teardown",
+        "description": "Remove every managed resource, migrate the final state locally and delete the backend last.",
+        "taskIds": [
+          "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access",
+        "slug": "create-dedicated-terraform-state-training-access",
+        "title": "Create dedicated Terraform state training access",
+        "phaseId": "phase-1-safe-identity-and-local-state",
+        "orderInPhase": 1,
+        "feature": "IAM user, policy, AWS CLI profile and working folder",
+        "goal": "Start with no lab infrastructure, create one temporary training identity, verify the AWS account and prepare an empty folder.",
+        "whyItMatters": "State operations can change or forget infrastructure, so the learner must confirm identity, Region and folder boundaries before running Terraform.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-iam-best",
+          "source-cli-config"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the training policy and user",
+            "instruction": "Sign in to the training AWS account as an administrator; never use the root user for this lab.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-1",
+                "text": "Sign in to the training AWS account as an administrator; never use the root user for this lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-2",
+                "text": "Open the account menu, copy the 12-digit account ID and record it as [ACCOUNT_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-3",
+                "text": "Use the Region selector to choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-4",
+                "text": "Open IAM, choose Policies, then choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-5",
+                "text": "Choose JSON and paste the supplied fa-terraform-state-training-policy document.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-6",
+                "text": "Replace every <ACCOUNT_ID> placeholder with the recorded 12-digit account ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-7",
+                "text": "Choose Next, name the policy fa-terraform-state-training-policy, review the named S3 and Parameter Store boundaries, then choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-8",
+                "text": "Open IAM Users, choose Create user and enter fa-terraform-state-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-9",
+                "text": "Attach fa-terraform-state-training-policy directly to this temporary user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-10",
+                "text": "Open the new user, choose Security credentials and create one CLI access key only if using local PowerShell or WSL.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-11",
+                "text": "Store the access key only in the protected AWS CLI prompt; never paste it into Terraform files, Author, Git or chat.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-instruction-12",
+                "text": "If using AWS CloudShell, switch to an authorized non-root training role or user before continuing.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-1-create-the-training-policy-and-user-json-1",
+                "title": "fa-terraform-state-training-policy.json",
+                "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadCallerIdentity\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:GetCallerIdentity\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"CreateAndListTrainingBuckets\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:CreateBucket\",\n        \"s3:ListAllMyBuckets\",\n        \"s3:GetBucketLocation\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyNamedTrainingBuckets\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:DeleteBucket\",\n        \"s3:GetBucketVersioning\",\n        \"s3:PutBucketVersioning\",\n        \"s3:GetEncryptionConfiguration\",\n        \"s3:PutEncryptionConfiguration\",\n        \"s3:GetBucketPublicAccessBlock\",\n        \"s3:PutBucketPublicAccessBlock\",\n        \"s3:ListBucket\",\n        \"s3:ListBucketVersions\"\n      ],\n      \"Resource\": [\n        \"arn:aws:s3:::fa-tf-state-<ACCOUNT_ID>\",\n        \"arn:aws:s3:::fa-tf-import-<ACCOUNT_ID>\"\n      ]\n    },\n    {\n      \"Sid\": \"ManageOnlyNamedTrainingObjects\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:GetObject\",\n        \"s3:PutObject\",\n        \"s3:DeleteObject\",\n        \"s3:GetObjectVersion\",\n        \"s3:DeleteObjectVersion\"\n      ],\n      \"Resource\": [\n        \"arn:aws:s3:::fa-tf-state-<ACCOUNT_ID>/*\",\n        \"arn:aws:s3:::fa-tf-import-<ACCOUNT_ID>/*\"\n      ]\n    },\n    {\n      \"Sid\": \"ManageOnlyTrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DescribeParameters\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:DeleteParameter\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:<ACCOUNT_ID>:parameter/fa-terraform-state/*\"\n    }\n  ]\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-iam-best",
+                  "source-cli-config"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The temporary user and narrowly named training policy exist, and the learner is not using root.",
+            "warning": "The policy is for this disposable training lab. An administrator must review it before attachment.",
+            "sourceIds": [
+              "source-iam-best",
+              "source-cli-config"
+            ]
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create and enter the working folder",
+            "instruction": "Open AWS CloudShell or Windows PowerShell.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-1",
+                "text": "Open AWS CloudShell or Windows PowerShell.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-2",
+                "text": "CloudShell: run mkdir -p ~/fa-terraform-state to create the folder even if it already exists.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-3",
+                "text": "CloudShell: run cd ~/fa-terraform-state to enter the folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-4",
+                "text": "CloudShell: run pwd and confirm the path ends with /fa-terraform-state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-5",
+                "text": "PowerShell: run New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-state\" -Force.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-6",
+                "text": "PowerShell: run Set-Location \"$env:USERPROFILE\\fa-terraform-state\".",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-7",
+                "text": "PowerShell: run Get-Location and confirm the path ends with fa-terraform-state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-8",
+                "text": "Run terraform version and record the installed version. Terraform 1.10 or newer is required for native S3 lockfiles.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-console-step-2-create-and-enter-the-working-folder-instruction-9",
+                "text": "Run Get-ChildItem in PowerShell or ls -la in CloudShell and confirm the folder contains no old state or configuration.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The terminal is in one empty fa-terraform-state folder and Terraform 1.10 or newer is available.",
+            "warning": "",
+            "sourceIds": [
+              "source-iam-best",
+              "source-cli-config"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws configure --profile fa-terraform-state",
+            "explanation": "Enter the temporary access key, secret, eu-west-2 and json directly into the protected prompt.",
+            "expectedResult": "The named profile is stored locally; secrets are not printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sts get-caller-identity --profile fa-terraform-state",
+            "explanation": "Verify the exact caller and account before Terraform can make changes.",
+            "expectedResult": "The ARN identifies fa-terraform-state-user in [ACCOUNT_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform version",
+            "explanation": "Verify a Terraform version that supports native S3 lockfiles.",
+            "expectedResult": "Terraform reports version 1.10 or newer.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "mkdir -p ~/fa-terraform-state",
+            "explanation": "CloudShell or WSL: create the isolated working folder.",
+            "expectedResult": "The folder exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "cd ~/fa-terraform-state",
+            "explanation": "CloudShell or WSL: enter the exact lab folder.",
+            "expectedResult": "The terminal enters fa-terraform-state.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "pwd",
+            "explanation": "CloudShell or WSL: print the current folder.",
+            "expectedResult": "The path ends with /fa-terraform-state.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-state\" -Force",
+            "explanation": "PowerShell: create the isolated working folder.",
+            "expectedResult": "PowerShell displays the folder.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "Set-Location \"$env:USERPROFILE\\fa-terraform-state\"",
+            "explanation": "PowerShell: enter the exact lab folder.",
+            "expectedResult": "The current folder changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "Get-Location",
+            "explanation": "PowerShell: print the current folder.",
+            "expectedResult": "The path ends with fa-terraform-state.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-iam-best",
+              "source-cli-config"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-verification-1",
+            "title": "Verify identity",
+            "instruction": "Read the caller ARN and account from aws sts get-caller-identity.",
+            "expectedResult": "The caller is the temporary training user in [ACCOUNT_ID].",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-001-create-dedicated-terraform-state-training-access-verification-2",
+            "title": "Verify the clean boundary",
+            "instruction": "List the current folder and confirm no terraform.tfstate, backend.tf or unrelated .tf files exist.",
+            "expectedResult": "The lab begins in an empty isolated folder.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-002-create-the-first-configuration-and-local-state",
+        "slug": "create-the-first-configuration-and-local-state",
+        "title": "Create the first configuration and local state",
+        "phaseId": "phase-1-safe-identity-and-local-state",
+        "orderInPhase": 2,
+        "feature": "Terraform configuration, plan, apply and local state",
+        "goal": "Create one harmless Parameter Store parameter and inspect how local state records it.",
+        "whyItMatters": "The learner needs a real local state file before practising a controlled migration to S3.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-001-create-dedicated-terraform-state-training-access"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-init",
+          "source-tf-state-purpose",
+          "source-tf-state-inspect",
+          "source-tf-plan"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create, validate and apply the local-state configuration",
+            "instruction": "Remain inside the empty fa-terraform-state folder.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-1",
+                "text": "Remain inside the empty fa-terraform-state folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-2",
+                "text": "Create versions.tf and paste the supplied versions.tf block exactly.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-3",
+                "text": "Create variables.tf and paste the supplied variables.tf block exactly.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-4",
+                "text": "Create main.tf and paste the supplied main.tf block exactly.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-5",
+                "text": "Create outputs.tf and paste the supplied outputs.tf block exactly.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-6",
+                "text": "Understand that terraform.workspace is default during the first run, so the parameter name becomes /fa-terraform-state/default/demo.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-7",
+                "text": "Run terraform fmt and confirm Terraform formats the files without creating AWS resources.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-8",
+                "text": "Run terraform init and confirm the AWS provider is installed for the local backend.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-9",
+                "text": "Run terraform validate and correct any named file and line before continuing.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-10",
+                "text": "Run terraform plan -out=local.tfplan and confirm exactly one aws_ssm_parameter.demo will be added.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-11",
+                "text": "Run terraform show local.tfplan and read the parameter name, value type and tags.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-12",
+                "text": "Run terraform apply local.tfplan only after the saved plan is understood.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-13",
+                "text": "Open AWS Systems Manager in eu-west-2, choose Parameter Store and open /fa-terraform-state/default/demo.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-14",
+                "text": "Verify its value is managed-by-terraform and its ManagedBy tag is Terraform.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-15",
+                "text": "Return to the terminal and run terraform state list.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-16",
+                "text": "Run terraform state show aws_ssm_parameter.demo and compare the recorded name with the Console.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-instruction-17",
+                "text": "List the folder and identify terraform.tfstate; do not open, edit, copy or commit this sensitive state file.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-json-1",
+                "title": "versions.tf",
+                "content": "terraform {\n  required_version = \">= 1.10.0\"\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.0\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  region  = var.aws_region\n  profile = var.aws_profile\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-init",
+                  "source-tf-state-purpose",
+                  "source-tf-state-inspect",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-json-2",
+                "title": "variables.tf",
+                "content": "variable \"aws_region\" {\n  description = \"AWS Region for the training resources\"\n  type        = string\n  default     = \"eu-west-2\"\n}\n\nvariable \"aws_profile\" {\n  description = \"Named AWS CLI profile used by Terraform\"\n  type        = string\n  default     = \"fa-terraform-state\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-init",
+                  "source-tf-state-purpose",
+                  "source-tf-state-inspect",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-json-3",
+                "title": "main.tf",
+                "content": "resource \"aws_ssm_parameter\" \"demo\" {\n  name        = \"/fa-terraform-state/${terraform.workspace}/demo\"\n  description = \"Terraform state training parameter\"\n  type        = \"String\"\n  value       = \"managed-by-terraform\"\n\n  tags = {\n    ManagedBy   = \"Terraform\"\n    Environment = terraform.workspace\n    Lab         = \"fa-terraform-state\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-init",
+                  "source-tf-state-purpose",
+                  "source-tf-state-inspect",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-console-step-1-create-validate-and-apply-the-local-state-configuration-json-4",
+                "title": "outputs.tf",
+                "content": "output \"parameter_name\" {\n  description = \"Parameter managed in the current workspace\"\n  value       = aws_ssm_parameter.demo.name\n}\n\noutput \"active_workspace\" {\n  value = terraform.workspace\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-init",
+                  "source-tf-state-purpose",
+                  "source-tf-state-inspect",
+                  "source-tf-plan"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "One Parameter Store parameter exists and local state tracks aws_ssm_parameter.demo.",
+            "warning": "Terraform state can contain sensitive values. Never paste or commit terraform.tfstate.",
+            "sourceIds": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Apply standard formatting to all .tf files.",
+            "expectedResult": "Terraform completes without creating resources.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Initialize the local backend and install the AWS provider.",
+            "expectedResult": "Terraform reports successful initialization.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Check the combined configuration.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=local.tfplan",
+            "explanation": "Create a saved plan for the default workspace parameter.",
+            "expectedResult": "Plan: 1 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform show local.tfplan",
+            "explanation": "Inspect the exact saved plan before applying it.",
+            "expectedResult": "The output names /fa-terraform-state/default/demo.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply local.tfplan",
+            "explanation": "Apply only the reviewed plan file.",
+            "expectedResult": "Apply complete! Resources: 1 added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform state list",
+            "explanation": "List addresses stored in local state.",
+            "expectedResult": "aws_ssm_parameter.demo is listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform state show aws_ssm_parameter.demo",
+            "explanation": "Inspect the resource as Terraform records it.",
+            "expectedResult": "The parameter name, type and tags are visible.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-init",
+              "source-tf-state-purpose",
+              "source-tf-state-inspect",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-verification-1",
+            "title": "Verify AWS and state agree",
+            "instruction": "Compare the Parameter Store name and tags with terraform state show.",
+            "expectedResult": "Both surfaces identify the same default-workspace parameter.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-002-create-the-first-configuration-and-local-state-verification-2",
+            "title": "Verify local state protection",
+            "instruction": "Confirm terraform.tfstate is not staged in Git and is not copied into notes.",
+            "expectedResult": "The state file remains only in the isolated local folder.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket",
+        "slug": "create-the-protected-s3-backend-bucket",
+        "title": "Create the protected S3 backend bucket",
+        "phaseId": "phase-2-protected-remote-backend",
+        "orderInPhase": 1,
+        "feature": "Amazon S3 backend prerequisites",
+        "goal": "Create one private encrypted versioned bucket outside Terraform so it can hold Terraform state.",
+        "whyItMatters": "A backend must exist before Terraform can initialize it, and versioning helps recover from accidental state changes.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-002-create-the-first-configuration-and-local-state"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-s3-start",
+          "source-s3-public",
+          "source-s3-versioning",
+          "source-tf-backend"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and verify the backend bucket",
+            "instruction": "Open Amazon S3 in the same [ACCOUNT_ID].",
+            "instructions": [
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-1",
+                "text": "Open Amazon S3 in the same [ACCOUNT_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-2",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-3",
+                "text": "For Bucket name, enter fa-tf-state-<ACCOUNT_ID> after replacing <ACCOUNT_ID> with the recorded 12-digit value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-4",
+                "text": "For AWS Region, choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-5",
+                "text": "Keep Object Ownership set to ACLs disabled.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-6",
+                "text": "Keep Block all public access selected and do not add a public bucket policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-7",
+                "text": "Turn Bucket Versioning on.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-8",
+                "text": "Keep default encryption enabled with Amazon S3 managed keys (SSE-S3).",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-9",
+                "text": "Add tag Lab = fa-terraform-state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-10",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-11",
+                "text": "Open the exact bucket, choose Properties and verify Versioning is Enabled and Default encryption is SSE-S3.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-12",
+                "text": "Choose Permissions and verify all four Block Public Access settings are On.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-console-step-1-create-and-verify-the-backend-bucket-instruction-13",
+                "text": "Confirm the Objects tab is empty before state migration.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The exact fa-tf-state-<ACCOUNT_ID> bucket is empty, private, encrypted and versioned.",
+            "warning": "Do not place ordinary files or credentials in the state bucket.",
+            "sourceIds": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3api create-bucket --bucket fa-tf-state-<ACCOUNT_ID> --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-terraform-state",
+            "explanation": "Create the uniquely named London Region backend bucket.",
+            "expectedResult": "The response returns the bucket location.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws s3api put-bucket-versioning --bucket fa-tf-state-<ACCOUNT_ID> --versioning-configuration Status=Enabled --profile fa-terraform-state",
+            "explanation": "Enable recoverable object versions.",
+            "expectedResult": "The command completes without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws s3api put-public-access-block --bucket fa-tf-state-<ACCOUNT_ID> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --profile fa-terraform-state",
+            "explanation": "Explicitly enable all bucket-level public access blocks.",
+            "expectedResult": "The command completes without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws s3api put-bucket-encryption --bucket fa-tf-state-<ACCOUNT_ID> --server-side-encryption-configuration Rules=[{ApplyServerSideEncryptionByDefault={SSEAlgorithm=AES256}}] --profile fa-terraform-state",
+            "explanation": "Explicitly configure SSE-S3 default encryption.",
+            "expectedResult": "The command completes without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws s3api get-bucket-versioning --bucket fa-tf-state-<ACCOUNT_ID> --profile fa-terraform-state",
+            "explanation": "Read the versioning setting.",
+            "expectedResult": "Status is Enabled.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws s3api get-public-access-block --bucket fa-tf-state-<ACCOUNT_ID> --profile fa-terraform-state",
+            "explanation": "Read all four public-access settings.",
+            "expectedResult": "All four values are true.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws s3api get-bucket-encryption --bucket fa-tf-state-<ACCOUNT_ID> --profile fa-terraform-state",
+            "explanation": "Read the encryption rule.",
+            "expectedResult": "SSEAlgorithm is AES256.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-s3-start",
+              "source-s3-public",
+              "source-s3-versioning",
+              "source-tf-backend"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-003-create-the-protected-s3-backend-bucket-verification-1",
+            "title": "Verify all backend protections",
+            "instruction": "Confirm the exact bucket name, eu-west-2 Region, Enabled versioning, SSE-S3 encryption and all four public access blocks.",
+            "expectedResult": "Every protection is visible and the bucket contains no objects before migration.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking",
+        "slug": "migrate-local-state-and-enable-native-locking",
+        "title": "Migrate local state and enable native locking",
+        "phaseId": "phase-2-protected-remote-backend",
+        "orderInPhase": 2,
+        "feature": "S3 backend, terraform init -migrate-state and use_lockfile",
+        "goal": "Move the existing state into S3 without recreating the Parameter Store resource and enable native S3 state locking.",
+        "whyItMatters": "Teams need shared state and locking so two writers cannot silently update the same state at once.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-003-create-the-protected-s3-backend-bucket"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-backend",
+          "source-tf-init",
+          "source-tf-state-inspect",
+          "source-s3-versioning"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Configure and migrate the backend",
+            "instruction": "Create backend.tf in fa-terraform-state and paste the supplied empty S3 backend block.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-1",
+                "text": "Create backend.tf in fa-terraform-state and paste the supplied empty S3 backend block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-2",
+                "text": "Create backend.hcl and paste the supplied partial backend settings.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-3",
+                "text": "Replace <ACCOUNT_ID> in backend.hcl with the recorded 12-digit account ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-4",
+                "text": "Confirm backend.hcl contains only bucket, key, Region, use_lockfile and profile settings; it must contain no access key or secret.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-5",
+                "text": "Run terraform fmt and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-6",
+                "text": "Run terraform init -migrate-state -backend-config=backend.hcl.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-7",
+                "text": "When Terraform asks whether to copy existing state to the S3 backend, read the source and destination and enter yes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-8",
+                "text": "Wait for Terraform to report successful backend configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-9",
+                "text": "Run terraform state list and confirm aws_ssm_parameter.demo is still tracked.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-10",
+                "text": "Run terraform plan and confirm 0 to add, 0 to change, 0 to destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-11",
+                "text": "Open the S3 backend bucket and browse to terraform-state-lab/terraform.tfstate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-12",
+                "text": "Verify the state object has a current version and do not download or display its contents.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-13",
+                "text": "Understand that use_lockfile creates a .tflock object only while Terraform holds a lock; it can disappear when the operation completes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-14",
+                "text": "Run terraform plan -lock-timeout=60s and allow it to acquire and release the backend lock normally.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-instruction-15",
+                "text": "Refresh the S3 Objects and Versions views and identify the state key versions. Do not delete any version.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-json-1",
+                "title": "backend.tf",
+                "content": "terraform {\n  backend \"s3\" {}\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-backend",
+                  "source-tf-init",
+                  "source-tf-state-inspect",
+                  "source-s3-versioning"
+                ]
+              },
+              {
+                "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-console-step-1-configure-and-migrate-the-backend-json-2",
+                "title": "backend.hcl",
+                "content": "bucket       = \"fa-tf-state-<ACCOUNT_ID>\"\nkey          = \"terraform-state-lab/terraform.tfstate\"\nregion       = \"eu-west-2\"\nuse_lockfile = true\nprofile      = \"fa-terraform-state\"",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-backend",
+                  "source-tf-init",
+                  "source-tf-state-inspect",
+                  "source-s3-versioning"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The S3 backend holds the state, the existing resource is unchanged and native lockfile support is enabled.",
+            "warning": "Never use -lock=false for a normal shared-state operation. Never edit state directly.",
+            "sourceIds": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Format the new backend block.",
+            "expectedResult": "Terraform completes without creating resources.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform validate",
+            "explanation": "Validate the configuration before changing the backend.",
+            "expectedResult": "The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform init -migrate-state -backend-config=backend.hcl",
+            "explanation": "Copy the existing local state into the protected S3 backend after interactive confirmation.",
+            "expectedResult": "Terraform reports successful backend configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform state list",
+            "explanation": "Prove that the resource remained tracked after migration.",
+            "expectedResult": "aws_ssm_parameter.demo is listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform plan",
+            "explanation": "Confirm migration did not change infrastructure.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform plan -lock-timeout=60s",
+            "explanation": "Use the configured backend lock and wait safely if another operation temporarily owns it.",
+            "expectedResult": "Terraform acquires the lock, completes the plan and releases it.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws s3api list-object-versions --bucket fa-tf-state-<ACCOUNT_ID> --prefix terraform-state-lab/ --profile fa-terraform-state",
+            "explanation": "List state versions without displaying state contents.",
+            "expectedResult": "At least one terraform.tfstate version is returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-backend",
+              "source-tf-init",
+              "source-tf-state-inspect",
+              "source-s3-versioning"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-verification-1",
+            "title": "Verify migration without replacement",
+            "instruction": "Confirm terraform state list retains the parameter and terraform plan is a no-change plan.",
+            "expectedResult": "State migrated while the AWS resource remained intact.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-004-migrate-local-state-and-enable-native-locking-verification-2",
+            "title": "Verify remote storage",
+            "instruction": "Confirm the exact state key exists in the versioned S3 bucket.",
+            "expectedResult": "terraform-state-lab/terraform.tfstate has a version ID.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely",
+        "slug": "detect-drift-and-use-refresh-only-safely",
+        "title": "Detect drift and use refresh-only safely",
+        "phaseId": "phase-3-state-aware-operations",
+        "orderInPhase": 1,
+        "feature": "Drift detection, refresh-only plans and configuration reconciliation",
+        "goal": "Create one visible tag drift, review a refresh-only plan, then restore the declared configuration.",
+        "whyItMatters": "The exam distinguishes recording remote changes in state from changing infrastructure back to the configuration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-004-migrate-local-state-and-enable-native-locking"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-plan",
+          "source-tf-state-inspect",
+          "source-tf-state-purpose"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create one controlled drift and reconcile it",
+            "instruction": "Open Systems Manager, choose Parameter Store and open /fa-terraform-state/default/demo.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-1",
+                "text": "Open Systems Manager, choose Parameter Store and open /fa-terraform-state/default/demo.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-2",
+                "text": "Open Tags and change only Environment from default to changed-outside-terraform.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-3",
+                "text": "Do not change the parameter name, type or value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-4",
+                "text": "Return to fa-terraform-state and run terraform plan -refresh-only -out=refresh.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-5",
+                "text": "Read the plan and confirm it records the tag difference without proposing to restore the configured value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-6",
+                "text": "Run terraform show refresh.tfplan and verify only the Environment tag changed in the refresh-only plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-7",
+                "text": "Run terraform apply refresh.tfplan to record the observed remote tag in state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-8",
+                "text": "Run terraform state show aws_ssm_parameter.demo and confirm state now records changed-outside-terraform.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-9",
+                "text": "Run terraform plan -out=reconcile.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-10",
+                "text": "Confirm the normal plan proposes one in-place change restoring Environment = default from the configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-11",
+                "text": "Run terraform apply reconcile.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-12",
+                "text": "Refresh the Parameter Store Tags view and verify Environment = default.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-console-step-1-create-one-controlled-drift-and-reconcile-it-instruction-13",
+                "text": "Run terraform plan one more time and confirm no changes.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The learner sees the difference between refresh-only state synchronization and configuration reconciliation.",
+            "warning": "Change only the named training parameter tag. Never experiment with unrelated production resources.",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan -refresh-only -out=refresh.tfplan",
+            "explanation": "Create a saved plan that updates state to match the observed remote tag.",
+            "expectedResult": "The plan shows the out-of-band Environment tag change.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform show refresh.tfplan",
+            "explanation": "Inspect the saved refresh-only plan.",
+            "expectedResult": "Only the controlled tag drift is shown.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform apply refresh.tfplan",
+            "explanation": "Record the observed remote object in state without restoring configuration yet.",
+            "expectedResult": "Apply completes with the refreshed state.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform state show aws_ssm_parameter.demo",
+            "explanation": "Read the refreshed state.",
+            "expectedResult": "Environment is changed-outside-terraform.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform plan -out=reconcile.tfplan",
+            "explanation": "Compare refreshed state with the unchanged HCL configuration.",
+            "expectedResult": "One in-place update restores Environment = default.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply reconcile.tfplan",
+            "explanation": "Apply only the reviewed reconciliation plan.",
+            "expectedResult": "The parameter tag returns to default.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform plan",
+            "explanation": "Verify configuration, state and AWS agree again.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-plan",
+              "source-tf-state-inspect",
+              "source-tf-state-purpose"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-verification-1",
+            "title": "Explain refresh-only",
+            "instruction": "State in one sentence what refresh-only changed and what it did not change.",
+            "expectedResult": "It updated Terraform state to observed AWS values; it did not restore the HCL value.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-005-detect-drift-and-use-refresh-only-safely-verification-2",
+            "title": "Verify reconciliation",
+            "instruction": "Compare HCL, state show and the Console tag.",
+            "expectedResult": "All three show Environment = default.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace",
+        "slug": "create-and-remove-an-isolated-development-workspace",
+        "title": "Create and remove an isolated development workspace",
+        "phaseId": "phase-4-environment-isolation",
+        "orderInPhase": 1,
+        "feature": "Terraform CLI workspaces and separate backend state paths",
+        "goal": "Create a development workspace, apply one isolated parameter and return safely to default.",
+        "whyItMatters": "CLI workspaces create separate state instances, but they do not replace strong architectural environment separation.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-005-detect-drift-and-use-refresh-only-safely"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-workspaces",
+          "source-tf-backend",
+          "source-tf-plan"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Use the development workspace without changing default",
+            "instruction": "Run terraform workspace list and identify the asterisk beside default.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-1",
+                "text": "Run terraform workspace list and identify the asterisk beside default.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-2",
+                "text": "Run terraform workspace new development.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-3",
+                "text": "Run terraform workspace show and confirm development is active.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-4",
+                "text": "Run terraform plan -out=development.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-5",
+                "text": "Confirm the plan creates /fa-terraform-state/development/demo rather than changing the default parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-6",
+                "text": "Run terraform apply development.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-7",
+                "text": "Open Parameter Store and verify both /fa-terraform-state/default/demo and /fa-terraform-state/development/demo exist.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-8",
+                "text": "Open the S3 bucket and identify the development workspace state under the workspace prefix without opening its contents.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-9",
+                "text": "Run terraform plan -destroy -out=development-destroy.tfplan and confirm only the development parameter will be destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-10",
+                "text": "Run terraform apply development-destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-11",
+                "text": "Verify the development parameter is absent while the default parameter remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-12",
+                "text": "Run terraform workspace select default.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-13",
+                "text": "Run terraform workspace delete development.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-console-step-1-use-the-development-workspace-without-changing-default-instruction-14",
+                "text": "Run terraform workspace list and confirm only default remains.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The development state was isolated, its resource was removed, and the learner returned to default.",
+            "warning": "Never delete an active workspace or a workspace that still manages resources.",
+            "sourceIds": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform workspace list",
+            "explanation": "List workspace names and identify the active workspace.",
+            "expectedResult": "An asterisk appears beside default.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform workspace new development",
+            "explanation": "Create and select a separate development state instance.",
+            "expectedResult": "Created and switched to workspace development.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform workspace show",
+            "explanation": "Confirm which state instance later commands will use.",
+            "expectedResult": "development is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=development.tfplan",
+            "explanation": "Plan the development parameter with the workspace-derived name.",
+            "expectedResult": "One development parameter will be added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform apply development.tfplan",
+            "explanation": "Apply only the reviewed development plan.",
+            "expectedResult": "One resource is added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform plan -destroy -out=development-destroy.tfplan",
+            "explanation": "Prepare the development-only teardown.",
+            "expectedResult": "One resource will be destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform apply development-destroy.tfplan",
+            "explanation": "Remove the development parameter.",
+            "expectedResult": "One resource is destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform workspace select default",
+            "explanation": "Return to the original state instance.",
+            "expectedResult": "Switched to workspace default.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "terraform workspace delete development",
+            "explanation": "Delete the empty development workspace state.",
+            "expectedResult": "Deleted workspace development.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-cli-step-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "terraform workspace list",
+            "explanation": "Verify the final workspace boundary.",
+            "expectedResult": "Only default remains and is active.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-workspaces",
+              "source-tf-backend",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-verification-1",
+            "title": "Verify state isolation",
+            "instruction": "Confirm development created a separate parameter and separate backend state path.",
+            "expectedResult": "The default resource and state were not overwritten.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-006-create-and-remove-an-isolated-development-workspace-verification-2",
+            "title": "Verify workspace cleanup",
+            "instruction": "Confirm development has no resource and no workspace entry.",
+            "expectedResult": "Only the default workspace and default parameter remain.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform",
+        "slug": "import-an-existing-s3-bucket-into-terraform",
+        "title": "Import an existing S3 bucket into Terraform",
+        "phaseId": "phase-5-adopt-existing-infrastructure",
+        "orderInPhase": 1,
+        "feature": "Terraform import and configuration alignment",
+        "goal": "Create one empty bucket outside Terraform, declare it in HCL, import it and reach a no-change plan.",
+        "whyItMatters": "Import adds an existing object to state but does not automatically create a complete maintainable configuration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-006-create-and-remove-an-isolated-development-workspace"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-import",
+          "source-tf-state-inspect",
+          "source-tf-plan",
+          "source-s3-start"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create, declare and import the existing bucket",
+            "instruction": "Open Amazon S3 and choose Create bucket.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-1",
+                "text": "Open Amazon S3 and choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-2",
+                "text": "Enter fa-tf-import-<ACCOUNT_ID> after replacing the placeholder with the recorded account ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-3",
+                "text": "Choose eu-west-2, keep ACLs disabled and keep Block all public access selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-4",
+                "text": "Keep default encryption enabled and choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-5",
+                "text": "Do not upload any objects to this import bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-6",
+                "text": "Return to the default Terraform workspace and create import.tf.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-7",
+                "text": "Paste the supplied aws_s3_bucket.imported resource block and replace <ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-8",
+                "text": "Run terraform fmt and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-9",
+                "text": "Run terraform plan and observe that Terraform proposes creating the declared bucket because it is not yet in state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-10",
+                "text": "Do not apply that plan because the bucket already exists.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-11",
+                "text": "Run terraform import aws_s3_bucket.imported fa-tf-import-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-12",
+                "text": "Run terraform state list and confirm both aws_ssm_parameter.demo and aws_s3_bucket.imported are tracked.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-13",
+                "text": "Run terraform state show aws_s3_bucket.imported and compare the recorded bucket name with S3.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-14",
+                "text": "Run terraform plan -out=post-import.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-15",
+                "text": "Read any proposed tag-only update, apply it if it exactly adds the declared ManagedBy and Lab tags, then run terraform plan again.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-instruction-16",
+                "text": "Confirm the final plan reports no changes.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-console-step-1-create-declare-and-import-the-existing-bucket-json-1",
+                "title": "Add to import.tf",
+                "content": "resource \"aws_s3_bucket\" \"imported\" {\n  bucket = \"fa-tf-import-<ACCOUNT_ID>\"\n\n  tags = {\n    ManagedBy = \"Terraform\"\n    Lab       = \"fa-terraform-state\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-import",
+                  "source-tf-state-inspect",
+                  "source-tf-plan",
+                  "source-s3-start"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The pre-existing empty bucket is tracked by Terraform and the final plan has no changes.",
+            "warning": "Import only the exact empty training bucket. Import does not prove that the configuration describes every existing setting.",
+            "sourceIds": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3api create-bucket --bucket fa-tf-import-<ACCOUNT_ID> --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-terraform-state",
+            "explanation": "Create the empty import target outside Terraform.",
+            "expectedResult": "The response returns the bucket location.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws s3api put-public-access-block --bucket fa-tf-import-<ACCOUNT_ID> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --profile fa-terraform-state",
+            "explanation": "Keep the import target private.",
+            "expectedResult": "The command completes without error.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform fmt",
+            "explanation": "Format import.tf.",
+            "expectedResult": "Terraform completes without infrastructure changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform validate",
+            "explanation": "Validate the declared import address.",
+            "expectedResult": "The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform plan",
+            "explanation": "Demonstrate that configuration alone does not adopt an existing object.",
+            "expectedResult": "Terraform proposes creating aws_s3_bucket.imported; do not apply.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform import aws_s3_bucket.imported fa-tf-import-<ACCOUNT_ID>",
+            "explanation": "Associate the exact existing bucket with the declared resource address.",
+            "expectedResult": "Import successful!",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform state list",
+            "explanation": "List all tracked addresses.",
+            "expectedResult": "The SSM parameter and imported S3 bucket are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform state show aws_s3_bucket.imported",
+            "explanation": "Inspect the imported bucket state.",
+            "expectedResult": "The bucket name matches fa-tf-import-<ACCOUNT_ID>.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "terraform plan -out=post-import.tfplan",
+            "explanation": "Review any difference between imported reality and the HCL declaration.",
+            "expectedResult": "Only understood declared tag changes appear, or the plan has no changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "terraform apply post-import.tfplan",
+            "explanation": "Apply only if the reviewed plan contains the two declared training tags and no replacement or deletion.",
+            "expectedResult": "The tag alignment completes.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-cli-step-11",
+            "stepNumber": 11,
+            "number": 11,
+            "command": "terraform plan",
+            "explanation": "Verify the final adopted configuration.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-import",
+              "source-tf-state-inspect",
+              "source-tf-plan",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-verification-1",
+            "title": "Verify import identity",
+            "instruction": "Compare the bucket name in state show with the S3 Console.",
+            "expectedResult": "Both identify fa-tf-import-<ACCOUNT_ID>.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform-verification-2",
+            "title": "Verify stable management",
+            "instruction": "Run a final normal plan.",
+            "expectedResult": "Terraform reports no changes.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend",
+        "slug": "destroy-workloads-migrate-state-locally-and-remove-the-backend",
+        "title": "Destroy workloads, migrate state locally and remove the backend",
+        "phaseId": "phase-6-complete-teardown",
+        "orderInPhase": 1,
+        "feature": "Reverse-dependency teardown and backend retirement",
+        "goal": "Remove every lab resource in the only safe order and retain no credentials or state bucket.",
+        "whyItMatters": "The backend must remain available until Terraform has destroyed managed resources and copied its final state elsewhere.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-state-007-import-an-existing-s3-bucket-into-terraform"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-state training identity and exact named resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete browser guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-destroy",
+          "source-tf-init",
+          "source-s3-versioning",
+          "source-s3-start"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Perform the complete ordered teardown",
+            "instruction": "Run terraform workspace show and confirm default is active.",
+            "instructions": [
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-1",
+                "text": "Run terraform workspace show and confirm default is active.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-2",
+                "text": "Run terraform state list and confirm only the default SSM parameter and imported empty S3 bucket remain.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-3",
+                "text": "Run terraform plan -destroy -out=destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-4",
+                "text": "Inspect destroy.tfplan and confirm it deletes only aws_ssm_parameter.demo and aws_s3_bucket.imported.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-5",
+                "text": "Run terraform apply destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-6",
+                "text": "Open Parameter Store and verify /fa-terraform-state/default/demo is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-7",
+                "text": "Open S3 and verify fa-tf-import-<ACCOUNT_ID> is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-8",
+                "text": "Run terraform state list and confirm it returns no resource addresses.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-9",
+                "text": "Do not delete the backend bucket yet.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-10",
+                "text": "Replace backend.tf with the supplied local backend block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-11",
+                "text": "Run terraform init -migrate-state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-12",
+                "text": "When asked to copy the final empty state from S3 to local, verify the direction and enter yes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-13",
+                "text": "Run terraform state list again and confirm the migrated local state is empty.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-14",
+                "text": "Open fa-tf-state-<ACCOUNT_ID> in S3 and choose Empty.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-15",
+                "text": "Enter permanently delete and empty all object versions and delete markers in that exact bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-16",
+                "text": "After the bucket is empty, choose Delete, enter the exact bucket name and delete it.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-17",
+                "text": "Open IAM as the administrator and delete the access key for fa-terraform-state-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-18",
+                "text": "Detach and delete fa-terraform-state-training-policy, then delete fa-terraform-state-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-19",
+                "text": "Delete the named fa-terraform-state AWS CLI profile from the local credentials and config files without touching other profiles.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-20",
+                "text": "Leave the lab folder, verify its exact path, and delete only fa-terraform-state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-instruction-21",
+                "text": "Confirm no backend bucket, import bucket, training parameters, temporary IAM identity or local lab folder remains.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-json-1",
+                "title": "Replace backend.tf with this local backend block after workload destruction",
+                "content": "terraform {\n  backend \"local\" {\n    path = \"terraform.tfstate\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-destroy",
+                  "source-tf-init",
+                  "source-s3-versioning",
+                  "source-s3-start"
+                ]
+              },
+              {
+                "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-console-step-1-perform-the-complete-ordered-teardown-json-2",
+                "title": "delete-versions.json structure",
+                "content": "{\n  \"Objects\": [\n    {\n      \"Key\": \"terraform-state-lab/terraform.tfstate\",\n      \"VersionId\": \"<VERSION_ID>\"\n    }\n  ],\n  \"Quiet\": true\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-tf-destroy",
+                  "source-tf-init",
+                  "source-s3-versioning",
+                  "source-s3-start"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Every named lab resource, state version, temporary credential and local file is removed.",
+            "warning": "Versioned S3 buckets remain non-empty until every object version and delete marker is removed. Verify the exact bucket before permanent deletion.",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform workspace show",
+            "explanation": "Verify default is active before destruction.",
+            "expectedResult": "default is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform state list",
+            "explanation": "List the exact managed workload before teardown.",
+            "expectedResult": "Only the default parameter and imported bucket are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform plan -destroy -out=destroy.tfplan",
+            "explanation": "Create a reviewable teardown plan.",
+            "expectedResult": "Exactly two managed resources will be destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform show destroy.tfplan",
+            "explanation": "Inspect every deletion before applying it.",
+            "expectedResult": "Only exact fa-terraform-state resources appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform apply destroy.tfplan",
+            "explanation": "Apply only the saved teardown plan.",
+            "expectedResult": "Apply complete! Resources: 2 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform state list",
+            "explanation": "Verify workload state is empty while the backend still exists.",
+            "expectedResult": "No resource addresses are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform init -migrate-state",
+            "explanation": "After replacing backend.tf, copy the final empty state from S3 to the local backend.",
+            "expectedResult": "Terraform reports successful backend configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws s3api list-object-versions --bucket fa-tf-state-<ACCOUNT_ID> --profile fa-terraform-state",
+            "explanation": "Inventory every remaining state version and delete marker before permanent cleanup.",
+            "expectedResult": "Only keys belonging to this lab are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "aws s3api delete-objects --bucket fa-tf-state-<ACCOUNT_ID> --delete file://delete-versions.json --profile fa-terraform-state",
+            "explanation": "Delete only the version IDs copied into the reviewed JSON file; repeat after refreshing the inventory until none remain.",
+            "expectedResult": "Deleted entries correspond only to the exact backend bucket versions.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "aws s3api delete-bucket --bucket fa-tf-state-<ACCOUNT_ID> --region eu-west-2 --profile fa-terraform-state",
+            "explanation": "Delete the exact empty backend bucket after migration.",
+            "expectedResult": "The command completes without error.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-11",
+            "stepNumber": 11,
+            "number": 11,
+            "command": "aws iam delete-access-key --user-name fa-terraform-state-user --access-key-id <ACCESS_KEY_ID>",
+            "explanation": "Administrator route: delete only the temporary user access key.",
+            "expectedResult": "The key is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-12",
+            "stepNumber": 12,
+            "number": 12,
+            "command": "aws iam detach-user-policy --user-name fa-terraform-state-user --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-state-training-policy",
+            "explanation": "Administrator route: detach the exact training policy.",
+            "expectedResult": "The policy is detached.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-13",
+            "stepNumber": 13,
+            "number": 13,
+            "command": "aws iam delete-user --user-name fa-terraform-state-user",
+            "explanation": "Administrator route: delete the empty temporary user.",
+            "expectedResult": "The user is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-cli-step-14",
+            "stepNumber": 14,
+            "number": 14,
+            "command": "aws iam delete-policy --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-state-training-policy",
+            "explanation": "Administrator route: delete the exact customer-managed training policy.",
+            "expectedResult": "The policy is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-init",
+              "source-s3-versioning",
+              "source-s3-start"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-verification-1",
+            "title": "Verify AWS cleanup",
+            "instruction": "Search S3, Parameter Store and IAM for every exact fa-terraform-state and fa-tf-import name.",
+            "expectedResult": "No named lab resource remains.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-verification-2",
+            "title": "Verify backend order",
+            "instruction": "Confirm workload destruction and local state migration occurred before deleting the backend bucket.",
+            "expectedResult": "The backend was available for every Terraform state operation.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-state-008-destroy-workloads-migrate-state-locally-and-remove-the-backend-verification-3",
+            "title": "Verify local cleanup",
+            "instruction": "Confirm the named CLI profile and exact fa-terraform-state folder are absent.",
+            "expectedResult": "No temporary credential, plan or state file remains locally.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Parameter Store standard parameters are normally free. S3 storage and requests can incur small charges. Delete every named lab resource during the final phase.",
+      "safety": "Operate only on exact fa-terraform-state and fa-tf-import names. Read every plan before apply and never edit Terraform state directly.",
+      "credentials": "Never paste passwords, access keys, session tokens, backend credentials, state content or plan JSON into HCL, Author, Git, screenshots or chat.",
+      "region": "Use eu-west-2 for S3 and Parameter Store resources. IAM is global. Verify the AWS account before every create, import or delete operation."
+    },
+    "cleanup": {
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency",
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Remove the development workspace workload",
+          "instruction": "Destroy the development workspace parameter before returning to default and deleting the empty workspace.",
+          "description": "Destroy the development workspace parameter before returning to default and deleting the empty workspace.",
+          "verification": "Cleanup item 1 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Remove default managed resources",
+          "instruction": "Destroy the default Parameter Store parameter and imported empty S3 bucket using a reviewed saved destroy plan.",
+          "description": "Destroy the default Parameter Store parameter and imported empty S3 bucket using a reviewed saved destroy plan.",
+          "verification": "Cleanup item 2 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Migrate the final empty state locally",
+          "instruction": "Change to the local backend and run terraform init -migrate-state before touching the S3 backend bucket.",
+          "description": "Change to the local backend and run terraform init -migrate-state before touching the S3 backend bucket.",
+          "verification": "Cleanup item 3 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Empty and delete the versioned backend bucket",
+          "instruction": "Delete every version and delete marker only from fa-tf-state-<ACCOUNT_ID>, then delete that exact empty bucket.",
+          "description": "Delete every version and delete marker only from fa-tf-state-<ACCOUNT_ID>, then delete that exact empty bucket.",
+          "verification": "Cleanup item 4 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Remove temporary IAM access",
+          "instruction": "Delete the temporary access key, detach and delete the exact policy, then delete fa-terraform-state-user.",
+          "description": "Delete the temporary access key, detach and delete the exact policy, then delete fa-terraform-state-user.",
+          "verification": "Cleanup item 5 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Remove local training files",
+          "instruction": "Delete only the fa-terraform-state CLI profile and verified lab folder after AWS cleanup is complete.",
+          "description": "Delete only the fa-terraform-state CLI profile and verified lab folder after AWS cleanup is complete.",
+          "verification": "Cleanup item 6 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-7",
+          "stepNumber": 7,
+          "title": "Acknowledge complete cleanup",
+          "instruction": "Confirm no named S3 bucket, SSM parameter, IAM resource, workspace, credential, plan or state file remains.",
+          "description": "Confirm no named S3 bucket, SSM parameter, IAM resource, workspace, credential, plan or state file remains.",
+          "verification": "Cleanup item 7 is visibly complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        }
+      ]
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "warnings",
+          "priority": "advisory",
+          "message": "An administrator must review the exact temporary training policy and replace account placeholders before attachment.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "State and plan files can contain sensitive values and must never be displayed, committed or copied into Author.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "cleanup",
+          "priority": "advisory",
+          "message": "Managed resources and final state migration must complete before the versioned backend bucket is emptied and deleted.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "terraform-state-backend-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The local Author import must bind the currently signed-in Author and create exactly one private draft."
+  },
+  "summary": {
+    "phaseCount": 6,
+    "taskCount": 8,
+    "checkboxCount": 130,
+    "cliCommandCount": 73,
+    "verificationCheckCount": 16,
+    "cleanupItemCount": 7,
+    "learnerResourceValueCount": 0,
+    "officialSourceCount": 13,
+    "officialAwsSourceCount": 5,
+    "officialTerraformSourceCount": 8
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "d07389c6ecdbac0bebd1aaf1494d716ac034a6feecdc33df32303038ac77abdb"
+  }
+}

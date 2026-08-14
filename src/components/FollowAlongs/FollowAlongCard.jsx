@@ -37,6 +37,7 @@ const ICON_MAP = {
 
 export const FollowAlongCard = ({
   programme,
+  cardNumber = null,
   progressSummary = null,
   onSelectProgramme = () => {}
 }) => {
@@ -83,6 +84,11 @@ export const FollowAlongCard = ({
               <IconComponent className="w-6 h-6" />
             </div>
             <div>
+              {Number.isInteger(cardNumber) && cardNumber >= 0 && (
+                <span className="mb-1 inline-flex rounded-full border border-violet-700/70 bg-violet-950/50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-violet-200">
+                  Follow Along {cardNumber}
+                </span>
+              )}
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
                 {programme.category}
               </span>

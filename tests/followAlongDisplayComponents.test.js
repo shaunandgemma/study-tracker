@@ -227,10 +227,27 @@ test('Follow Along display components', async (t) => {
         phaseCount: 6,
       },
       progressSummary: { status: 'Not Started', completed: 0, total: 23, percentage: 0, loading: false },
+      cardNumber: 2,
     }));
     assert.match(publishedCardHtml, /0 of 23 tasks completed/);
     assert.match(publishedCardHtml, /Start Follow Along/);
+    assert.match(publishedCardHtml, /Follow Along 2/);
     assert.doesNotMatch(publishedCardHtml, /Resume Follow Along/);
+
+    const zeroCardHtml = renderToStaticMarkup(createElement(FollowAlongCard, {
+      programme: {
+        id: 'terraform-configuration-foundations-learning-path',
+        title: 'Understanding and Building Terraform Configuration',
+        category: 'Terraform Configuration Language',
+        description: 'Build every Terraform block gradually.',
+        service: 'HashiCorp Terraform on AWS',
+        status: 'available',
+        taskCount: 9,
+        phaseCount: 6,
+      },
+      cardNumber: 0,
+    }));
+    assert.match(zeroCardHtml, /Follow Along 0/);
 
     const cardWithoutProgressHtml = renderToStaticMarkup(createElement(FollowAlongCard, {
       programme: {

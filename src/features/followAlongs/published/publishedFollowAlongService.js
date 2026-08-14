@@ -13,6 +13,13 @@ function clean(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+export function getPublishedFollowAlongDisplayName(programme) {
+  const displayName = clean(programme?.displayName);
+  return clean(programme?.programmeId || programme?.pathId) === 'terraform-configuration-foundations-learning-path'
+    ? displayName.replace(/^Follow Along 0\s*[—-]\s*/i, '')
+    : displayName;
+}
+
 function storageDefaults(programme) {
   const slug = clean(programme?.serviceSlug || programme?.shortName || 'follow-along').toLowerCase().replace(/[^a-z0-9]+/g, '_');
   return {
@@ -142,7 +149,7 @@ export function buildPublishedFollowAlongConfig(row) {
     identity: {
       serviceSlug: clean(programme.serviceSlug),
       serviceName: clean(programme.serviceName),
-      displayName: clean(programme.displayName),
+      displayName: getPublishedFollowAlongDisplayName(programme),
       description: clean(programme.description),
       programmeId,
       pathId,
@@ -176,7 +183,7 @@ export function buildPublishedProgrammeCard(row) {
   const supportedModes = [hasConsole && 'console', hasCli && 'cli', hasConsole && hasCli && 'both'].filter(Boolean);
   const assignedTask = tasks.find(task => task.examId || task.examCode);
   const inferredExamId = programme.programmeId === 'cloudformation-terraform-learning-path'
-    ? 'terraform-associate-004'
+    ? 'aws-saa-c03'
     : '';
   const examId = clean(programme.examId || programme.examCode)
     || clean(assignedTask?.examId || assignedTask?.examCode)
@@ -185,7 +192,7 @@ export function buildPublishedProgrammeCard(row) {
   return {
     id: programme.programmeId,
     slug: programme.serviceSlug,
-    title: programme.displayName,
+    title: getPublishedFollowAlongDisplayName(programme),
     shortTitle: programme.shortName,
     subtitle: programme.subtitle,
     description: programme.description,
