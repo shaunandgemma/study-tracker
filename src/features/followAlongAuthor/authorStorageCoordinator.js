@@ -10,7 +10,9 @@ export const AUTHOR_STORAGE_MODE = Object.freeze({
 
 export const AUTHOR_DRAFT_COPY_STATUS = Object.freeze({
   READY: 'ready_to_copy',
-  CONFLICT: 'remote_draft_already_exists'
+  CONFLICT: 'remote_draft_already_exists',
+  UPDATE_READY: 'ready_to_update_existing_programme',
+  UPDATE_BLOCKED: 'existing_programme_update_blocked'
 });
 
 function localDraftResult(userId, storage) {
@@ -42,20 +44,49 @@ function contentCounts(draft) {
 function verifiedHandoff(draft) {
   const source = draft?.draft?.importedFrom || {};
   const fingerprint = String(source.handoffFingerprint || '').trim().toLowerCase();
+  const identityMatches = draft?.draft?.draftId === `author-draft-import-${fingerprint}`
+    || (source.importStep === '92-local-revision-update'
+      && SHA256_PATTERN.test(String(source.previousHandoffFingerprint || '').trim().toLowerCase())
+      && draft?.draft?.draftId === `author-draft-import-${String(source.previousHandoffFingerprint).trim().toLowerCase()}`);
   return source.type === 'author_assistant_handoff'
-    && source.importStep === '92'
+    && ['92', '92-local-revision-update'].includes(source.importStep)
     && source.acceptedStages === '1-11'
     && SHA256_PATTERN.test(fingerprint)
     && SHA256_PATTERN.test(String(source.authorDraftContentFingerprint || '').trim().toLowerCase())
-    && draft?.draft?.draftId === `author-draft-import-${fingerprint}`;
+    && identityMatches;
 }
 
-async function copySummary(localDraft, remoteDraft) {
+function programmeId(draft) {
+  return String(draft?.programme?.programmeId || '').trim();
+}
+
+function activeCandidateForDraft(candidate, remoteDraft) {
+  const candidateDraftId = candidate?.draft_id || candidate?.sourceDraftId;
+  const candidateRevision = Number(candidate?.source_revision ?? candidate?.sourceRevision);
+  const decision = String(candidate?.approval_decision ?? candidate?.approval?.decision ?? '').toLowerCase();
+  const status = String(candidate?.status || '').toLowerCase();
+  const final = Boolean(candidate?.published_at || candidate?.publishedAt)
+    || decision === 'rejected'
+    || status === 'rejected'
+    || status === 'published';
+  return !final && candidateDraftId === draftId(remoteDraft) && candidateRevision === draftRevision(remoteDraft);
+}
+
+async function copySummary(localDraft, remoteDraft, { programmeMatch = false, programmeMatchCount = remoteDraft ? 1 : 0, activeCandidates = [] } = {}) {
   const [localContentFingerprint, remoteContentFingerprint] = await Promise.all([
     fingerprintAuthorHandoffJson(localDraft),
     remoteDraft ? fingerprintAuthorHandoffJson(remoteDraft) : Promise.resolve(null)
   ]);
   const source = localDraft?.draft?.importedFrom || {};
+  const exactIdMatch = Boolean(remoteDraft && draftId(remoteDraft) === draftId(localDraft));
+  const canUpdateShared = Boolean(
+    remoteDraft
+    && programmeMatch
+    && programmeMatchCount === 1
+    && verifiedHandoff(localDraft)
+    && localDraft?.draft?.createdBy === remoteDraft?.draft?.createdBy
+    && activeCandidates.length === 0
+  );
   return {
     draftId: draftId(localDraft),
     title: localDraft?.programme?.displayName || localDraft?.programme?.serviceName || 'Untitled Follow Along',
@@ -63,6 +94,10 @@ async function copySummary(localDraft, remoteDraft) {
     localRevision: draftRevision(localDraft),
     localUpdatedAt: localDraft?.draft?.updatedAt || null,
     remoteRevision: remoteDraft ? draftRevision(remoteDraft) : null,
+    remoteDraftId: remoteDraft ? draftId(remoteDraft) : null,
+    programmeMatch,
+    programmeMatchCount,
+    activeCandidateCount: activeCandidates.length,
     ownerId: localDraft?.draft?.createdBy || '',
     programmeId: localDraft?.programme?.programmeId || '',
     serviceSlug: localDraft?.programme?.serviceSlug || '',
@@ -73,8 +108,13 @@ async function copySummary(localDraft, remoteDraft) {
     remoteContentFingerprint,
     remoteContentMatches: remoteDraft ? localContentFingerprint === remoteContentFingerprint : null,
     counts: contentCounts(localDraft),
-    status: remoteDraft ? AUTHOR_DRAFT_COPY_STATUS.CONFLICT : AUTHOR_DRAFT_COPY_STATUS.READY,
-    canCopy: !remoteDraft,
+    status: exactIdMatch
+      ? AUTHOR_DRAFT_COPY_STATUS.CONFLICT
+      : programmeMatch
+        ? canUpdateShared ? AUTHOR_DRAFT_COPY_STATUS.UPDATE_READY : AUTHOR_DRAFT_COPY_STATUS.UPDATE_BLOCKED
+        : AUTHOR_DRAFT_COPY_STATUS.READY,
+    canCopy: !remoteDraft && !programmeMatch,
+    canUpdateShared,
     localWillRemain: true
   };
 }
@@ -215,13 +255,29 @@ export function createAuthorStorageCoordinator({
         };
       }
 
-      const shared = await remote.listDrafts();
+      const [shared, candidates] = await Promise.all([remote.listDrafts(), remote.listReleaseCandidates()]);
       if (!shared.success) {
         return { ...shared, previewOnly: true, localPreserved: true, localDraftCount: local.drafts.length };
       }
+      if (!candidates.success) {
+        return { ...candidates, previewOnly: true, localPreserved: true, localDraftCount: local.drafts.length };
+      }
 
       const remoteById = new Map((shared.drafts || []).map(item => [draftId(item), item]));
-      const drafts = await Promise.all(local.drafts.map(item => copySummary(item, remoteById.get(draftId(item)))));
+      const remoteByProgramme = new Map();
+      (shared.drafts || []).forEach(item => {
+        const key = programmeId(item);
+        if (!key) return;
+        remoteByProgramme.set(key, [...(remoteByProgramme.get(key) || []), item]);
+      });
+      const drafts = await Promise.all(local.drafts.map(item => {
+        const exact = remoteById.get(draftId(item));
+        if (exact) return copySummary(item, exact);
+        const programmeMatches = remoteByProgramme.get(programmeId(item)) || [];
+        const matched = programmeMatches.length === 1 ? programmeMatches[0] : null;
+        const activeCandidates = matched ? (candidates.candidates || []).filter(candidate => activeCandidateForDraft(candidate, matched)) : [];
+        return copySummary(item, matched, { programmeMatch: programmeMatches.length > 0, programmeMatchCount: programmeMatches.length, activeCandidates });
+      }));
       return {
         success: true,
         previewOnly: true,
@@ -229,8 +285,100 @@ export function createAuthorStorageCoordinator({
         storageMode: AUTHOR_STORAGE_MODE.SHARED,
         localDraftCount: drafts.length,
         readyCount: drafts.filter(item => item.canCopy).length,
-        conflictCount: drafts.filter(item => !item.canCopy).length,
+        updateReadyCount: drafts.filter(item => item.canUpdateShared).length,
+        conflictCount: drafts.filter(item => !item.canCopy && !item.canUpdateShared).length,
         drafts
+      };
+    },
+
+    async updateSharedDraftFromLocal({
+      localDraftId,
+      sharedDraftId,
+      confirmation,
+      expectedLocalRevision,
+      expectedSharedRevision,
+      expectedLocalContentFingerprint,
+      expectedSharedContentFingerprint
+    } = {}) {
+      if (getMode() !== AUTHOR_STORAGE_MODE.SHARED) {
+        return { success: false, disabled: true, localPreserved: true, error: 'Select Shared Drafts before updating the existing programme.' };
+      }
+      if (!localDraftId || !sharedDraftId || confirmation !== `UPDATE ${sharedDraftId} FROM ${localDraftId}`) {
+        return { success: false, confirmationRequired: true, localPreserved: true, error: 'Confirm the exact Local and Shared Draft IDs before updating.' };
+      }
+
+      const local = loadLocal();
+      if (!local.success) return { ...local, localPreserved: true };
+      const source = local.drafts.find(item => draftId(item) === localDraftId);
+      if (!source) return { success: false, notFound: true, localPreserved: true, error: 'The verified Local Draft could not be found.' };
+      if (!verifiedHandoff(source) || source.draft.createdBy !== userId) return { success: false, localPreserved: true, error: 'The Local Draft is not a verified handoff owned by this Author.' };
+      if (draftRevision(source) !== Number(expectedLocalRevision)) return { success: false, conflict: true, localPreserved: true, error: `The Local Draft changed to revision ${draftRevision(source)} after the preview.` };
+
+      const [shared, candidates] = await Promise.all([remote.listDrafts(), remote.listReleaseCandidates()]);
+      if (!shared.success) return { ...shared, success: false, localPreserved: true };
+      if (!candidates.success) return { ...candidates, success: false, localPreserved: true };
+      const matches = (shared.drafts || []).filter(item => programmeId(item) === programmeId(source));
+      if (matches.length !== 1 || draftId(matches[0]) !== sharedDraftId) {
+        return { success: false, conflict: true, localPreserved: true, error: 'The existing Shared Draft programme match changed after the preview.' };
+      }
+      const target = matches[0];
+      if (target.draft.createdBy !== userId || source.draft.createdBy !== target.draft.createdBy) return { success: false, localPreserved: true, error: 'The signed-in Author does not own both drafts.' };
+      if (draftRevision(target) !== Number(expectedSharedRevision)) return { success: false, conflict: true, localPreserved: true, error: `The Shared Draft changed to revision ${draftRevision(target)} after the preview.` };
+      if ((candidates.candidates || []).some(candidate => activeCandidateForDraft(candidate, target))) {
+        return { success: false, conflict: true, localPreserved: true, error: 'An active release candidate exists for this Shared Draft revision. Resolve it before updating.' };
+      }
+
+      const [localFingerprint, sharedFingerprint] = await Promise.all([
+        fingerprintAuthorHandoffJson(source),
+        fingerprintAuthorHandoffJson(target)
+      ]);
+      if (localFingerprint !== expectedLocalContentFingerprint || sharedFingerprint !== expectedSharedContentFingerprint) {
+        return { success: false, conflict: true, localPreserved: true, error: 'The Local or Shared Draft content changed after the preview.' };
+      }
+
+      const updatedAt = new Date().toISOString();
+      const next = {
+        ...structuredClone(source),
+        draft: {
+          ...structuredClone(target.draft),
+          revision: draftRevision(target),
+          status: 'draft',
+          createdAt: target.draft.createdAt,
+          createdBy: target.draft.createdBy,
+          updatedAt,
+          updatedBy: userId,
+          basedOnProgrammeId: programmeId(target),
+          importedFrom: structuredClone(source.draft.importedFrom),
+          lastAssistantUpdate: {
+            type: 'verified_local_to_existing_shared_update',
+            localDraftId,
+            localRevision: draftRevision(source),
+            localContentFingerprint: localFingerprint,
+            updatedAt,
+            updatedBy: userId
+          },
+          notes: 'Updated from the exact verified Local Draft after a controlled programme comparison.'
+        }
+      };
+      const saved = await remote.saveDraft({ draft: next, expectedRevision: draftRevision(target) });
+      if (!saved.success) return { ...saved, success: false, localPreserved: true };
+      if (draftId(saved.draft) !== sharedDraftId || draftRevision(saved.draft) !== draftRevision(target) + 1) {
+        return { success: false, localPreserved: true, error: 'The saved Shared Draft did not match the approved revision comparison.' };
+      }
+      const localAfter = loadLocal();
+      const preserved = localAfter.success && localAfter.drafts.some(item => draftId(item) === localDraftId && draftRevision(item) === draftRevision(source));
+      return {
+        success: true,
+        updatedCount: 1,
+        localPreserved: preserved,
+        localDraftId,
+        sharedDraftId,
+        sharedRevision: draftRevision(saved.draft),
+        draft: saved.draft,
+        candidateCreated: false,
+        approved: false,
+        published: false,
+        message: `The existing Shared Draft was updated to revision ${draftRevision(saved.draft)}. The verified Local Draft remains unchanged.`
       };
     },
 

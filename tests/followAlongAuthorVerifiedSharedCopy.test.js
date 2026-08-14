@@ -62,6 +62,7 @@ function sharedService(overrides = {}) {
   return {
     enabled: true,
     async listDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, drafts: [] }; },
+    async listReleaseCandidates() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, candidates: [] }; },
     async loadDraft() { return { success: false, notFound: true, storageMode: AUTHOR_STORAGE_MODE.SHARED }; },
     async storeNewDraft(draft) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft, row: { draft_id: draft.draft.draftId, revision: 1 } }; },
     ...overrides
@@ -137,10 +138,70 @@ test('Step 93 verified Author Assistant Local-to-Shared copy', async t => {
     assert.match(panel, /Verified Author Assistant handoff/);
     assert.match(panel, /Handoff SHA-256/);
     assert.match(panel, /Local content SHA-256/);
-    assert.match(panel, /existing shared content exactly matches/);
+    assert.match(panel, /existing Shared content exactly matches/);
     assert.match(panel, /typeof onCopied === 'function'/);
     assert.match(panel, /await onCopied\(\)/);
     assert.match(coordinator, /exactContentVerified/);
     assert.doesNotMatch(panel, /storeReleaseCandidate|approveReleaseCandidate|publishReleaseCandidate/);
+  });
+
+  await t.test('6. a verified Local Draft can update exactly one owned Shared Draft for the same programme', async () => {
+    const storage = memoryStorage();
+    const local = verifiedLocalDraft(storage);
+    const remoteDraft = {
+      ...structuredClone(local),
+      draft: { ...structuredClone(local.draft), draftId: 'existing-shared-terraform', revision: 2 },
+      programme: { ...structuredClone(local.programme), displayName: 'Older Shared content' }
+    };
+    let savedValues;
+    const remote = sharedService({
+      async listDrafts() { return { success: true, drafts: [structuredClone(remoteDraft)] }; },
+      async saveDraft(values) {
+        savedValues = structuredClone(values);
+        return { success: true, draft: { ...structuredClone(values.draft), draft: { ...structuredClone(values.draft.draft), revision: 3 } } };
+      }
+    });
+    const coordinator = sharedCoordinator(storage, remote);
+    const preview = await coordinator.previewLocalDraftCopies();
+    const item = preview.drafts[0];
+    assert.equal(item.status, AUTHOR_DRAFT_COPY_STATUS.UPDATE_READY);
+    assert.equal(item.canCopy, false);
+    assert.equal(item.canUpdateShared, true);
+    assert.equal(item.remoteDraftId, remoteDraft.draft.draftId);
+    assert.equal(item.remoteRevision, 2);
+    const result = await coordinator.updateSharedDraftFromLocal({
+      localDraftId: item.draftId,
+      sharedDraftId: item.remoteDraftId,
+      confirmation: `UPDATE ${item.remoteDraftId} FROM ${item.draftId}`,
+      expectedLocalRevision: item.localRevision,
+      expectedSharedRevision: item.remoteRevision,
+      expectedLocalContentFingerprint: item.localContentFingerprint,
+      expectedSharedContentFingerprint: item.remoteContentFingerprint
+    });
+    assert.equal(result.success, true);
+    assert.equal(result.updatedCount, 1);
+    assert.equal(result.sharedRevision, 3);
+    assert.equal(result.localPreserved, true);
+    assert.equal(savedValues.expectedRevision, 2);
+    assert.equal(savedValues.draft.draft.draftId, remoteDraft.draft.draftId);
+    assert.equal(savedValues.draft.programme.displayName, local.programme.displayName);
+    assert.equal(loadAuthorDrafts({ userId, storage }).drafts[0].draft.draftId, local.draft.draftId);
+  });
+
+  await t.test('7. an active candidate blocks the programme-matched Shared Draft update', async () => {
+    const storage = memoryStorage();
+    const local = verifiedLocalDraft(storage);
+    const remoteDraft = { ...structuredClone(local), draft: { ...structuredClone(local.draft), draftId: 'candidate-shared-draft', revision: 2 } };
+    let saves = 0;
+    const remote = sharedService({
+      async listDrafts() { return { success: true, drafts: [remoteDraft] }; },
+      async listReleaseCandidates() { return { success: true, candidates: [{ draft_id: remoteDraft.draft.draftId, source_revision: 2, status: 'awaiting_trusted_approval', approval_decision: 'pending' }] }; },
+      async saveDraft() { saves += 1; throw new Error('must not save'); }
+    });
+    const preview = await sharedCoordinator(storage, remote).previewLocalDraftCopies();
+    assert.equal(preview.drafts[0].status, AUTHOR_DRAFT_COPY_STATUS.UPDATE_BLOCKED);
+    assert.equal(preview.drafts[0].canUpdateShared, false);
+    assert.equal(preview.drafts[0].activeCandidateCount, 1);
+    assert.equal(saves, 0);
   });
 });

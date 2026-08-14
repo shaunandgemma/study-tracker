@@ -13,7 +13,7 @@ function memoryStorage() {
 }
 
 function localDraft(storage, id = 'copy', userId = 'author-1') {
-  const draft = createAuthorDraft({ userId, input: { serviceName: 'Amazon VPC', shortName: 'VPC' }, idFactory: () => id });
+  const draft = createAuthorDraft({ userId, input: { serviceName: `Amazon ${id}`, shortName: id }, idFactory: () => id });
   assert.equal(storeNewAuthorDraft({ userId, draft, storage }).success, true);
   return draft;
 }
@@ -22,6 +22,7 @@ function sharedService(overrides = {}) {
   return {
     enabled: true,
     async listDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, drafts: [] }; },
+    async listReleaseCandidates() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, candidates: [] }; },
     async loadDraft() { return { success: false, notFound: true, storageMode: AUTHOR_STORAGE_MODE.SHARED }; },
     async storeNewDraft(draft) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft, row: { draft_id: draft.draft.draftId } }; },
     ...overrides

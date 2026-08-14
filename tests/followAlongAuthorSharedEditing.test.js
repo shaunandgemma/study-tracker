@@ -20,6 +20,7 @@ function remoteService(overrides = {}) {
   return {
     enabled: true,
     async listDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, drafts: [] }; },
+    async listReleaseCandidates() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, candidates: [] }; },
     async loadDraft() { return { success: false, notFound: true, storageMode: AUTHOR_STORAGE_MODE.SHARED }; },
     async storeNewDraft(value) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft: value }; },
     async saveDraft({ draft: value, expectedRevision }) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft: { ...value, draft: { ...value.draft, revision: expectedRevision + 1 } } }; },
