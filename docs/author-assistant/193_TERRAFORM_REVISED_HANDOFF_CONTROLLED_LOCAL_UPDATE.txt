@@ -1,0 +1,22 @@
+193. TERRAFORM REVISED HANDOFF CONTROLLED LOCAL UPDATE
+
+1. Problem
+The accepted Terraform package with fingerprint 235aa816693dfd9731566c07bc8f06db3cf0658cbbb092d0264ee0b6b5d6b430 was incorrectly blocked as a duplicate because an older package used the same Author Assistant session ID.
+
+2. Correction
+Exact duplicate detection now checks the exact draft or handoff fingerprint. A different accepted package from the same session is treated as a controlled revision of its existing Local Draft when the signed-in owner and programme identity match.
+
+3. Local revision boundary
+The browser shows an exact before-and-after Local Draft revision comparison. The Author must confirm the update before it is saved. The existing draft ID is preserved and the revision advances by exactly one.
+
+4. Protected boundaries
+The correction does not create a second Local Draft. It does not update Shared Drafts, connect to AWS, create a release candidate, approve anything, or publish anything.
+
+5. Conflict protection
+The action stops if the package, acceptance audit, Author, programme, draft revision, comparison fingerprint, or ownership changes before saving. Reusing the exact same accepted handoff remains blocked as a duplicate.
+
+6. Verification
+The controlled import and Terraform handoff tests passed: 13 tests, 0 failures. The application production build also completed successfully.
+
+7. User action
+Remain in Local Drafts. Select the revised Terraform Step 90 package and matching Step 90A audit, validate the read-only preview, review Local revision 3 to Local revision 4, confirm the exact comparison, and choose Update This Existing Local Draft. Shared Drafts remain unchanged until a separate reviewed copy/update action.

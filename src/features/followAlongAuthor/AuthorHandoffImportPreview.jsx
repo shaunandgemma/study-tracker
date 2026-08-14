@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, CheckCircle2, FileCheck2, LockKeyhole, ShieldCheck, Upload, X } from 'lucide-react';
 import {
   AUTHOR_HANDOFF_IMPORT_CONFIRMATION,
+  AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION,
   prepareAuthorHandoffControlledImport
 } from './authorHandoffControlledImport.js';
 import {
@@ -18,6 +19,7 @@ export function AuthorHandoffImportPreview({
   existingDrafts = [],
   releaseCandidates = [],
   onCreatePrivateDraft,
+  onUpdateLocalDraft,
   onUpdateSharedDraft
 }) {
   const [documents, setDocuments] = useState({ handoffPackage: null, acceptance: null });
@@ -99,10 +101,11 @@ export function AuthorHandoffImportPreview({
       setError('Review the exact comparison and confirm the controlled draft action.');
       return;
     }
-    const updating = importPlan.operation === 'update_existing';
-    const action = updating ? onUpdateSharedDraft : onCreatePrivateDraft;
+    const updatingShared = importPlan.operation === 'update_existing';
+    const updatingLocal = importPlan.operation === 'update_existing_local';
+    const action = updatingShared ? onUpdateSharedDraft : updatingLocal ? onUpdateLocalDraft : onCreatePrivateDraft;
     if (typeof action !== 'function') {
-      setError(updating ? 'Shared Draft updating is unavailable.' : 'Private Author draft creation is unavailable.');
+      setError(updatingShared ? 'Shared Draft updating is unavailable.' : updatingLocal ? 'Local Draft updating is unavailable.' : 'Private Author draft creation is unavailable.');
       return;
     }
     setImporting(true);
@@ -112,7 +115,7 @@ export function AuthorHandoffImportPreview({
       const result = await action({
         ...documents,
         preparedPlan: importPlan,
-        confirmation: updating ? AUTHOR_HANDOFF_UPDATE_CONFIRMATION : AUTHOR_HANDOFF_IMPORT_CONFIRMATION
+        confirmation: updatingShared ? AUTHOR_HANDOFF_UPDATE_CONFIRMATION : updatingLocal ? AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION : AUTHOR_HANDOFF_IMPORT_CONFIRMATION
       });
       if (!result?.success) {
         setError(result?.error || 'The controlled import stopped safely.');
@@ -152,20 +155,20 @@ export function AuthorHandoffImportPreview({
     </div>}
 
     {importPlan && <div className="rounded-xl border border-cyan-700 bg-cyan-950/20 p-4 space-y-4" aria-label="Exact controlled draft comparison">
-      <div className="flex items-start gap-2"><LockKeyhole className="h-5 w-5 shrink-0 text-cyan-300" /><div><span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">{importPlan.operation === 'update_existing' ? 'Controlled existing Follow Along update' : 'Step 92 - Controlled private draft import'}</span><h3 className="mt-1 text-sm font-bold text-white">Exact pre-import comparison</h3><p className="mt-1 text-xs text-slate-400">{importPlan.operation === 'update_existing' ? 'The selected owned Shared Draft will move forward by exactly one revision. No new draft is created.' : 'Accepted Stages 1-11 are copied unchanged. Only the private draft identity and import audit are added.'}</p></div></div>
+      <div className="flex items-start gap-2"><LockKeyhole className="h-5 w-5 shrink-0 text-cyan-300" /><div><span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">{importPlan.operation === 'update_existing' ? 'Controlled existing Follow Along update' : importPlan.operation === 'update_existing_local' ? 'Controlled revised package import' : 'Step 92 - Controlled private draft import'}</span><h3 className="mt-1 text-sm font-bold text-white">Exact pre-import comparison</h3><p className="mt-1 text-xs text-slate-400">{importPlan.operation === 'update_existing' ? 'The selected owned Shared Draft will move forward by exactly one revision. No new draft is created.' : importPlan.operation === 'update_existing_local' ? 'The existing Local Draft from this Author Assistant session will move forward by exactly one revision. Shared Drafts are not changed.' : 'Accepted Stages 1-11 are copied unchanged. Only the private draft identity and import audit are added.'}</p></div></div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-center">
-        <div><span className="block text-[10px] uppercase tracking-wide text-slate-500">Before</span><strong className="text-xl text-white">{importPlan.operation === 'update_existing' ? importPlan.beforeRevision ?? '-' : importPlan.beforeDraftCount}</strong><span className="block text-[10px] text-slate-500">{importPlan.operation === 'update_existing' ? 'Shared revision' : 'Local drafts'}</span></div>
+        <div><span className="block text-[10px] uppercase tracking-wide text-slate-500">Before</span><strong className="text-xl text-white">{importPlan.operation === 'update_existing' || importPlan.operation === 'update_existing_local' ? importPlan.beforeRevision ?? '-' : importPlan.beforeDraftCount}</strong><span className="block text-[10px] text-slate-500">{importPlan.operation === 'update_existing' ? 'Shared revision' : importPlan.operation === 'update_existing_local' ? 'Local revision' : 'Local drafts'}</span></div>
         <ArrowRight className="h-5 w-5 text-cyan-400" />
-        <div><span className="block text-[10px] uppercase tracking-wide text-slate-500">After</span><strong className="text-xl text-white">{importPlan.operation === 'update_existing' ? importPlan.afterRevision ?? '-' : importPlan.afterDraftCount}</strong><span className="block text-[10px] text-slate-500">{importPlan.operation === 'update_existing' ? 'Shared revision' : 'Local drafts'}</span></div>
+        <div><span className="block text-[10px] uppercase tracking-wide text-slate-500">After</span><strong className="text-xl text-white">{importPlan.operation === 'update_existing' || importPlan.operation === 'update_existing_local' ? importPlan.afterRevision ?? '-' : importPlan.afterDraftCount}</strong><span className="block text-[10px] text-slate-500">{importPlan.operation === 'update_existing' ? 'Shared revision' : importPlan.operation === 'update_existing_local' ? 'Local revision' : 'Local drafts'}</span></div>
       </div>
 
       <dl className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
         <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><dt className="text-slate-500">Programme</dt><dd className="mt-1 font-semibold text-white">{preview.programme.displayName}</dd></div>
         <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><dt className="text-slate-500">Storage</dt><dd className="mt-1 font-semibold text-white">{importPlan.storageLabel}</dd></div>
         <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><dt className="text-slate-500">Owner to bind</dt><dd className="mt-1 break-all font-semibold text-white">{preview.intendedAuthor.email}</dd></div>
-        <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><dt className="text-slate-500">Draft action</dt><dd className="mt-1 text-white">{importPlan.operation === 'update_existing' ? `Existing draft to revision ${importPlan.afterRevision ?? '-'}` : 'New draft - Revision 1'}</dd></div>
-        <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 sm:col-span-2"><dt className="text-slate-500">Draft ID</dt><dd className="mt-1 break-all font-mono text-[10px] text-cyan-200">{importPlan.operation === 'update_existing' ? importPlan.existingDraft?.draft?.draftId || 'Not found' : importPlan.identity.draftId}</dd></div>
+        <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><dt className="text-slate-500">Draft action</dt><dd className="mt-1 text-white">{importPlan.operation === 'update_existing' || importPlan.operation === 'update_existing_local' ? `Existing draft to revision ${importPlan.afterRevision ?? '-'}` : 'New draft - Revision 1'}</dd></div>
+        <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 sm:col-span-2"><dt className="text-slate-500">Draft ID</dt><dd className="mt-1 break-all font-mono text-[10px] text-cyan-200">{importPlan.operation === 'update_existing' || importPlan.operation === 'update_existing_local' ? importPlan.existingDraft?.draft?.draftId || 'Not found' : importPlan.identity.draftId}</dd></div>
       </dl>
 
       <div className="grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-4"><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.phaseCount} phases</span><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.taskCount} tasks</span><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.checkboxCount} checkboxes</span><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.verificationCheckCount} checks</span><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.cleanupItemCount} cleanup items</span><span className="rounded-lg bg-slate-950/50 p-2 text-slate-300">{preview.summary.officialAwsSourceCount} AWS sources</span><span className="rounded-lg bg-slate-950/50 p-2 text-emerald-300">Content unchanged</span><span className="rounded-lg bg-slate-950/50 p-2 text-emerald-300">Stage 12 not started</span></div>
@@ -174,9 +177,9 @@ export function AuthorHandoffImportPreview({
 
       {importPlan.blockedReason && <p role="alert" className="rounded-lg border border-amber-800 bg-amber-950/30 p-3 text-xs text-amber-200">{importPlan.blockedReason}{importPlan.duplicateDraftId ? ` Existing draft: ${importPlan.duplicateDraftId}` : ''}</p>}
 
-      {(importPlan.canCreate || importPlan.canUpdate) && !importResult && <div className="rounded-lg border border-cyan-800 bg-slate-950/50 p-3 space-y-3"><label className="flex items-start gap-2 text-xs text-slate-200"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} className="mt-0.5" /><span>{importPlan.operation === 'update_existing' ? <>I confirm this exact comparison and want to update exactly one existing Shared Draft owned by <strong>{preview.intendedAuthor.email}</strong>.</> : <>I confirm this exact comparison and want to create exactly one private Local Draft owned by <strong>{preview.intendedAuthor.email}</strong>.</>}</span></label><button type="button" disabled={!confirmed || importing} onClick={() => void applyControlledPackage()} className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40"><LockKeyhole className="h-4 w-4" />{importing ? (importPlan.operation === 'update_existing' ? 'Updating one Shared Draft...' : 'Creating one private draft...') : (importPlan.operation === 'update_existing' ? 'Update This Existing Follow Along' : 'Create One Private Author Draft')}</button></div>}
+      {(importPlan.canCreate || importPlan.canUpdate || importPlan.canUpdateLocal) && !importResult && <div className="rounded-lg border border-cyan-800 bg-slate-950/50 p-3 space-y-3"><label className="flex items-start gap-2 text-xs text-slate-200"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} className="mt-0.5" /><span>{importPlan.operation === 'update_existing' ? <>I confirm this exact comparison and want to update exactly one existing Shared Draft owned by <strong>{preview.intendedAuthor.email}</strong>.</> : importPlan.operation === 'update_existing_local' ? <>I confirm this exact comparison and want to update exactly one existing Local Draft owned by <strong>{preview.intendedAuthor.email}</strong>. Shared Drafts will not change.</> : <>I confirm this exact comparison and want to create exactly one private Local Draft owned by <strong>{preview.intendedAuthor.email}</strong>.</>}</span></label><button type="button" disabled={!confirmed || importing} onClick={() => void applyControlledPackage()} className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-40"><LockKeyhole className="h-4 w-4" />{importing ? (importPlan.operation === 'update_existing' ? 'Updating one Shared Draft...' : importPlan.operation === 'update_existing_local' ? 'Updating one Local Draft...' : 'Creating one private draft...') : (importPlan.operation === 'update_existing' ? 'Update This Existing Follow Along' : importPlan.operation === 'update_existing_local' ? 'Update This Existing Local Draft' : 'Create One Private Author Draft')}</button></div>}
 
-      {importResult && <div role="status" className="rounded-lg border border-emerald-700 bg-emerald-950/25 p-3 text-xs text-emerald-200"><strong className="block">{importPlan.operation === 'update_existing' ? 'Exactly one existing Shared Draft updated' : 'Exactly one private Author draft created'}</strong><span className="mt-1 block">{importResult.draftId} - Revision {importResult.revision}</span><span className="mt-1 block">No candidate, approval or publication action occurred.</span></div>}
+      {importResult && <div role="status" className="rounded-lg border border-emerald-700 bg-emerald-950/25 p-3 text-xs text-emerald-200"><strong className="block">{importPlan.operation === 'update_existing' ? 'Exactly one existing Shared Draft updated' : importPlan.operation === 'update_existing_local' ? 'Exactly one existing Local Draft updated' : 'Exactly one private Author draft created'}</strong><span className="mt-1 block">{importResult.draftId} - Revision {importResult.revision}</span><span className="mt-1 block">No candidate, approval or publication action occurred.</span></div>}
     </div>}
   </section>;
 }

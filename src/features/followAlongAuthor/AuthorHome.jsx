@@ -113,7 +113,8 @@ export const AuthorHome = ({ currentUser }) => {
       currentUser: { id: currentUser.id, email: currentUser.email },
       storageMode,
       listDrafts: () => coordinator.listDrafts(),
-      storeDraft: draft => coordinator.storeNewDraft(draft)
+      storeDraft: draft => coordinator.storeNewDraft(draft),
+      saveDraft: valuesToSave => coordinator.saveDraft(valuesToSave)
     });
     if (result.success) await refresh();
     return result;
@@ -164,6 +165,7 @@ export const AuthorHome = ({ currentUser }) => {
           existingDrafts={drafts}
           releaseCandidates={releaseCandidates}
           onCreatePrivateDraft={importPrivateHandoffDraft}
+          onUpdateLocalDraft={importPrivateHandoffDraft}
           onUpdateSharedDraft={updateSharedHandoffDraft}
         />
 

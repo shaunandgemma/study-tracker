@@ -5,6 +5,7 @@ import { validateAuthorReview } from './authorReview.js';
 
 export const AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE = 'private_local_browser';
 export const AUTHOR_HANDOFF_IMPORT_CONFIRMATION = 'create_one_private_author_draft';
+export const AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION = 'update_one_existing_local_draft';
 
 function clean(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -66,15 +67,51 @@ function buildPrivateDraft({ handoffPackage, acceptance, preview, currentUser, i
   };
 }
 
-function duplicateMatch(draft, { draftId, sessionId, handoffFingerprint }) {
+function duplicateMatch(draft, { draftId, handoffFingerprint }) {
   const source = importSource(draft);
   return draft?.draft?.draftId === draftId
-    || source.sessionId === sessionId
     || source.handoffFingerprint === handoffFingerprint;
 }
 
 export function findAuthorHandoffImportDuplicate(existingDrafts = [], identity = {}) {
   return existingDrafts.find(draft => duplicateMatch(draft, identity)) || null;
+}
+
+function findEarlierSessionDraft(existingDrafts = [], sessionId = '') {
+  return existingDrafts.find(draft => clean(importSource(draft).sessionId) === clean(sessionId)) || null;
+}
+
+function sameProgramme(left, right) {
+  return clean(left?.programme?.programmeId) === clean(right?.programme?.programmeId)
+    && clean(left?.programme?.pathId) === clean(right?.programme?.pathId);
+}
+
+function buildUpdatedLocalDraft({ draft, existingDraft, preview, acceptance, currentUser, importedAt }) {
+  return {
+    ...draft,
+    draft: {
+      ...structuredClone(existingDraft.draft),
+      revision: Number(existingDraft.draft.revision),
+      status: 'draft',
+      createdAt: existingDraft.draft.createdAt,
+      createdBy: existingDraft.draft.createdBy,
+      updatedAt: importedAt,
+      updatedBy: currentUser.id,
+      importedFrom: {
+        type: 'author_assistant_handoff',
+        importStep: '92-local-revision-update',
+        sessionId: preview.sessionId,
+        handoffFingerprint: preview.handoffFingerprint,
+        acceptanceAuditFingerprint: preview.acceptanceAuditFingerprint,
+        authorDraftContentFingerprint: clean(acceptance?.authorDraftContentFingerprint?.value),
+        importedAt,
+        importedBy: currentUser.id,
+        acceptedStages: '1-11',
+        previousHandoffFingerprint: clean(importSource(existingDraft).handoffFingerprint)
+      },
+      notes: 'Updated in place from a newer browser-verified package for the same Author Assistant session.'
+    }
+  };
 }
 
 function acceptedContentFromDraft(draft) {
@@ -121,43 +158,69 @@ export async function prepareAuthorHandoffControlledImport({
   }
 
   const draftFingerprint = await fingerprintAuthorHandoffJson(draft, cryptoImpl);
-  const planFingerprint = await fingerprintAuthorHandoffJson(
-    await createPlanFingerprintContent({ preview, draft, storageMode }),
-    cryptoImpl
-  );
   const identity = {
     draftId: draft.draft.draftId,
     sessionId: preview.sessionId,
     handoffFingerprint: preview.handoffFingerprint
   };
   const duplicate = findAuthorHandoffImportDuplicate(existingDrafts, identity);
+  const earlierSessionDraft = duplicate ? null : findEarlierSessionDraft(existingDrafts, preview.sessionId);
+  const canReviseEarlierSession = Boolean(
+    earlierSessionDraft
+    && earlierSessionDraft.draft?.createdBy === currentUser.id
+    && sameProgramme(earlierSessionDraft, draft)
+  );
+  const revisedDraft = canReviseEarlierSession
+    ? buildUpdatedLocalDraft({ draft, existingDraft: earlierSessionDraft, preview, acceptance, currentUser, importedAt })
+    : null;
   const localMode = storageMode === AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE;
 
+  if (revisedDraft) {
+    const revisedContent = acceptedContentFromDraft(revisedDraft);
+    const revisedContentFingerprint = await fingerprintAuthorHandoffJson(revisedContent, cryptoImpl);
+    if (revisedContentFingerprint !== expectedContentFingerprint) throw new Error('The accepted Stage 1-11 content changed during local revision preparation.');
+  }
+
+  const operation = revisedDraft ? 'update_existing_local' : 'create_new_local';
+  const planDraft = revisedDraft || draft;
+  const calculatedPlanFingerprint = await fingerprintAuthorHandoffJson(
+    await createPlanFingerprintContent({ preview, draft: planDraft, storageMode }),
+    cryptoImpl
+  );
+
   return {
+    operation,
     step: '92',
     preview,
     importedAt,
     storageMode,
     storageLabel: 'Local Drafts - private browser storage',
-    draft,
-    draftFingerprint,
-    planFingerprint,
+    draft: planDraft,
+    draftFingerprint: revisedDraft ? await fingerprintAuthorHandoffJson(revisedDraft, cryptoImpl) : draftFingerprint,
+    planFingerprint: calculatedPlanFingerprint,
     sourceContentFingerprint,
     authorValidation,
     acceptedContentUnchanged: true,
     identity,
     duplicate: Boolean(duplicate),
     duplicateDraftId: duplicate?.draft?.draftId || null,
+    existingDraft: earlierSessionDraft,
+    beforeRevision: earlierSessionDraft?.draft?.revision || null,
+    afterRevision: earlierSessionDraft ? Number(earlierSessionDraft.draft.revision) + 1 : null,
     beforeDraftCount: existingDrafts.length,
-    afterDraftCount: duplicate ? existingDrafts.length : existingDrafts.length + 1,
-    canCreate: localMode && !duplicate,
+    afterDraftCount: duplicate || revisedDraft ? existingDrafts.length : existingDrafts.length + 1,
+    canCreate: localMode && !duplicate && !revisedDraft,
+    canUpdateLocal: localMode && Boolean(revisedDraft),
     blockedReason: !localMode
       ? 'Select Local Drafts before creating this private browser draft.'
       : duplicate
         ? 'This accepted handoff package has already been imported. A second draft will not be created.'
+        : earlierSessionDraft && !canReviseEarlierSession
+          ? 'An earlier package from this session belongs to a different Author or programme. Nothing was changed.'
         : '',
     boundaries: {
-      createsExactlyOnePrivateDraft: true,
+      createsExactlyOnePrivateDraft: !revisedDraft,
+      updatesExactlyOneExistingLocalDraft: Boolean(revisedDraft),
       bindsOnlySignedInAuthor: true,
       acceptedStagesOneToElevenUnchanged: true,
       supabaseWrite: false,
@@ -179,15 +242,18 @@ export async function executeAuthorHandoffControlledImport({
   storageMode = AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE,
   listDrafts,
   storeDraft,
+  saveDraft,
   cryptoImpl = globalThis.crypto
 } = {}) {
-  if (confirmation !== AUTHOR_HANDOFF_IMPORT_CONFIRMATION) {
-    return { success: false, confirmationRequired: true, error: 'Confirm creation of exactly one private Author draft.' };
+  const updatingLocal = preparedPlan?.operation === 'update_existing_local';
+  const requiredConfirmation = updatingLocal ? AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION : AUTHOR_HANDOFF_IMPORT_CONFIRMATION;
+  if (confirmation !== requiredConfirmation) {
+    return { success: false, confirmationRequired: true, error: updatingLocal ? 'Confirm the exact Local Draft revision update.' : 'Confirm creation of exactly one private Author draft.' };
   }
   if (storageMode !== AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE) {
     return { success: false, wrongStorageMode: true, error: 'Select Local Drafts before importing this package.' };
   }
-  if (typeof listDrafts !== 'function' || typeof storeDraft !== 'function') {
+  if (typeof listDrafts !== 'function' || typeof storeDraft !== 'function' || (updatingLocal && typeof saveDraft !== 'function')) {
     return { success: false, error: 'Private Author draft storage is unavailable.' };
   }
   if (!preparedPlan?.planFingerprint || preparedPlan.storageMode !== AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE) {
@@ -195,11 +261,13 @@ export async function executeAuthorHandoffControlledImport({
   }
 
   try {
+    const currentBeforeRebuild = await listDrafts();
+    if (!currentBeforeRebuild?.success) return { success: false, error: currentBeforeRebuild?.error || 'Unable to check existing private drafts.' };
     const rebuiltPlan = await prepareAuthorHandoffControlledImport({
       handoffPackage,
       acceptance,
       currentUser,
-      existingDrafts: [],
+      existingDrafts: currentBeforeRebuild.drafts || [],
       storageMode,
       now: () => new Date(preparedPlan.importedAt),
       cryptoImpl
@@ -211,8 +279,31 @@ export async function executeAuthorHandoffControlledImport({
       || rebuiltPlan.preview.intendedAuthor.id !== currentUser?.id
     ) return { success: false, comparisonChanged: true, error: 'The package, Author or import comparison changed. Run the comparison again.' };
 
-    const current = await listDrafts();
-    if (!current?.success) return { success: false, error: current?.error || 'Unable to check existing private drafts.' };
+    if (updatingLocal) {
+      if (rebuiltPlan.operation !== 'update_existing_local' || !rebuiltPlan.canUpdateLocal) {
+        return { success: false, conflict: true, error: rebuiltPlan.blockedReason || 'The existing Local Draft changed before the update.' };
+      }
+      const saved = await saveDraft({ draft: rebuiltPlan.draft, expectedRevision: rebuiltPlan.beforeRevision });
+      if (!saved?.success) return { ...saved, success: false, error: saved?.error || 'The Local Draft update was not saved.' };
+      if (saved.draft?.draft?.draftId !== rebuiltPlan.existingDraft?.draft?.draftId || Number(saved.draft?.draft?.revision) !== rebuiltPlan.afterRevision) {
+        return { success: false, error: 'The saved Local Draft did not match the approved revision comparison.' };
+      }
+      return {
+        success: true,
+        updatedCount: 1,
+        draft: saved.draft,
+        draftId: saved.draft.draft.draftId,
+        revision: saved.draft.draft.revision,
+        storageMode: AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE,
+        stage12Started: false,
+        candidateCreated: false,
+        approved: false,
+        published: false,
+        message: 'Exactly one existing Local Draft was updated to its next revision from the verified package.'
+      };
+    }
+
+    const current = currentBeforeRebuild;
     const duplicate = findAuthorHandoffImportDuplicate(current.drafts || [], rebuiltPlan.identity);
     if (duplicate) {
       return {

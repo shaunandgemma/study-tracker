@@ -3,11 +3,12 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   AUTHOR_HANDOFF_IMPORT_CONFIRMATION,
+  AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION,
   AUTHOR_HANDOFF_PRIVATE_STORAGE_MODE,
   executeAuthorHandoffControlledImport,
   prepareAuthorHandoffControlledImport
 } from '../src/features/followAlongAuthor/authorHandoffControlledImport.js';
-import { loadAuthorDrafts, storeNewAuthorDraft } from '../src/features/followAlongAuthor/authorDraftService.js';
+import { loadAuthorDrafts, saveAuthorDraft, storeNewAuthorDraft } from '../src/features/followAlongAuthor/authorDraftService.js';
 import { buildStage90ALocalAcceptance } from '../scripts/author-assistant/authorAssistantStage90A.mjs';
 import { fingerprintJson } from '../scripts/author-assistant/authorAssistantStage84D.mjs';
 
@@ -54,7 +55,7 @@ function acceptedContent() {
       supportedModes: ['console'],
       publicationVisibility: 'unpublished'
     },
-    sources: [{ id: sourceId, title: 'Synthetic service guide', url: 'https://docs.aws.amazon.com/example/latest/guide/start.html', purpose: 'Support the learner Console path.', taskIds: [taskId] }],
+    sources: [{ id: sourceId, title: 'Synthetic service guide', url: 'https://docs.aws.amazon.com/example/latest/guide/start.html', publisher: 'AWS', purpose: 'Support the learner Console path.', taskIds: [taskId] }],
     presentation: { accentColor: '#0891b2', iconLabel: 'SYN', iconName: '', badgeText: '' },
     storage: {},
     progress: { initialTaskId: taskId, supportedModes: ['console'], optionalTasksCountTowardsProgress: false, completionStatuses: ['in_progress', 'completed_cleaned'] },
@@ -278,5 +279,44 @@ test('Step 92 controlled Author handoff import', async t => {
     assert.match(home, /executeAuthorHandoffControlledImport/);
     assert.match(home, /storageMode !== AUTHOR_STORAGE_MODE\.LOCAL/);
     assert.doesNotMatch(component, /from\s+['"][^'"]*(?:authorSharedStorageService|supabase)[^'"]*['"]|\b(?:storeReleaseCandidate|approveReleaseCandidate|publishFollowAlong)\s*\(/i);
+  });
+
+  await t.test('9. a newer accepted package from the same session updates exactly one Local Draft revision', async () => {
+    const original = fixture();
+    const originalPlan = await prepareAuthorHandoffControlledImport({ ...original, currentUser, now: () => new Date(importedAt) });
+    const revised = fixture();
+    revised.handoffPackage.authorDraftContent.programme.description = 'A revised accepted description for the same programme.';
+    refreshFingerprints(revised.handoffPackage, revised.acceptance);
+
+    const preparedPlan = await prepareAuthorHandoffControlledImport({
+      ...revised,
+      currentUser,
+      existingDrafts: [originalPlan.draft],
+      now: () => new Date('2026-08-10T16:00:00.000Z')
+    });
+    assert.equal(preparedPlan.operation, 'update_existing_local');
+    assert.equal(preparedPlan.canUpdateLocal, true);
+    assert.equal(preparedPlan.beforeRevision, 1);
+    assert.equal(preparedPlan.afterRevision, 2);
+    assert.equal(preparedPlan.draft.draft.draftId, originalPlan.draft.draft.draftId);
+
+    const storage = memoryStorage();
+    assert.equal(storeNewAuthorDraft({ userId: currentUser.id, draft: originalPlan.draft, storage }).success, true);
+    const result = await executeAuthorHandoffControlledImport({
+      ...revised,
+      currentUser,
+      preparedPlan,
+      confirmation: AUTHOR_HANDOFF_LOCAL_UPDATE_CONFIRMATION,
+      listDrafts: async () => loadAuthorDrafts({ userId: currentUser.id, storage }),
+      storeDraft: async draft => storeNewAuthorDraft({ userId: currentUser.id, draft, storage }),
+      saveDraft: async values => saveAuthorDraft({ userId: currentUser.id, storage, ...values })
+    });
+    assert.equal(result.success, true);
+    assert.equal(result.updatedCount, 1);
+    assert.equal(result.revision, 2);
+    const saved = loadAuthorDrafts({ userId: currentUser.id, storage });
+    assert.equal(saved.drafts.length, 1);
+    assert.equal(saved.drafts[0].programme.description, revised.handoffPackage.authorDraftContent.programme.description);
+    assert.equal(saved.drafts[0].draft.importedFrom.previousHandoffFingerprint, original.handoffPackage.handoffFingerprint.value);
   });
 });
