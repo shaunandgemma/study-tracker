@@ -63,6 +63,7 @@ function sharedService(overrides = {}) {
     enabled: true,
     async listDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, drafts: [] }; },
     async listReleaseCandidates() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, candidates: [] }; },
+    async listPublishedDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, publications: [], publishedDraftIds: [] }; },
     async loadDraft() { return { success: false, notFound: true, storageMode: AUTHOR_STORAGE_MODE.SHARED }; },
     async storeNewDraft(draft) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft, row: { draft_id: draft.draft.draftId, revision: 1 } }; },
     ...overrides
@@ -123,13 +124,15 @@ test('Step 93 verified Author Assistant Local-to-Shared copy', async t => {
     assert.equal(item.remoteContentMatches, true);
   });
 
-  await t.test('4. a different shared object with the same ID is visibly separated as a conflict', async () => {
+  await t.test('4. a different owned Shared Draft with the same ID is offered as a controlled update', async () => {
     const storage = memoryStorage();
     const local = verifiedLocalDraft(storage);
     const changed = { ...structuredClone(local), programme: { ...local.programme, displayName: 'Changed remote content' } };
     const preview = await sharedCoordinator(storage, sharedService({ async listDrafts() { return { success: true, drafts: [changed] }; } })).previewLocalDraftCopies();
     assert.equal(preview.drafts[0].remoteContentMatches, false);
     assert.equal(preview.drafts[0].canCopy, false);
+    assert.equal(preview.drafts[0].canUpdateShared, true);
+    assert.equal(preview.drafts[0].status, AUTHOR_DRAFT_COPY_STATUS.UPDATE_READY);
   });
 
   await t.test('5. shared-copy UI shows verification evidence and exposes no candidate, approval or publishing action', async () => {
@@ -203,5 +206,54 @@ test('Step 93 verified Author Assistant Local-to-Shared copy', async t => {
     assert.equal(preview.drafts[0].canUpdateShared, false);
     assert.equal(preview.drafts[0].activeCandidateCount, 1);
     assert.equal(saves, 0);
+  });
+
+  await t.test('8. an approved candidate already recorded as published does not block the Shared Draft update', async () => {
+    const storage = memoryStorage();
+    const local = verifiedLocalDraft(storage);
+    const remoteDraft = {
+      ...structuredClone(local),
+      draft: { ...structuredClone(local.draft), revision: 2 },
+      programme: { ...structuredClone(local.programme), displayName: 'Published older content' }
+    };
+    const candidateId = `release-${remoteDraft.draft.draftId}-r2-${'d'.repeat(12)}`;
+    const remote = sharedService({
+      async listDrafts() { return { success: true, drafts: [remoteDraft] }; },
+      async listReleaseCandidates() {
+        return { success: true, candidates: [{ candidate_id: candidateId, draft_id: remoteDraft.draft.draftId, source_revision: 2, status: 'approved_release_candidate', approval_decision: 'approved' }] };
+      },
+      async listPublishedDrafts() {
+        return { success: true, publications: [{ candidate_id: candidateId, programme_id: remoteDraft.programme.programmeId, source_revision: 2 }], publishedDraftIds: [remoteDraft.draft.draftId] };
+      }
+    });
+    const preview = await sharedCoordinator(storage, remote).previewLocalDraftCopies();
+    assert.equal(preview.success, true);
+    assert.equal(preview.drafts[0].activeCandidateCount, 0);
+    assert.equal(preview.drafts[0].status, AUTHOR_DRAFT_COPY_STATUS.UPDATE_READY);
+    assert.equal(preview.drafts[0].canUpdateShared, true);
+  });
+
+  await t.test('9. matching learner content is not offered as another update when only draft metadata differs', async () => {
+    const storage = memoryStorage();
+    const local = verifiedLocalDraft(storage);
+    const remoteDraft = {
+      ...structuredClone(local),
+      draft: {
+        ...structuredClone(local.draft),
+        revision: 3,
+        status: 'draft',
+        updatedAt: '2026-08-14T15:30:00.000Z',
+        notes: 'Updated from the exact verified Local Draft after a controlled programme comparison.'
+      },
+      review: { ...structuredClone(local.review), approvalDecision: 'pending' },
+      publication: { ...structuredClone(local.publication), publishStatus: 'not_published' }
+    };
+    const preview = await sharedCoordinator(storage, sharedService({
+      async listDrafts() { return { success: true, drafts: [remoteDraft] }; }
+    })).previewLocalDraftCopies();
+    const item = preview.drafts[0];
+    assert.equal(item.remoteContentMatches, true);
+    assert.equal(item.canUpdateShared, false);
+    assert.equal(item.status, AUTHOR_DRAFT_COPY_STATUS.CONFLICT);
   });
 });

@@ -1,0 +1,41 @@
+STEP 195 - PUBLISHED CANDIDATE SHARED UPDATE FIX
+
+1. Confirmed database state
+
+The Terraform candidate for Shared Draft revision 2 is approved and published:
+
+Programme ID: terraform-beginner-learning-path
+Candidate ID: release-author-draft-import-c6bd6b28efc87391dbcbf4ad886e025e3e34129fee0f82d3967a0612842c4bf0-r2-3483c2c030f2
+Source revision: 2
+Published at: 2026-08-14 14:46:24.599122+00
+
+2. Cause
+
+The Local-to-Shared update preview checked release candidates but did not load the published-programme records. An approved and already published candidate could therefore be incorrectly treated as active.
+
+3. Correction
+
+The preview and final Shared Draft update validation now load the published-programme records. A candidate recorded there is final and does not block a later Shared Draft revision.
+
+4. Safety preserved
+
+Pending or otherwise unpublished candidates still block Shared Draft updates.
+The published revision was not rejected, deleted or changed.
+No candidate was created.
+Nothing was approved or published.
+No database or AWS write was performed.
+
+5. Repeat-update correction
+
+After the controlled revision 2 to 3 update succeeded, the preview incorrectly offered revision 3 to 4 because revision metadata and timestamps were included in the equality decision.
+
+The preview now compares learner content separately from draft bookkeeping. Full fingerprints and revision checks remain in place for concurrency and tamper protection. Matching learner content cannot be advanced again merely because revision metadata differs.
+
+6. Verification
+
+Focused tests: 22 passed, 0 failed.
+Production build: passed.
+
+7. Next local action
+
+Refresh the local Author page, select Shared Drafts, and choose Preview Copies again. The Terraform draft should report that the Shared learner content matches the Local Draft and must not offer another update.

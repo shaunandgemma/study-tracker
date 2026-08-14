@@ -23,6 +23,7 @@ function sharedService(overrides = {}) {
     enabled: true,
     async listDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, drafts: [] }; },
     async listReleaseCandidates() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, candidates: [] }; },
+    async listPublishedDrafts() { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, publications: [], publishedDraftIds: [] }; },
     async loadDraft() { return { success: false, notFound: true, storageMode: AUTHOR_STORAGE_MODE.SHARED }; },
     async storeNewDraft(draft) { return { success: true, storageMode: AUTHOR_STORAGE_MODE.SHARED, draft, row: { draft_id: draft.draft.draftId } }; },
     ...overrides
