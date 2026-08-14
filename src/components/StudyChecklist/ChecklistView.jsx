@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useExam } from '../../context/ExamContext';
 import { TopicCard } from './TopicCard';
+import { TerraformKnowledgeGuidePage } from './TerraformKnowledgeGuidePage.jsx';
+import {
+  TERRAFORM_KNOWLEDGE_GUIDE_ORDER,
+  getTerraformKnowledgeGuide
+} from '../../data/terraformKnowledgeGuide.js';
 import { 
   Search, 
   RotateCcw, 
@@ -20,7 +25,7 @@ import {
   CheckSquare
 } from 'lucide-react';
 
-export const ChecklistView = ({ onLaunchPrepExam }) => {
+export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, onExitKnowledgeGuide = () => {} }) => {
   const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic } = useExam();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,8 +35,33 @@ export const ChecklistView = ({ onLaunchPrepExam }) => {
   const [newTopicCode, setNewTopicCode] = useState('AWS Service');
   const [newTopicWeight, setNewTopicWeight] = useState(15);
   const [newTopicDesc, setNewTopicDesc] = useState('');
+  const [selectedKnowledgeGuide, setSelectedKnowledgeGuide] = useState(() => (
+    startKnowledgeGuide
+      ? { itemId: TERRAFORM_KNOWLEDGE_GUIDE_ORDER[0] }
+      : null
+  ));
 
   if (!activeExam) return null;
+
+  if (activeExamId === 'terraform-associate-004' && selectedKnowledgeGuide) {
+    const currentIndex = TERRAFORM_KNOWLEDGE_GUIDE_ORDER.indexOf(selectedKnowledgeGuide.itemId);
+    const openGuideAtIndex = index => {
+      const itemId = TERRAFORM_KNOWLEDGE_GUIDE_ORDER[index];
+      if (itemId) setSelectedKnowledgeGuide({ itemId });
+    };
+
+    return (
+      <TerraformKnowledgeGuidePage
+        guide={getTerraformKnowledgeGuide(selectedKnowledgeGuide.itemId)}
+        objectiveCode={selectedKnowledgeGuide.objectiveCode || `Objective ${selectedKnowledgeGuide.itemId.split('-')[1].charAt(0)}`}
+        currentIndex={currentIndex}
+        totalLessons={TERRAFORM_KNOWLEDGE_GUIDE_ORDER.length}
+        onPrevious={currentIndex > 0 ? () => openGuideAtIndex(currentIndex - 1) : null}
+        onNext={currentIndex < TERRAFORM_KNOWLEDGE_GUIDE_ORDER.length - 1 ? () => openGuideAtIndex(currentIndex + 1) : null}
+        onBack={startKnowledgeGuide ? onExitKnowledgeGuide : () => setSelectedKnowledgeGuide(null)}
+      />
+    );
+  }
 
   const topicsList = activeExam.topics || activeExam.domains || [];
 
@@ -127,10 +157,12 @@ export const ChecklistView = ({ onLaunchPrepExam }) => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
-              {activeExam.title}
+              {activeExamId === 'terraform-associate-004' ? 'Terraform Knowledge Guide' : activeExam.title}
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed">
-              {activeExam.description}
+              {activeExamId === 'terraform-associate-004'
+                ? 'Start here before the practice exam and Follow Alongs. Open Study beside any row for a simple, detailed lesson, then tick the row when you understand it.'
+                : activeExam.description}
             </p>
 
             <div className="flex items-center gap-6 pt-2 text-xs font-semibold text-slate-400">
@@ -327,6 +359,9 @@ export const ChecklistView = ({ onLaunchPrepExam }) => {
             topic={topic}
             searchQuery={searchQuery}
             forceCollapsed={allCollapsed}
+            onOpenKnowledgeGuide={activeExamId === 'terraform-associate-004'
+              ? (itemId, objectiveCode) => setSelectedKnowledgeGuide({ itemId, objectiveCode })
+              : null}
             onLaunchTopicQuiz={(topicId) => onLaunchPrepExam({ mode: 'domain', domainId: topicId })}
           />
         ))}

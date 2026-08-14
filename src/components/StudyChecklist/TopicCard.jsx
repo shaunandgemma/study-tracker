@@ -14,10 +14,12 @@ import {
   X,
   FileText,
   ClipboardList,
-  CheckSquare
+  CheckSquare,
+  ChevronRight
 } from 'lucide-react';
+import { hasTerraformKnowledgeGuide } from '../../data/terraformKnowledgeGuide.js';
 
-export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapsed }) => {
+export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapsed, onOpenKnowledgeGuide = null }) => {
   const { 
     activeExamId, 
     checklist, 
@@ -351,6 +353,19 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                           {item.text}
                         </span>
                       </label>
+
+                      {onOpenKnowledgeGuide && hasTerraformKnowledgeGuide(item.id) && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenKnowledgeGuide(item.id, topic.code)}
+                          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-violet-800/70 bg-violet-950/40 px-3 py-2 text-xs font-bold text-violet-200 transition hover:border-violet-500 hover:bg-violet-900/60"
+                          aria-label={`Study ${item.text}`}
+                          title="Open this Knowledge Guide lesson"
+                        >
+                          <span className="hidden sm:inline">Study</span>
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      )}
 
                       {/* Edit & Delete Action Buttons */}
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">

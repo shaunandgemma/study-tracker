@@ -31,6 +31,18 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
   const details = getExamLandingDetails(exam);
   const topics = getExamTopics(exam);
   const checklistItems = getExamChecklistItemCount(exam);
+  const toolCards = exam.id === 'terraform-associate-004'
+    ? [
+        {
+          id: 'knowledge-guide',
+          title: 'Knowledge Guide',
+          description: 'Start here. Study all 37 Terraform lessons in checklist order with Previous and Next controls.',
+          icon: BookOpenCheck,
+          colour: 'border-violet-700/80 bg-violet-950/35 text-violet-300'
+        },
+        ...TOOL_CARDS
+      ]
+    : TOOL_CARDS;
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -60,8 +72,8 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
         <div>
           <h2 className="text-xl font-bold text-white">What would you like to do?</h2>
           <p className="mt-1 text-sm text-slate-400">Everything opened below remains connected to {exam.code}.</p>
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            {TOOL_CARDS.map(tool => {
+          <div className={`mt-4 grid gap-4 ${toolCards.length === 4 ? 'md:grid-cols-2 xl:grid-cols-4' : 'md:grid-cols-3'}`}>
+            {toolCards.map(tool => {
               const Icon = tool.icon;
               return (
                 <button

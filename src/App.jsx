@@ -306,6 +306,17 @@ const MainContent = () => {
               </>
             )}
 
+            {viewMode === 'knowledge-guide' && activeExamId === 'terraform-associate-004' && (
+              <>
+                <ExamWorkspaceHeader exam={activeExam} viewMode={viewMode} onBack={() => setViewMode('exam-home')} />
+                <ChecklistView
+                  onLaunchPrepExam={handleLaunchPrepExam}
+                  startKnowledgeGuide
+                  onExitKnowledgeGuide={() => setViewMode('exam-home')}
+                />
+              </>
+            )}
+
             {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
               <>
                 <ExamWorkspaceHeader exam={activeExam} viewMode="follow-alongs" onBack={() => setViewMode('exam-home')} />
