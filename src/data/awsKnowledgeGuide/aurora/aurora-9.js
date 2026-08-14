@@ -1,3 +1,13 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({"id":"aurora-9","topicId":"topic-aurora","topicTitle":"Amazon Aurora","objectiveCode":"Databases","title":"Aurora Replicas"});
+export default createAwsKnowledgeGuide({
+  id: 'aurora-9', topicId: 'topic-aurora', topicTitle: 'Amazon Aurora', objectiveCode: 'Databases', title: 'Aurora Replicas', status: 'ready',
+  plainEnglish: 'An Aurora Replica, also called a reader instance, is a read-only DB instance in the same Aurora cluster. It connects to the same cluster volume as the writer. Applications can send SELECT workloads to the reader endpoint, which distributes read-only connections among available readers. A reader can also be promoted to become the writer if the current writer fails.',
+  whyItMatters: 'Replicas scale read-heavy workloads and improve availability. They let reporting, search, and analytics queries avoid competing with writes, while also giving Aurora an existing instance to promote during failover.',
+  workplaceExample: 'A product catalog serves updates through the writer but sends web browsing and reporting queries through two reader instances. During a writer problem, an eligible reader becomes writer, and the cluster endpoint directs new write connections to it.',
+  examFocus: 'Aurora Replicas are same-Region readers within the cluster, not cross-Region replicas. Use them for read scaling and failover. Connect read-only workloads to the reader endpoint and write/general workloads to the cluster endpoint. Promotion priority influences which reader is selected, but availability and instance configuration still matter.',
+  keyPoints: ['Aurora Replicas are read-only reader instances in a cluster.', 'They share the Aurora cluster volume with the writer.', 'They scale read workloads through the reader endpoint.', 'They can be promoted during automatic failover.', 'They should be distributed across AZs for higher availability.'],
+  commonMistake: 'Sending writes to the reader endpoint results in failed write operations and may obscure application bugs. Separate read and write connection paths, and ensure code can tolerate a reader endpoint briefly reaching a newly promoted writer during failover.',
+  example: 'Run a read-only report through the reader endpoint and a transaction through the cluster endpoint. Expect the report to use a reader and the transaction to reach the writer. Verify instance role, reader CPU metrics, and that reporting load does not overload the writer.',
+  sources: [{ title: 'Replication with Amazon Aurora', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html' }, { title: 'Aurora DB clusters', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.html' }, { title: 'Aurora endpoints', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html' }]
+});

@@ -1,3 +1,13 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({"id":"aurora-11","topicId":"topic-aurora","topicTitle":"Amazon Aurora","objectiveCode":"Databases","title":"Aurora Writer Endpoint"});
+export default createAwsKnowledgeGuide({
+  id: 'aurora-11', topicId: 'topic-aurora', topicTitle: 'Amazon Aurora', objectiveCode: 'Databases', title: 'Aurora Writer Endpoint', status: 'ready',
+  plainEnglish: 'The Aurora writer endpoint, also called the cluster endpoint, is a stable DNS name that connects applications to the current writer instance. The writer handles all data modifications and can also process reads. If failover promotes a reader, Aurora updates the endpoint to point to the new writer, so applications keep the same connection name even though they must reconnect after an interrupted session.',
+  whyItMatters: 'A stable writer endpoint simplifies application configuration and failover recovery. It prevents applications from depending on one instance hostname that becomes a reader or disappears during maintenance or failure.',
+  workplaceExample: 'Checkout services use the cluster endpoint for INSERT and UPDATE statements. A reporting application uses a reader endpoint instead. After a failover, checkout reconnects to the same cluster endpoint and reaches the new writer automatically.',
+  examFocus: 'Use the writer/cluster endpoint for writes and general-purpose connections. Do not use an instance endpoint for normal failover-tolerant writer traffic. The reader endpoint is for read-only load distribution. An endpoint change does not preserve an existing broken TCP connection, so client retry logic is still required.',
+  keyPoints: ['The cluster endpoint resolves to the current writer.', 'The writer performs all data modifications.', 'The writer can also handle reads when necessary.', 'Aurora updates the endpoint target after a writer failover.', 'Applications must reconnect after an interrupted connection.'],
+  commonMistake: 'Using the writer endpoint for all read-heavy traffic concentrates load on the writer. Route read-only queries to the reader endpoint where consistency and application behavior permit, preserving writer resources for transactions.',
+  example: 'Configure the transaction service with the cluster endpoint and execute a small write followed by a read. Expect the writer to process both. Verify the endpoint shown in the cluster details and test that the application reconnects to the same hostname after a controlled failover.',
+  sources: [{ title: 'Aurora endpoint connections', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html' }, { title: 'Aurora DB clusters', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.html' }]
+});

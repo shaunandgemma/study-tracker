@@ -1,3 +1,13 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({"id":"aurora-19","topicId":"topic-aurora","topicTitle":"Amazon Aurora","objectiveCode":"Databases","title":"Aurora Database Cloning"});
+export default createAwsKnowledgeGuide({
+  id: 'aurora-19', topicId: 'topic-aurora', topicTitle: 'Amazon Aurora', objectiveCode: 'Databases', title: 'Aurora Database Cloning', status: 'ready',
+  plainEnglish: 'Aurora database cloning creates a new DB cluster from an existing cluster using copy-on-write storage. At creation the clone shares the source volume’s data blocks; as either cluster changes data, Aurora stores changed blocks separately. This makes clones fast and storage-efficient for initial copies while allowing source and clone to diverge independently.',
+  whyItMatters: 'Cloning gives teams realistic test, development, analytics, and recovery-validation databases without waiting for a full logical export or carrying an immediate full physical copy. It shortens safe testing cycles around production-like data.',
+  workplaceExample: 'Before a major application release, a team clones a sanitized production-like Aurora cluster, runs migrations and load tests against the clone, then deletes the clone after review. The source remains unaffected by the clone’s experiments.',
+  examFocus: 'Choose cloning for a fast same-Region copy derived from an existing Aurora cluster. Choose PITR or snapshot restore when the recovery point is a particular time or durable backup artifact. Copy-on-write means later modifications consume additional storage. Treat cloned data as sensitive production-derived data and apply network and access controls before allowing testers access.',
+  keyPoints: ['Cloning creates a new Aurora cluster from a source cluster.', 'It uses copy-on-write storage behavior.', 'Source and clone share unchanged data blocks initially.', 'Changes in either cluster create separate storage blocks.', 'Clones are useful for testing, development, and validation.'],
+  commonMistake: 'Treating a clone as free or as automatically sanitized can expose data and create unexpected storage use as workloads diverge. Restrict access, sanitize according to policy, tag and monitor clones, and delete them when the task ends.',
+  example: 'Create a non-production clone from a protected source, isolate it with non-production security groups, and run a migration test only on the clone. Expect source data to remain unchanged. Verify the clone has its own endpoints, intended access controls, and a lifecycle owner before sharing it.',
+  sources: [{ title: 'Cloning a volume for an Aurora DB cluster', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Clone.html' }, { title: 'Overview of backing up and restoring Aurora', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html' }]
+});

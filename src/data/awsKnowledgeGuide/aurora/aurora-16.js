@@ -1,3 +1,13 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({"id":"aurora-16","topicId":"topic-aurora","topicTitle":"Amazon Aurora","objectiveCode":"Databases","title":"Aurora Point-in-Time Recovery"});
+export default createAwsKnowledgeGuide({
+  id: 'aurora-16', topicId: 'topic-aurora', topicTitle: 'Amazon Aurora', objectiveCode: 'Databases', title: 'Aurora Point-in-Time Recovery', status: 'ready',
+  plainEnglish: 'Point-in-time recovery (PITR) uses Aurora automated backup data to create a new DB cluster at a chosen time within the backup retention period. Aurora keeps continuous incremental backup information, including log records, so the restore target can be the latest restorable time or a selected earlier time. PITR does not rewind the original production cluster in place.',
+  whyItMatters: 'PITR is the safe recovery approach for accidental changes, data corruption, or investigation because the existing cluster remains available for comparison while the recovered copy is checked before cutover.',
+  workplaceExample: 'An administrator runs an unintended update at 10:15. The team restores a new cluster to 10:14, validates the affected data, exports or reconciles the missing records, and performs a controlled application recovery rather than immediately replacing production.',
+  examFocus: 'Choose PITR for recovery to a time inside automated-backup retention and expect a new cluster. Choose a manual snapshot when a known fixed recovery point must persist beyond retention. Aurora Backtrack is an Aurora MySQL in-place rewind feature with different limitations; it is not a substitute for backup-based recovery.',
+  keyPoints: ['PITR uses continuous automated backups within the retention period.', 'A PITR operation creates a new DB cluster.', 'Earliest and latest restorable times define the valid recovery range.', 'The source cluster remains unchanged by the restore.', 'Recovered clusters need validation and application cutover planning.'],
+  commonMistake: 'Assuming PITR overwrites production can lead to an incomplete recovery plan. Prepare network, security groups, parameter groups, writer creation when applicable, validation, and a deliberate cutover path for the restored cluster.',
+  example: 'Restore to a time just before a known bad change into an isolated cluster. Expect a new cluster with data from the selected point. Verify the restored time, database integrity, security settings, and application tests before moving any production traffic or data.',
+  sources: [{ title: 'Restoring a DB cluster to a specified time', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-pitr.html' }, { title: 'Overview of backing up and restoring Aurora', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html' }]
+});

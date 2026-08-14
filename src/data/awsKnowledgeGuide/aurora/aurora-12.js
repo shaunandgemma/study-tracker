@@ -1,3 +1,13 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({"id":"aurora-12","topicId":"topic-aurora","topicTitle":"Amazon Aurora","objectiveCode":"Databases","title":"Aurora Reader Endpoint"});
+export default createAwsKnowledgeGuide({
+  id: 'aurora-12', topicId: 'topic-aurora', topicTitle: 'Amazon Aurora', objectiveCode: 'Databases', title: 'Aurora Reader Endpoint', status: 'ready',
+  plainEnglish: 'The Aurora reader endpoint is a stable DNS name for read-only connections. Aurora distributes those connections among available Aurora Replicas so applications can scale SELECT workloads without targeting individual readers. It does not guarantee that a particular query uses a particular replica, and it should not be used for writes.',
+  whyItMatters: 'Using the reader endpoint separates reporting and browse traffic from write transactions, improves read throughput, and lets Aurora adapt connection routing as readers are added, removed, or promoted.',
+  workplaceExample: 'An e-commerce site sends product browsing queries through the reader endpoint while orders and inventory updates use the cluster endpoint. Adding a reader before a sale lets Aurora distribute more read connections without changing application configuration.',
+  examFocus: 'Choose the reader endpoint for read scaling across Aurora Replicas. Choose the cluster endpoint for writes. During failover the reader endpoint can briefly point to a newly promoted writer, so clients should tolerate its behavior and must not rely on it for strict write routing. Use custom endpoints only when a defined subset of instances should serve a workload.',
+  keyPoints: ['The reader endpoint is for read-only connections.', 'It distributes connections among available reader instances.', 'It helps offload SELECT workloads from the writer.', 'It automatically adapts as reader instances change roles.', 'It is not the endpoint for write transactions.'],
+  commonMistake: 'Expecting each read query to balance perfectly across replicas ignores that connections, not individual queries, are routed. Use connection pooling and monitor per-reader load; add readers or tune workloads if one reader becomes a bottleneck.',
+  example: 'Connect a reporting service to the reader endpoint and run read-only queries while the transactional service uses the cluster endpoint. Expect reader CPU and connections to carry reporting load. Verify all reader instances, endpoint connection behavior, and writer load in CloudWatch.',
+  sources: [{ title: 'Aurora endpoint connections', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html' }, { title: 'Replication with Amazon Aurora', url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Replication.html' }]
+});
