@@ -17,7 +17,6 @@ import {
   CheckSquare,
   ChevronRight
 } from 'lucide-react';
-import { hasTerraformKnowledgeGuide } from '../../data/terraformKnowledgeGuide.js';
 
 export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapsed, onOpenKnowledgeGuide = null }) => {
   const { 
@@ -354,7 +353,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                         </span>
                       </label>
 
-                      {onOpenKnowledgeGuide && hasTerraformKnowledgeGuide(item.id) && (
+                      {onOpenKnowledgeGuide && (
                         <button
                           type="button"
                           onClick={() => onOpenKnowledgeGuide(item.id, topic.code)}

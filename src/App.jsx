@@ -306,7 +306,7 @@ const MainContent = () => {
               </>
             )}
 
-            {viewMode === 'knowledge-guide' && activeExamId === 'terraform-associate-004' && (
+            {viewMode === 'knowledge-guide' && (activeExamId === 'terraform-associate-004' || activeExamId === 'aws-saa-c03') && (
               <>
                 <ExamWorkspaceHeader exam={activeExam} viewMode={viewMode} onBack={() => setViewMode('exam-home')} />
                 <ChecklistView

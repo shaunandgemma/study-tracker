@@ -41,6 +41,7 @@ export const TerraformKnowledgeGuidePage = ({
   totalLessons = 1,
   onPrevious = null,
   onNext = null,
+  guideName = 'Terraform Knowledge Guide',
   onBack = () => {}
 }) => {
   if (!guide) return null;
@@ -48,7 +49,7 @@ export const TerraformKnowledgeGuidePage = ({
   return (
     <div className="mx-auto max-w-5xl space-y-6 animate-fadeIn">
       <button type="button" onClick={onBack} className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 transition hover:text-white">
-        <ArrowLeft className="h-4 w-4" /> Back to Terraform Knowledge Guide
+        <ArrowLeft className="h-4 w-4" /> Back to {guideName}
       </button>
 
       <header className="rounded-3xl border border-violet-800/60 bg-gradient-to-br from-slate-900 via-violet-950/30 to-slate-950 p-7 sm:p-9">
@@ -56,29 +57,29 @@ export const TerraformKnowledgeGuidePage = ({
           {objectiveCode} Knowledge Guide
         </span>
         <h1 className="mt-4 text-3xl font-black tracking-tight text-white">{guide.title}</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{guide.plainEnglish}</p>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{guide.plainEnglish || 'This lesson file is scaffolded and ready for detailed study content.'}</p>
       </header>
 
       <LessonNavigation currentIndex={currentIndex} totalLessons={totalLessons} onPrevious={onPrevious} onNext={onNext} />
 
       <div className="grid gap-5 md:grid-cols-2">
         <Section icon={Lightbulb} title="Why this matters">
-          <p>{guide.whyItMatters}</p>
+          <p>{guide.whyItMatters || 'Add why this AWS concept matters to architecture and operations.'}</p>
         </Section>
         <Section icon={BriefcaseBusiness} title="Workplace example" colour="text-cyan-300">
-          <p>{guide.workplaceExample}</p>
+          <p>{guide.workplaceExample || 'Add a realistic workplace example.'}</p>
         </Section>
         <Section icon={GraduationCap} title="What to understand for the exam" colour="text-amber-300">
-          <p>{guide.examFocus}</p>
+          <p>{guide.examFocus || 'Add the SAA-C03 decisions and comparisons the learner must understand.'}</p>
         </Section>
         <Section icon={TriangleAlert} title="Common beginner mistake" colour="text-rose-300">
-          <p>{guide.commonMistake}</p>
+          <p>{guide.commonMistake || 'Add the most important beginner mistake to avoid.'}</p>
         </Section>
       </div>
 
       <Section icon={CheckCircle2} title="Key points to remember" colour="text-emerald-300">
         <ul className="space-y-3">
-          {guide.keyPoints.map(point => (
+          {(guide.keyPoints.length ? guide.keyPoints : ['Add concise key points to this lesson file.']).map(point => (
             <li key={point} className="flex gap-3">
               <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-400" />
               <span>{point}</span>

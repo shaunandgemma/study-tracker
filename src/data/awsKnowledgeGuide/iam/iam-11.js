@@ -1,0 +1,3 @@
+import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
+
+export default createAwsKnowledgeGuide({"id":"iam-11","topicId":"topic-iam","topicTitle":"AWS IAM (Identity and Access Management)","objectiveCode":"Security","title":"IAM Managed Policies"});

@@ -31,12 +31,15 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
   const details = getExamLandingDetails(exam);
   const topics = getExamTopics(exam);
   const checklistItems = getExamChecklistItemCount(exam);
-  const toolCards = exam.id === 'terraform-associate-004'
+  const hasKnowledgeGuide = exam.id === 'terraform-associate-004' || exam.id === 'aws-saa-c03';
+  const toolCards = hasKnowledgeGuide
     ? [
         {
           id: 'knowledge-guide',
           title: 'Knowledge Guide',
-          description: 'Start here. Study all 37 Terraform lessons in checklist order with Previous and Next controls.',
+          description: exam.id === 'terraform-associate-004'
+            ? 'Start here. Study all 37 Terraform lessons in checklist order with Previous and Next controls.'
+            : 'Start here. Study AWS lessons in checklist order with Previous and Next controls.',
           icon: BookOpenCheck,
           colour: 'border-violet-700/80 bg-violet-950/35 text-violet-300'
         },

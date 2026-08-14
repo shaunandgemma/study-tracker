@@ -70,7 +70,7 @@ test('Terraform Knowledge Guide covers the complete checklist', async t => {
     assert.match(examLanding, /id: 'knowledge-guide'/);
     assert.match(checklistView, /activeExamId === 'terraform-associate-004'/);
     assert.match(checklistView, /<TerraformKnowledgeGuidePage/);
-    assert.match(topicCard, /hasTerraformKnowledgeGuide\(item\.id\)/);
+    assert.match(topicCard, /onOpenKnowledgeGuide &&/);
     assert.match(topicCard, /Open this Knowledge Guide lesson/);
     assert.match(page, /Why this matters/);
     assert.match(page, /Workplace example/);

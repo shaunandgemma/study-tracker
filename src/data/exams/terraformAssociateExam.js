@@ -7,7 +7,8 @@ export const TERRAFORM_ASSOCIATE_EXAM = Object.freeze({
   benefits: [
     'Track every published Terraform Associate (004) objective.',
     'Practise questions across all eight objective groups.',
-    'Open Terraform Follow Alongs assigned to this certification.'
+    'Open Terraform Follow Alongs assigned to this certification.',
+    'Use the quick study guides in the Knowledge Guides.'
   ],
   passingScore: 70,
   timeLimitMinutes: 60,

@@ -1,0 +1,3 @@
+import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
+
+export default createAwsKnowledgeGuide({"id":"os-12","topicId":"topic-opensearch","topicTitle":"Amazon OpenSearch Service","objectiveCode":"Analytics","title":"UltraWarm Storage"});

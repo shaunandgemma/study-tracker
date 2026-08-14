@@ -1,0 +1,3 @@
+import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
+
+export default createAwsKnowledgeGuide({"id":"documentdb-6","topicId":"topic-documentdb","topicTitle":"Amazon DocumentDB","objectiveCode":"Databases","title":"DocumentDB Primary and Replica Instances"});

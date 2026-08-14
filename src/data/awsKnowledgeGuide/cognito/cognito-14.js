@@ -1,0 +1,3 @@
+import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
+
+export default createAwsKnowledgeGuide({"id":"cognito-14","topicId":"topic-cognito","topicTitle":"Amazon Cognito","objectiveCode":"Security","title":"Social Identity Provider Federation"});

@@ -6,6 +6,7 @@ import {
   TERRAFORM_KNOWLEDGE_GUIDE_ORDER,
   getTerraformKnowledgeGuide
 } from '../../data/terraformKnowledgeGuide.js';
+import { getAwsKnowledgeGuide } from '../../data/awsKnowledgeGuide.js';
 import { 
   Search, 
   RotateCcw, 
@@ -27,6 +28,10 @@ import {
 
 export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, onExitKnowledgeGuide = () => {} }) => {
   const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic } = useExam();
+  const isAwsGuide = activeExamId === 'aws-saa-c03';
+  const knowledgeGuideOrder = isAwsGuide
+    ? (activeExam?.topics || []).flatMap(topic => (topic.items || []).map(item => item.id))
+    : TERRAFORM_KNOWLEDGE_GUIDE_ORDER;
   
   const [searchQuery, setSearchQuery] = useState('');
   const [allCollapsed, setAllCollapsed] = useState(false);
@@ -37,27 +42,30 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
   const [newTopicDesc, setNewTopicDesc] = useState('');
   const [selectedKnowledgeGuide, setSelectedKnowledgeGuide] = useState(() => (
     startKnowledgeGuide
-      ? { itemId: TERRAFORM_KNOWLEDGE_GUIDE_ORDER[0] }
+      ? { itemId: knowledgeGuideOrder[0] }
       : null
   ));
 
   if (!activeExam) return null;
 
-  if (activeExamId === 'terraform-associate-004' && selectedKnowledgeGuide) {
-    const currentIndex = TERRAFORM_KNOWLEDGE_GUIDE_ORDER.indexOf(selectedKnowledgeGuide.itemId);
+  if ((activeExamId === 'terraform-associate-004' || isAwsGuide) && selectedKnowledgeGuide) {
+    const currentIndex = knowledgeGuideOrder.indexOf(selectedKnowledgeGuide.itemId);
     const openGuideAtIndex = index => {
-      const itemId = TERRAFORM_KNOWLEDGE_GUIDE_ORDER[index];
+      const itemId = knowledgeGuideOrder[index];
       if (itemId) setSelectedKnowledgeGuide({ itemId });
     };
 
     return (
       <TerraformKnowledgeGuidePage
-        guide={getTerraformKnowledgeGuide(selectedKnowledgeGuide.itemId)}
-        objectiveCode={selectedKnowledgeGuide.objectiveCode || `Objective ${selectedKnowledgeGuide.itemId.split('-')[1].charAt(0)}`}
+        guide={isAwsGuide ? getAwsKnowledgeGuide(selectedKnowledgeGuide.itemId) : getTerraformKnowledgeGuide(selectedKnowledgeGuide.itemId)}
+        objectiveCode={selectedKnowledgeGuide.objectiveCode || (isAwsGuide
+          ? getAwsKnowledgeGuide(selectedKnowledgeGuide.itemId)?.objectiveCode
+          : `Objective ${selectedKnowledgeGuide.itemId.split('-')[1].charAt(0)}`)}
         currentIndex={currentIndex}
-        totalLessons={TERRAFORM_KNOWLEDGE_GUIDE_ORDER.length}
+        totalLessons={knowledgeGuideOrder.length}
         onPrevious={currentIndex > 0 ? () => openGuideAtIndex(currentIndex - 1) : null}
-        onNext={currentIndex < TERRAFORM_KNOWLEDGE_GUIDE_ORDER.length - 1 ? () => openGuideAtIndex(currentIndex + 1) : null}
+        onNext={currentIndex < knowledgeGuideOrder.length - 1 ? () => openGuideAtIndex(currentIndex + 1) : null}
+        guideName={isAwsGuide ? 'AWS SAA-C03 Knowledge Guide' : 'Terraform Knowledge Guide'}
         onBack={startKnowledgeGuide ? onExitKnowledgeGuide : () => setSelectedKnowledgeGuide(null)}
       />
     );
@@ -359,7 +367,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
             topic={topic}
             searchQuery={searchQuery}
             forceCollapsed={allCollapsed}
-            onOpenKnowledgeGuide={activeExamId === 'terraform-associate-004'
+            onOpenKnowledgeGuide={activeExamId === 'terraform-associate-004' || activeExamId === 'aws-saa-c03'
               ? (itemId, objectiveCode) => setSelectedKnowledgeGuide({ itemId, objectiveCode })
               : null}
             onLaunchTopicQuiz={(topicId) => onLaunchPrepExam({ mode: 'domain', domainId: topicId })}
