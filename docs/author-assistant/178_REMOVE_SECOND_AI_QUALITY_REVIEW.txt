@@ -1,0 +1,44 @@
+STEP 178 - REMOVE THE SECOND AI QUALITY REVIEW
+
+1. Reason
+
+The separate beginner-quality AI review could rewrite an otherwise valid task
+with broken structural values. A Kubernetes generation completed successfully,
+but the review replaced Task 8 with an invalid prerequisite and the final local
+validation stopped before saving the paid generation.
+
+2. Approved change
+
+The simplified Author Assistant now makes no separate beginner-quality review
+request. The initial generation continues to receive the complete published RDS
+Console and CLI Golden Standard as its writing reference.
+
+3. Local checks
+
+After generation, local checks still inspect beginner guidance, chained command
+content and reverse-dependency cleanup. Reviewable findings are added to the
+handoff package as manual correction findings instead of being sent to another
+AI request.
+
+4. Preserved safety boundaries
+
+The script still rejects unusable package structure, missing Console or CLI
+routes, credential-like content, invalid phases and prerequisites, unprotected
+AWS sources, and incomplete required fields. It still writes only local files
+and cannot connect to AWS, write to Supabase or Author, approve or publish.
+
+5. Cost and preservation outcome
+
+A normal successful run uses the initial AI generation only. Reviewable quality
+and cleanup findings no longer cause a second paid AI review or allow that review
+to damage the generated task structure. The generated package is saved for human
+inspection and correction in Author.
+
+6. Prerequisite recovery amendment
+
+An initial Kubernetes generation later returned an impossible prerequisite on
+Task 6. The prerequisite validator had remained a hard stop after removal of the
+second AI review. Generated prerequisite numbers that refer to the same task, a
+future task, a missing task or a non-positive task are now removed locally. Valid
+earlier prerequisites are preserved and an exact manual-review finding is added
+to the package. Candidate creation remains protected by the Author planning check.

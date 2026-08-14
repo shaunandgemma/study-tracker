@@ -41,7 +41,7 @@ async function requiredWithDefault(question, defaultValue) {
 try {
   output.write('\nAUTHOR ASSISTANT - COMPLETE FOLLOW ALONG\n');
   output.write('One run creates a complete Console and CLI preview from official AWS Docs.\n');
-  output.write('A second AI request reviews every task against the complete published RDS Console and CLI standard and rewrites only weak tasks.\n');
+  output.write('The single generation request uses the complete published RDS Console and CLI standard. Local quality findings are kept for manual correction in Author.\n');
   output.write('It performs only a read-only published-list check and does not write to AWS, Supabase or Author. It cannot publish.\n\n');
   const modeIndex = await numberedChoice('What do you want to do?', ['New Follow Along', 'Update Existing Follow Along']);
   let inputs;

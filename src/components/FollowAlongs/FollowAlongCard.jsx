@@ -44,6 +44,7 @@ export const FollowAlongCard = ({
   const isAvailable = programme.status === 'available';
 
   const isLoading = progressSummary?.loading;
+  const hasProgressSummary = Boolean(progressSummary);
   const normalizedProgressStatus = String(progressSummary?.status || 'not-started')
     .trim()
     .toLowerCase()
@@ -59,7 +60,7 @@ export const FollowAlongCard = ({
 
   return (
     <div
-      className={`rounded-2xl border transition-all duration-300 flex flex-col justify-between overflow-hidden relative ${
+      className={`h-[24rem] rounded-2xl border transition-all duration-300 flex flex-col overflow-hidden relative ${
         isAvailable
           ? 'bg-gradient-to-b from-slate-900/90 via-slate-900/60 to-slate-950/90 border-slate-800 hover:border-cyan-500/50 hover:shadow-xl hover:shadow-cyan-950/20 group'
           : 'bg-slate-950/40 border-slate-800/60 opacity-80'
@@ -70,7 +71,7 @@ export const FollowAlongCard = ({
         <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500" />
       )}
 
-      <div className="p-6 space-y-4 flex-1">
+      <div className="p-6 flex flex-1 flex-col gap-4 min-h-0">
         {/* Header Row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -85,7 +86,7 @@ export const FollowAlongCard = ({
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
                 {programme.category}
               </span>
-              <h3 className="text-lg font-bold text-white leading-snug">
+              <h3 className="text-lg font-bold text-white leading-snug line-clamp-2 min-h-[2.75rem]">
                 {programme.title}
               </h3>
             </div>
@@ -103,7 +104,7 @@ export const FollowAlongCard = ({
         </div>
 
         {/* Subtitle & Description */}
-        <p className="text-xs text-slate-300 leading-relaxed min-h-[3rem]">
+        <p className="text-xs text-slate-300 leading-relaxed line-clamp-3 min-h-[3.75rem]">
           {programme.description}
         </p>
 
@@ -126,8 +127,8 @@ export const FollowAlongCard = ({
         </div>
 
         {/* Progress Summary Section */}
-        {isAvailable && (
-          <div className="pt-2 border-t border-slate-800/80">
+        {isAvailable && hasProgressSummary && (
+          <div className="mt-auto pt-2 border-t border-slate-800/80">
             {isLoading ? (
               <div className="animate-pulse space-y-2 py-2">
                 <div className="h-3 bg-slate-800 rounded w-1/2" />

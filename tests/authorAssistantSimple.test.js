@@ -5,22 +5,20 @@ import { webcrypto } from 'node:crypto';
 import {
   acceptSimpleHandoff,
   buildAuthorDraftContent,
-  buildBeginnerQualityReviewPayload,
   buildCompleteGenerationPayload,
   buildSimpleHandoff,
   findCleanupCoverageFindings,
   formatSimplePreview,
+  repairReviewablePrerequisites,
   reconcileProtectedSourceList,
   requestCompleteFollowAlong,
   SIMPLE_AUTHOR_ASSISTANT_MODE,
   validateCompleteProposal
 } from '../scripts/author-assistant/authorAssistantSimple.mjs';
 import {
-  applyBeginnerQualityReview,
   buildBeginnerGoldStandardReference,
   findBeginnerQualityFindings,
-  findReviewableProposalFindings,
-  validateBeginnerQuality
+  findReviewableProposalFindings
 } from '../scripts/author-assistant/authorAssistantBeginnerQuality.mjs';
 import { loadPublishedFollowAlongCatalogue, parseAuthorAssistantEnv } from '../scripts/author-assistant/authorAssistantPublishedCatalogue.mjs';
 import { validateAuthorHandoffImportPreview } from '../src/features/followAlongAuthor/authorHandoffPreview.js';
@@ -101,29 +99,16 @@ test('simplified Author Assistant creates one import-ready Console and CLI packa
     assert.throws(() => buildBeginnerGoldStandardReference({ programmeId: 'rds-learning-path', runtimeContent: { tasks: [{ consoleSteps: [], cliSteps: [] }] } }), /complete Console and CLI task content/);
   });
 
-  await t.test('1B. vague beginner instructions are blocked and the AI review can replace only weak tasks', () => {
+  await t.test('1B. vague beginner instructions are detected locally for manual Author correction', () => {
     const weak = proposal();
     weak.tasks[0].consoleSteps[0].instructions = ['Open Users.', 'Choose a suitable existing user.'];
     assert.ok(findBeginnerQualityFindings(weak).length >= 2);
-    assert.throws(() => validateBeginnerQuality(weak), /beginner-quality review did not resolve/);
-    const correctedTask = structuredClone(proposal().tasks[0]);
-    const taskReviews = weak.tasks.map((task, index) => ({ taskNumber: index + 1, passed: index !== 0, findings: index === 0 ? ['Navigation was vague.'] : [], revisedTask: index === 0 ? correctedTask : null }));
-    const corrected = applyBeginnerQualityReview(weak, { passed: false, taskReviews });
-    assert.equal(validateBeginnerQuality(corrected), corrected);
-    const reviewPayload = buildBeginnerQualityReviewPayload(inputs, weak, urls.map(url => ({ url })), qualityReference());
-    assert.match(reviewPayload.instructions, /final beginner-quality reviewer/);
-    assert.equal(reviewPayload.text.format.schema.properties.taskReviews.items.properties.revisedTask.anyOf[0].properties.consoleSteps.minItems, 1);
-    assert.equal(Object.hasOwn(reviewPayload.text.format.schema.properties.taskReviews, 'minItems'), false);
-    assert.equal(reviewPayload.text.format.schema.properties.taskReviews.maxItems, weak.tasks.length);
-    assert.deepEqual(reviewPayload.text.format.schema.properties.taskReviews.items.properties.taskNumber.enum, [1, 2, 3]);
   });
 
-  await t.test('1C. generation always completes a separate beginner-quality AI review before returning content', async () => {
+  await t.test('1C. generation uses one AI request and returns the original generated tasks unchanged', async () => {
     const generated = proposal();
-    const review = { passed: true, taskReviews: generated.tasks.map((_task, index) => ({ taskNumber: index + 1, passed: true, findings: [], revisedTask: null })) };
     const responses = [
-      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url, title: 'AWS source' })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
-      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(review) }] }] }
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url, title: 'AWS source' })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] }
     ];
     const requests = [];
     const result = await requestCompleteFollowAlong({
@@ -134,42 +119,33 @@ test('simplified Author Assistant creates one import-ready Console and CLI packa
       }
     });
     assert.equal(result.tasks.length, 3);
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 1);
     assert.equal(requests[0].tools[0].type, 'web_search');
-    assert.equal(requests[1].tools, undefined);
-    assert.match(requests[1].instructions, /Review every task/);
+    assert.deepEqual(result.tasks, generated.tasks);
   });
 
-  await t.test('1D. a chained generated command reaches the reviewer and is replaced with separate safe CLI steps', async () => {
+  await t.test('1D. a chained generated command is preserved and clearly marked for manual correction', async () => {
     const generated = proposal();
     generated.tasks[1].cliSteps[0].command = 'aws example get-status --region eu-west-2 | ConvertFrom-Json';
-    const correctedTask = structuredClone(generated.tasks[1]);
-    correctedTask.cliSteps = [
-      { ...correctedTask.cliSteps[0], command: 'aws example get-status --region eu-west-2', explanation: 'Return the documented status without a shell pipeline.' },
-      { ...correctedTask.cliSteps[0], command: 'aws example describe-resource --region eu-west-2', explanation: 'Inspect the resource with a separate documented AWS command.' }
-    ];
-    const review = { passed: false, taskReviews: generated.tasks.map((_task, index) => ({ taskNumber: index + 1, passed: index !== 1, findings: index === 1 ? ['Split the shell pipeline.'] : [], revisedTask: index === 1 ? correctedTask : null })) };
     const responses = [
-      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
-      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(review) }] }] }
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] }
     ];
     const requests = [];
     const result = await requestCompleteFollowAlong({
       inputs, apiKey: 'test-key', qualityReference: qualityReference(),
       fetchImpl: async (_url, options) => { requests.push(JSON.parse(options.body)); return { ok: true, json: async () => responses.shift() }; }
     });
-    assert.equal(findReviewableProposalFindings(result).length, 0);
-    assert.equal(result.tasks[1].cliSteps.length, 2);
-    assert.match(requests[1].input, /Task 2 CLI step 1 contains more than one shell operation/);
+    assert.equal(requests.length, 1);
+    assert.equal(findReviewableProposalFindings(result).length, 1);
+    assert.equal(result.tasks[1].cliSteps[0].command, generated.tasks[1].cliSteps[0].command);
+    assert.ok(result.manualReviewFindings.some(message => /Task 2 CLI step 1 contains more than one shell operation/i.test(message)));
   });
 
-  await t.test('1E. an incomplete reviewer response preserves unreviewed tasks as manual findings without another API request', async () => {
+  await t.test('1E. cleanup findings are preserved locally without a second AI request', async () => {
     const generated = proposal();
     generated.resourceInventory[0].resourceNameOrPlaceholder = 'exact-resource-name-not-returned-by-cleanup';
-    const incomplete = { passed: true, taskReviews: [{ taskNumber: 1, passed: true, findings: [], revisedTask: null }] };
     const responses = [
-      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] },
-      { output: [{ type: 'message', content: [{ type: 'output_text', text: JSON.stringify(incomplete) }] }] }
+      { output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] }
     ];
     const requests = [];
     const progress = [];
@@ -178,12 +154,41 @@ test('simplified Author Assistant creates one import-ready Console and CLI packa
       fetchImpl: async (_url, options) => { requests.push(JSON.parse(options.body)); return { ok: true, json: async () => responses.shift() }; }
     });
     assert.equal(result.tasks.length, 3);
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 1);
     assert.equal(requests.filter(item => item.tools?.[0]?.type === 'web_search').length, 1);
-    assert.ok(result.manualReviewFindings.some(message => /task number\(s\): 2, 3/i.test(message)));
     assert.ok(result.manualReviewFindings.some(message => /Cleanup for resource example-resource does not name its exact target/i.test(message)));
     assert.deepEqual(result.tasks[1], generated.tasks[1]);
-    assert.equal(progress.some(message => /initial generation will not be repeated/i.test(message)), false);
+    assert.ok(progress.some(message => /retained for manual correction in Author/i.test(message)));
+    assert.equal(progress.some(message => /quality review/i.test(message)), false);
+  });
+
+  await t.test('1F. impossible generated prerequisites are removed and retained as manual findings', async () => {
+    const generated = proposal();
+    generated.tasks[1].prerequisiteTaskNumbers = [1, 2, 99];
+    const repaired = repairReviewablePrerequisites(generated);
+    assert.deepEqual(repaired.tasks[1].prerequisiteTaskNumbers, [1]);
+    assert.deepEqual(generated.tasks[1].prerequisiteTaskNumbers, [1, 2, 99]);
+    assert.ok(repaired.manualReviewFindings.some(message => /Task 2 contained impossible prerequisite number\(s\): 2, 99/i.test(message)));
+    assert.equal(validateCompleteProposal(repaired, urls.map(url => ({ url })), { allowReviewableQuality: true }), repaired);
+  });
+
+  await t.test('1G. a paid generation with an impossible prerequisite still returns a saveable package', async () => {
+    const generated = proposal();
+    generated.tasks[2].prerequisiteTaskNumbers = [2, 3, 50];
+    const requests = [];
+    const result = await requestCompleteFollowAlong({
+      inputs,
+      apiKey: 'test-key',
+      qualityReference: qualityReference(),
+      fetchImpl: async (_url, options) => {
+        requests.push(JSON.parse(options.body));
+        return { ok: true, json: async () => ({ output: [{ type: 'web_search_call', action: { sources: urls.map(url => ({ url })) } }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(generated) }] }] }) };
+      }
+    });
+    assert.equal(requests.length, 1);
+    assert.deepEqual(result.tasks[2].prerequisiteTaskNumbers, [2]);
+    assert.ok(result.manualReviewFindings.some(message => /Task 3 contained impossible prerequisite number\(s\): 3, 50/i.test(message)));
+    assert.doesNotThrow(() => buildAuthorDraftContent(inputs, result));
   });
 
   await t.test('2. protected sources, unchained commands, and both modes are required', () => {

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  FOLLOW_ALONG_LANDING_PROGRAMMES,
   FOLLOW_ALONG_PROGRAMMES,
   getFollowAlongProgramme
 } from '../src/data/followAlongProgrammes.js';
@@ -45,6 +46,12 @@ test('Follow Alongs - Programme Catalogue Integrity', async (t) => {
 
     assert.equal(new Set(ids).size, ids.length, 'All programme IDs must be unique');
     assert.equal(new Set(slugs).size, slugs.length, 'All programme slugs must be unique');
+  });
+
+  await t.test('4a. Legacy VPC stays preserved but is hidden from the learner catalogue', () => {
+    assert.ok(getFollowAlongProgramme('vpc-learning-path'));
+    assert.equal(FOLLOW_ALONG_LANDING_PROGRAMMES.some(programme => programme.id === 'vpc-learning-path'), false);
+    assert.equal(FOLLOW_ALONG_LANDING_PROGRAMMES.length, FOLLOW_ALONG_PROGRAMMES.length - 1);
   });
 });
 

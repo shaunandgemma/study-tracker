@@ -231,5 +231,23 @@ test('Follow Along display components', async (t) => {
     assert.match(publishedCardHtml, /0 of 23 tasks completed/);
     assert.match(publishedCardHtml, /Start Follow Along/);
     assert.doesNotMatch(publishedCardHtml, /Resume Follow Along/);
+
+    const cardWithoutProgressHtml = renderToStaticMarkup(createElement(FollowAlongCard, {
+      programme: {
+        id: 'published-without-progress',
+        title: 'A Follow Along With A Long Consistent Card Title',
+        category: 'AWS Services',
+        description: 'A deliberately long description that should be visually limited so it cannot make this catalogue card taller than the other Follow Along cards.',
+        service: 'AWS Service',
+        status: 'available',
+        taskCount: 8,
+        phaseCount: 4,
+      },
+    }));
+    assert.match(cardWithoutProgressHtml, /h-\[24rem\]/);
+    assert.match(cardWithoutProgressHtml, /line-clamp-2/);
+    assert.match(cardWithoutProgressHtml, /line-clamp-3/);
+    assert.doesNotMatch(cardWithoutProgressHtml, /animate-pulse/);
+    assert.doesNotMatch(cardWithoutProgressHtml, /tasks completed/);
   });
 });

@@ -182,6 +182,16 @@ export const FOLLOW_ALONG_PROGRAMMES = [
   }
 ];
 
+// Retain the original VPC implementation and catalogue record for compatibility,
+// but keep it out of the normal learner catalogue while a replacement is planned.
+export const HIDDEN_FOLLOW_ALONG_PROGRAMME_IDS = Object.freeze(['vpc-learning-path']);
+
+export function isFollowAlongProgrammeVisible(programme) {
+  return Boolean(programme?.id) && !HIDDEN_FOLLOW_ALONG_PROGRAMME_IDS.includes(programme.id);
+}
+
+export const FOLLOW_ALONG_LANDING_PROGRAMMES = FOLLOW_ALONG_PROGRAMMES.filter(isFollowAlongProgrammeVisible);
+
 export function getFollowAlongProgramme(idOrSlug) {
   if (!idOrSlug) return null;
   return FOLLOW_ALONG_PROGRAMMES.find(

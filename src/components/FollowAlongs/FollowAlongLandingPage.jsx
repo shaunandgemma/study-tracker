@@ -1,54 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Layers, Search, Sparkles, Network, CheckCircle2 } from 'lucide-react';
-import { FOLLOW_ALONG_PROGRAMMES } from '../../data/followAlongProgrammes.js';
-import { getProgrammeProgressSummary } from '../../services/vpcLearningPathService.js';
+import { FOLLOW_ALONG_LANDING_PROGRAMMES, isFollowAlongProgrammeVisible } from '../../data/followAlongProgrammes.js';
 import { FollowAlongCard } from './FollowAlongCard.jsx';
 import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 
 export const FollowAlongLandingPage = ({
-  currentUser = null,
   onSelectProgramme = () => {}
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [vpcSummary, setVpcSummary] = useState({ loading: true });
-  const [programmes, setProgrammes] = useState(FOLLOW_ALONG_PROGRAMMES);
+  const [programmes, setProgrammes] = useState(FOLLOW_ALONG_LANDING_PROGRAMMES);
 
   useEffect(() => {
     let active = true;
     const service = createPublishedFollowAlongService();
     service.listPublishedProgrammes().then(result => {
-      if (active && result.success) setProgrammes(mergePublishedProgrammeCards(FOLLOW_ALONG_PROGRAMMES, result.programmes));
+      if (active && result.success) {
+        setProgrammes(mergePublishedProgrammeCards(FOLLOW_ALONG_LANDING_PROGRAMMES, result.programmes).filter(isFollowAlongProgrammeVisible));
+      }
     });
     return () => { active = false; };
   }, []);
-
-  // Fetch the retained static VPC summary on mount or user change.
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadSummaries() {
-      setVpcSummary({ loading: true });
-      try {
-        const vSummary = await getProgrammeProgressSummary(currentUser?.id, 'vpc-learning-path');
-
-        if (isMounted) {
-          setVpcSummary(vSummary || { loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45 });
-        }
-      } catch (err) {
-        console.error('[FollowAlongLandingPage] Error loading summaries:', err);
-        if (isMounted) {
-          setVpcSummary({ loading: false, status: 'not-started', completedTasks: 0, totalTasks: 45, error: err.message });
-        }
-      }
-    }
-
-    loadSummaries();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [currentUser]);
 
   // Extract unique categories
   const categories = ['All', ...new Set(programmes.map(p => p.category))];
@@ -150,11 +122,6 @@ export const FollowAlongLandingPage = ({
               <FollowAlongCard
                 key={prog.id}
                 programme={prog}
-                progressSummary={
-                  prog.id === 'vpc-learning-path'
-                    ? vpcSummary
-                    : null
-                }
                 onSelectProgramme={onSelectProgramme}
               />
             ))}

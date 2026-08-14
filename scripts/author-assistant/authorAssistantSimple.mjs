@@ -9,11 +9,8 @@ import { formatOpenAiRequestError, OPENAI_RESPONSES_URL, DEFAULT_AUTHOR_ASSISTAN
 import { fingerprintJson } from './authorAssistantStage84D.mjs';
 import { buildStage90ALocalAcceptance } from './authorAssistantStage90A.mjs';
 import {
-  applyBeginnerQualityReview,
-  buildBeginnerQualityReviewSchema,
   findBeginnerQualityFindings,
-  findReviewableProposalFindings,
-  validateBeginnerQuality
+  findReviewableProposalFindings
 } from './authorAssistantBeginnerQuality.mjs';
 
 export const SIMPLE_AUTHOR_ASSISTANT_KIND = 'author_assistant_complete_generation';
@@ -254,37 +251,6 @@ export function buildCompleteGenerationPayload(inputs, { model = DEFAULT_AUTHOR_
   };
 }
 
-export function buildBeginnerQualityReviewPayload(inputs, proposal, returnedSources, qualityReference, { model = DEFAULT_AUTHOR_ASSISTANT_MODEL, localFindings = [] } = {}) {
-  const sourceUrls = returnedSources.map(item => normalizedUrl(item.url));
-  const completeSchema = buildCompleteGenerationSchema(sourceUrls);
-  return {
-    model,
-    store: false,
-    reasoning: { effort: 'medium' },
-    instructions: [
-      'Act as the final beginner-quality reviewer for an AWS Follow Along.',
-      'Review every task. A beginner has no existing infrastructure and may never have used this AWS service.',
-      'A task passes only when its Console path explains how to navigate there, identifies exact visible controls and field values, creates prerequisites before use, explains every recorded value or placeholder, supplies referenced JSON, and includes visible expected results and verification.',
-      'Console and CLI routes must remain separate and technically consistent. Never invent AWS facts or cite a URL outside the supplied protected list.',
-      'Use the complete RDS Console and CLI reference as the minimum standard for writing depth, route completeness and beginner guidance. Inspect every RDS task in the reference, not merely selected examples. Never copy RDS-specific names, permissions or architecture.',
-      'A CLI route must be independently usable. If it refers to supplied JSON, user data, a trust policy or another local file, place the complete content in the same task and clearly tell the learner how and where to save it.',
-      'Return one review for every task in exact task-number order. For a passed task return revisedTask as null. For a failed task return a complete corrected replacement task and preserve its intended scope, phase, prerequisites and official source citations.',
-      'Every task named in the local findings must be marked failed and returned as a corrected replacement. Split chained CLI operations into separate CLI steps; never remove required behaviour merely to make the warning disappear.',
-      'Do not shorten already complete instructions.'
-    ].filter(Boolean).join(' '),
-    input: [
-      `Target service: ${inputs.serviceName}`,
-      `Learner level: ${inputs.learnerLevel}`,
-      `Preferred Region: ${inputs.preferredRegion}`,
-      `Protected source URLs: ${JSON.stringify(sourceUrls)}`,
-      `RDS beginner gold standard: ${JSON.stringify(qualityReference)}`,
-      `Mandatory local findings to correct: ${JSON.stringify(localFindings)}`,
-      `Generated Follow Along to review: ${JSON.stringify(proposal)}`
-    ].join('\n'),
-    text: { format: { type: 'json_schema', name: 'beginner_quality_review', strict: true, schema: buildBeginnerQualityReviewSchema(completeSchema, proposal.tasks.length) } }
-  };
-}
-
 function outputText(response) {
   for (const item of response?.output || []) {
     if (item?.type !== 'message') continue;
@@ -404,7 +370,7 @@ export function findCleanupCoverageFindings(proposal) {
   return [...new Set(findings)];
 }
 
-export function validateCompleteProposal(proposal, returnedSources, { beginnerQuality = false, allowReviewableQuality = false } = {}) {
+export function validateCompleteProposal(proposal, returnedSources, { allowReviewableQuality = false } = {}) {
   const allowed = new Set((returnedSources || []).map(item => normalizedUrl(item.url)));
   if (!proposal?.tasks?.length || !proposal?.phases?.length || !proposal?.sources?.length) throw new Error('The complete Follow Along is missing phases, tasks, or sources.');
   if (proposal.phases.length < 4) throw new Error('The complete Follow Along must contain at least four phases.');
@@ -439,8 +405,24 @@ export function validateCompleteProposal(proposal, returnedSources, { beginnerQu
     if (!Number.isInteger(task.phaseNumber) || task.phaseNumber < 1 || task.phaseNumber > proposal.phases.length) throw new Error(`Task ${index + 1} has an invalid phase.`);
     if (task.prerequisiteTaskNumbers.some(number => !Number.isInteger(number) || number < 1 || number > index)) throw new Error(`Task ${index + 1} has an invalid prerequisite.`);
   });
-  if (beginnerQuality) validateBeginnerQuality(proposal);
   return proposal;
+}
+
+export function repairReviewablePrerequisites(proposal) {
+  const repaired = structuredClone(proposal);
+  const findings = [];
+  (repaired.tasks || []).forEach((task, index) => {
+    const taskNumber = index + 1;
+    const supplied = Array.isArray(task.prerequisiteTaskNumbers) ? task.prerequisiteTaskNumbers : [];
+    const valid = [...new Set(supplied.filter(number => Number.isInteger(number) && number >= 1 && number < taskNumber))];
+    const invalid = supplied.filter(number => !Number.isInteger(number) || number < 1 || number >= taskNumber);
+    task.prerequisiteTaskNumbers = valid;
+    if (invalid.length) {
+      findings.push(`Task ${taskNumber} contained impossible prerequisite number(s): ${invalid.map(value => JSON.stringify(value)).join(', ')}. They were removed; review this task's dependencies manually in Author before candidate creation.`);
+    }
+  });
+  repaired.manualReviewFindings = [...(repaired.manualReviewFindings || []), ...findings];
+  return repaired;
 }
 
 export async function requestCompleteFollowAlong({ inputs, apiKey, qualityReference, model = DEFAULT_AUTHOR_ASSISTANT_MODEL, fetchImpl = globalThis.fetch, onProgress = () => {} } = {}) {
@@ -450,33 +432,25 @@ export async function requestCompleteFollowAlong({ inputs, apiKey, qualityRefere
   const returned = protectedSources(firstResponse);
   if (returned.length < 3) throw new Error('Protected AWS Docs search returned fewer than three usable official sources.');
   onProgress(`Initial generation completed with ${returned.length} protected AWS source(s).`);
-  let proposal = reconcileProtectedSourceList(parseProposal(firstResponse), returned);
+  let proposal = repairReviewablePrerequisites(reconcileProtectedSourceList(parseProposal(firstResponse), returned));
   try { validateCompleteProposal(proposal, returned, { allowReviewableQuality: true }); }
   catch (error) {
     if (!/source was not returned|cited AWS source|duplicate AWS sources/i.test(error.message)) throw error;
     const correctionResponse = await request(buildCompleteGenerationPayload(inputs, { model, sourceUrls: returned.map(item => item.url), qualityReference }), apiKey, fetchImpl);
-    proposal = reconcileProtectedSourceList(parseProposal(correctionResponse), returned);
+    proposal = repairReviewablePrerequisites(reconcileProtectedSourceList(parseProposal(correctionResponse), returned));
     validateCompleteProposal(proposal, returned, { allowReviewableQuality: true });
   }
-  const localFindings = [...findReviewableProposalFindings(proposal), ...findCleanupCoverageFindings(proposal)];
-  if (localFindings.length) onProgress(`The local check found ${localFindings.length} reviewable quality or cleanup item(s). Sending them to the quality review instead of stopping.`);
-  onProgress('Running the separate beginner-quality AI review. Only weak tasks may be rewritten.');
-  const reviewResponse = await request(buildBeginnerQualityReviewPayload(inputs, proposal, returned, qualityReference, { model, localFindings }), apiKey, fetchImpl);
-  let reviewed;
-  try {
-    reviewed = applyBeginnerQualityReview(proposal, parseProposal(reviewResponse), { allowPartial: true });
-  } catch {
-    reviewed = structuredClone(proposal);
-    reviewed.manualReviewFindings = [...(reviewed.manualReviewFindings || []), 'The AI beginner-quality review response could not be applied. All original generated tasks were preserved for manual review before creating a release candidate.'];
-  }
-  const unresolved = [...findReviewableProposalFindings(reviewed), ...findBeginnerQualityFindings(reviewed), ...findCleanupCoverageFindings(reviewed)];
-  if (unresolved.length) {
-    reviewed.manualReviewFindings = [...(reviewed.manualReviewFindings || []), ...unresolved.map(finding => `Manual beginner-quality correction required: ${finding}`)];
-    onProgress(`Beginner-quality review completed with ${unresolved.length} item(s) retained for manual correction in Author.`);
+  const localFindings = [...findReviewableProposalFindings(proposal), ...findBeginnerQualityFindings(proposal), ...findCleanupCoverageFindings(proposal)];
+  if (localFindings.length) {
+    proposal.manualReviewFindings = [
+      ...(proposal.manualReviewFindings || []),
+      ...localFindings.map(finding => `Manual correction required: ${finding}`)
+    ];
+    onProgress(`Local checks completed with ${localFindings.length} item(s) retained for manual correction in Author.`);
   } else {
-    onProgress('Beginner-quality AI review completed. Running final local checks.');
+    onProgress('Local quality and cleanup checks passed.');
   }
-  return validateCompleteProposal(reviewed, returned, { allowReviewableQuality: true });
+  return validateCompleteProposal(proposal, returned, { allowReviewableQuality: true });
 }
 
 function uniqueSlug(value, used, fallback) {
