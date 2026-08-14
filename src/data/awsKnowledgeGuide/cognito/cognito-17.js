@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-17', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Authenticated and Unauthenticated Identities', status: 'ready', plainEnglish: 'Identity pools can issue identities and temporary credentials for authenticated users and, when guest access is deliberately enabled, unauthenticated users. Authenticated identities have signed in through a configured provider. Unauthenticated identities are guest users without verified sign-in and should receive a separate, much narrower IAM role.', whyItMatters: 'The distinction supports useful guest experiences without granting anonymous visitors the same privileges as verified users.', workplaceExample: 'A media app lets guests read public thumbnails with its unauthenticated role. After sign-in, users receive an authenticated role that can upload and list only their own private content.', examFocus: 'Unauthenticated does not mean no credentials: it can mean temporary AWS credentials for a guest role. Enable guest access only when required, give guests least privilege, and do not rely on an unauthenticated identity as proof of a real-world person.', keyPoints: ['Authenticated identities have verified provider sign-in.', 'Unauthenticated identities are optional guest identities.', 'Both can obtain temporary credentials through different IAM roles.', 'Guest roles require stricter least privilege.', 'An identity identifier is not proof of user identity.'], commonMistake: 'Assigning the same IAM role to guests and signed-in users makes sign-in ineffective as an authorization boundary. Use separate roles and permissions for each state.', example: 'Enable guest access in a test identity pool with a read-only guest role and a separate authenticated role. Verify a guest can perform only the public test action, then sign in and verify the authenticated policy is different.', sources: [{ title: 'Identity pools console overview', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/identity-pools.html' }, { title: 'Getting credentials', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/getting-credentials.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-17',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Authenticated and Unauthenticated Identities',
+  status: 'ready',
+  plainEnglish: 'Cognito Identity Pools categorize application users into two distinct identity types:\n- Authenticated Identities: Users who have verified their identity by logging in through a supported identity provider (Cognito User Pool, Google, Facebook, Apple, SAML, or OIDC). They receive temporary credentials bound to the Authenticated IAM Role.\n- Unauthenticated (Guest) Identities: Anonymous users who have not logged in. Cognito generates a temporary unique Identity ID for the guest device and assigns temporary credentials bound to the Unauthenticated IAM Role.',
+  whyItMatters: 'Unauthenticated identities allow mobile apps to provide seamless guest onboarding (such as browsing products or storing local preferences in DynamoDB) before prompting the user to sign up, without sacrificing AWS security controls.',
+  workplaceExample: 'A news mobile app allows anonymous guest users (Unauthenticated Identities) to read articles stored in S3. When a guest subscribes, they sign in via Google (Authenticated Identity), and Cognito automatically transitions their Identity ID and grants access to premium subscriber content.',
+  examFocus: 'SAA-C03 Guest Access rules:\n- Enable "Enable access to unauthenticated identities" in Identity Pool settings to support guest access.\n- Ensure the Unauthenticated IAM Role follows strict least-privilege (e.g. read-only access to specific public S3 buckets).\n- Guest identities can be merged into authenticated identities when a user eventually signs in.',
+  keyPoints: [
+    'Authenticated Identities: Signed-in users assigned the Authenticated IAM Role.',
+    'Unauthenticated Identities: Guest users assigned the Unauthenticated IAM Role.',
+    'Guest access enabled via Identity Pool setting ("Enable unauthenticated identities").',
+    'Provides unique Identity IDs for guest devices before sign-up.',
+    'Supports seamless identity migration when a guest user registers an account.'
+  ],
+  commonMistake: 'Enabling unauthenticated identities with an IAM role that grants full `s3:*` or `dynamodb:*` access, allowing anonymous internet users to read or delete private database records.',
+  example: 'Unauthenticated IAM Role Policy:\n`"Action": ["s3:GetObject"], "Resource": "arn:aws:s3:::news-app-public-articles/*"`',
+  sources: [
+    { title: 'Identity pools (federated identities) overview', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/identity-pools.html' }
+  ]
+});

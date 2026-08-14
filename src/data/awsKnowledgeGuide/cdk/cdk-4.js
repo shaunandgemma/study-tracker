@@ -1,3 +1,38 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cdk-4', topicId: 'topic-cdk', topicTitle: 'AWS CDK (Cloud Development Kit)', objectiveCode: 'Management', title: 'AWS CDK Infrastructure as Code', status: 'ready', plainEnglish: 'Infrastructure as code (IaC) means defining and managing cloud infrastructure in source code instead of configuring it manually in a console. AWS CDK is an open-source framework for IaC: you write an application in a supported general-purpose language, use reusable building blocks called constructs, organize them into stacks, and deploy through AWS CloudFormation.', whyItMatters: 'IaC makes infrastructure changes reviewable, repeatable, and easier to test. A CDK application can keep infrastructure, configuration, and application assets under source control so teams can recreate approved environments instead of relying on undocumented manual setup.', workplaceExample: 'A team defines a web service, its network, storage, permissions, and monitoring in a TypeScript CDK app. Changes are peer-reviewed with the application code. A pipeline synthesizes and deploys the same stack definition to development and production accounts, with environment-specific values provided deliberately.', examFocus: 'CDK is not a direct replacement for CloudFormation: CDK code is synthesized into CloudFormation templates, and CloudFormation provisions the resources. A CDK app contains stacks, which correspond to CloudFormation stacks, and constructs, which are reusable cloud components. Use a supported language and the Construct Library to express infrastructure with programming features such as conditions, loops, and composition.', keyPoints: ['Infrastructure as code manages cloud resources from version-controlled definitions.', 'AWS CDK is an open-source IaC framework that deploys through AWS CloudFormation.', 'A CDK app contains one or more stacks.', 'A CDK stack represents an AWS CloudFormation stack.', 'Constructs are reusable building blocks that define cloud components.', 'CDK supports TypeScript, JavaScript, Python, Java, C#/.NET, and Go.'], commonMistake: 'Treating CDK source code as the deployed infrastructure hides the CloudFormation boundary. Review the synthesized template and deployment change set, understand CloudFormation update behavior, and keep manual console changes out of managed resources whenever possible.', example: 'Create a small CDK stack that defines an Amazon S3 bucket through a construct, then synthesize it before deployment. Expect the generated cloud assembly to contain a CloudFormation template describing the bucket. Verify the intended resource properties and security settings in the generated output before applying the change.', sources: [{ title: 'What is the AWS CDK?', url: 'https://docs.aws.amazon.com/cdk/v2/guide/home.html' }, { title: 'Learn AWS CDK core concepts', url: 'https://docs.aws.amazon.com/cdk/v2/guide/core-concepts.html' }, { title: 'Best practices for AWS CDK', url: 'https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html' }] });
+export default createAwsKnowledgeGuide({
+  "id": "cdk-4",
+  "topicId": "topic-cdk",
+  "topicTitle": "AWS CDK (Cloud Development Kit)",
+  "objectiveCode": "Management",
+  "title": "AWS CDK Infrastructure as Code",
+  "status": "ready",
+  "plainEnglish": "AWS Cloud Development Kit (AWS CDK) is an open-source software development framework that lets you define and provision cloud infrastructure using familiar modern programming languages (such as TypeScript, Python, Java, C#, and Go) instead of writing raw JSON or YAML configuration files. Behind the scenes, the AWS CDK synthesizes your high-level code into standard AWS CloudFormation templates and deploys them reliably using CloudFormation's deployment engine.",
+  "whyItMatters": "Raw JSON/YAML templates can span thousands of lines and lack programming features like loops, conditionals, type-safety, code completion, unit testing, and inheritance. With AWS CDK, developers and architects can create reusable, object-oriented cloud components (Constructs), share company-wide security standards as libraries (npm/pip packages), and test infrastructure using standard software testing frameworks (Jest, pytest).",
+  "workplaceExample": "A platform engineering team builds a custom internal TypeScript library named `@corp/secure-microservice` that bundles an ECS Fargate cluster, Application Load Balancer, VPC subnets, and IAM least-privilege roles adhering to corporate security guardrails. Product teams consume this construct in just 5 lines of TypeScript CDK code to launch compliant microservices across AWS accounts.",
+  "examFocus": "For SAA-C03, understand CDK fundamentals: (1) CDK code is written in general-purpose languages (TypeScript, Python, Java, C#, Go). (2) CDK does NOT deploy infrastructure directly; it compiles (synthesizes) down to AWS CloudFormation templates. (3) Key hierarchy: App -> Stacks (map 1:1 with CloudFormation stacks) -> Constructs (reusable cloud components). (4) Requires `cdk bootstrap` before deploying assets to provision S3 buckets and IAM roles used by CDK.",
+  "keyPoints": [
+    "Open-source IaC framework supporting TypeScript, Python, Java, C# (.NET), and Go.",
+    "Synthesizes high-level programming constructs into standard AWS CloudFormation templates.",
+    "Hierarchy: App (root) contains one or more Stacks, which contain reusable Constructs.",
+    "Construct levels: L1 (raw Cfn resources), L2 (AWS curated with defaults), L3 (solution patterns).",
+    "Enables object-oriented design, loops, conditions, code completion, and unit testing for IaC.",
+    "Requires `cdk bootstrap` in an AWS account/Region to store deployment assets and templates."
+  ],
+  "commonMistake": "Thinking AWS CDK replaces CloudFormation. CDK is built ON TOP OF CloudFormation; CloudFormation remains the underlying deployment, rollback, and state management engine that actually provisions the AWS resources.",
+  "example": "// Example TypeScript CDK Stack defining an encrypted S3 bucket and DynamoDB table:\nimport * as cdk from 'aws-cdk-lib';\nimport * as s3 from 'aws-cdk-lib/aws-s3';\nimport * as dynamodb from 'aws-cdk-lib/aws-dynamodb';\nimport { Construct } from 'constructs';\n\nexport class WebAppStack extends cdk.Stack {\n  constructor(scope: Construct, id: string, props?: cdk.StackProps) {\n    super(scope, id, props);\n\n    const bucket = new s3.Bucket(this, 'DataBucket', {\n      encryption: s3.BucketEncryption.S3_MANAGED,\n      removalPolicy: cdk.RemovalPolicy.RETAIN,\n      versioned: true,\n    });\n  }\n}",
+  "sources": [
+    {
+      "title": "What is the AWS Cloud Development Kit (AWS CDK)?",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/home.html"
+    },
+    {
+      "title": "AWS CDK Core Concepts",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/core-concepts.html"
+    },
+    {
+      "title": "Best Practices for Developing Cloud Applications with AWS CDK",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html"
+    }
+  ]
+});

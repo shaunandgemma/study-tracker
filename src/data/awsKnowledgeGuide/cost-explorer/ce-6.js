@@ -1,3 +1,33 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'ce-6', topicId: 'topic-cost-explorer', topicTitle: 'AWS Cost Explorer', objectiveCode: 'Management', title: 'Cost Forecasting', status: 'ready', plainEnglish: 'A Cost Explorer forecast estimates likely future cost from available historical billing patterns and the selected chart scope. It is useful for planning, but it cannot know about future launches, shutdowns, pricing changes, or unusual workload events that are not represented in the input data.', whyItMatters: 'Forecasts help teams notice a likely budget issue early enough to investigate demand, usage growth, and optimization options.', workplaceExample: 'A team sees that its forecast for the current month is above the planned spend. It groups the view by service, identifies growth in a test environment, and confirms whether the environment should be stopped or the plan revised.', examFocus: 'Forecasts are estimates based on Cost Explorer data, not a prevention mechanism and not a commitment. Change the filter or grouping and you change the forecast scope. Pair forecasts with AWS Budgets for thresholds and notifications.', keyPoints: ['Cost Explorer forecasts estimate future cost.', 'Forecast scope follows the selected chart configuration.', 'Estimates rely on available historical billing data.', 'Unplanned workload changes can make forecasts inaccurate.', 'Budgets provide separate threshold and alert capabilities.'], commonMistake: 'Assuming a forecast will automatically stop spending is incorrect. Use budget alerts, governance controls, and workload-level controls when action is required.', example: 'Enable a forecast for a filtered test account and compare it with its planned monthly amount. Expect an estimate based on the selected data. Verify a new large workload would require fresh analysis because it may not be reflected yet.', sources: [{ title: 'Analyzing your costs and usage with AWS Cost Explorer', url: 'https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html' }, { title: 'Visualizing and analyzing cost and usage data using Dashboards', url: 'https://docs.aws.amazon.com/cost-management/latest/userguide/dashboards.html' }] });
+export default createAwsKnowledgeGuide({
+  "id": "ce-6",
+  "topicId": "topic-cost-explorer",
+  "topicTitle": "AWS Cost Explorer",
+  "objectiveCode": "Management",
+  "title": "Cost Forecasting",
+  "status": "ready",
+  "plainEnglish": "Cost Forecasting in AWS Cost Explorer uses machine learning (ML) models trained on your historical usage and spending patterns to predict your future AWS bills up to 12 months ahead. Cost Explorer automatically calculates prediction confidence intervals (e.g. 80% confidence upper and lower bounds), adjusting for day-of-week trends and ongoing growth rates.",
+  "whyItMatters": "Cloud billing surprises often happen at the end of the month when invoices arrive. Cost Forecasting allows finance and engineering managers to see where their spend is headed mid-month, enabling them to make proactive adjustments before overspending their allocated budget.",
+  "workplaceExample": "On day 10 of the billing cycle, a startup's engineering director checks the Cost Explorer forecast. Based on early-month database traffic, the forecast projects an end-of-month spend of $18,000 against a $12,000 budget. The director discovers unindexed queries overloading Aurora read replicas and deploys query caching, bringing the forecasted total back to $11,500.",
+  "examFocus": "For SAA-C03, know the key parameters of Cost Explorer Forecasting: (1) Forecasts up to 12 months into the future. (2) Requires at least a full current billing cycle of historical data to generate accurate forecasts. (3) You can forecast filtered scopes (e.g. forecast spend for Amazon EC2 in `us-east-1` for a specific Linked Account). (4) Prediction interval (e.g. 80%) shows expected variance.",
+  "keyPoints": [
+    "Uses machine learning to forecast future AWS costs and usage up to 12 months ahead.",
+    "Calculates prediction intervals (upper and lower bounds) based on historical variance.",
+    "Supports forecasting for specific services, linked accounts, tags, and Regions.",
+    "Requires sufficient historical data (at least 1 full billing cycle) for reliable models.",
+    "Integrates with AWS Budgets to alert when forecasted spend exceeds budget limits."
+  ],
+  "commonMistake": "Assuming Cost Explorer forecasting accounts for future planned workload changes. Forecasting is purely statistical extrapolation based on past usage; it cannot anticipate a planned new product launch next week unless you account for it manually.",
+  "example": "# Retrieve cost forecast for the remainder of the current month via AWS CLI:\naws ce get-cost-forecast \\\n  --time-period Start=2026-08-15,End=2026-08-31 \\\n  --metric UNBLENDED_COST \\\n  --granularity MONTHLY \\\n  --prediction-interval-level 80",
+  "sources": [
+    {
+      "title": "Forecasting with Cost Explorer",
+      "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/ce-forecast.html"
+    },
+    {
+      "title": "Analyzing Your Costs and Usage with AWS Cost Explorer",
+      "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html"
+    }
+  ]
+});

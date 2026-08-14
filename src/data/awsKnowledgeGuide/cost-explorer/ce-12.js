@@ -1,3 +1,34 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'ce-12', topicId: 'topic-cost-explorer', topicTitle: 'AWS Cost Explorer', objectiveCode: 'Management', title: 'Cost Allocation Tags', status: 'ready', plainEnglish: 'Cost allocation tags are resource labels that AWS Billing activates for cost reporting. After activation and when supported resources are tagged, Cost Explorer can filter or group costs by tag key and value, such as project, owner, environment, or cost center.', whyItMatters: 'Tags create a shared allocation language across teams, allowing cost reports to match products, environments, and business ownership rather than only AWS technical boundaries.', workplaceExample: 'An organization requires Project, Environment, and Owner tags. Finance groups Cost Explorer by Project, while engineering filters to Production and finds untagged resources that need remediation.', examFocus: 'Applying a resource tag is not sufficient by itself: activate the tag for cost allocation and allow time for billing data to reflect it. Untagged resources are not assigned to a project tag value. Tags can be used as filters or grouping dimensions.', keyPoints: ['Cost allocation tags are activated for billing analysis.', 'Tags can filter and group Cost Explorer data.', 'Resources need consistent supported-resource tagging.', 'Untagged cost is not allocated to a tag value.', 'Tag data can take time to appear in billing analysis.'], commonMistake: 'Assuming a new tag retroactively labels all historical charges can distort reports. Track the activation date and report untagged cost separately during adoption.', example: 'Activate a Project cost-allocation tag in a test account, tag supported test resources consistently, and later group Cost Explorer by Project. Expect tagged costs to appear under their values and any untagged charges to remain outside those project values.', sources: [{ title: 'Filtering the data that you want to view', url: 'https://docs.aws.amazon.com/cost-management/latest/userguide/ce-filtering.html' }, { title: 'Reading the Cost Explorer data table', url: 'https://docs.aws.amazon.com/cost-management/latest/userguide/ce-table.html' }] });
+export default createAwsKnowledgeGuide({
+  "id": "ce-12",
+  "topicId": "topic-cost-explorer",
+  "topicTitle": "AWS Cost Explorer",
+  "objectiveCode": "Management",
+  "title": "Cost Allocation Tags",
+  "status": "ready",
+  "plainEnglish": "Cost Allocation Tags are key-value metadata labels assigned to AWS resources (such as `Environment: Production`, `CostCenter: 1042`, or `Project: Atlas`) that are explicitly activated in the AWS Billing and Cost Management console. Once activated, AWS organizes your billing data using these tag keys, enabling you to filter and group costs in Cost Explorer, AWS Budgets, and Cost and Usage Reports (CUR).",
+  "whyItMatters": "Multiple applications, development squads, and microservices often share the same AWS account or VPC. Without Cost Allocation Tags, all charges are blended into a single unassigned bill, making it impossible to attribute costs to specific applications, cost centers, or product owners.",
+  "workplaceExample": "A company activates the `CostCenter` and `Environment` tags. All CloudFormation and Terraform modules are updated to require these tags. When the monthly AWS bill is generated, Cost Explorer groups spend by `CostCenter`, allowing the accounting team to automatically invoice the correct engineering department with zero manual spreadsheet reconciliation.",
+  "examFocus": "For SAA-C03, remember these crucial tag rules: (1) Applying a tag to an EC2 or S3 resource does NOT automatically make it a cost allocation tag; you MUST explicitly activate it in the Billing and Cost Management console. (2) Two types: AWS-Generated tags (e.g. `aws:createdBy`, prefixed with `aws:`) and User-Defined tags (prefixed with `user:`). (3) Cost allocation tags only apply to costs incurred AFTER activation—they do NOT apply retroactively to past bills.",
+  "keyPoints": [
+    "Key-value metadata labels used to organize and track AWS costs on a detailed level.",
+    "Must be explicitly activated in the AWS Billing and Cost Management console.",
+    "Two types: AWS-Generated tags (`aws:createdBy`) and User-Defined tags.",
+    "Tags only apply to costs incurred AFTER activation; they are NOT retroactive.",
+    "Enables filtering and grouping in Cost Explorer, AWS Budgets, and Cost and Usage Reports.",
+    "Enforce tagging compliance using AWS Organizations Tag Policies and SCPs."
+  ],
+  "commonMistake": "Expecting newly activated Cost Allocation Tags to categorize previous months of spending. Cost allocation tags are forward-looking only; they start tracking costs from the moment they are activated in the Billing console forward.",
+  "example": "# Query costs grouped by a User-Defined Cost Allocation Tag ('user:Project'):\naws ce get-cost-and-usage \\\n  --time-period Start=2026-07-01,End=2026-07-31 \\\n  --granularity MONTHLY \\\n  --metrics \"UnblendedCost\" \\\n  --group-by Type=TAG,Key=\"user:Project\"",
+  "sources": [
+    {
+      "title": "Using Cost Allocation Tags in AWS Billing",
+      "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/cost-alloc-tags.html"
+    },
+    {
+      "title": "Activating User-Defined Cost Allocation Tags",
+      "url": "https://docs.aws.amazon.com/cost-management/latest/userguide/activate-tags.html"
+    }
+  ]
+});

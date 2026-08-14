@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-18', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Cognito with API Gateway', status: 'ready', plainEnglish: 'API Gateway REST APIs can use a Cognito user-pool authorizer to validate a user-pool token before a request reaches an API method. The client signs in to Cognito, receives a token, and sends it in the configured Authorization header. API Gateway checks the token against the selected user pool and method authorization settings.', whyItMatters: 'This centralizes API authentication at the gateway, so protected backend integrations receive requests only after a valid user-pool token passes the authorizer.', workplaceExample: 'A mobile app signs in through Cognito and sends its access token to protected REST endpoints. API Gateway uses a user-pool authorizer and required scopes on sensitive methods before invoking the backend.', examFocus: 'A Cognito user-pool authorizer protects API Gateway REST API methods. Identity tokens are used for identity-claim authorization; access tokens are used for custom scopes. Identity pools and IAM authorization are a different pattern for AWS credential-based API access.', keyPoints: ['API Gateway REST APIs can use Cognito user-pool authorizers.', 'Clients sign in first and send a Cognito token in the Authorization header.', 'The authorizer must be associated with selected API methods.', 'Access tokens support scope-based authorization.', 'Identity pools are separate from user-pool authorizers.'], commonMistake: 'Adding an authorizer but forgetting to attach it to a method or redeploy the API leaves the intended protection inactive. Test every deployed method with valid, missing, expired, and wrong-scope tokens.', example: 'Create a test REST API method with a Cognito user-pool authorizer, deploy it, and call it with a valid test token. Verify the valid request passes and a request with no token or an invalid token is rejected before backend processing.', sources: [{ title: 'Control access to REST APIs using Amazon Cognito user pools as an authorizer', url: 'https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html' }, { title: 'Integrate a REST API with an Amazon Cognito user pool', url: 'https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-18',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Cognito with API Gateway',
+  status: 'ready',
+  plainEnglish: 'Amazon API Gateway integrates directly with Amazon Cognito User Pools using a built-in Cognito User Pool Authorizer. When a client application makes an HTTP request to an API Gateway endpoint, it includes the Cognito JWT token (ID Token or Access Token) in the `Authorization` header. API Gateway automatically validates the cryptographic signature and expiration of the JWT token against the Cognito User Pool before forwarding the request to backend Lambda functions or HTTP endpoints.',
+  whyItMatters: 'Using API Gateway Cognito Authorizers offloads JWT token validation entirely to API Gateway. Backend AWS Lambda functions do not need to parse or verify tokens, saving compute execution time and simplifying backend code.',
+  workplaceExample: 'A serverless microservice exposes endpoints on Amazon API Gateway. Every route is protected by a Cognito User Pool Authorizer. If an unauthenticated request arrives without a valid Cognito JWT token, API Gateway automatically blocks the request with a `401 Unauthorized` HTTP status without invoking the Lambda function.',
+  examFocus: 'SAA-C03 API Gateway + Cognito Authorizer details:\n- API Gateway Cognito User Pool Authorizer automatically validates Cognito JWT tokens (ID Token or Access Token).\n- Offloads authentication overhead from Lambda functions.\n- Claims from the validated token (such as `sub`, `email`, `cognito:groups`) are automatically passed to Lambda in `event.requestContext.authorizer.claims`.\n- Zero code required in Lambda to validate tokens.',
+  keyPoints: [
+    'Native integration protecting API Gateway REST and HTTP APIs.',
+    'API Gateway validates Cognito JWT token signatures and expiration automatically.',
+    'Rejects unauthorized requests with 401 Unauthorized before invoking Lambda.',
+    'Passes user claims to Lambda via `event.requestContext.authorizer.claims`.',
+    'Supports fine-grained OAuth 2.0 scope authorization on API routes.'
+  ],
+  commonMistake: 'Writing manual JWT token verification code inside every AWS Lambda function instead of attaching a native Cognito User Pool Authorizer to Amazon API Gateway.',
+  example: 'Accessing User Claims in Lambda (Node.js):\n`const userId = event.requestContext.authorizer.claims.sub;`\n`const email = event.requestContext.authorizer.claims.email;`',
+  sources: [
+    { title: 'Control access to REST APIs using Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html' }
+  ]
+});

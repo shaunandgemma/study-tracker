@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-11', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Password Policies', status: 'ready', plainEnglish: 'A user-pool password policy sets requirements for locally managed user passwords, such as minimum length, character requirements, temporary-password validity, and password history where configured. It applies to the user-pool password authentication experience, not to an external federated identity provider password.', whyItMatters: 'A consistent password policy reduces weak-password risk and gives administrators a predictable account onboarding and recovery baseline.', workplaceExample: 'A customer application requires a minimum-length password and a limited temporary-password period for administrator-created accounts. Federated workforce users continue to follow their corporate identity provider policy instead.', examFocus: 'Password policy is configured on a user pool and applies to local user-pool passwords. It works alongside, not instead of, MFA and risk controls. User pools can also support other authentication methods, so design the policy with the chosen sign-in flows.', keyPoints: ['Password policy applies to local user-pool passwords.', 'Policies can set length and character requirements.', 'Temporary password validity is configurable.', 'Federated-provider passwords are controlled by that provider.', 'MFA adds a separate authentication factor.'], commonMistake: 'Assuming a Cognito password policy governs Google, SAML, or OIDC provider passwords is incorrect. Set comparable controls at each upstream identity provider.', example: 'Set a test pool password policy, create a local test account, and attempt passwords that are below and above the requirement. Verify Cognito rejects the weak choice while allowing the compliant test password, without logging it.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Common Amazon Cognito terms and concepts', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-terms.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-11',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Password Policies',
+  status: 'ready',
+  plainEnglish: 'Cognito Password Policies enforce security rules on user passwords created in a User Pool. You can set minimum password length (between 6 and 99 characters) and require combinations of uppercase letters, lowercase letters, numbers, and special characters. You can also specify temporary password expiration times for admin-created users.',
+  whyItMatters: 'Weak passwords (like `123456` or `password`) are easily cracked by automated brute-force scripts. Enforcing robust password complexity requirements protects user accounts from unauthorized access.',
+  workplaceExample: 'An enterprise security team configures its User Pool password policy: Minimum length 12 characters, requiring at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special symbol (`!@#$%^&*`). User registration attempts with weak passwords are automatically rejected by Cognito.',
+  examFocus: 'SAA-C03 Password Policy parameters:\n- Minimum length: 6 to 99 characters.\n- Character requirements: Require Uppercase, Require Lowercase, Require Numbers, Require Symbols.\n- Temporary password validity period: Configurable in days (default 7 days).\n- Advanced Security Features: Adds compromised credential checking and adaptive risk-based authentication.',
+  keyPoints: [
+    'Enforces minimum length (6-99 characters) and character complexity rules.',
+    'Protects accounts against brute-force and dictionary attacks.',
+    'Configures temporary password expiration windows for new users.',
+    'Integrates with Advanced Security Features for compromised credential detection.',
+    'Evaluated automatically by Cognito during user sign-up and password reset.'
+  ],
+  commonMistake: 'Relying solely on frontend Javascript password checks without configuring Cognito Password Policies. Clients can bypass frontend validation, so Cognito server-side policies are mandatory.',
+  example: 'User Pool Password Policy Config:\n`PasswordPolicy: { MinimumLength: 12, RequireUppercase: true, RequireLowercase: true, RequireNumbers: true, RequireSymbols: true, TemporaryPasswordValidityDays: 3 }`',
+  sources: [
+    { title: 'Adding user pool password requirements', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-policies.html' }
+  ]
+});

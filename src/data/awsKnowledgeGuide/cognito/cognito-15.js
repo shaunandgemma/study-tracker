@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-15', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'SAML and OIDC Federation', status: 'ready', plainEnglish: 'Cognito user pools can federate sign-in to enterprise identity providers that use SAML 2.0 or OpenID Connect (OIDC). Cognito acts as a relying party, accepts the provider authentication result, maps approved attributes into a user-pool profile, and issues Cognito tokens to the application.', whyItMatters: 'Enterprise federation enables single sign-on while the application remains integrated with a single user-pool issuer and does not have to implement every corporate identity protocol itself.', workplaceExample: 'A business application redirects employees to the company SAML identity provider. After the employee signs in, Cognito maps their approved email and department attributes and returns Cognito tokens to the application.', examFocus: 'SAML and OIDC are federation protocols; they are different from an identity pool. Configure trusted provider metadata or discovery information, exact assertion-consumer or redirect endpoints, identifiers, requested attributes, and mappings. Validate the end-to-end flow and plan how attributes and groups drive authorization.', keyPoints: ['User pools support SAML 2.0 and OIDC federation.', 'Cognito acts as a relying party to the external identity provider.', 'Cognito maps approved provider attributes to user-pool attributes.', 'Applications receive Cognito-issued tokens after federation.', 'Identity-pool AWS credentials require separate configuration.'], commonMistake: 'Mapping every upstream attribute by default can expose unnecessary personal or authorization data. Request and map only attributes the application needs, then apply least privilege to authorization rules.', example: 'Integrate a test SAML provider with one test user and map a required email attribute. Verify sign-in reaches the approved assertion-consumer path, creates the intended profile, and rejects an assertion with missing required information.', sources: [{ title: 'Using SAML identity providers with a user pool', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-saml-idp.html' }, { title: 'Identity provider and relying party endpoints', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-15',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'SAML and OIDC Federation',
+  status: 'ready',
+  plainEnglish: 'SAML 2.0 and OIDC (OpenID Connect) Federation allows enterprise employees to sign in to your AWS applications using their corporate Single Sign-On (SSO) identity provider (such as Microsoft Entra ID / Azure AD, Okta, Ping Identity, or Active Directory Federation Services). Cognito User Pools integrate with enterprise IdPs via SAML 2.0 or OIDC protocols to validate enterprise assertions and map employee attributes into Cognito JWT tokens.',
+  whyItMatters: 'Enterprise customers require Single Sign-On (SSO) integration. SAML/OIDC federation enables employees to log into cloud apps using their corporate credentials while IT administrators maintain central control over account provisioning and de-provisioning.',
+  workplaceExample: 'A B2B enterprise software provider integrates its Cognito User Pool with Okta via SAML 2.0. Corporate clients log into the application using their Okta corporate credentials without creating separate passwords in the SaaS app.',
+  examFocus: 'SAA-C03 Enterprise Federation comparison:\n- SAML 2.0: XML-based enterprise federation (Azure AD, Okta, ADFS). Requires uploading SAML Metadata XML document or URL to Cognito.\n- OIDC (OpenID Connect): JSON/OAuth 2.0-based federation (Auth0, custom OIDC providers). Requires Issuer URL, Client ID, and Client Secret.\n- Cognito maps enterprise SAML/OIDC attributes to user pool attributes automatically.',
+  keyPoints: [
+    'Enables Single Sign-On (SSO) for enterprise users via SAML 2.0 or OIDC.',
+    'Integrates with Azure AD, Okta, ADFS, Ping Identity, and Auth0.',
+    'Maps enterprise SAML assertions / OIDC claims to Cognito user attributes.',
+    'Centralizes enterprise identity governance and automated access revocation.',
+    'Returns standard Cognito JWT tokens to the client application.'
+  ],
+  commonMistake: 'Forgetting to map SAML assertion attributes (such as `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`) to Cognito user pool attributes, causing sign-in attempts to fail with missing required attribute errors.',
+  example: 'SAML Provider Setup in Cognito:\nMetadata Source: `https://login.microsoftonline.com/tenant-id/federationmetadata/2007-06/federationmetadata.xml`\nAttribute Mapping: SAML `mail` -> Cognito `email`.',
+  sources: [
+    { title: 'Adding SAML identity providers to a user pool', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-saml-idp.html' }
+  ]
+});

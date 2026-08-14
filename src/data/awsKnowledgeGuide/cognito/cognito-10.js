@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-10', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Multi-Factor Authentication', status: 'ready', plainEnglish: 'Multi-factor authentication (MFA) requires an additional proof after a primary sign-in factor, such as a password. Cognito user pools can require or make optional supported MFA factors, including time-based one-time passwords and other configured methods. The user pool and each user configuration determine when a challenge occurs.', whyItMatters: 'MFA makes a stolen password less useful because an attacker also needs the second factor or approved recovery path.', workplaceExample: 'An administrator portal requires MFA. After the password check, Cognito prompts enrolled users for their configured authenticator-code challenge before it issues tokens.', examFocus: 'MFA is a user-pool authentication setting, not an IAM policy. Choose required, optional, or disabled based on the use case and configure a safe enrollment and recovery journey. Do not confuse an MFA challenge with app authorization after the user signs in.', keyPoints: ['MFA adds a factor after primary authentication.', 'Cognito user pools can require or make MFA optional.', 'MFA configuration affects sign-in challenges.', 'Enrollment and account recovery need deliberate design.', 'MFA improves protection against password compromise.'], commonMistake: 'Enabling required MFA without testing enrollment and recovery can lock out legitimate users. Test new-user enrollment, existing-user migration, lost-device support, and administrator access paths.', example: 'In a test pool, require an authenticator-app MFA factor for one test account. Sign in with the password and then the time-based code. Verify the password alone is insufficient and recovery procedures follow the intended policy.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Common Amazon Cognito terms and concepts', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-terms.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-10',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Multi-Factor Authentication',
+  status: 'ready',
+  plainEnglish: 'Amazon Cognito Multi-Factor Authentication (MFA) adds a second layer of security to user sign-in by requiring a secondary verification factor in addition to a password. Cognito supports two MFA methods:\n1. Time-based One-Time Password (TOTP): Authenticator apps such as Google Authenticator, Authy, or 1Password.\n2. SMS Text Message: Sending a 6-digit passcode to the user\'s verified phone number via Amazon SNS.',
+  whyItMatters: 'Passwords alone are vulnerable to phishing, credential stuffing, and dictionary attacks. MFA drastically reduces account compromise risks by requiring physical possession of a mobile device or authenticator app.',
+  workplaceExample: 'A healthcare portal configures Cognito User Pools with Required MFA. When a doctor logs in with their password, Cognito prompts for a 6-digit TOTP code from their Google Authenticator app before issuing JWT tokens.',
+  examFocus: 'SAA-C03 MFA Configuration modes:\n- OFF: MFA is disabled.\n- OPTIONAL: Users can choose whether to enable MFA on their individual profiles.\n- REQUIRED: All users MUST configure and use MFA to sign in.\n- Supported factors: TOTP software tokens and SMS text messages.',
+  keyPoints: [
+    'Provides multi-factor authentication for enhanced account security.',
+    'Supports TOTP authenticator apps (Google Authenticator, Authy) and SMS text messages.',
+    'MFA modes: OFF, OPTIONAL, or REQUIRED for all users.',
+    'Uses Amazon SNS under the hood for SMS message delivery.',
+    'Required for strict regulatory compliance (PCI-DSS, HIPAA, SOC 2).'
+  ],
+  commonMistake: 'Configuring SMS MFA without allocating sufficient Amazon SNS spending limits for international SMS delivery, causing MFA SMS messages to fail during peak user sign-ins.',
+  example: 'MFA Challenge Response during Sign-In:\n`ChallengeName: "SOFTWARE_TOKEN_MFA"`\n`ChallengeResponses: { "USERNAME": "doctor1", "SOFTWARE_TOKEN_MFA_CODE": "654321" }`',
+  sources: [
+    { title: 'Adding multi-factor authentication (MFA) to a user pool', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-mfa.html' }
+  ]
+});

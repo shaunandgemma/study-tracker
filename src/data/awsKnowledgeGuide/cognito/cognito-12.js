@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-12', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'JWT ID, Access and Refresh Tokens', status: 'ready', plainEnglish: 'After user-pool authentication, Cognito can issue three token types. An ID token is about the signed-in user and contains identity claims. An access token authorizes access to protected user-pool resources and scopes. A refresh token is used to obtain new ID and access tokens without a full sign-in. ID and access tokens are JSON web tokens (JWTs).', whyItMatters: 'Using the correct token type prevents authorization mistakes and supports session renewal without continually requesting a password.', workplaceExample: 'A browser uses the ID token to display the signed-in profile, sends an access token to a protected API that checks scopes, and uses the refresh process according to its secure session design when short-lived tokens expire.', examFocus: 'Validate a JWT signature and claims before trusting it. Check the issuer, token use, expiry, and the audience or client-related claim appropriate to the token. Do not use an ID token as a general API authorization substitute when an access token and scopes are required.', keyPoints: ['ID tokens carry identity claims.', 'Access tokens support authorization and scopes.', 'Refresh tokens obtain new ID and access tokens.', 'ID and access tokens are JWTs.', 'Resource servers must validate token signature and claims.'], commonMistake: 'Decoding a JWT without cryptographic validation only reads untrusted data. Obtain Cognito signing keys from the documented issuer discovery information and validate before authorization.', example: 'Have a test app sign in and inspect token claims without exposing token values. Send the access token to an API configured for it and verify an altered or expired token is denied. Confirm the API does not accept the wrong token use.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Identity provider and relying party endpoints', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-12',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'JWT ID, Access and Refresh Tokens',
+  status: 'ready',
+  plainEnglish: 'Upon successful authentication, Amazon Cognito User Pools issue three cryptographic JSON Web Tokens (JWTs):\n1. ID Token: Contains claims about the identity of the authenticated user (e.g. `sub`, `email`, `name`, `given_name`). Valid for 1 hour by default.\n2. Access Token: Contains granted OAuth 2.0 scopes and groups; used to authorize access to backend APIs and resources. Valid for 1 hour by default.\n3. Refresh Token: A long-lived token (valid for 30 days by default) used to request fresh ID and Access Tokens without forcing the user to re-enter their password.',
+  whyItMatters: 'JWT tokens enable stateless, scalable authentication across microservices. Backend services verify token signatures locally using Cognito\'s public JWKS (JSON Web Key Set) without making database calls for every API request.',
+  workplaceExample: 'A single-page web app authenticates with Cognito. It stores the Refresh Token securely and uses the Access Token in the `Authorization: Bearer <Access-Token>` header to call microservices behind API Gateway.',
+  examFocus: 'SAA-C03 Token Roles to memorize:\n- ID Token: Proves WHO the user is (contains user profile claims).\n- Access Token: Proves WHAT the user can do (contains OAuth scopes and Cognito groups).\n- Refresh Token: Obtains new ID/Access tokens when they expire.\n- API Gateway Cognito Authorizers validate Access Tokens or ID Tokens automatically.',
+  keyPoints: [
+    'Cognito issues 3 tokens: ID Token, Access Token, and Refresh Token.',
+    'ID Token contains user profile attributes (claims).',
+    'Access Token contains OAuth 2.0 scopes and Cognito user group memberships.',
+    'Refresh Token requests new ID/Access tokens without requiring re-authentication.',
+    'Tokens are cryptographically signed using RSA-256 and verified via JWKS URL.'
+  ],
+  commonMistake: 'Using the ID Token to authorize API Gateway scope endpoints. Access Tokens should be used for API authorization; ID Tokens are used for client-side user profile display.',
+  example: 'Verifying a Cognito JWT Token Signature:\nJWKS URL: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123/.well-known/jwks.json`',
+  sources: [
+    { title: 'Using tokens with user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html' }
+  ]
+});

@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-4', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Cognito User Pools', status: 'ready', plainEnglish: 'A Cognito user pool is a managed user directory for an application. It stores user profiles and supports sign-up, sign-in, recovery, multi-factor authentication, federation, and token issuance. Applications connect through app clients, which identify the application to the user pool.', whyItMatters: 'User pools provide an authentication foundation without building password storage, verification, and token issuance from scratch.', workplaceExample: 'A SaaS application keeps customer accounts in a user pool, gives its web application an app client, and lets the API validate the resulting tokens before returning tenant data.', examFocus: 'Choose a user pool when the need is application authentication and JWT tokens. A user pool is different from an identity pool, which exchanges authenticated identities for temporary AWS credentials and IAM roles. Plan attributes, sign-in options, MFA, recovery, app clients, and federation before production launch.', keyPoints: ['User pools are managed application user directories.', 'They support authentication and issue JSON web tokens.', 'App clients represent applications that use a user pool.', 'User pools can support local and federated users.', 'Identity pools serve a separate temporary AWS credential purpose.'], commonMistake: 'Using a user pool token as AWS credentials is incorrect. Use an identity pool and IAM roles when the client must access AWS services with temporary credentials.', example: 'Create a non-production user pool and app client, register a test user, then sign in. Expect Cognito to authenticate the user and return tokens for the application. Verify that no AWS permissions are implied merely by receiving those tokens.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Common Amazon Cognito terms and concepts', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-terms.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-4',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Cognito User Pools',
+  status: 'ready',
+  plainEnglish: 'Amazon Cognito User Pools is a fully managed user directory service that handles user registration, authentication, sign-in, multi-factor authentication (MFA), account recovery, and user attribute management for web and mobile applications. When users sign in through a User Pool, Cognito authenticates them and issues standard JSON Web Tokens (JWTs: ID Token, Access Token, Refresh Token).',
+  whyItMatters: 'Building user authentication systems from scratch requires securely hashing passwords, managing OAuth flows, building password reset pages, and maintaining user databases. User Pools handle user directory management and token issuance completely out of the box.',
+  workplaceExample: 'A mobile banking application uses Cognito User Pools as its user directory. Customers register with email and password, receive a 6-digit confirmation SMS code, and sign in. User Pools handle password hashing and issue JWT tokens for the mobile app.',
+  examFocus: 'SAA-C03 Core Concept:\n- User Pools = AUTHENTICATION (Who are you?).\n- Identity Pools = AUTHORIZATION (What AWS resources can you access?).\n- User Pools provide user directories, sign-up, sign-in, MFA, and return JWT tokens.\n- Supports social identity federation (Google, Facebook, Apple) and enterprise SAML/OIDC.',
+  keyPoints: [
+    'User directory providing sign-up, sign-in, MFA, and account recovery.',
+    'Handles user authentication and returns JWT tokens (ID, Access, Refresh tokens).',
+    'Supports custom user attributes and password security policies.',
+    'Integrates with external identity providers (Google, Apple, SAML 2.0, OIDC).',
+    'Provides built-in hosted UI for seamless browser sign-in.'
+  ],
+  commonMistake: 'Expecting Cognito User Pools to directly grant temporary AWS IAM credentials for S3 or DynamoDB access. User Pools only handle user authentication (JWTs). You must pair User Pools with Cognito Identity Pools to get AWS IAM credentials.',
+  example: 'User Pool Sign-In Response:\n`{`\n`  "IdToken": "eyJraWQiOiJ...",`\n`  "AccessToken": "eyJraWQiOiJ...",`\n`  "RefreshToken": "eyJjdHkiOiJ..."`\n`}`',
+  sources: [
+    { title: 'Amazon Cognito User Pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html' }
+  ]
+});

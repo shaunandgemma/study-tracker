@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-14', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Social Identity Provider Federation', status: 'ready', plainEnglish: 'Social identity provider federation lets a Cognito user pool redirect users to a supported social provider, such as Google, Facebook, Login with Amazon, or Sign in with Apple, then create or update a linked user-pool profile after successful authentication. Cognito issues its own tokens to the application.', whyItMatters: 'Federation reduces sign-up friction while keeping the application integrated with one user-pool token issuer and authorization model.', workplaceExample: 'A consumer application offers local email registration and Google sign-in. Both paths finish with Cognito user-pool tokens, so the API uses one validation path regardless of how the person authenticated.', examFocus: 'Social federation is user-pool authentication, not automatic AWS credential access. Configure the provider application, client ID and secret where required, allowed redirect URLs, attribute mapping, and the Cognito app client. Identity pools are separate if the client needs AWS credentials.', keyPoints: ['Social federation lets users authenticate with an external provider.', 'Cognito user pools issue the final application tokens.', 'Provider configuration includes redirect URLs and client settings.', 'Attribute mapping links provider data to user-pool attributes.', 'Identity pools are separate from user-pool federation.'], commonMistake: 'Assuming social login removes token validation is unsafe. The application should validate Cognito-issued tokens, not blindly trust data returned to the browser by an upstream provider.', example: 'Configure a test social provider and map only the required profile attributes. Sign in with a test provider account and verify Cognito creates or updates the intended user profile and returns tokens to only the registered callback URL.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Identity provider and relying party endpoints', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-14',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Social Identity Provider Federation',
+  status: 'ready',
+  plainEnglish: 'Social Identity Provider Federation allows users to sign in to your application using their existing social network accounts (such as Google, Facebook, Amazon, or Apple). Cognito User Pools act as an identity broker: when a user clicks "Sign in with Google", Cognito redirects them to Google for authentication, receives the social token, maps social attributes (name, email) to a Cognito user profile, and returns Cognito JWT tokens to your app.',
+  whyItMatters: 'Social federation eliminates sign-up friction. Users do not need to create or remember a new password for your application, leading to significantly higher user registration rates.',
+  workplaceExample: 'A consumer fitness app enables Social Federation with Google and Apple. Users sign in with 1 click using FaceID on Apple or their Google account. Cognito creates a mapped user record in the User Pool without storing a local password.',
+  examFocus: 'SAA-C03 Social Federation key points:\n- Supported Social IdPs: Google, Facebook, Amazon, Apple.\n- Cognito handles OAuth 2.0 token exchange and user attribute mapping automatically.\n- Returns standard Cognito JWT tokens to the client app regardless of which social provider was used.\n- Seamlessly pairs with Cognito Identity Pools for temporary AWS IAM credentials.',
+  keyPoints: [
+    'Allows users to sign in using Google, Facebook, Amazon, or Apple accounts.',
+    'Cognito acts as the identity broker, mapping social claims to User Pool attributes.',
+    'Eliminates password creation and reduces registration friction.',
+    'Client application receives standard Cognito JWT tokens upon successful sign-in.',
+    'Configured via App Client supported identity providers settings.'
+  ],
+  commonMistake: 'Writing custom backend code for Google and Facebook OAuth integration when Cognito User Pools native Social Federation handles provider token verification and profile creation out of the box.',
+  example: 'Social Provider Mapping in Cognito:\nGoogle Claim `email` -> Mapped to Cognito Attribute `email`.\nGoogle Claim `sub` -> Mapped to Cognito Attribute `username`.',
+  sources: [
+    { title: 'Adding social identity providers to a user pool', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-social-idp.html' }
+  ]
+});

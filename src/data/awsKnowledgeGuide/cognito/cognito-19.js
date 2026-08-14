@@ -1,3 +1,27 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-19', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Cognito User Pools vs Identity Pools', status: 'ready', plainEnglish: 'A user pool is a managed user directory that authenticates application users and issues JSON web tokens. An identity pool is a federation service that exchanges an authenticated or guest identity for temporary AWS credentials tied to IAM roles. They solve different problems and can work together.', whyItMatters: 'Choosing the right pool prevents insecure client credential designs and clarifies whether an API needs tokens for application access or a client needs IAM permissions for AWS services.', workplaceExample: 'A web app uses a user pool to sign customers in and send access tokens to its API. It also uses an identity pool only for a feature that uploads directly to S3 with tightly scoped temporary credentials.', examFocus: 'Choose user pools for sign-up, sign-in, federation, and JWTs. Choose identity pools for temporary AWS credentials and IAM roles. A user-pool token can be an input to an identity pool, but it does not itself grant AWS permissions. API Gateway user-pool authorizers validate user-pool tokens, while AWS_IAM authorization uses IAM credentials.', keyPoints: ['User pools authenticate users and issue JWTs.', 'Identity pools issue temporary AWS credentials.', 'Identity pools assign IAM roles to identities.', 'A user pool can be an identity provider for an identity pool.', 'Tokens alone do not grant AWS permissions.'], commonMistake: 'Using an identity pool when only application login is required adds unnecessary IAM complexity; using only a user pool when a browser needs direct S3 access leaves no temporary AWS credential mechanism. Select the service based on the required outcome.', example: 'For each test feature, state whether it needs application authentication, direct AWS service access, or both. Expect a user pool for login, an identity pool for temporary S3 credentials, and both only where the signed-in user must access AWS directly.', sources: [{ title: 'Common Amazon Cognito terms and concepts', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-terms.html' }, { title: 'Identity pools console overview', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/identity-pools.html' }, { title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-19',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Cognito User Pools vs Identity Pools',
+  status: 'ready',
+  plainEnglish: 'Amazon Cognito User Pools and Identity Pools serve two distinct but complementary purposes in cloud application security:\n- Cognito User Pools (Authentication - "Who are you?"): User directory service handling sign-up, sign-in, MFA, password reset, and social/SAML federation. Returns JSON Web Tokens (JWTs: ID Token, Access Token, Refresh Token).\n- Cognito Identity Pools (Authorization - "What can you do in AWS?"): Federated credential exchange service that accepts tokens (from User Pools, Google, Facebook, SAML/OIDC) and exchanges them for temporary AWS IAM security credentials (Access Key, Secret Key, Session Token) to access AWS services directly.',
+  whyItMatters: 'Confusing User Pools and Identity Pools is one of the most common mistakes in AWS architecture. Understanding when to use one or both is critical for designing secure web and mobile applications.',
+  workplaceExample: 'A mobile app uses BOTH services together: The app first authenticates the user against a Cognito User Pool to receive an ID Token. Next, it passes the ID Token to a Cognito Identity Pool, which returns temporary AWS IAM credentials allowing the mobile app to upload files directly to an S3 bucket.',
+  examFocus: 'SAA-C03 Architectural Decision Matrix:\n- Need user registration, login, email verification, MFA, social sign-in, or JWT tokens? -> Cognito User Pools.\n- Need temporary AWS IAM credentials for direct client access to S3, DynamoDB, or SQS? -> Cognito Identity Pools.\n- Best Practice Pattern: User Pool (Authentication) -> Passes JWT to Identity Pool (Authorization) -> Receives IAM Credentials -> Accesses S3/DynamoDB.',
+  keyPoints: [
+    'User Pools = Authentication (User Directory, Sign-In, MFA, JWT Tokens).',
+    'Identity Pools = Authorization (Temporary AWS IAM Credentials via STS).',
+    'User Pools return JWTs; Identity Pools return AWS Access Keys & Session Tokens.',
+    'Identity Pools support guest access (Unauthenticated Identities); User Pools require registration.',
+    'User Pools and Identity Pools are frequently paired together for end-to-end security.'
+  ],
+  commonMistake: 'Attempting to use Cognito User Pools alone to authorize direct client S3 file uploads without using an Identity Pool or a backend API Gateway proxy.',
+  example: 'Complete Cognito Architecture Pattern:\nUser signs in -> User Pool returns ID Token -> Client passes ID Token to Identity Pool -> Identity Pool assumes IAM Role -> Returns STS Credentials -> App uploads photo directly to S3.',
+  sources: [
+    { title: 'Amazon Cognito User Pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html' },
+    { title: 'Amazon Cognito Identity Pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-identity-pools.html' }
+  ]
+});

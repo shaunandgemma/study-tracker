@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-5', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'Cognito Identity Pools', status: 'ready', plainEnglish: 'A Cognito identity pool, also called federated identities, exchanges a verified application identity for temporary AWS credentials. It maps authenticated or guest users to IAM roles so an application can call permitted AWS services without embedding long-term access keys.', whyItMatters: 'It provides a safer way for browser and mobile applications to access AWS resources directly with short-lived, limited permissions.', workplaceExample: 'A photo application accepts a user-pool sign-in, exchanges that identity through an identity pool, and receives credentials for an IAM role that can upload only to that user’s allowed Amazon S3 prefix.', examFocus: 'Identity pools provide temporary AWS credentials through IAM roles; user pools authenticate users and issue application tokens. An identity pool can accept a user pool or other supported identity provider as its source. Configure both the role trust policy and the role permission policy.', keyPoints: ['Identity pools issue temporary AWS credentials.', 'They map identities to IAM roles.', 'They can use user pools and other identity providers.', 'Authenticated and guest identities can receive different roles.', 'Temporary credentials are limited by IAM policies.'], commonMistake: 'Giving an identity-pool role broad account permissions defeats the purpose of temporary credentials. Restrict each role to the exact resources and actions its client requires.', example: 'Configure a test identity pool with a user pool as a provider and an authenticated IAM role with read-only access to one test bucket prefix. After sign-in, verify credentials can read only that prefix and cannot access another prefix.', sources: [{ title: 'Identity pools console overview', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/identity-pools.html' }, { title: 'Getting credentials', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/getting-credentials.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-5',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'Cognito Identity Pools',
+  status: 'ready',
+  plainEnglish: 'Amazon Cognito Identity Pools (also known as Federated Identities) authorize users by exchanging authentication tokens (from Cognito User Pools, Google, Facebook, Apple, or SAML/OIDC) for temporary, limited-privilege AWS IAM security credentials (Access Key, Secret Key, Session Token). This allows mobile or web apps to access AWS services (like S3 or DynamoDB) directly.',
+  whyItMatters: 'Without Identity Pools, client applications would have to proxy every file upload or database read through a backend API, or hardcode master AWS access keys inside client apps (which is an extreme security risk). Identity Pools grant temporary scoped IAM credentials directly to end users.',
+  workplaceExample: 'A photo-sharing mobile application uses an Identity Pool. After a user signs in via Google, the mobile app passes the Google ID token to the Identity Pool, which exchanges it for temporary IAM credentials with permissions to upload photos to `s3://my-photo-bucket/user-id/`.',
+  examFocus: 'SAA-C03 Core Concept:\n- Identity Pools = AUTHORIZATION & AWS CREDENTIALS.\n- Identity Pools issue temporary AWS IAM credentials (`STS:AssumeRoleWithWebIdentity`).\n- Supports both Authenticated Users (signed in via User Pool, Google, Facebook, SAML) and Unauthenticated Users (guest access).\n- Assigns distinct IAM roles for authenticated and guest users.',
+  keyPoints: [
+    'Exchanges identity tokens for temporary AWS IAM security credentials.',
+    'Provides direct client access to AWS services (S3, DynamoDB, SQS).',
+    'Supports federated authentication (Cognito User Pools, Social, SAML, OIDC).',
+    'Supports guest access via Unauthenticated Identity IAM Roles.',
+    'Uses AWS STS under the hood for short-lived credentials.'
+  ],
+  commonMistake: 'Hardcoding static IAM Access Keys inside a mobile app to allow photo uploads to S3 instead of using a Cognito Identity Pool to retrieve temporary credentials.',
+  example: 'Identity Pool Credential Flow:\nClient App -> Authenticates with Google -> Passes ID Token to Identity Pool -> Receives Temporary AWS Credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN) -> Uploads directly to S3.',
+  sources: [
+    { title: 'Amazon Cognito Identity Pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-identity-pools.html' }
+  ]
+});

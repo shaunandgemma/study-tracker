@@ -1,3 +1,37 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cdk-12', topicId: 'topic-cdk', topicTitle: 'AWS CDK (Cloud Development Kit)', objectiveCode: 'Management', title: 'CDK Synthesis to CloudFormation', status: 'ready', plainEnglish: 'Synthesis is the CDK step that runs your CDK application and produces a cloud assembly: deployment files that include an AWS CloudFormation template for each stack and any required deployment artifacts. The CDK CLI command cdk synth performs this conversion. For a single stack, it also displays a YAML template in the terminal by default; the generated assembly is stored in cdk.out.', whyItMatters: 'Synthesis is a safe checkpoint between writing infrastructure code and creating or changing AWS resources. It lets a team inspect what CDK actually generated, find synthesis errors early, and review the CloudFormation resources and properties that CloudFormation will manage.', workplaceExample: 'Before merging an infrastructure change, an engineer runs synthesis in continuous integration. The review compares the generated template and deployment diff with the intended change, catching an unexpected security-group rule before the CloudFormation deployment reaches a shared account.', examFocus: 'cdk synth produces the CloudFormation template and deployment artifacts; it does not itself provision resources. CDK deploy uses the synthesized cloud assembly to deploy through CloudFormation. With multiple stacks, CDK can synthesize all stacks or a named stack, and the assembly includes templates and referenced assets. Bootstrapping prepares an environment with resources that a synthesized deployment may reference.', keyPoints: ['Synthesis converts CDK stacks into CloudFormation templates and deployment artifacts.', 'The output is called a cloud assembly.', 'cdk synth runs the CDK app and performs basic synthesis work.', 'The cloud assembly is written to cdk.out by default.', 'Synthesis does not create or update AWS resources.', 'cdk deploy uses the synthesized output to provision resources through CloudFormation.'], commonMistake: 'Skipping synthesis because deploy can run it automatically removes an important review point. Run synthesis and inspect generated resources before deployment, especially after changing abstractions, permissions, network rules, assets, or environment-specific configuration.', example: 'Change a CDK construct in a non-production project and run cdk synth from the project root. Expect a generated CloudFormation template and a cloud assembly directory, with no AWS resources created by that command. Verify that the template contains only the expected logical resources and properties before proceeding to a reviewed deployment.', sources: [{ title: 'Configure and perform CDK stack synthesis', url: 'https://docs.aws.amazon.com/cdk/v2/guide/configure-synth.html' }, { title: 'cdk synthesize command reference', url: 'https://docs.aws.amazon.com/cdk/v2/guide/ref-cli-cmd-synth.html' }, { title: 'Create your first AWS CDK app', url: 'https://docs.aws.amazon.com/cdk/v2/guide/hello-world.html' }] });
+export default createAwsKnowledgeGuide({
+  "id": "cdk-12",
+  "topicId": "topic-cdk",
+  "topicTitle": "AWS CDK (Cloud Development Kit)",
+  "objectiveCode": "Management",
+  "title": "CDK Synthesis to CloudFormation",
+  "status": "ready",
+  "plainEnglish": "CDK Synthesis (`cdk synth`) is the compilation step in the AWS CDK workflow that executes your programming code and transforms your constructs and stacks into a directory of deployment artifacts known as a Cloud Assembly (written to the `cdk.out` directory). This assembly includes standard JSON/YAML AWS CloudFormation templates for each stack, along with asset manifests for Lambda code bundles and container images.",
+  "whyItMatters": "Synthesis provides a critical validation and review boundary before anything touches your AWS account. It catches programming syntax bugs, circular dependency errors, and type mismatches locally on the developer machine, allowing you to run security scanning tools (like cfn-nag or cdk-nag) against the generated CloudFormation template prior to deployment.",
+  "workplaceExample": "A CI/CD pull-request pipeline runs `cdk synth` followed by `cdk diff`. The automated security scanner inspects the synthesized CloudFormation JSON in `cdk.out/` to verify that all S3 buckets have public access blocked and that all KMS keys have rotation enabled before allowing the pull request to merge into the main branch.",
+  "examFocus": "For SAA-C03, remember the CDK CLI lifecycle commands: (1) `cdk init` (initializes a new project template), (2) `cdk bootstrap` (deploys initial bootstrap stack in account/region), (3) `cdk synth` (synthesizes CDK code into CloudFormation templates in `cdk.out`), (4) `cdk diff` (compares local synthesized template against live deployed stack), and (5) `cdk deploy` (deploys the synthesized stack via CloudFormation).",
+  "keyPoints": [
+    "Executes CDK application code and outputs a Cloud Assembly in the `cdk.out` folder.",
+    "Generates standard AWS CloudFormation JSON/YAML templates for each defined Stack.",
+    "Does NOT create, modify, or provision any actual AWS resources.",
+    "Enables local template inspection, security scanning (cdk-nag), and automated linting in CI/CD.",
+    "`cdk diff` compares the synthesized template with the currently deployed CloudFormation stack."
+  ],
+  "commonMistake": "Thinking `cdk synth` provisions resources in your AWS account. `cdk synth` is purely a local compilation step that produces CloudFormation templates; `cdk deploy` is required to submit the synthesized template to CloudFormation for deployment.",
+  "example": "# Synthesize CloudFormation templates from CDK app:\ncdk synth\n\n# Compare synthesized local stack with deployed stack in AWS:\ncdk diff WebAppStack\n\n# Deploy the synthesized stack through CloudFormation:\ncdk deploy WebAppStack",
+  "sources": [
+    {
+      "title": "Configuring and Performing CDK Stack Synthesis",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/configure-synth.html"
+    },
+    {
+      "title": "AWS CDK CLI Command Reference (cdk synth)",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/ref-cli-cmd-synth.html"
+    },
+    {
+      "title": "Your First AWS CDK Application",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/hello-world.html"
+    }
+  ]
+});

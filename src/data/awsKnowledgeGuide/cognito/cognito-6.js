@@ -1,3 +1,26 @@
 import { createAwsKnowledgeGuide } from '../createAwsKnowledgeGuide.js';
 
-export default createAwsKnowledgeGuide({ id: 'cognito-6', topicId: 'topic-cognito', topicTitle: 'Amazon Cognito', objectiveCode: 'Security', title: 'User Pools for Authentication', status: 'ready', plainEnglish: 'User-pool authentication verifies who a person is and then returns JSON web tokens (JWTs) to the app. Cognito supports password, passkey, one-time-password, custom challenge, and federated flows where supported and configured. The app client determines which flows the application may use.', whyItMatters: 'Authentication establishes a reliable application identity that APIs and backends can authorize without repeatedly handling a password.', workplaceExample: 'A web app sends a user through its configured sign-in flow, receives tokens after Cognito verifies the user, and presents the access token to a protected API.', examFocus: 'Authentication answers who the user is; authorization decides what that authenticated user may do. Configure flows per app client, use secure transport, validate JWTs at the resource server, and keep client secrets only in confidential server-side clients.', keyPoints: ['User pools authenticate application users.', 'Successful authentication issues JWTs.', 'App clients control permitted authentication flows.', 'Authentication and authorization are separate decisions.', 'Supported passwordless and federation options depend on configuration.'], commonMistake: 'Trusting a token only because it decodes is unsafe. A backend must validate its signature and relevant claims such as issuer, audience or client, token use, and expiration.', example: 'Use a test app client to sign in one test user, then send the issued access token to a test API. Expect a valid token to authenticate the request and an expired or altered token to be rejected.', sources: [{ title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }, { title: 'Identity provider and relying party endpoints', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/federation-endpoints.html' }] });
+export default createAwsKnowledgeGuide({
+  id: 'cognito-6',
+  topicId: 'topic-cognito',
+  topicTitle: 'Amazon Cognito',
+  objectiveCode: 'Security',
+  title: 'User Pools for Authentication',
+  status: 'ready',
+  plainEnglish: 'Using Cognito User Pools for Authentication means leveraging the user pool as the central identity provider for your application. User Pools authenticate user credentials (username/password or social identity), verify MFA challenges, and issue cryptographic JSON Web Tokens (JWTs). The client application includes these tokens in HTTP headers when calling backend services to prove user identity.',
+  whyItMatters: 'Centralizing user authentication in Cognito User Pools guarantees consistent security standards, reduces identity management overhead, and ensures that sensitive user passwords are encrypted and managed in a compliant AWS cloud directory.',
+  workplaceExample: 'A SaaS platform uses a Cognito User Pool to handle user login. When a user submits their email and password, User Pools verify the credentials and return an ID Token and Access Token. The web app attaches the Access Token to API calls to authenticate requests.',
+  examFocus: 'SAA-C03 Authentication flow:\n- User submits credentials -> User Pool validates -> User Pool returns 3 JWT tokens:\n  1. ID Token: Contains user profile attributes (name, email, sub).\n  2. Access Token: Contains granted scopes; used to authorize API calls.\n  3. Refresh Token: Long-lived token used to acquire new ID/Access tokens without forcing re-login.',
+  keyPoints: [
+    'User Pools serve as the primary user directory and authentication server.',
+    'Authenticates user credentials and enforces security policies.',
+    'Returns 3 OAuth 2.0 / OIDC tokens: ID Token, Access Token, Refresh Token.',
+    'Integrates seamlessly with API Gateway Cognito Authorizers.',
+    'Handles password reset, email verification, and MFA challenges automatically.'
+  ],
+  commonMistake: 'Storing user passwords in a custom EC2 database table instead of using Cognito User Pools, introducing security vulnerabilities and compliance compliance liabilities.',
+  example: 'API Request with Cognito Access Token:\n`Authorization: Bearer eyJraWQiOiJ...` (Access Token sent in HTTP Header to API Gateway).',
+  sources: [
+    { title: 'Authentication with Amazon Cognito user pools', url: 'https://docs.aws.amazon.com/cognito/latest/developerguide/authentication.html' }
+  ]
+});
