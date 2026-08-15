@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 const LABELS = {
   checklist: 'Checklist',
   'knowledge-guide': 'Knowledge Guide',
+  troubleshooting: 'Troubleshooting',
   'prep-exam': 'Prep Exam',
   'follow-alongs': 'Follow Alongs'
 };

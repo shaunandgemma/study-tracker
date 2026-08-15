@@ -1,0 +1,36 @@
+205. TERRAFORM ASSOCIATE 004 QUESTION PUBLICATION
+
+1. PURPOSE
+Publish the 30 reviewed Terraform Associate (004) questions to the existing Supabase exam question tables.
+
+2. DATABASE SCOPE
+- Exam code: terraform-associate-004
+- Question IDs: q-tf004-1 through q-tf004-30
+- One topic mapping is written for each question.
+- Existing matching Terraform IDs are updated safely.
+- A conflicting ID owned by another exam stops the complete migration.
+
+3. PROTECTED DATA
+- AWS SAA-C03 questions are not changed.
+- Exam attempts are not changed.
+- Follow Alongs, drafts, candidates, approvals and publishing are not changed.
+- Hands On data is not changed.
+
+4. APPLICATION BEHAVIOUR
+- Terraform questions load from Supabase first.
+- The same 30 bundled questions remain as an offline fallback.
+- Topic quizzes use the same Supabase-first and local-fallback behaviour.
+
+5. MIGRATION
+supabase/migrations/20260828_publish_terraform_004_exam_questions.sql
+
+6. GENERATOR
+scripts/generateTerraformQuestionMigration.mjs
+
+7. SAFETY
+The migration is transactional through the Supabase migration runner. It verifies exactly 30 questions and 30 topic mappings before it can complete.
+
+8. DEPLOYMENT STATUS
+Deployed successfully to the linked Supabase database on 15 August 2026.
+Supabase reported: Finished supabase db push.
+Migration applied: 20260828_publish_terraform_004_exam_questions.sql

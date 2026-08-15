@@ -41,9 +41,12 @@ function mapDatabaseToAppQuestion(q, topicMap) {
   };
 }
 
-function mapFallbackQuestions(examCode) {
-  return fallbackBank
-    .filter(q => (q.exam_code || 'aws-saa-c03') === examCode || examCode === 'aws-saa-c03')
+function mapFallbackQuestions(examCode, localFallbackQuestions = null) {
+  const sourceQuestions = Array.isArray(localFallbackQuestions)
+    ? localFallbackQuestions
+    : fallbackBank.filter(q => (q.exam_code || 'aws-saa-c03') === examCode || examCode === 'aws-saa-c03');
+
+  return sourceQuestions
     .map(q => ({
       ...q,
       topicId: q.topics?.[0] || q.topicId || null,
@@ -57,7 +60,7 @@ function mapFallbackQuestions(examCode) {
  * @param {string} examCode - The exam identifier, e.g., 'aws-saa-c03'
  * @returns {Promise<Array>} List of practice questions in application format
  */
-export async function getExamQuestions(examCode) {
+export async function getExamQuestions(examCode, localFallbackQuestions = null) {
   try {
     const { data: questions, error: qError } = await supabase
       .from('exam_questions')
@@ -94,7 +97,7 @@ export async function getExamQuestions(examCode) {
     console.warn('[questionService] Failed to load questions from Supabase, using local fallback:', err);
   }
 
-  return mapFallbackQuestions(examCode);
+  return mapFallbackQuestions(examCode, localFallbackQuestions);
 }
 
 /**
@@ -104,7 +107,7 @@ export async function getExamQuestions(examCode) {
  * @param {string} topicId - The targeted topic identifier, e.g., 'topic-s3'
  * @returns {Promise<Array>} List of practice questions mapped to topicId
  */
-export async function getQuestionsByTopic(examCode, topicId) {
+export async function getQuestionsByTopic(examCode, topicId, localFallbackQuestions = null) {
   try {
     // 1. Fetch matching question IDs from question_topics table
     const { data: matchingTopics, error: tError } = await supabase
@@ -154,7 +157,7 @@ export async function getQuestionsByTopic(examCode, topicId) {
   }
 
   // Fallback to local bundled questions if Supabase is offline/unconfigured or fails
-  return mapFallbackQuestions(examCode).filter(q => 
+  return mapFallbackQuestions(examCode, localFallbackQuestions).filter(q =>
     q.topicId === topicId || (Array.isArray(q.topicIds) && q.topicIds.includes(topicId))
   );
 }

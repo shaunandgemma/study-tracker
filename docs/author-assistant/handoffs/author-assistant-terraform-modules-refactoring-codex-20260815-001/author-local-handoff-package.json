@@ -1,0 +1,2667 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-terraform-modules-refactoring-codex-20260815-001",
+  "preparedAt": "2026-08-15T12:00:00.000Z",
+  "generationMode": "new",
+  "service": {
+    "officialName": "HashiCorp Terraform on AWS",
+    "shortName": "Terraform Modules"
+  },
+  "acceptedFingerprintChain": {
+    "stage6": {
+      "algorithm": "sha256-json-v1",
+      "value": "fbf2e4f25285ca09fe5a16a734af47071937d5a2ed5abb0288fb77df24fef016"
+    },
+    "stage7": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "stage8": {
+      "algorithm": "sha256-json-v1",
+      "value": "dd9003d0a112cef8ac97f14f624f2c2c8d65d48c452b145bd0e496087fd24cd6"
+    },
+    "stage9": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "stage10": {
+      "algorithm": "sha256-json-v1",
+      "value": "e00b50fa971db49778232c3dfe6a2b00eedb4745ed356de7f680bf48f9abb049"
+    },
+    "stage11": {
+      "algorithm": "sha256-json-v1",
+      "value": "ed68819d84d84a14c566ace04118efa0967cc3a30579c0ea63a71c7b5040f721"
+    }
+  },
+  "acceptedRecordManifest": {
+    "planning": {
+      "algorithm": "sha256-json-v1",
+      "value": "be3ae4459bd8beb2b191086a9fb92c76e3524604423344e74c6b245620cbb302"
+    },
+    "instructions": {
+      "algorithm": "sha256-json-v1",
+      "value": "fbf2e4f25285ca09fe5a16a734af47071937d5a2ed5abb0288fb77df24fef016"
+    },
+    "resourcesAndChecks": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "cleanup": {
+      "algorithm": "sha256-json-v1",
+      "value": "dd9003d0a112cef8ac97f14f624f2c2c8d65d48c452b145bd0e496087fd24cd6"
+    },
+    "authoringCheck": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "learnerPreview": {
+      "algorithm": "sha256-json-v1",
+      "value": "e00b50fa971db49778232c3dfe6a2b00eedb4745ed356de7f680bf48f9abb049"
+    },
+    "structuredReview": {
+      "algorithm": "sha256-json-v1",
+      "value": "ed68819d84d84a14c566ace04118efa0967cc3a30579c0ea63a71c7b5040f721"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "codex-local-handoff"
+    },
+    "programme": {
+      "serviceSlug": "terraform-modules-refactoring",
+      "serviceName": "HashiCorp Terraform on AWS",
+      "shortName": "Terraform Modules",
+      "displayName": "Terraform Modules and Refactoring Follow Along",
+      "subtitle": "Build a reusable module and refactor live infrastructure without replacement.",
+      "description": "Start with no lab infrastructure. Build one flat Terraform VPC configuration, create a reusable child module, move the existing VPC into it without replacement, create a second module instance, rename a module safely and remove everything in the correct order.",
+      "learningOutcome": "Understand module structure, inputs, outputs, local sources, reuse and moved blocks well enough to refactor Terraform configuration without replacing live infrastructure.",
+      "programmeId": "terraform-modules-refactoring-learning-path",
+      "pathId": "terraform-modules-refactoring-learning-path",
+      "componentNamespace": "",
+      "category": "Terraform Modules and Refactoring",
+      "difficulty": "Beginner to Intermediate",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished",
+      "examId": "terraform-associate-004"
+    },
+    "sources": [
+      {
+        "id": "source-aws-iam-best",
+        "title": "Security best practices in IAM",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Use temporary non-root training access.",
+        "taskIds": [
+          "task-terraform-modules-001-create-temporary-terraform-module-training-access",
+          "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-aws-cli-config",
+        "title": "Configure the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create and verify a named training profile.",
+        "taskIds": [
+          "task-terraform-modules-001-create-temporary-terraform-module-training-access"
+        ]
+      },
+      {
+        "id": "source-aws-vpc-create",
+        "title": "Create a VPC",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Verify the VPCs and their CIDR blocks in the Console.",
+        "taskIds": [
+          "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration",
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc",
+          "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-tf-modules",
+        "title": "Modules overview",
+        "url": "https://developer.hashicorp.com/terraform/language/modules",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explain root and child modules and module reuse.",
+        "taskIds": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module",
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc"
+        ]
+      },
+      {
+        "id": "source-tf-module-syntax",
+        "title": "The module block",
+        "url": "https://developer.hashicorp.com/terraform/language/block/module",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use source and module input arguments correctly.",
+        "taskIds": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module",
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely",
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc"
+        ]
+      },
+      {
+        "id": "source-tf-module-sources",
+        "title": "Module sources",
+        "url": "https://developer.hashicorp.com/terraform/language/modules/sources",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Distinguish local paths from registry module sources.",
+        "taskIds": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module"
+        ]
+      },
+      {
+        "id": "source-tf-module-develop",
+        "title": "Developing reusable modules",
+        "url": "https://developer.hashicorp.com/terraform/language/modules/develop",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Structure inputs, resources and outputs.",
+        "taskIds": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module"
+        ]
+      },
+      {
+        "id": "source-tf-refactor-modules",
+        "title": "Refactor modules",
+        "url": "https://developer.hashicorp.com/terraform/language/modules/develop/refactoring",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Move resources into and between modules without replacement.",
+        "taskIds": [
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely",
+          "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc"
+        ]
+      },
+      {
+        "id": "source-tf-moved",
+        "title": "The moved block",
+        "url": "https://developer.hashicorp.com/terraform/language/block/moved",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Record address changes explicitly.",
+        "taskIds": [
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely",
+          "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc"
+        ]
+      },
+      {
+        "id": "source-tf-plan",
+        "title": "Terraform plan command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Review every proposed change before apply.",
+        "taskIds": [
+          "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration",
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely",
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc",
+          "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc",
+          "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-tf-validate",
+        "title": "Terraform validate command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/validate",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Validate root and module configuration.",
+        "taskIds": [
+          "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration",
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module"
+        ]
+      },
+      {
+        "id": "source-tf-destroy",
+        "title": "Terraform destroy command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Remove all managed lab infrastructure safely.",
+        "taskIds": [
+          "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#7c3aed",
+      "iconLabel": "TF3",
+      "iconName": "Blocks",
+      "badgeText": "Terraform Card 3"
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-terraform-modules-001-create-temporary-terraform-module-training-access",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-a-safe-workspace",
+        "phaseNumber": 1,
+        "title": "Prepare a safe workspace",
+        "description": "Create temporary access and build one flat Terraform-managed VPC from an empty folder.",
+        "taskIds": [
+          "task-terraform-modules-001-create-temporary-terraform-module-training-access",
+          "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-understand-module-structure",
+        "phaseNumber": 2,
+        "title": "Understand module structure",
+        "description": "Separate inputs, managed resources and outputs into a reusable child module.",
+        "taskIds": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-refactor-without-replacement",
+        "phaseNumber": 3,
+        "title": "Refactor without replacement",
+        "description": "Move the existing VPC into the module while retaining its physical ID.",
+        "taskIds": [
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-reuse-and-rename-safely",
+        "phaseNumber": 4,
+        "title": "Reuse and rename safely",
+        "description": "Create a second module instance and rename the first module without replacing infrastructure.",
+        "taskIds": [
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc",
+          "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-complete-teardown",
+        "phaseNumber": 5,
+        "title": "Complete teardown",
+        "description": "Destroy both VPCs, remove temporary access and delete only the lab files.",
+        "taskIds": [
+          "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access",
+        "slug": "create-temporary-terraform-module-training-access",
+        "title": "Create temporary Terraform module training access",
+        "phaseId": "phase-1-prepare-a-safe-workspace",
+        "orderInPhase": 1,
+        "feature": "IAM policy, IAM user, AWS CLI profile and isolated folder",
+        "goal": "Begin with no lab infrastructure, verify the AWS identity and prepare one empty working folder.",
+        "whyItMatters": "A module refactor can affect existing resources. Confirming identity and an isolated folder prevents accidental changes outside this training lab.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-aws-iam-best",
+          "source-aws-cli-config"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and verify the training boundary",
+            "instruction": "Sign in to the training AWS account as an administrator; do not use the root user.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-1",
+                "text": "Sign in to the training AWS account as an administrator; do not use the root user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-2",
+                "text": "Open the account menu and record the 12-digit account ID as [ACCOUNT_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-3",
+                "text": "Use the Region selector to choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-4",
+                "text": "Open IAM, choose Policies, choose Create policy and then choose JSON.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-5",
+                "text": "Replace the policy editor content with the supplied fa-terraform-modules-training-policy JSON.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-6",
+                "text": "Choose Next and name the policy fa-terraform-modules-training-policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-7",
+                "text": "Review that the policy contains only caller identity and VPC training actions, then choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-8",
+                "text": "Open IAM Users, choose Create user and enter fa-terraform-modules-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-9",
+                "text": "Attach fa-terraform-modules-training-policy directly to the temporary user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-10",
+                "text": "Open the user, choose Security credentials and create one CLI access key only if the terminal requires it.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-11",
+                "text": "Enter credentials only into the protected AWS CLI prompt; never place them in Terraform, Git, Author or notes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-12",
+                "text": "Open CloudShell, WSL or PowerShell.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-13",
+                "text": "CloudShell or WSL: run mkdir -p ~/fa-terraform-modules, then run cd ~/fa-terraform-modules and pwd.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-14",
+                "text": "PowerShell: run New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-modules\" -Force.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-15",
+                "text": "PowerShell: run Set-Location \"$env:USERPROFILE\\fa-terraform-modules\", then run Get-Location.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-instruction-16",
+                "text": "List the folder and confirm it has no old .tf files, plans or state before continuing.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-console-step-1-create-and-verify-the-training-boundary-json-1",
+                "title": "fa-terraform-modules-training-policy.json",
+                "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"VerifyTrainingIdentity\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:GetCallerIdentity\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTerraformModuleTrainingVpcs\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpc\",\n        \"ec2:DeleteVpc\",\n        \"ec2:ModifyVpcAttribute\",\n        \"ec2:DescribeVpcs\",\n        \"ec2:DescribeVpcAttribute\",\n        \"ec2:DescribeTags\",\n        \"ec2:DescribeAvailabilityZones\",\n        \"ec2:DescribeAccountAttributes\",\n        \"ec2:CreateTags\",\n        \"ec2:DeleteTags\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-aws-iam-best",
+                  "source-aws-cli-config"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The temporary user, policy, named profile boundary and empty folder are ready.",
+            "warning": "This is a disposable training identity. An administrator must review the policy before attaching it.",
+            "sourceIds": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws configure --profile fa-terraform-modules",
+            "explanation": "Store the temporary key, secret, eu-west-2 and json in the AWS CLI configuration.",
+            "expectedResult": "The protected prompt completes without printing the secret.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sts get-caller-identity --profile fa-terraform-modules",
+            "explanation": "Confirm the exact training identity and account.",
+            "expectedResult": "The ARN identifies fa-terraform-modules-user in [ACCOUNT_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "mkdir -p ~/fa-terraform-modules",
+            "explanation": "CloudShell or WSL: create the isolated folder.",
+            "expectedResult": "The folder exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "cd ~/fa-terraform-modules",
+            "explanation": "CloudShell or WSL: enter the folder.",
+            "expectedResult": "The terminal enters fa-terraform-modules.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "pwd",
+            "explanation": "CloudShell or WSL: print the current location.",
+            "expectedResult": "The path ends with /fa-terraform-modules.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-modules\" -Force",
+            "explanation": "PowerShell: create the isolated folder.",
+            "expectedResult": "The folder is displayed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "Set-Location \"$env:USERPROFILE\\fa-terraform-modules\"",
+            "explanation": "PowerShell: enter the isolated folder.",
+            "expectedResult": "The working location changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "Get-Location",
+            "explanation": "PowerShell: verify the current location.",
+            "expectedResult": "The path ends with fa-terraform-modules.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-iam-best",
+              "source-aws-cli-config"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-verification-1",
+            "title": "Verify the caller",
+            "instruction": "Read the Account and Arn returned by STS.",
+            "expectedResult": "The temporary user and intended account are shown.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-001-create-temporary-terraform-module-training-access-verification-2",
+            "title": "Verify the clean folder",
+            "instruction": "List all files in the current folder.",
+            "expectedResult": "No old Terraform configuration, state or plan is present.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration",
+        "slug": "build-and-apply-one-flat-vpc-configuration",
+        "title": "Build and apply one flat VPC configuration",
+        "phaseId": "phase-1-prepare-a-safe-workspace",
+        "orderInPhase": 2,
+        "feature": "Root module, provider, variables, resource and output",
+        "goal": "Create one VPC directly in the root module and record its physical VPC ID before refactoring.",
+        "whyItMatters": "A learner must understand the original flat configuration before seeing what changes when the resource moves into a child module.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-001-create-temporary-terraform-module-training-access"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-aws-vpc-create",
+          "source-tf-plan",
+          "source-tf-validate"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create each root configuration file and inspect every block",
+            "instruction": "Remain in the empty fa-terraform-modules folder.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-1",
+                "text": "Remain in the empty fa-terraform-modules folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-2",
+                "text": "Create versions.tf and paste the supplied block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-3",
+                "text": "Identify required_version, required_providers and provider aws as three separate responsibilities.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-4",
+                "text": "Create variables.tf and paste the supplied root variables.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-5",
+                "text": "Notice that aws_region and aws_profile have types, descriptions and safe lab defaults.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-6",
+                "text": "Create main.tf and paste the initial flat aws_vpc.lab resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-7",
+                "text": "Read resource \"aws_vpc\" \"lab\" as resource type aws_vpc with local name lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-8",
+                "text": "Confirm the CIDR is 10.60.0.0/16 and the Name tag is fa-tf-module-primary-vpc.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-9",
+                "text": "Create outputs.tf and paste the initial root output.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-10",
+                "text": "Notice that aws_vpc.lab.id references the ID created by the resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-11",
+                "text": "Run terraform fmt, terraform init and terraform validate in that order.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-12",
+                "text": "Run terraform plan -out=flat.tfplan and confirm exactly one VPC will be added.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-13",
+                "text": "Run terraform show flat.tfplan and verify no resource except aws_vpc.lab appears.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-14",
+                "text": "Run terraform apply flat.tfplan only after reviewing the saved plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-15",
+                "text": "Record the primary_vpc_id output as [PRIMARY_VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-16",
+                "text": "Open VPC in eu-west-2 and search for fa-tf-module-primary-vpc.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-instruction-17",
+                "text": "Open the VPC and verify its ID equals [PRIMARY_VPC_ID], its CIDR is 10.60.0.0/16 and ManagedBy is Terraform.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-json-1",
+                "title": "versions.tf",
+                "content": "terraform {\n  required_version = \">= 1.10.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.0\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  region  = var.aws_region\n  profile = var.aws_profile\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-aws-vpc-create",
+                  "source-tf-plan",
+                  "source-tf-validate"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-json-2",
+                "title": "variables.tf",
+                "content": "variable \"aws_region\" {\n  description = \"AWS Region for the training VPCs\"\n  type        = string\n  default     = \"eu-west-2\"\n}\n\nvariable \"aws_profile\" {\n  description = \"Named AWS CLI profile used only for this lab\"\n  type        = string\n  default     = \"fa-terraform-modules\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-aws-vpc-create",
+                  "source-tf-plan",
+                  "source-tf-validate"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-json-3",
+                "title": "main.tf - initial flat resource",
+                "content": "resource \"aws_vpc\" \"lab\" {\n  cidr_block           = \"10.60.0.0/16\"\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name      = \"fa-tf-module-primary-vpc\"\n    ManagedBy = \"Terraform\"\n    Lab       = \"fa-terraform-modules\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-aws-vpc-create",
+                  "source-tf-plan",
+                  "source-tf-validate"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-console-step-1-create-each-root-configuration-file-and-inspect-every-block-json-4",
+                "title": "outputs.tf - initial root output",
+                "content": "output \"primary_vpc_id\" {\n  description = \"ID of the primary training VPC\"\n  value       = aws_vpc.lab.id\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-aws-vpc-create",
+                  "source-tf-plan",
+                  "source-tf-validate"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "One VPC exists at root address aws_vpc.lab and its physical ID is recorded.",
+            "warning": "Do not continue unless the plan creates exactly one VPC and nothing else.",
+            "sourceIds": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Apply standard formatting to all root files.",
+            "expectedResult": "The files are formatted without creating infrastructure.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Install the provider and initialize the working directory.",
+            "expectedResult": "Terraform reports successful initialization.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Check the root configuration references and syntax.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=flat.tfplan",
+            "explanation": "Save the exact one-VPC creation plan.",
+            "expectedResult": "Plan: 1 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform show flat.tfplan",
+            "explanation": "Read the saved plan before applying it.",
+            "expectedResult": "Only aws_vpc.lab is added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply flat.tfplan",
+            "explanation": "Apply the exact reviewed plan.",
+            "expectedResult": "Apply complete! Resources: 1 added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform output primary_vpc_id",
+            "explanation": "Display the VPC ID for continuity checks.",
+            "expectedResult": "The command returns [PRIMARY_VPC_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform state list",
+            "explanation": "Inspect the initial root resource address.",
+            "expectedResult": "aws_vpc.lab is listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-aws-vpc-create",
+              "source-tf-plan",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-verification-1",
+            "title": "Verify the physical VPC",
+            "instruction": "Compare Terraform output with the VPC Console ID.",
+            "expectedResult": "Both show [PRIMARY_VPC_ID].",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration-verification-2",
+            "title": "Verify the initial state address",
+            "instruction": "Run terraform state list.",
+            "expectedResult": "The VPC is tracked as aws_vpc.lab before refactoring.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module",
+        "slug": "build-a-reusable-vpc-child-module",
+        "title": "Build a reusable VPC child module",
+        "phaseId": "phase-2-understand-module-structure",
+        "orderInPhase": 1,
+        "feature": "Module folder, input variables, managed resource and outputs",
+        "goal": "Create a local child module and understand how information flows into and out of it.",
+        "whyItMatters": "A reusable module has a clear interface: inputs enter through variables, resources use those values, and useful results leave through outputs.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-002-build-and-apply-one-flat-vpc-configuration"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-modules",
+          "source-tf-module-syntax",
+          "source-tf-module-develop",
+          "source-tf-module-sources",
+          "source-tf-validate"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and understand the child module one file at a time",
+            "instruction": "Inside fa-terraform-modules, create the folders modules and modules/vpc.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-1",
+                "text": "Inside fa-terraform-modules, create the folders modules and modules/vpc.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-2",
+                "text": "Confirm the final path is fa-terraform-modules/modules/vpc.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-3",
+                "text": "Create modules/vpc/variables.tf and paste the supplied module variables.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-4",
+                "text": "Read name and cidr_block as required inputs because they have no defaults.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-5",
+                "text": "Read lab_name as an optional input because it has a default value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-6",
+                "text": "Inspect the validation blocks and explain that invalid empty names or CIDR text stop before resource creation.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-7",
+                "text": "Create modules/vpc/main.tf and paste the supplied VPC resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-8",
+                "text": "Notice that the resource uses var.cidr_block, var.name and var.lab_name instead of fixed values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-9",
+                "text": "Understand that the local name this is only an internal module address, not an AWS name.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-10",
+                "text": "Create modules/vpc/outputs.tf and paste the supplied outputs.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-11",
+                "text": "Notice that id and cidr_block expose selected resource attributes to the calling root module.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-12",
+                "text": "Run terraform fmt -recursive to format root and child module files.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-13",
+                "text": "Run terraform validate and confirm the existing root configuration remains valid.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-14",
+                "text": "Do not change main.tf or apply yet; the child module exists but has not been called.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-instruction-15",
+                "text": "Run terraform plan and confirm Terraform reports no changes because an unused module folder creates nothing.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-json-1",
+                "title": "modules/vpc/variables.tf",
+                "content": "variable \"name\" {\n  description = \"Name tag for the VPC\"\n  type        = string\n\n  validation {\n    condition     = length(trimspace(var.name)) > 0\n    error_message = \"The VPC name cannot be empty.\"\n  }\n}\n\nvariable \"cidr_block\" {\n  description = \"Private IPv4 CIDR block for the VPC\"\n  type        = string\n\n  validation {\n    condition     = can(cidrnetmask(var.cidr_block))\n    error_message = \"cidr_block must be valid IPv4 CIDR notation.\"\n  }\n}\n\nvariable \"lab_name\" {\n  description = \"Tag used to identify this training lab\"\n  type        = string\n  default     = \"fa-terraform-modules\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-modules",
+                  "source-tf-module-syntax",
+                  "source-tf-module-develop",
+                  "source-tf-module-sources",
+                  "source-tf-validate"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-json-2",
+                "title": "modules/vpc/main.tf",
+                "content": "resource \"aws_vpc\" \"this\" {\n  cidr_block           = var.cidr_block\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name      = var.name\n    ManagedBy = \"Terraform\"\n    Lab       = var.lab_name\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-modules",
+                  "source-tf-module-syntax",
+                  "source-tf-module-develop",
+                  "source-tf-module-sources",
+                  "source-tf-validate"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-console-step-1-create-and-understand-the-child-module-one-file-at-a-time-json-3",
+                "title": "modules/vpc/outputs.tf",
+                "content": "output \"id\" {\n  description = \"ID of the VPC created by this module\"\n  value       = aws_vpc.this.id\n}\n\noutput \"cidr_block\" {\n  description = \"CIDR block assigned to the VPC\"\n  value       = aws_vpc.this.cidr_block\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-modules",
+                  "source-tf-module-syntax",
+                  "source-tf-module-develop",
+                  "source-tf-module-sources",
+                  "source-tf-validate"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The local child module has a clear input-resource-output structure but no second resource has been created.",
+            "warning": "Creating module files alone does not call the module. Do not assume the new folder manages the existing VPC yet.",
+            "sourceIds": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "mkdir -p modules/vpc",
+            "explanation": "CloudShell or WSL: create the nested child-module folder.",
+            "expectedResult": "modules/vpc exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "New-Item -ItemType Directory -Path \".\\modules\\vpc\" -Force",
+            "explanation": "PowerShell: create the nested child-module folder.",
+            "expectedResult": "modules\\vpc exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform fmt -recursive",
+            "explanation": "Format both root and child module configuration.",
+            "expectedResult": "Terraform formats all .tf files.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform validate",
+            "explanation": "Validate module variable, resource and output expressions.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform plan",
+            "explanation": "Confirm an uncalled local module changes no infrastructure.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-module-develop",
+              "source-tf-module-sources",
+              "source-tf-validate"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-verification-1",
+            "title": "Verify the module interface",
+            "instruction": "Identify the three input variables and two outputs without reading the resource internals.",
+            "expectedResult": "The learner can describe what enters and leaves the module.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-003-build-a-reusable-vpc-child-module-verification-2",
+            "title": "Verify no premature change",
+            "instruction": "Review the normal plan before calling the module.",
+            "expectedResult": "Terraform reports no changes.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely",
+        "slug": "move-the-existing-vpc-into-the-module-safely",
+        "title": "Move the existing VPC into the module safely",
+        "phaseId": "phase-3-refactor-without-replacement",
+        "orderInPhase": 1,
+        "feature": "Module call, moved block and state-address continuity",
+        "goal": "Refactor aws_vpc.lab into module.primary.aws_vpc.this without replacing [PRIMARY_VPC_ID].",
+        "whyItMatters": "Moving configuration changes Terraform addresses. A moved block records that relationship so Terraform retains the real object instead of destroying and recreating it.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-003-build-a-reusable-vpc-child-module"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-module-syntax",
+          "source-tf-refactor-modules",
+          "source-tf-moved",
+          "source-tf-plan"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Replace the flat resource with a module call and record its move",
+            "instruction": "Open root main.tf and replace the flat aws_vpc.lab block with the supplied module primary block.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-1",
+                "text": "Open root main.tf and replace the flat aws_vpc.lab block with the supplied module primary block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-2",
+                "text": "Read source = \"./modules/vpc\" as a local relative module path.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-3",
+                "text": "Confirm name and cidr_block exactly match the existing VPC values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-4",
+                "text": "Create moved.tf in the root folder and paste the first moved block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-5",
+                "text": "Read from = aws_vpc.lab as the old state address.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-6",
+                "text": "Read to = module.primary.aws_vpc.this as the new address inside the child module.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-7",
+                "text": "Replace outputs.tf with the supplied refactored output.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-8",
+                "text": "Notice that the root output now reads module.primary.id rather than reaching directly into the child resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-9",
+                "text": "Run terraform fmt -recursive and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-10",
+                "text": "Run terraform init because the root module now calls a local child module.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-11",
+                "text": "Run terraform plan -out=module-refactor.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-12",
+                "text": "Find the statement showing aws_vpc.lab has moved to module.primary.aws_vpc.this.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-13",
+                "text": "Confirm the summary is 0 to add, 0 to change, 0 to destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-14",
+                "text": "Stop immediately if the plan proposes replacing or deleting [PRIMARY_VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-15",
+                "text": "Run terraform apply module-refactor.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-16",
+                "text": "Run terraform output primary_vpc_id and confirm [PRIMARY_VPC_ID] is unchanged.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-17",
+                "text": "Run terraform state list and confirm the address is now module.primary.aws_vpc.this.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-instruction-18",
+                "text": "Refresh the VPC Console and confirm the same physical VPC still exists.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-json-1",
+                "title": "main.tf - call the primary module",
+                "content": "module \"primary\" {\n  source = \"./modules/vpc\"\n\n  name       = \"fa-tf-module-primary-vpc\"\n  cidr_block = \"10.60.0.0/16\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-module-syntax",
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-json-2",
+                "title": "moved.tf - preserve the existing VPC",
+                "content": "moved {\n  from = aws_vpc.lab\n  to   = module.primary.aws_vpc.this\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-module-syntax",
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-console-step-1-replace-the-flat-resource-with-a-module-call-and-record-its-move-json-3",
+                "title": "outputs.tf - read the module output",
+                "content": "output \"primary_vpc_id\" {\n  description = \"ID of the primary training VPC\"\n  value       = module.primary.id\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-module-syntax",
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The VPC keeps [PRIMARY_VPC_ID] and Terraform tracks it inside module.primary.",
+            "warning": "Never apply this refactor if the saved plan contains an add or destroy action for the primary VPC.",
+            "sourceIds": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt -recursive",
+            "explanation": "Format the root module call, moved block and child module.",
+            "expectedResult": "All files are formatted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Discover and install the local child module.",
+            "expectedResult": "Terraform reports successful initialization.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Check the refactored configuration.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=module-refactor.tfplan",
+            "explanation": "Preview the state-address move.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform show module-refactor.tfplan",
+            "explanation": "Inspect the saved refactor plan.",
+            "expectedResult": "The VPC is moved, not replaced.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply module-refactor.tfplan",
+            "explanation": "Apply only the verified address move.",
+            "expectedResult": "Apply complete! Resources: 0 added, 0 changed, 0 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform output primary_vpc_id",
+            "explanation": "Confirm physical-resource continuity.",
+            "expectedResult": "The output remains [PRIMARY_VPC_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform state list",
+            "explanation": "Inspect the new resource address.",
+            "expectedResult": "module.primary.aws_vpc.this is listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-module-syntax",
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-verification-1",
+            "title": "Verify zero infrastructure changes",
+            "instruction": "Read the applied plan summary.",
+            "expectedResult": "It reports 0 added, 0 changed and 0 destroyed.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-verification-2",
+            "title": "Verify VPC continuity",
+            "instruction": "Compare the output and Console with the ID recorded before refactoring.",
+            "expectedResult": "[PRIMARY_VPC_ID] is unchanged.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely-verification-3",
+            "title": "Verify the new address",
+            "instruction": "Run terraform state list.",
+            "expectedResult": "The VPC appears under module.primary.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc",
+        "slug": "reuse-the-module-to-create-a-second-vpc",
+        "title": "Reuse the module to create a second VPC",
+        "phaseId": "phase-4-reuse-and-rename-safely",
+        "orderInPhase": 1,
+        "feature": "Multiple module instances and independent input values",
+        "goal": "Call the same module twice with different names and non-overlapping CIDR blocks.",
+        "whyItMatters": "Module reuse is valuable because one tested implementation can create consistent resources while each call supplies different inputs.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-004-move-the-existing-vpc-into-the-module-safely"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-modules",
+          "source-tf-module-syntax",
+          "source-tf-plan",
+          "source-aws-vpc-create"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Add a second independent module call",
+            "instruction": "Replace root main.tf with the supplied primary and secondary module calls.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-1",
+                "text": "Replace root main.tf with the supplied primary and secondary module calls.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-2",
+                "text": "Compare both calls and confirm they use the same source path.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-3",
+                "text": "Confirm primary uses 10.60.0.0/16 and secondary uses the non-overlapping 10.61.0.0/16.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-4",
+                "text": "Confirm each call supplies a different Name tag.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-5",
+                "text": "Keep the existing moved.tf block unchanged.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-6",
+                "text": "Replace outputs.tf with the supplied two-output block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-7",
+                "text": "Run terraform fmt -recursive, terraform init and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-8",
+                "text": "Run terraform plan -out=reuse.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-9",
+                "text": "Confirm module.secondary.aws_vpc.this is the only new resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-10",
+                "text": "Confirm module.primary.aws_vpc.this is unchanged and no resources will be destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-11",
+                "text": "Run terraform apply reuse.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-12",
+                "text": "Record secondary_vpc_id as [SECONDARY_VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-13",
+                "text": "Open VPC in eu-west-2 and verify both named VPCs exist.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-14",
+                "text": "Confirm [PRIMARY_VPC_ID] uses 10.60.0.0/16 and [SECONDARY_VPC_ID] uses 10.61.0.0/16.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-instruction-15",
+                "text": "Confirm both VPCs have ManagedBy = Terraform and Lab = fa-terraform-modules.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-json-1",
+                "title": "main.tf - primary and secondary calls",
+                "content": "module \"primary\" {\n  source = \"./modules/vpc\"\n\n  name       = \"fa-tf-module-primary-vpc\"\n  cidr_block = \"10.60.0.0/16\"\n}\n\nmodule \"secondary\" {\n  source = \"./modules/vpc\"\n\n  name       = \"fa-tf-module-secondary-vpc\"\n  cidr_block = \"10.61.0.0/16\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-modules",
+                  "source-tf-module-syntax",
+                  "source-tf-plan",
+                  "source-aws-vpc-create"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-console-step-1-add-a-second-independent-module-call-json-2",
+                "title": "outputs.tf - both module results",
+                "content": "output \"primary_vpc_id\" {\n  description = \"ID of the primary training VPC\"\n  value       = module.primary.id\n}\n\noutput \"secondary_vpc_id\" {\n  description = \"ID of the secondary training VPC\"\n  value       = module.secondary.id\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-modules",
+                  "source-tf-module-syntax",
+                  "source-tf-plan",
+                  "source-aws-vpc-create"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Two VPCs created from the same module exist with distinct inputs and IDs.",
+            "warning": "The second CIDR must not overlap the first. Stop if the plan changes or replaces the primary VPC.",
+            "sourceIds": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt -recursive",
+            "explanation": "Format both module calls and outputs.",
+            "expectedResult": "All configuration is formatted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Refresh the local module installation after changing calls.",
+            "expectedResult": "Initialization succeeds.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Validate both sets of module inputs.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=reuse.tfplan",
+            "explanation": "Preview one second VPC from the reusable module.",
+            "expectedResult": "Plan: 1 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform show reuse.tfplan",
+            "explanation": "Confirm only the secondary module instance is created.",
+            "expectedResult": "Only module.secondary.aws_vpc.this is added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply reuse.tfplan",
+            "explanation": "Apply the reviewed reuse plan.",
+            "expectedResult": "Apply complete! Resources: 1 added.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform output secondary_vpc_id",
+            "explanation": "Record the second module result.",
+            "expectedResult": "The output returns [SECONDARY_VPC_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform state list",
+            "explanation": "List both module-managed resource addresses.",
+            "expectedResult": "primary and secondary VPC addresses are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-modules",
+              "source-tf-module-syntax",
+              "source-tf-plan",
+              "source-aws-vpc-create"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-verification-1",
+            "title": "Verify two physical VPCs",
+            "instruction": "Compare both Terraform outputs with the VPC Console.",
+            "expectedResult": "Both IDs, names and CIDRs match.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc-verification-2",
+            "title": "Verify one reusable implementation",
+            "instruction": "Open both root module calls and the single modules/vpc resource file.",
+            "expectedResult": "Both VPCs use the same child module implementation.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc",
+        "slug": "rename-a-module-without-replacing-its-vpc",
+        "title": "Rename a module without replacing its VPC",
+        "phaseId": "phase-4-reuse-and-rename-safely",
+        "orderInPhase": 2,
+        "feature": "Whole-module moved block and refactoring history",
+        "goal": "Rename module.primary to module.network while retaining [PRIMARY_VPC_ID].",
+        "whyItMatters": "Module names often improve as code evolves. Recording the rename prevents a harmless code change from becoming an infrastructure replacement.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-005-reuse-the-module-to-create-a-second-vpc"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-refactor-modules",
+          "source-tf-moved",
+          "source-tf-plan"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Rename primary to network and preserve the address history",
+            "instruction": "Replace root main.tf with the supplied network and secondary module calls.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-1",
+                "text": "Replace root main.tf with the supplied network and secondary module calls.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-2",
+                "text": "Confirm only the first module label changed from primary to network.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-3",
+                "text": "Keep its source, name and CIDR values exactly unchanged.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-4",
+                "text": "Replace moved.tf with the supplied two-block move history.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-5",
+                "text": "Understand that the first block records the earlier resource-to-module move.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-6",
+                "text": "Understand that the second block records module.primary moving to module.network.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-7",
+                "text": "Replace outputs.tf with the supplied output that reads module.network.id.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-8",
+                "text": "Run terraform fmt -recursive and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-9",
+                "text": "Run terraform plan -out=module-rename.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-10",
+                "text": "Find the statement showing module.primary has moved to module.network.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-11",
+                "text": "Confirm the summary is 0 to add, 0 to change, 0 to destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-12",
+                "text": "Stop if either [PRIMARY_VPC_ID] or [SECONDARY_VPC_ID] will be replaced.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-13",
+                "text": "Run terraform apply module-rename.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-14",
+                "text": "Run terraform output primary_vpc_id and confirm it still equals [PRIMARY_VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-15",
+                "text": "Run terraform state list and verify module.network.aws_vpc.this and module.secondary.aws_vpc.this.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-instruction-16",
+                "text": "Refresh VPC and confirm both physical VPC IDs remain unchanged.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-json-1",
+                "title": "main.tf - renamed primary module",
+                "content": "module \"network\" {\n  source = \"./modules/vpc\"\n\n  name       = \"fa-tf-module-primary-vpc\"\n  cidr_block = \"10.60.0.0/16\"\n}\n\nmodule \"secondary\" {\n  source = \"./modules/vpc\"\n\n  name       = \"fa-tf-module-secondary-vpc\"\n  cidr_block = \"10.61.0.0/16\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-json-2",
+                "title": "moved.tf - retained move history",
+                "content": "moved {\n  from = aws_vpc.lab\n  to   = module.primary.aws_vpc.this\n}\n\nmoved {\n  from = module.primary\n  to   = module.network\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-console-step-1-rename-primary-to-network-and-preserve-the-address-history-json-3",
+                "title": "outputs.tf - renamed module reference",
+                "content": "output \"primary_vpc_id\" {\n  description = \"ID of the primary training VPC after the module rename\"\n  value       = module.network.id\n}\n\noutput \"secondary_vpc_id\" {\n  description = \"ID of the secondary training VPC\"\n  value       = module.secondary.id\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-refactor-modules",
+                  "source-tf-moved",
+                  "source-tf-plan"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The primary module has a clearer name and neither VPC was changed or replaced.",
+            "warning": "Keep published moved blocks unless you deliberately drop support for configurations using the old addresses.",
+            "sourceIds": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt -recursive",
+            "explanation": "Format the renamed call and move history.",
+            "expectedResult": "All files are formatted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform validate",
+            "explanation": "Check all renamed references.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform plan -out=module-rename.tfplan",
+            "explanation": "Preview the whole-module address move.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform show module-rename.tfplan",
+            "explanation": "Inspect the saved rename plan.",
+            "expectedResult": "The module address moves without VPC replacement.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform apply module-rename.tfplan",
+            "explanation": "Apply only the reviewed module rename.",
+            "expectedResult": "Apply complete! Resources: 0 added, 0 changed, 0 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform output primary_vpc_id",
+            "explanation": "Verify the primary physical ID did not change.",
+            "expectedResult": "The output remains [PRIMARY_VPC_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform state list",
+            "explanation": "Confirm the final state addresses.",
+            "expectedResult": "module.network.aws_vpc.this and module.secondary.aws_vpc.this are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-refactor-modules",
+              "source-tf-moved",
+              "source-tf-plan"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-verification-1",
+            "title": "Verify the rename plan",
+            "instruction": "Read the plan summary and move statement.",
+            "expectedResult": "No infrastructure action was proposed.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc-verification-2",
+            "title": "Verify both VPC IDs",
+            "instruction": "Compare outputs and the VPC Console with the recorded IDs.",
+            "expectedResult": "Both physical IDs are unchanged.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary",
+        "slug": "destroy-both-vpcs-and-remove-the-training-boundary",
+        "title": "Destroy both VPCs and remove the training boundary",
+        "phaseId": "phase-5-complete-teardown",
+        "orderInPhase": 1,
+        "feature": "Saved destroy plan, AWS verification, IAM and local cleanup",
+        "goal": "Delete every resource and file created by this Follow Along in a controlled order.",
+        "whyItMatters": "A complete Terraform exercise includes a reviewed teardown and verification that no temporary credentials, state or cloud resources remain.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-modules-006-rename-a-module-without-replacing-its-vpc"
+        ],
+        "requiredPermissions": [
+          "Use only the temporary fa-terraform-modules identity and exact named VPC resources."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-destroy",
+          "source-tf-plan",
+          "source-aws-vpc-create",
+          "source-aws-iam-best"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Perform the complete ordered teardown",
+            "instruction": "Run terraform state list and confirm only module.network.aws_vpc.this and module.secondary.aws_vpc.this are managed.",
+            "instructions": [
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-1",
+                "text": "Run terraform state list and confirm only module.network.aws_vpc.this and module.secondary.aws_vpc.this are managed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-2",
+                "text": "Run terraform plan -destroy -out=destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-3",
+                "text": "Run terraform show destroy.tfplan and confirm exactly the two named training VPCs will be destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-4",
+                "text": "Confirm no default VPC or unrelated resource appears.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-5",
+                "text": "Run terraform apply destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-6",
+                "text": "Run terraform state list and confirm no resource addresses remain.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-7",
+                "text": "Open VPC in eu-west-2 and verify fa-tf-module-primary-vpc is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-8",
+                "text": "Verify fa-tf-module-secondary-vpc is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-9",
+                "text": "As the administrator, open IAM and delete the access key from fa-terraform-modules-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-10",
+                "text": "Detach fa-terraform-modules-training-policy from the temporary user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-11",
+                "text": "Delete fa-terraform-modules-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-12",
+                "text": "Delete fa-terraform-modules-training-policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-13",
+                "text": "Remove only the fa-terraform-modules profile from local AWS credentials and config files.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-14",
+                "text": "Leave the fa-terraform-modules folder and confirm its exact path before deletion.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-15",
+                "text": "Delete only the fa-terraform-modules folder, including its plans, .terraform folder and empty state.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-console-step-1-perform-the-complete-ordered-teardown-instruction-16",
+                "text": "Confirm no named VPC, IAM resource, AWS CLI profile or local lab folder remains.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Both VPCs, the temporary identity, local profile and exact lab folder are removed.",
+            "warning": "Destroy the VPCs through Terraform before deleting credentials or local state. Verify every exact name before deletion.",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform state list",
+            "explanation": "Inventory the final managed resources.",
+            "expectedResult": "Exactly two module VPC addresses are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform plan -destroy -out=destroy.tfplan",
+            "explanation": "Create a saved teardown plan.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 2 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform show destroy.tfplan",
+            "explanation": "Inspect both exact deletions.",
+            "expectedResult": "Only the primary and secondary training VPCs appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform apply destroy.tfplan",
+            "explanation": "Apply the exact reviewed destroy plan.",
+            "expectedResult": "Apply complete! Resources: 2 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform state list",
+            "explanation": "Verify Terraform state is empty.",
+            "expectedResult": "No resource addresses are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ec2 describe-vpcs --filters Name=tag:Lab,Values=fa-terraform-modules --region eu-west-2 --profile fa-terraform-modules",
+            "explanation": "Check for remaining VPCs before removing the profile.",
+            "expectedResult": "The Vpcs array is empty.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws iam delete-access-key --user-name fa-terraform-modules-user --access-key-id <ACCESS_KEY_ID>",
+            "explanation": "Administrator route: delete only the temporary access key.",
+            "expectedResult": "The access key is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws iam detach-user-policy --user-name fa-terraform-modules-user --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-modules-training-policy",
+            "explanation": "Administrator route: detach the exact policy.",
+            "expectedResult": "The policy is detached.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "aws iam delete-user --user-name fa-terraform-modules-user",
+            "explanation": "Administrator route: delete the empty temporary user.",
+            "expectedResult": "The user is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-cli-step-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "aws iam delete-policy --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-modules-training-policy",
+            "explanation": "Administrator route: delete the exact policy.",
+            "expectedResult": "The policy is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-vpc-create",
+              "source-aws-iam-best"
+            ],
+            "sourceIds": []
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-verification-1",
+            "title": "Verify AWS cleanup",
+            "instruction": "Search VPC and IAM for every exact fa-terraform-modules name.",
+            "expectedResult": "No training VPC, user or policy remains.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-verification-2",
+            "title": "Verify Terraform cleanup",
+            "instruction": "Confirm state list is empty before deleting local files.",
+            "expectedResult": "No managed address remains.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-modules-007-destroy-both-vpcs-and-remove-the-training-boundary-verification-3",
+            "title": "Verify local cleanup",
+            "instruction": "Check the AWS CLI profile list and filesystem.",
+            "expectedResult": "The named profile and exact lab folder are absent.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Amazon VPCs without chargeable attachments normally have no hourly charge. Delete both named training VPCs during the final phase.",
+      "safety": "Operate only on fa-tf-module-primary-vpc and fa-tf-module-secondary-vpc. Stop any plan that replaces the primary VPC during a refactor.",
+      "credentials": "Never paste passwords, access keys, session tokens, state or plan JSON into Terraform configuration, Author, Git, screenshots or chat.",
+      "region": "Use eu-west-2 for both training VPCs. IAM is global. Verify the AWS account before every create or delete action."
+    },
+    "cleanup": {
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency",
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Review the final Terraform inventory",
+          "instruction": "Confirm state contains only the two exact module-managed training VPCs.",
+          "description": "Confirm state contains only the two exact module-managed training VPCs.",
+          "verification": "Cleanup item 1 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Destroy both training VPCs",
+          "instruction": "Apply a saved destroy plan containing only fa-tf-module-primary-vpc and fa-tf-module-secondary-vpc.",
+          "description": "Apply a saved destroy plan containing only fa-tf-module-primary-vpc and fa-tf-module-secondary-vpc.",
+          "verification": "Cleanup item 2 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Verify cloud removal",
+          "instruction": "Confirm both exact VPC names are absent in eu-west-2 and Terraform state is empty.",
+          "description": "Confirm both exact VPC names are absent in eu-west-2 and Terraform state is empty.",
+          "verification": "Cleanup item 3 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Remove temporary IAM access",
+          "instruction": "Delete the access key, detach and delete the exact user and training policy.",
+          "description": "Delete the access key, detach and delete the exact user and training policy.",
+          "verification": "Cleanup item 4 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Remove local credentials and files",
+          "instruction": "Delete only the fa-terraform-modules profile and verified lab folder.",
+          "description": "Delete only the fa-terraform-modules profile and verified lab folder.",
+          "verification": "Cleanup item 5 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Acknowledge complete cleanup",
+          "instruction": "Confirm no VPC, IAM resource, profile, plan, state or local lab file remains.",
+          "description": "Confirm no VPC, IAM resource, profile, plan, state or local lab file remains.",
+          "verification": "Cleanup item 6 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        }
+      ]
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "warnings",
+          "priority": "advisory",
+          "message": "An administrator must review the temporary VPC training policy before attachment.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Every refactor plan must show zero add, change and destroy actions before it is applied.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "cleanup",
+          "priority": "advisory",
+          "message": "Terraform must destroy both VPCs before temporary credentials, state and local files are removed.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "terraform-modules-refactoring-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The local Author import must bind the currently signed-in Author and create exactly one private draft."
+  },
+  "summary": {
+    "phaseCount": 5,
+    "taskCount": 7,
+    "checkboxCount": 113,
+    "cliCommandCount": 54,
+    "verificationCheckCount": 16,
+    "cleanupItemCount": 6,
+    "learnerResourceValueCount": 0,
+    "officialSourceCount": 12,
+    "officialAwsSourceCount": 3,
+    "officialTerraformSourceCount": 9
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "103a4ea171d35046c7b44973392ad7fa110365cf1782c8f781c3a28c57247270"
+  }
+}

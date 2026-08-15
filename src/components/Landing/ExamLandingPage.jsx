@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, BookOpenCheck, CheckCircle2, FileQuestion, Network } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpenCheck, CheckCircle2, FileQuestion, Network, Siren } from 'lucide-react';
 import { getExamChecklistItemCount, getExamLandingDetails, getExamTopics } from '../../utils/examNavigation.js';
 
 const TOOL_CARDS = [
@@ -32,6 +32,7 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
   const topics = getExamTopics(exam);
   const checklistItems = getExamChecklistItemCount(exam);
   const hasKnowledgeGuide = exam.id === 'terraform-associate-004' || exam.id === 'aws-saa-c03';
+  const hasTroubleshooting = exam.id === 'terraform-associate-004' || exam.id === 'aws-saa-c03';
   const toolCards = hasKnowledgeGuide
     ? [
         {
@@ -43,6 +44,13 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
           icon: BookOpenCheck,
           colour: 'border-violet-700/80 bg-violet-950/35 text-violet-300'
         },
+        ...(hasTroubleshooting ? [{
+          id: 'troubleshooting',
+          title: 'Troubleshooting',
+          description: 'Investigate realistic incidents, validate your diagnosis, and build a workplace-style RCA report.',
+          icon: Siren,
+          colour: 'border-amber-700/80 bg-amber-950/30 text-amber-300'
+        }] : []),
         ...TOOL_CARDS
       ]
     : TOOL_CARDS;
@@ -75,7 +83,7 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
         <div>
           <h2 className="text-xl font-bold text-white">What would you like to do?</h2>
           <p className="mt-1 text-sm text-slate-400">Everything opened below remains connected to {exam.code}.</p>
-          <div className={`mt-4 grid gap-4 ${toolCards.length === 4 ? 'md:grid-cols-2 xl:grid-cols-4' : 'md:grid-cols-3'}`}>
+          <div className={`mt-4 grid gap-4 ${toolCards.length > 3 ? 'md:grid-cols-2 xl:grid-cols-5' : 'md:grid-cols-3'}`}>
             {toolCards.map(tool => {
               const Icon = tool.icon;
               return (

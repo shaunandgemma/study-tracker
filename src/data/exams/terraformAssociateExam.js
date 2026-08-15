@@ -12,6 +12,7 @@ export const TERRAFORM_ASSOCIATE_EXAM = Object.freeze({
   ],
   passingScore: 70,
   timeLimitMinutes: 60,
+  questionSource: 'supabase',
   badgeColor: 'from-violet-500 to-purple-700',
   followAlongExamIds: ['terraform-associate-004'],
   officialExamUrl: 'https://developer.hashicorp.com/certifications/infrastructure-automation',
@@ -239,6 +240,104 @@ export const TERRAFORM_ASSOCIATE_EXAM = Object.freeze({
       options: ['Policy enforcement', 'terraform fmt', 'Local backend storage', 'Provider aliasing'],
       correctAnswer: 0, correctAnswers: null,
       explanation: 'Policy enforcement adds governance checks to HCP Terraform run workflows.'
+    },
+    {
+      id: 'q-tf004-17', topicId: 'tf004-fundamentals', difficulty: 'Medium', type: 'single',
+      question: 'A configuration uses two AWS provider configurations with different regions. How should a resource select the aliased provider named west?',
+      options: ['provider = aws.west', 'provider = west.aws', 'region = aws.west', 'providers = [aws.west]'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'A resource selects an alternate provider configuration with the provider meta-argument and its local provider alias, such as provider = aws.west.'
+    },
+    {
+      id: 'q-tf004-18', topicId: 'tf004-configuration', difficulty: 'Medium', type: 'single',
+      question: 'What does marking a Terraform variable as sensitive do?',
+      options: ['Redacts its value from normal CLI output but does not guarantee exclusion from state', 'Encrypts the value in every state backend', 'Prevents providers from receiving the value', 'Deletes the value immediately after terraform apply'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'The sensitive flag limits normal display of a value. Sensitive values can still be stored in state, so the state must be protected.'
+    },
+    {
+      id: 'q-tf004-19', topicId: 'tf004-configuration', difficulty: 'Medium', type: 'single',
+      question: 'What is the purpose of the create_before_destroy lifecycle rule?',
+      options: ['Create a replacement before destroying the existing object when possible', 'Prevent Terraform from ever replacing the object', 'Skip dependency graph construction', 'Create every resource twice for availability'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'create_before_destroy reverses the normal replacement order when the remote API and naming constraints permit it, reducing disruption during replacement.'
+    },
+    {
+      id: 'q-tf004-20', topicId: 'tf004-configuration', difficulty: 'Hard', type: 'multiple',
+      question: 'Which two Terraform features can validate assumptions using custom conditions? Select two.',
+      options: ['A variable validation block', 'The dependency lock file', 'A resource precondition', 'The local backend'],
+      correctAnswer: null, correctAnswers: [0, 2],
+      explanation: 'Variable validation checks supplied input values, while resource preconditions check assumptions before Terraform performs the associated operation.'
+    },
+    {
+      id: 'q-tf004-21', topicId: 'tf004-configuration', difficulty: 'Medium', type: 'single',
+      question: 'Why is for_each often preferred over count when managing objects identified by meaningful names?',
+      options: ['Its instance addresses use stable map keys or set members', 'It automatically creates a child module', 'It disables resource replacement', 'It stores no information in state'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'for_each identifies instances by keys, which can avoid the index shifting that may occur when count is used with a changing ordered list.'
+    },
+    {
+      id: 'q-tf004-22', topicId: 'tf004-modules', difficulty: 'Medium', type: 'single',
+      question: 'Where is the version argument normally used to constrain a registry module?',
+      options: ['Inside the module block', 'Inside the provider block', 'Inside the output block', 'Inside the backend block'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'A module block can include a version constraint when its source supports versioning, such as a module from a registry.'
+    },
+    {
+      id: 'q-tf004-23', topicId: 'tf004-state', difficulty: 'Medium', type: 'single',
+      question: 'After changing a configuration from local state to a remote backend, which command initializes the new backend and can migrate the existing state?',
+      options: ['terraform init -migrate-state', 'terraform state list -remote', 'terraform apply -refresh-only', 'terraform fmt -recursive'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'terraform init -migrate-state reinitializes the backend and confirms migration of existing state to the newly configured backend.'
+    },
+    {
+      id: 'q-tf004-24', topicId: 'tf004-state', difficulty: 'Medium', type: 'single',
+      question: 'What is the purpose of a refresh-only plan?',
+      options: ['Review updates needed to reconcile Terraform state with changes already made remotely', 'Recreate every object recorded in state', 'Download newer provider versions', 'Remove all resources missing from configuration'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'Refresh-only mode lets you review and record remote changes in state without proposing changes to the remote infrastructure.'
+    },
+    {
+      id: 'q-tf004-25', topicId: 'tf004-state', difficulty: 'Hard', type: 'single',
+      question: 'A resource block is moved into a child module without changing the real infrastructure. What should record the address change in configuration?',
+      options: ['A moved block', 'A check block', 'A provider alias', 'A backend block'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'A moved block tells Terraform that an existing object has a new resource address, allowing the refactor without treating it as an unrelated destroy-and-create operation.'
+    },
+    {
+      id: 'q-tf004-26', topicId: 'tf004-maintenance', difficulty: 'Medium', type: 'multiple',
+      question: 'Which two statements about importing existing infrastructure are correct? Select two.',
+      options: ['The destination resource address must be chosen deliberately', 'Import always produces a complete production-ready configuration', 'The configuration must describe the object Terraform will manage', 'Import automatically moves the object to a new cloud account'],
+      correctAnswer: null, correctAnswers: [0, 2],
+      explanation: 'Import associates an existing object with a selected Terraform address. Configuration is still required and must be reviewed so it represents the desired management state.'
+    },
+    {
+      id: 'q-tf004-27', topicId: 'tf004-maintenance', difficulty: 'Easy', type: 'multiple',
+      question: 'Which two Terraform CLI commands inspect state without changing resource addresses? Select two.',
+      options: ['terraform state list', 'terraform state show', 'terraform state mv', 'terraform state rm'],
+      correctAnswer: null, correctAnswers: [0, 1],
+      explanation: 'state list displays the resource addresses in state and state show displays attributes for one state address. state mv and state rm modify Terraform state records.'
+    },
+    {
+      id: 'q-tf004-28', topicId: 'tf004-configuration', difficulty: 'Hard', type: 'single',
+      question: 'What is a key property of an ephemeral value in supported Terraform configuration?',
+      options: ['Terraform omits it from state and plan files', 'Terraform automatically stores it in a local values file', 'It can only contain a number', 'It replaces the need for provider authentication'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'Ephemeral values are intended for temporary data and are omitted from state and plan files, reducing persistence of short-lived sensitive information.'
+    },
+    {
+      id: 'q-tf004-29', topicId: 'tf004-hcp', difficulty: 'Medium', type: 'single',
+      question: 'What commonly happens when an HCP Terraform workspace is connected to a version control repository and an approved change is committed?',
+      options: ['The workspace can automatically queue a run for the changed configuration', 'The local backend overwrites the HCP Terraform state', 'Terraform bypasses the plan stage', 'Every workspace in the organization is destroyed'],
+      correctAnswer: 0, correctAnswers: null,
+      explanation: 'A VCS-connected workspace can detect relevant commits and queue Terraform runs according to the workspace configuration and approval workflow.'
+    },
+    {
+      id: 'q-tf004-30', topicId: 'tf004-hcp', difficulty: 'Hard', type: 'multiple',
+      question: 'Which two HCP Terraform capabilities support controlled team workflows? Select two.',
+      options: ['Policy enforcement', 'Disabling state history', 'Team-based workspace permissions', 'Storing every credential in configuration files'],
+      correctAnswer: null, correctAnswers: [0, 2],
+      explanation: 'Policy enforcement can evaluate changes against organizational rules, while team permissions control who can view, plan, apply, or administer workspaces.'
     }
   ]
 });

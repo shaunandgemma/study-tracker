@@ -12,6 +12,7 @@ import { QuizEngine } from './components/PrepExam/QuizEngine';
 import { ExamResults } from './components/PrepExam/ExamResults';
 import { AwsSetupGuide } from './features/awsConnection/AwsSetupGuide.jsx';
 import { FollowAlongsView } from './components/FollowAlongs/FollowAlongsView';
+import { TroubleshootingView } from './components/Troubleshooting/TroubleshootingView.jsx';
 import { AppLandingPage } from './components/Landing/AppLandingPage.jsx';
 import { ExamLandingPage } from './components/Landing/ExamLandingPage.jsx';
 import { ExamWorkspaceHeader } from './components/Landing/ExamWorkspaceHeader.jsx';
@@ -314,6 +315,13 @@ const MainContent = () => {
                   startKnowledgeGuide
                   onExitKnowledgeGuide={() => setViewMode('exam-home')}
                 />
+              </>
+            )}
+
+            {viewMode === 'troubleshooting' && (activeExamId === 'terraform-associate-004' || activeExamId === 'aws-saa-c03') && (
+              <>
+                <ExamWorkspaceHeader exam={activeExam} viewMode={viewMode} onBack={() => setViewMode('exam-home')} />
+                <TroubleshootingView examId={activeExamId} examCode={activeExam?.code} />
               </>
             )}
 

@@ -1,0 +1,2480 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-terraform-variables-validation-codex-20260815-001",
+  "preparedAt": "2026-08-15T14:00:00.000Z",
+  "generationMode": "new",
+  "service": {
+    "officialName": "HashiCorp Terraform on AWS",
+    "shortName": "Terraform Variables"
+  },
+  "acceptedFingerprintChain": {
+    "stage6": {
+      "algorithm": "sha256-json-v1",
+      "value": "5f7e3c2a9266648c833da6d5a65e75cf2c9703b35d59932029ed6f4765b8a840"
+    },
+    "stage7": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "stage8": {
+      "algorithm": "sha256-json-v1",
+      "value": "dd9003d0a112cef8ac97f14f624f2c2c8d65d48c452b145bd0e496087fd24cd6"
+    },
+    "stage9": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "stage10": {
+      "algorithm": "sha256-json-v1",
+      "value": "1177d2eccbb84447906c26bc0c17642bb46ed6579af6d8dcccc57b5e0ad25968"
+    },
+    "stage11": {
+      "algorithm": "sha256-json-v1",
+      "value": "8dc12b006c8b87afb905b4c5a4023e53e70bd14fb452bf54bcb38a2a74ee5917"
+    }
+  },
+  "acceptedRecordManifest": {
+    "planning": {
+      "algorithm": "sha256-json-v1",
+      "value": "620687970c015d9a0952092c8265b2c8adae711287502316cc029b8c91605745"
+    },
+    "instructions": {
+      "algorithm": "sha256-json-v1",
+      "value": "5f7e3c2a9266648c833da6d5a65e75cf2c9703b35d59932029ed6f4765b8a840"
+    },
+    "resourcesAndChecks": {
+      "algorithm": "sha256-json-v1",
+      "value": "477dd63c90938b550d2952c24923c88c3ed16a963da26ed43dfa1262c33a09d6"
+    },
+    "cleanup": {
+      "algorithm": "sha256-json-v1",
+      "value": "dd9003d0a112cef8ac97f14f624f2c2c8d65d48c452b145bd0e496087fd24cd6"
+    },
+    "authoringCheck": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "learnerPreview": {
+      "algorithm": "sha256-json-v1",
+      "value": "1177d2eccbb84447906c26bc0c17642bb46ed6579af6d8dcccc57b5e0ad25968"
+    },
+    "structuredReview": {
+      "algorithm": "sha256-json-v1",
+      "value": "8dc12b006c8b87afb905b4c5a4023e53e70bd14fb452bf54bcb38a2a74ee5917"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "codex-local-handoff"
+    },
+    "programme": {
+      "serviceSlug": "terraform-variables-validation",
+      "serviceName": "HashiCorp Terraform on AWS",
+      "shortName": "Terraform Variables",
+      "displayName": "Terraform Variables, Expressions and Validation Follow Along",
+      "subtitle": "Build typed, reusable and self-validating Terraform configuration.",
+      "description": "Start with no lab infrastructure. Create typed simple and complex variables, calculate locals, filter maps with for expressions, build stable resources with for_each, inspect structured outputs, use automatic and explicit tfvars files, trigger safe validation failures and remove everything in order.",
+      "learningOutcome": "Confidently trace Terraform values through variables, complex types, locals, expressions, functions, for_each, outputs, tfvars precedence and custom validation.",
+      "programmeId": "terraform-variables-validation-learning-path",
+      "pathId": "terraform-variables-validation-learning-path",
+      "componentNamespace": "",
+      "category": "Terraform Variables and Expressions",
+      "difficulty": "Beginner to Intermediate",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished",
+      "examId": "terraform-associate-004"
+    },
+    "sources": [
+      {
+        "id": "source-aws-iam",
+        "title": "Security best practices in IAM",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Use temporary non-root access.",
+        "taskIds": [
+          "task-terraform-variables-001-create-temporary-variables-training-access",
+          "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-aws-cli",
+        "title": "Configure the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create a named training profile.",
+        "taskIds": [
+          "task-terraform-variables-001-create-temporary-variables-training-access"
+        ]
+      },
+      {
+        "id": "source-aws-ssm",
+        "title": "Creating Parameter Store parameters",
+        "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-create.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Verify harmless String parameters in the Console.",
+        "taskIds": [
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values",
+          "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-tf-variables",
+        "title": "Input variables",
+        "url": "https://developer.hashicorp.com/terraform/language/values/variables",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Declare typed inputs, defaults and validation.",
+        "taskIds": [
+          "task-terraform-variables-002-define-simple-and-complex-input-variables",
+          "task-terraform-variables-006-trigger-validation-failures-without-changing-aws"
+        ]
+      },
+      {
+        "id": "source-tf-types",
+        "title": "Type constraints",
+        "url": "https://developer.hashicorp.com/terraform/language/expressions/type-constraints",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use maps, objects and optional attributes.",
+        "taskIds": [
+          "task-terraform-variables-002-define-simple-and-complex-input-variables",
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files"
+        ]
+      },
+      {
+        "id": "source-tf-locals",
+        "title": "Local values",
+        "url": "https://developer.hashicorp.com/terraform/language/values/locals",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Name and reuse calculated expressions.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ]
+      },
+      {
+        "id": "source-tf-for",
+        "title": "For expressions",
+        "url": "https://developer.hashicorp.com/terraform/language/expressions/for",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Filter and transform collections.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ]
+      },
+      {
+        "id": "source-tf-functions",
+        "title": "Built-in functions",
+        "url": "https://developer.hashicorp.com/terraform/language/functions",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use string and collection functions.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ]
+      },
+      {
+        "id": "source-tf-for-each",
+        "title": "The for_each meta-argument",
+        "url": "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Create stable resource instances from a map.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs",
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values"
+        ]
+      },
+      {
+        "id": "source-tf-values",
+        "title": "Variables and outputs",
+        "url": "https://developer.hashicorp.com/terraform/language/values",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explain value flow through configuration.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ]
+      },
+      {
+        "id": "source-tf-files",
+        "title": "Variable definitions files",
+        "url": "https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use automatic and explicit variable files.",
+        "taskIds": [
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files"
+        ]
+      },
+      {
+        "id": "source-tf-precondition",
+        "title": "Validate resource configuration",
+        "url": "https://developer.hashicorp.com/terraform/language/expressions/custom-conditions",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use variable validation, preconditions and checks.",
+        "taskIds": [
+          "task-terraform-variables-002-define-simple-and-complex-input-variables",
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs",
+          "task-terraform-variables-006-trigger-validation-failures-without-changing-aws"
+        ]
+      },
+      {
+        "id": "source-tf-plan",
+        "title": "Terraform plan command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Review saved and deliberately failing plans.",
+        "taskIds": [
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values",
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files",
+          "task-terraform-variables-006-trigger-validation-failures-without-changing-aws",
+          "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary"
+        ]
+      },
+      {
+        "id": "source-tf-output",
+        "title": "Terraform output command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/output",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Inspect scalar and structured output values.",
+        "taskIds": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs",
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values",
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files"
+        ]
+      },
+      {
+        "id": "source-tf-destroy",
+        "title": "Terraform destroy command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Remove every managed parameter safely.",
+        "taskIds": [
+          "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#7c3aed",
+      "iconLabel": "TF4",
+      "iconName": "Braces",
+      "badgeText": "Terraform Card 4"
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-terraform-variables-001-create-temporary-variables-training-access",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-safely",
+        "phaseNumber": 1,
+        "title": "Prepare safely",
+        "description": "Create temporary access and an isolated Terraform folder.",
+        "taskIds": [
+          "task-terraform-variables-001-create-temporary-variables-training-access"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-build-typed-configuration",
+        "phaseNumber": 2,
+        "title": "Build typed configuration",
+        "description": "Create variables, locals, expressions, resources and structured outputs one file at a time.",
+        "taskIds": [
+          "task-terraform-variables-002-define-simple-and-complex-input-variables",
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-apply-and-inspect-values",
+        "phaseNumber": 3,
+        "title": "Apply and inspect values",
+        "description": "Create harmless parameters and trace values from inputs to AWS.",
+        "taskIds": [
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-override-and-validate",
+        "phaseNumber": 4,
+        "title": "Override and validate",
+        "description": "Use variable files, expand a map and observe safe validation failures.",
+        "taskIds": [
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files",
+          "task-terraform-variables-006-trigger-validation-failures-without-changing-aws"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-complete-teardown",
+        "phaseNumber": 5,
+        "title": "Complete teardown",
+        "description": "Destroy every parameter and remove temporary access and files.",
+        "taskIds": [
+          "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-terraform-variables-001-create-temporary-variables-training-access",
+        "slug": "create-temporary-variables-training-access",
+        "title": "Create temporary variables training access",
+        "phaseId": "phase-1-prepare-safely",
+        "orderInPhase": 1,
+        "feature": "IAM, AWS CLI and isolated working folder",
+        "goal": "Start with no lab infrastructure and verify one temporary identity, Region and empty folder.",
+        "whyItMatters": "Typed configuration still creates real resources. A clear identity and folder boundary protects unrelated AWS resources and Terraform state.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-aws-iam",
+          "source-aws-cli"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create temporary variables training access",
+            "instruction": "Sign in to the training AWS account as an administrator; never use the root user for this lab.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-1",
+                "text": "Sign in to the training AWS account as an administrator; never use the root user for this lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-2",
+                "text": "Open the account menu and record the 12-digit account ID as [ACCOUNT_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-3",
+                "text": "Use the Region selector to choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-4",
+                "text": "Open IAM, choose Policies, choose Create policy and choose JSON.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-5",
+                "text": "Paste the supplied fa-terraform-vars-training-policy JSON.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-6",
+                "text": "Replace <ACCOUNT_ID> with the recorded account ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-7",
+                "text": "Choose Next, name the policy fa-terraform-vars-training-policy and review the /fa-terraform-vars path boundary.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-8",
+                "text": "Choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-9",
+                "text": "Open IAM Users, create fa-terraform-vars-user and attach only the new training policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-10",
+                "text": "Create one CLI access key only if the chosen terminal requires it.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-11",
+                "text": "Enter credentials only into the AWS CLI protected prompt; never put them in .tf or .tfvars files.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-12",
+                "text": "Open CloudShell, WSL or PowerShell.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-13",
+                "text": "CloudShell or WSL: create and enter ~/fa-terraform-vars, then confirm it with pwd.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-14",
+                "text": "PowerShell: create and enter $env:USERPROFILE\\fa-terraform-vars, then confirm it with Get-Location.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-instruction-15",
+                "text": "List the folder and confirm it contains no old Terraform files, plans or state.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-variables-001-create-temporary-variables-training-access-console-step-1-create-temporary-variables-training-access-json-1",
+                "title": "fa-terraform-vars-training-policy.json",
+                "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"VerifyCaller\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:GetCallerIdentity\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"DescribeTrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:DescribeParameters\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyTerraformVariableLabParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:<ACCOUNT_ID>:parameter/fa-terraform-vars/*\"\n    }\n  ]\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-aws-iam",
+                  "source-aws-cli"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The temporary access boundary and empty fa-terraform-vars folder are ready.",
+            "warning": "An administrator must review this disposable training policy before attachment.",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws configure --profile fa-terraform-vars",
+            "explanation": "Store temporary credentials and eu-west-2 in a named profile.",
+            "expectedResult": "The protected prompt completes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sts get-caller-identity --profile fa-terraform-vars",
+            "explanation": "Verify the caller and AWS account.",
+            "expectedResult": "The ARN identifies fa-terraform-vars-user in [ACCOUNT_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "mkdir -p ~/fa-terraform-vars",
+            "explanation": "CloudShell or WSL: create the exact folder.",
+            "expectedResult": "The folder exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "cd ~/fa-terraform-vars",
+            "explanation": "CloudShell or WSL: enter the exact folder.",
+            "expectedResult": "The terminal enters the folder.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "pwd",
+            "explanation": "CloudShell or WSL: verify the path.",
+            "expectedResult": "The path ends with /fa-terraform-vars.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-vars\" -Force",
+            "explanation": "PowerShell: create the exact folder.",
+            "expectedResult": "The folder exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "Set-Location \"$env:USERPROFILE\\fa-terraform-vars\"",
+            "explanation": "PowerShell: enter the exact folder.",
+            "expectedResult": "The location changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "Get-Location",
+            "explanation": "PowerShell: verify the path.",
+            "expectedResult": "The path ends with fa-terraform-vars.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-aws-iam",
+              "source-aws-cli"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-verification-1",
+            "title": "Verify identity",
+            "instruction": "Read the STS account and ARN.",
+            "expectedResult": "The expected temporary user is active.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-001-create-temporary-variables-training-access-verification-2",
+            "title": "Verify empty workspace",
+            "instruction": "List the current folder.",
+            "expectedResult": "No old .tf, state or plan file exists.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-002-define-simple-and-complex-input-variables",
+        "slug": "define-simple-and-complex-input-variables",
+        "title": "Define simple and complex input variables",
+        "phaseId": "phase-2-build-typed-configuration",
+        "orderInPhase": 1,
+        "feature": "String, map, object, optional attribute and validation blocks",
+        "goal": "Build versions.tf and variables.tf while understanding every declared type and default.",
+        "whyItMatters": "Type constraints make a module interface predictable and reject malformed input before infrastructure changes begin.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-001-create-temporary-variables-training-access"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-variables",
+          "source-tf-types",
+          "source-tf-precondition"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Define simple and complex input variables",
+            "instruction": "Remain in the empty fa-terraform-vars folder.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-1",
+                "text": "Remain in the empty fa-terraform-vars folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-2",
+                "text": "Create versions.tf and paste the supplied block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-3",
+                "text": "Identify the Terraform version, AWS provider source, provider constraint, Region variable and profile variable.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-4",
+                "text": "Create variables.tf and paste the supplied block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-5",
+                "text": "Read aws_region and aws_profile as string variables with defaults.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-6",
+                "text": "Read environment as a string that accepts only development or test after trimming and lowercasing.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-7",
+                "text": "Read common_tags as map(string), meaning every key and value must be text.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-8",
+                "text": "Read parameters as map(object(...)), meaning each named item must follow the object structure.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-9",
+                "text": "Identify value and description as required object attributes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-10",
+                "text": "Identify enabled as optional(bool, true), so omitted entries are enabled by default.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-11",
+                "text": "Inspect the default map and identify its three stable keys.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-12",
+                "text": "Read the second validation expression and identify keys(), for, regex(), can() and alltrue().",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-13",
+                "text": "Run terraform fmt and terraform init.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-14",
+                "text": "Run terraform validate and correct any reported file and line before continuing.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-instruction-15",
+                "text": "Do not apply; no resource block exists yet.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-json-1",
+                "title": "versions.tf",
+                "content": "terraform {\n  required_version = \">= 1.10.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.0\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  region  = var.aws_region\n  profile = var.aws_profile\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-variables",
+                  "source-tf-types",
+                  "source-tf-precondition"
+                ]
+              },
+              {
+                "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-console-step-1-define-simple-and-complex-input-variables-json-2",
+                "title": "variables.tf",
+                "content": "variable \"aws_region\" {\n  description = \"AWS Region for the training parameters\"\n  type        = string\n  default     = \"eu-west-2\"\n}\n\nvariable \"aws_profile\" {\n  description = \"Named AWS CLI profile used only for this lab\"\n  type        = string\n  default     = \"fa-terraform-vars\"\n}\n\nvariable \"environment\" {\n  description = \"Short environment name used in parameter paths\"\n  type        = string\n  default     = \"development\"\n\n  validation {\n    condition     = contains([\"development\", \"test\"], lower(trimspace(var.environment)))\n    error_message = \"environment must be development or test.\"\n  }\n}\n\nvariable \"common_tags\" {\n  description = \"Tags applied to every training parameter\"\n  type        = map(string)\n  default = {\n    ManagedBy = \"Terraform\"\n    Lab       = \"fa-terraform-vars\"\n  }\n}\n\nvariable \"parameters\" {\n  description = \"Training parameters keyed by a short safe name\"\n  type = map(object({\n    value       = string\n    description = string\n    enabled     = optional(bool, true)\n  }))\n\n  default = {\n    api-mode = {\n      value       = \"training\"\n      description = \"Harmless API operating mode\"\n    }\n    retry-count = {\n      value       = \"3\"\n      description = \"Harmless retry-count example\"\n    }\n    feature-flag = {\n      value       = \"enabled\"\n      description = \"Harmless feature flag\"\n    }\n  }\n\n  validation {\n    condition     = alltrue([for name in keys(var.parameters) : can(regex(\"^[a-z0-9-]+$\", name))])\n    error_message = \"Parameter keys may contain only lowercase letters, numbers and hyphens.\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-variables",
+                  "source-tf-types",
+                  "source-tf-precondition"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Terraform accepts the typed variable declarations and no AWS resource exists.",
+            "warning": "Do not place real passwords, tokens or secrets in variable defaults or tfvars files.",
+            "sourceIds": [
+              "source-tf-variables",
+              "source-tf-types",
+              "source-tf-precondition"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Format the first two configuration files.",
+            "expectedResult": "Terraform completes without creating resources.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-variables",
+              "source-tf-types",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Install the required AWS provider.",
+            "expectedResult": "Terraform reports successful initialization.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-variables",
+              "source-tf-types",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Validate the provider and variable declarations.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-variables",
+              "source-tf-types",
+              "source-tf-precondition"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-verification-1",
+            "title": "Explain the complex type",
+            "instruction": "Describe the outer map and inner object attributes.",
+            "expectedResult": "The learner can distinguish keys, required attributes and the optional boolean.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-002-define-simple-and-complex-input-variables-verification-2",
+            "title": "Verify no infrastructure",
+            "instruction": "Open Systems Manager Parameter Store in eu-west-2 and search /fa-terraform-vars.",
+            "expectedResult": "No lab parameter exists yet.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs",
+        "slug": "build-locals-expressions-resources-and-outputs",
+        "title": "Build locals, expressions, resources and outputs",
+        "phaseId": "phase-2-build-typed-configuration",
+        "orderInPhase": 2,
+        "feature": "locals, functions, for expressions, for_each, merge and structured outputs",
+        "goal": "Connect input variables to calculated locals, stable resource instances and readable outputs.",
+        "whyItMatters": "Terraform configuration becomes reusable when expressions transform input data rather than repeating fixed values.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-002-define-simple-and-complex-input-variables"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-locals",
+          "source-tf-for",
+          "source-tf-functions",
+          "source-tf-for-each",
+          "source-tf-values",
+          "source-tf-output",
+          "source-tf-precondition"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Build locals, expressions, resources and outputs",
+            "instruction": "Create locals.tf and paste the supplied local values.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-1",
+                "text": "Create locals.tf and paste the supplied local values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-2",
+                "text": "Read normalized_environment as a calculated lowercase trimmed value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-3",
+                "text": "Read path_prefix as string interpolation that builds the common Parameter Store path.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-4",
+                "text": "Read enabled_parameters as a for expression that filters out objects whose enabled value is false.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-5",
+                "text": "Read effective_tags as merge() combining caller tags with the calculated Environment tag.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-6",
+                "text": "Create main.tf and paste the supplied resource and check block.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-7",
+                "text": "Read for_each as creating one stable resource instance for each enabled map key.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-8",
+                "text": "Read each.key and each.value as the current map key and object.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-9",
+                "text": "Read the resource name as two interpolated parts: path prefix and stable key.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-10",
+                "text": "Read the tag merge as adding ParameterKey without duplicating the common tags.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-11",
+                "text": "Read the lifecycle precondition as rejecting enabled objects with empty values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-12",
+                "text": "Read the check block as requiring at least one enabled parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-13",
+                "text": "Create outputs.tf and paste the supplied outputs.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-14",
+                "text": "Read the list for expression that collects resource names and sort() that makes output predictable.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-15",
+                "text": "Read configuration_summary as an object containing a string, number, list and map.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-16",
+                "text": "Run terraform fmt and terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-17",
+                "text": "Run terraform console, evaluate local.enabled_parameters, then enter exit to leave the console.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-instruction-18",
+                "text": "Do not apply until the next task.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-json-1",
+                "title": "locals.tf",
+                "content": "locals {\n  normalized_environment = lower(trimspace(var.environment))\n  path_prefix             = \"/fa-terraform-vars/${local.normalized_environment}\"\n\n  enabled_parameters = {\n    for name, configuration in var.parameters :\n    name => configuration\n    if configuration.enabled\n  }\n\n  effective_tags = merge(var.common_tags, {\n    Environment = local.normalized_environment\n  })\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-locals",
+                  "source-tf-for",
+                  "source-tf-functions",
+                  "source-tf-for-each",
+                  "source-tf-values",
+                  "source-tf-output",
+                  "source-tf-precondition"
+                ]
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-json-2",
+                "title": "main.tf",
+                "content": "resource \"aws_ssm_parameter\" \"training\" {\n  for_each = local.enabled_parameters\n\n  name        = \"${local.path_prefix}/${each.key}\"\n  description = each.value.description\n  type        = \"String\"\n  value       = each.value.value\n\n  tags = merge(local.effective_tags, {\n    ParameterKey = each.key\n  })\n\n  lifecycle {\n    precondition {\n      condition     = length(trimspace(each.value.value)) > 0\n      error_message = \"Enabled parameter values cannot be empty.\"\n    }\n  }\n}\n\ncheck \"at_least_one_parameter\" {\n  assert {\n    condition     = length(local.enabled_parameters) > 0\n    error_message = \"At least one training parameter must be enabled.\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-locals",
+                  "source-tf-for",
+                  "source-tf-functions",
+                  "source-tf-for-each",
+                  "source-tf-values",
+                  "source-tf-output",
+                  "source-tf-precondition"
+                ]
+              },
+              {
+                "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-console-step-1-build-locals-expressions-resources-and-outputs-json-3",
+                "title": "outputs.tf",
+                "content": "output \"parameter_names\" {\n  description = \"Sorted names of all enabled training parameters\"\n  value       = sort([for parameter in aws_ssm_parameter.training : parameter.name])\n}\n\noutput \"configuration_summary\" {\n  description = \"Calculated values that explain the active configuration\"\n  value = {\n    environment       = local.normalized_environment\n    enabled_count     = length(local.enabled_parameters)\n    enabled_keys      = sort(keys(local.enabled_parameters))\n    effective_tag_map = local.effective_tags\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-locals",
+                  "source-tf-for",
+                  "source-tf-functions",
+                  "source-tf-for-each",
+                  "source-tf-values",
+                  "source-tf-output",
+                  "source-tf-precondition"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The complete configuration validates and the learner can trace each input through locals to resources and outputs.",
+            "warning": "The sample values are deliberately harmless. Do not convert this lab into a secrets exercise.",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Format all root files.",
+            "expectedResult": "Terraform formats the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform validate",
+            "explanation": "Check all expressions, references and conditions.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform console",
+            "explanation": "Open the expression console for read-only exploration.",
+            "expectedResult": "The Terraform prompt opens.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "local.normalized_environment",
+            "explanation": "Evaluate the normalized string inside terraform console.",
+            "expectedResult": "\"development\" is returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "keys(local.enabled_parameters)",
+            "explanation": "Evaluate the active stable keys inside terraform console.",
+            "expectedResult": "The three default keys are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "local.effective_tags",
+            "explanation": "Evaluate the merged tag map inside terraform console.",
+            "expectedResult": "ManagedBy, Lab and Environment are present.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "exit",
+            "explanation": "Leave terraform console before planning.",
+            "expectedResult": "The normal terminal prompt returns.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-locals",
+              "source-tf-for",
+              "source-tf-functions",
+              "source-tf-for-each",
+              "source-tf-values",
+              "source-tf-output",
+              "source-tf-precondition"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-verification-1",
+            "title": "Trace one value",
+            "instruction": "Follow api-mode from var.parameters through local.enabled_parameters to its resource name.",
+            "expectedResult": "The final path is /fa-terraform-vars/development/api-mode.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-003-build-locals-expressions-resources-and-outputs-verification-2",
+            "title": "Verify stable addresses",
+            "instruction": "Explain how map keys become for_each instance keys.",
+            "expectedResult": "The learner expects addresses such as aws_ssm_parameter.training[\"api-mode\"].",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values",
+        "slug": "plan-apply-and-inspect-the-default-values",
+        "title": "Plan, apply and inspect the default values",
+        "phaseId": "phase-3-apply-and-inspect-values",
+        "orderInPhase": 1,
+        "feature": "Saved plan, for_each instances, outputs and AWS verification",
+        "goal": "Create three harmless parameters and prove the calculated configuration matches AWS.",
+        "whyItMatters": "Applying and inspecting the result connects abstract expressions to real resource addresses, tags and output values.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-003-build-locals-expressions-resources-and-outputs"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-plan",
+          "source-tf-output",
+          "source-aws-ssm",
+          "source-tf-for-each"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Plan, apply and inspect the default values",
+            "instruction": "Run terraform plan -out=defaults.tfplan.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-1",
+                "text": "Run terraform plan -out=defaults.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-2",
+                "text": "Confirm exactly three aws_ssm_parameter.training instances will be added.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-3",
+                "text": "Confirm the instance keys are api-mode, retry-count and feature-flag.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-4",
+                "text": "Run terraform show defaults.tfplan and verify every path begins /fa-terraform-vars/development/.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-5",
+                "text": "Verify every parameter is type String and contains only the harmless supplied values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-6",
+                "text": "Run terraform apply defaults.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-7",
+                "text": "Run terraform output parameter_names and confirm three sorted paths.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-8",
+                "text": "Run terraform output configuration_summary and inspect the string, number, list and map types.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-9",
+                "text": "Run terraform state list and identify three stable for_each addresses.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-10",
+                "text": "Open Systems Manager in eu-west-2 and choose Parameter Store.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-11",
+                "text": "Search for /fa-terraform-vars/development/.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-12",
+                "text": "Open each parameter and compare its name, description, value and tags with the configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-console-step-1-plan-apply-and-inspect-the-default-values-instruction-13",
+                "text": "Record that enabled_count is 3 and AWS displays three parameters.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Three default parameters exist and match the calculated Terraform outputs.",
+            "warning": "Stop if the plan includes any parameter outside /fa-terraform-vars/development/.",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan -out=defaults.tfplan",
+            "explanation": "Save the exact three-parameter plan.",
+            "expectedResult": "Plan: 3 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform show defaults.tfplan",
+            "explanation": "Inspect every calculated name, value and tag.",
+            "expectedResult": "Only three harmless training parameters appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform apply defaults.tfplan",
+            "explanation": "Apply the reviewed saved plan.",
+            "expectedResult": "Apply complete! Resources: 3 added.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform output parameter_names",
+            "explanation": "Display the sorted list expression result.",
+            "expectedResult": "Three development parameter paths are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform output configuration_summary",
+            "explanation": "Display the structured output object.",
+            "expectedResult": "Environment, count, keys and tag map are visible.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform state list",
+            "explanation": "List stable for_each addresses.",
+            "expectedResult": "Three keyed aws_ssm_parameter.training addresses are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-plan",
+              "source-tf-output",
+              "source-aws-ssm",
+              "source-tf-for-each"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-verification-1",
+            "title": "Verify the resource count",
+            "instruction": "Compare enabled_count, state list and the Console search.",
+            "expectedResult": "All three surfaces report three parameters.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-004-plan-apply-and-inspect-the-default-values-verification-2",
+            "title": "Verify calculated tags",
+            "instruction": "Open one parameter and compare its tags with local.effective_tags.",
+            "expectedResult": "ManagedBy, Lab, Environment and ParameterKey match.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files",
+        "slug": "override-values-with-automatic-and-explicit-tfvars-files",
+        "title": "Override values with automatic and explicit tfvars files",
+        "phaseId": "phase-4-override-and-validate",
+        "orderInPhase": 1,
+        "feature": "Variable precedence, map replacement and controlled expansion",
+        "goal": "Add common tags automatically, then use an explicit variable file to expand the parameter map from three to four.",
+        "whyItMatters": "Teams separate reusable configuration from environment values. Learners must understand that complex variable values are replaced by higher-precedence assignments rather than automatically deep-merged.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-004-plan-apply-and-inspect-the-default-values"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-files",
+          "source-tf-plan",
+          "source-tf-types",
+          "source-tf-output"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Override values with automatic and explicit tfvars files",
+            "instruction": "Create training.auto.tfvars and paste the supplied common_tags map.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-1",
+                "text": "Create training.auto.tfvars and paste the supplied common_tags map.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-2",
+                "text": "Understand that *.auto.tfvars files are loaded automatically.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-3",
+                "text": "Run terraform plan -out=tags.tfplan without a -var-file option.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-4",
+                "text": "Confirm the three existing parameters receive Owner and Purpose tags without replacement.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-5",
+                "text": "Apply tags.tfplan and verify one parameter shows the two added tags.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-6",
+                "text": "Create expanded.tfvars and paste the complete supplied parameters map.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-7",
+                "text": "Understand that this explicit map replaces the default parameters map for this run; it does not deep-merge entries.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-8",
+                "text": "Compare the default map with expanded.tfvars and confirm all original keys were intentionally repeated.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-9",
+                "text": "Identify maintenance-window as the fourth key.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-10",
+                "text": "Identify changed harmless values for api-mode and retry-count.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-11",
+                "text": "Run terraform plan -var-file=expanded.tfvars -out=expanded.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-12",
+                "text": "Confirm one parameter is added, existing values are updated in place and none are destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-13",
+                "text": "Run terraform apply expanded.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-14",
+                "text": "Run terraform output configuration_summary and confirm enabled_count is 4.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-15",
+                "text": "Open Parameter Store and verify the four exact paths and updated harmless values.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-instruction-16",
+                "text": "Keep expanded.tfvars for all remaining plan and destroy commands so Terraform uses the same map.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-json-1",
+                "title": "training.auto.tfvars",
+                "content": "common_tags = {\n  ManagedBy = \"Terraform\"\n  Lab       = \"fa-terraform-vars\"\n  Owner     = \"training-learner\"\n  Purpose   = \"variables-validation-practice\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-files",
+                  "source-tf-plan",
+                  "source-tf-types",
+                  "source-tf-output"
+                ]
+              },
+              {
+                "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-console-step-1-override-values-with-automatic-and-explicit-tfvars-files-json-2",
+                "title": "expanded.tfvars",
+                "content": "environment = \"development\"\n\nparameters = {\n  api-mode = {\n    value       = \"guided-training\"\n    description = \"Harmless API operating mode\"\n  }\n  retry-count = {\n    value       = \"5\"\n    description = \"Harmless retry-count example\"\n  }\n  feature-flag = {\n    value       = \"enabled\"\n    description = \"Harmless feature flag\"\n  }\n  maintenance-window = {\n    value       = \"sunday-0200\"\n    description = \"Harmless maintenance-window example\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-files",
+                  "source-tf-plan",
+                  "source-tf-types",
+                  "source-tf-output"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Four parameters exist, automatic tags apply to all, and the learner understands variable-file precedence.",
+            "warning": "Forgetting -var-file=expanded.tfvars later would make Terraform plan to remove the fourth parameter and restore default values.",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan -out=tags.tfplan",
+            "explanation": "Automatically load training.auto.tfvars and preview tag updates.",
+            "expectedResult": "Three parameters update in place.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform apply tags.tfplan",
+            "explanation": "Apply only the reviewed tag plan.",
+            "expectedResult": "The Owner and Purpose tags are added.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform plan -var-file=expanded.tfvars -out=expanded.tfplan",
+            "explanation": "Use the explicit complete map and save the expansion plan.",
+            "expectedResult": "One parameter is added and none are destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform show expanded.tfplan",
+            "explanation": "Review the added key and changed harmless values.",
+            "expectedResult": "Only exact /fa-terraform-vars resources appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform apply expanded.tfplan",
+            "explanation": "Apply the reviewed explicit-value plan.",
+            "expectedResult": "Four parameters are managed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform output configuration_summary",
+            "explanation": "Confirm the resulting calculated count and keys.",
+            "expectedResult": "enabled_count is 4 and all four keys are listed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform state list",
+            "explanation": "Confirm four stable resource addresses.",
+            "expectedResult": "Four keyed parameter addresses are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-files",
+              "source-tf-plan",
+              "source-tf-types",
+              "source-tf-output"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-verification-1",
+            "title": "Verify precedence",
+            "instruction": "Run a plan with expanded.tfvars and compare it with defaults.",
+            "expectedResult": "The explicit parameters map is active while the auto-loaded tags also remain active.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files-verification-2",
+            "title": "Verify four resources",
+            "instruction": "Compare output, state and Parameter Store.",
+            "expectedResult": "All three show four exact training parameters.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws",
+        "slug": "trigger-validation-failures-without-changing-aws",
+        "title": "Trigger validation failures without changing AWS",
+        "phaseId": "phase-4-override-and-validate",
+        "orderInPhase": 2,
+        "feature": "Variable validation, lifecycle precondition and recovery",
+        "goal": "Run two deliberately invalid plans, read their useful error messages and return to a clean valid plan.",
+        "whyItMatters": "Good validation fails early with a message that explains how to correct input, reducing failed applies and unsafe infrastructure changes.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-005-override-values-with-automatic-and-explicit-tfvars-files"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-precondition",
+          "source-tf-variables",
+          "source-tf-plan"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Trigger validation failures without changing AWS",
+            "instruction": "Create invalid-environment.tfvars and paste the supplied production value.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-1",
+                "text": "Create invalid-environment.tfvars and paste the supplied production value.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-2",
+                "text": "Run terraform plan -var-file=invalid-environment.tfvars.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-3",
+                "text": "Confirm the plan stops with environment must be development or test.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-4",
+                "text": "Understand that no AWS request changed a resource and no plan file was saved.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-5",
+                "text": "Create invalid-parameter.tfvars and paste the supplied empty-value object.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-6",
+                "text": "Run terraform plan -var-file=invalid-parameter.tfvars.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-7",
+                "text": "Confirm variable validation passes because the key format is valid.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-8",
+                "text": "Confirm the resource precondition then stops the plan because the enabled value is empty.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-9",
+                "text": "Read the resource instance address in the error and identify broken-example as the failing map key.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-10",
+                "text": "Do not apply either invalid configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-11",
+                "text": "Run terraform plan -var-file=expanded.tfvars -out=recovery.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-12",
+                "text": "Confirm the valid four-parameter configuration reports no changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-13",
+                "text": "Delete only invalid-environment.tfvars and invalid-parameter.tfvars after the learning check.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-instruction-14",
+                "text": "Keep expanded.tfvars and training.auto.tfvars until cleanup is complete.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-json-1",
+                "title": "invalid-environment.tfvars",
+                "content": "environment = \"production\"",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-precondition",
+                  "source-tf-variables",
+                  "source-tf-plan"
+                ]
+              },
+              {
+                "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-console-step-1-trigger-validation-failures-without-changing-aws-json-2",
+                "title": "invalid-parameter.tfvars",
+                "content": "environment = \"development\"\n\nparameters = {\n  broken-example = {\n    value       = \"\"\n    description = \"Deliberately invalid empty value\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-tf-precondition",
+                  "source-tf-variables",
+                  "source-tf-plan"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Both invalid plans fail locally with clear messages, AWS remains unchanged and the valid recovery plan is clean.",
+            "warning": "A validation error is the expected result. Do not weaken or remove the conditions merely to make invalid input pass.",
+            "sourceIds": [
+              "source-tf-precondition",
+              "source-tf-variables",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan -var-file=invalid-environment.tfvars",
+            "explanation": "Trigger the allowed-environment variable validation.",
+            "expectedResult": "Planning stops with the custom environment message.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-precondition",
+              "source-tf-variables",
+              "source-tf-plan"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform plan -var-file=invalid-parameter.tfvars",
+            "explanation": "Trigger the non-empty resource precondition.",
+            "expectedResult": "Planning stops with the custom empty-value message.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-precondition",
+              "source-tf-variables",
+              "source-tf-plan"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform plan -var-file=expanded.tfvars -out=recovery.tfplan",
+            "explanation": "Return to the accepted complete variable map.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-precondition",
+              "source-tf-variables",
+              "source-tf-plan"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform show recovery.tfplan",
+            "explanation": "Confirm recovery contains no infrastructure action.",
+            "expectedResult": "The plan contains no add, change or destroy action.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-precondition",
+              "source-tf-variables",
+              "source-tf-plan"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-verification-1",
+            "title": "Verify safe failure",
+            "instruction": "Refresh Parameter Store after both failed plans.",
+            "expectedResult": "The same four parameters and values remain.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-verification-2",
+            "title": "Verify recovery",
+            "instruction": "Read the recovery plan summary.",
+            "expectedResult": "Terraform reports no changes.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-006-trigger-validation-failures-without-changing-aws-verification-3",
+            "title": "Explain validation layers",
+            "instruction": "Compare variable validation, resource precondition and check block responsibilities.",
+            "expectedResult": "The learner can state when each condition is evaluated and what it protects.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary",
+        "slug": "destroy-all-parameters-and-remove-the-training-boundary",
+        "title": "Destroy all parameters and remove the training boundary",
+        "phaseId": "phase-5-complete-teardown",
+        "orderInPhase": 1,
+        "feature": "Saved destroy plan, cloud verification, IAM and local cleanup",
+        "goal": "Remove all four parameters, temporary access, profile and lab files in the correct order.",
+        "whyItMatters": "The same explicit variable inputs used to create resources must be supplied during teardown so Terraform sees the complete managed configuration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "prerequisites": [
+          "task-terraform-variables-006-trigger-validation-failures-without-changing-aws"
+        ],
+        "requiredPermissions": [
+          "Use only fa-terraform-vars-user and /fa-terraform-vars/development/ training parameters."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete Console and file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI guidance is included."
+          }
+        },
+        "sourceIds": [
+          "source-tf-destroy",
+          "source-tf-plan",
+          "source-aws-ssm",
+          "source-aws-iam"
+        ],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Destroy all parameters and remove the training boundary",
+            "instruction": "Run terraform state list and confirm exactly four parameter addresses remain.",
+            "instructions": [
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-1",
+                "text": "Run terraform state list and confirm exactly four parameter addresses remain.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-2",
+                "text": "Run terraform plan -destroy -var-file=expanded.tfvars -out=destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-3",
+                "text": "Run terraform show destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-4",
+                "text": "Confirm exactly four /fa-terraform-vars/development/ parameters will be destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-5",
+                "text": "Confirm no unrelated Parameter Store path or AWS resource appears.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-6",
+                "text": "Run terraform apply destroy.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-7",
+                "text": "Run terraform state list and confirm no resource address remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-8",
+                "text": "Open Parameter Store in eu-west-2 and verify the /fa-terraform-vars/development/ search returns no lab parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-9",
+                "text": "As the administrator, delete the access key from fa-terraform-vars-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-10",
+                "text": "Detach fa-terraform-vars-training-policy from the temporary user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-11",
+                "text": "Delete fa-terraform-vars-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-12",
+                "text": "Delete fa-terraform-vars-training-policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-13",
+                "text": "Remove only the fa-terraform-vars profile from local AWS credentials and config.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-14",
+                "text": "Leave the fa-terraform-vars directory.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-15",
+                "text": "Verify the exact directory path and delete only fa-terraform-vars with its plans, state and configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-console-step-1-destroy-all-parameters-and-remove-the-training-boundary-instruction-16",
+                "text": "Confirm no named parameter, IAM resource, profile, state, plan or lab folder remains.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Every cloud and local item created by the programme is removed.",
+            "warning": "Use expanded.tfvars during destroy. Delete credentials and files only after Terraform has destroyed and verified all four resources.",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform state list",
+            "explanation": "Inventory the four managed parameters.",
+            "expectedResult": "Exactly four keyed addresses appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform plan -destroy -var-file=expanded.tfvars -out=destroy.tfplan",
+            "explanation": "Create the complete saved teardown plan using the active variable map.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 4 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform show destroy.tfplan",
+            "explanation": "Inspect all four exact deletions.",
+            "expectedResult": "Only /fa-terraform-vars/development/ parameters appear.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform apply destroy.tfplan",
+            "explanation": "Apply the exact reviewed teardown.",
+            "expectedResult": "Apply complete! Resources: 4 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform state list",
+            "explanation": "Verify the state is empty.",
+            "expectedResult": "No addresses are returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ssm describe-parameters --parameter-filters Key=Name,Option=BeginsWith,Values=/fa-terraform-vars/development/ --region eu-west-2 --profile fa-terraform-vars",
+            "explanation": "Verify no lab parameter remains before deleting the profile.",
+            "expectedResult": "The Parameters array is empty.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws iam delete-access-key --user-name fa-terraform-vars-user --access-key-id <ACCESS_KEY_ID>",
+            "explanation": "Administrator route: delete the temporary access key.",
+            "expectedResult": "The key is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws iam detach-user-policy --user-name fa-terraform-vars-user --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-vars-training-policy",
+            "explanation": "Administrator route: detach the exact training policy.",
+            "expectedResult": "The policy is detached.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-9",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "aws iam delete-user --user-name fa-terraform-vars-user",
+            "explanation": "Administrator route: delete the empty temporary user.",
+            "expectedResult": "The user is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-cli-step-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "aws iam delete-policy --policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/fa-terraform-vars-training-policy",
+            "explanation": "Administrator route: delete the exact policy.",
+            "expectedResult": "The policy is deleted.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-tf-destroy",
+              "source-tf-plan",
+              "source-aws-ssm",
+              "source-aws-iam"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-verification-1",
+            "title": "Verify AWS cleanup",
+            "instruction": "Search Parameter Store and IAM for exact lab names.",
+            "expectedResult": "No parameter, user or policy remains.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-verification-2",
+            "title": "Verify Terraform cleanup",
+            "instruction": "Run state list before deleting local files.",
+            "expectedResult": "The state is empty.",
+            "mode": "either"
+          },
+          {
+            "id": "task-terraform-variables-007-destroy-all-parameters-and-remove-the-training-boundary-verification-3",
+            "title": "Verify local cleanup",
+            "instruction": "Check profiles and the filesystem.",
+            "expectedResult": "The named profile and exact lab folder are absent.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Standard Parameter Store parameters used by this lab normally have no additional charge. Delete all four during cleanup.",
+      "safety": "Operate only under /fa-terraform-vars/development/. Supply expanded.tfvars to every later plan and destroy command.",
+      "credentials": "Never place credentials, passwords, tokens or real secrets in .tf, .tfvars, plans, state, Author, Git, screenshots or chat.",
+      "region": "Use eu-west-2 for Parameter Store. IAM is global. Verify the AWS account before creating or deleting anything."
+    },
+    "cleanup": {
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency",
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Inventory the active map",
+          "instruction": "Use expanded.tfvars and confirm state contains exactly four lab parameters.",
+          "description": "Use expanded.tfvars and confirm state contains exactly four lab parameters.",
+          "verification": "Cleanup item 1 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Destroy all managed parameters",
+          "instruction": "Apply a saved destroy plan containing only the four exact training paths.",
+          "description": "Apply a saved destroy plan containing only the four exact training paths.",
+          "verification": "Cleanup item 2 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Verify Parameter Store is clear",
+          "instruction": "Confirm no /fa-terraform-vars/development/ parameter remains.",
+          "description": "Confirm no /fa-terraform-vars/development/ parameter remains.",
+          "verification": "Cleanup item 3 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Remove temporary IAM access",
+          "instruction": "Delete the key, detach and delete the exact user and policy.",
+          "description": "Delete the key, detach and delete the exact user and policy.",
+          "verification": "Cleanup item 4 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Remove local profile and files",
+          "instruction": "Delete only the fa-terraform-vars profile and verified lab folder.",
+          "description": "Delete only the fa-terraform-vars profile and verified lab folder.",
+          "verification": "Cleanup item 5 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Acknowledge complete cleanup",
+          "instruction": "Confirm no resource, credential, state, plan or configuration file remains.",
+          "description": "Confirm no resource, credential, state, plan or configuration file remains.",
+          "verification": "Cleanup item 6 is complete for only the exact lab targets.",
+          "resourceKeys": [],
+          "sourceIds": []
+        }
+      ]
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "warnings",
+          "priority": "advisory",
+          "message": "An administrator must review the temporary Parameter Store training policy before attachment.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The explicit expanded.tfvars map must be supplied to every later plan and destroy command.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "cleanup",
+          "priority": "advisory",
+          "message": "Terraform must destroy all parameters before temporary credentials, state and files are removed.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "terraform-variables-validation-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The local Author import must bind the currently signed-in Author and create exactly one private draft."
+  },
+  "summary": {
+    "phaseCount": 5,
+    "taskCount": 7,
+    "checkboxCount": 107,
+    "cliCommandCount": 45,
+    "verificationCheckCount": 16,
+    "cleanupItemCount": 6,
+    "learnerResourceValueCount": 0,
+    "officialSourceCount": 15,
+    "officialAwsSourceCount": 3,
+    "officialTerraformSourceCount": 12
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "c68ad7c601d9675d39b687916290a9902da666684ddaf35f92ac0e07b91d5127"
+  }
+}

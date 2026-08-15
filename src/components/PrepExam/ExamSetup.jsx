@@ -58,8 +58,8 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
       setError(null);
 
       try {
-        if (activeExam.id === 'aws-saa-c03' || !activeExam.questions) {
-          const fetched = await getExamQuestions(activeExam.id);
+        if (activeExam.questionSource === 'supabase' || activeExam.id === 'aws-saa-c03' || !activeExam.questions) {
+          const fetched = await getExamQuestions(activeExam.id, activeExam.questions || null);
           if (isMounted) {
             setFullExamQuestions(fetched);
             setLoadingFull(false);
@@ -84,7 +84,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
     return () => {
       isMounted = false;
     };
-  }, [activeExam?.id]);
+  }, [activeExam]);
 
   // 2. Fetch targeted topic questions when mode === 'domain' or selectedDomainId changes
   useEffect(() => {
@@ -96,8 +96,8 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
       setError(null);
 
       try {
-        if (activeExam.id === 'aws-saa-c03' || !activeExam.questions) {
-          const fetched = await getQuestionsByTopic(activeExam.id, selectedDomainId);
+        if (activeExam.questionSource === 'supabase' || activeExam.id === 'aws-saa-c03' || !activeExam.questions) {
+          const fetched = await getQuestionsByTopic(activeExam.id, selectedDomainId, activeExam.questions || null);
           if (isMounted) {
             setTopicQuestions(fetched);
             setLoadingTopic(false);
@@ -128,7 +128,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
     return () => {
       isMounted = false;
     };
-  }, [activeExam?.id, mode, selectedDomainId]);
+  }, [activeExam, mode, selectedDomainId]);
 
   if (!activeExam) return null;
 
