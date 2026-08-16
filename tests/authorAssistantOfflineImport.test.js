@@ -6,7 +6,8 @@ import test from 'node:test';
 import {
   buildOfflineHandoff,
   defaultOfflineOutputRoot,
-  normalizeOfflineManuscript
+  normalizeOfflineManuscript,
+  validateOfflinePreviewMatchesManuscript
 } from '../scripts/author-assistant/authorAssistantOfflineImport.mjs';
 import { acceptSimpleHandoff } from '../scripts/author-assistant/authorAssistantSimple.mjs';
 import { validateAuthorHandoffImportPreview } from '../src/features/followAlongAuthor/authorHandoffPreview.js';
@@ -92,6 +93,48 @@ test('offline Follow Along importer creates a genuine browser-compatible local h
     assert.equal(normalized.proposal.sources[0].publisher, 'HashiCorp');
   });
 
+  await t.test('alternate portable field names are translated locally without another AI request', () => {
+    const base = portableManuscript();
+    const alternate = structuredClone(base);
+    alternate.tasks = alternate.tasks.map(task => ({
+      id: task.id,
+      phaseId: task.phaseId,
+      title: task.title,
+      feature: task.feature,
+      goal: task.goal,
+      whyItMatters: task.whyItMatters,
+      difficulty: task.difficulty,
+      prerequisites: task.prerequisites,
+      sourceIds: task.sourceIds,
+      browserSteps: task.consoleSteps[0].instructions.map((instruction, sequence) => ({ sequence: sequence + 1, instruction })),
+      cliBlocks: task.cliSteps.map(step => ({ title: 'CLI route', content: step.command })),
+      editableBlocks: task.consoleSteps[0].editableBlocks,
+      expectedResults: [task.consoleSteps[0].expectedResult],
+      verificationChecks: task.verification.map(check => ({ id: `${task.id}-check`, text: check.instruction }))
+    }));
+    alternate.programmeCleanup = [{
+      sequence: 1,
+      resource: 'fa-hcp-test-workspace',
+      action: 'Delete only fa-hcp-test-workspace.',
+      verification: 'fa-hcp-test-workspace is absent.',
+      taskId: 'task-verify'
+    }];
+    const result = buildOfflineHandoff(alternate, { now: () => new Date('2026-08-16T12:00:00Z') });
+    assert.equal(result.handoffPackage.summary.taskCount, 3);
+    assert.equal(result.handoffPackage.authorDraftContent.programme.examId, 'terraform-associate-004');
+    assert.ok(result.handoffPackage.authorDraftContent.tasks.every(task => task.consoleSteps.length && task.cliSteps.length));
+  });
+
+  await t.test('preview and manuscript identity mismatches stop before conversion', () => {
+    const manuscript = portableManuscript();
+    const matchingPreview = `# ${manuscript.programme.title}\n\nPrefix: ${manuscript.programme.resourcePrefix}\n\n${manuscript.tasks.map(task => task.id).join('\n')}`;
+    assert.equal(validateOfflinePreviewMatchesManuscript(manuscript, matchingPreview).valid, true);
+    assert.throws(
+      () => validateOfflinePreviewMatchesManuscript(manuscript, matchingPreview.replace(manuscript.programme.title, 'Different Follow Along')),
+      /programme titles do not match/
+    );
+  });
+
   await t.test('unsafe boundaries and credential-like content are rejected', () => {
     const imported = portableManuscript();
     imported.boundaries.imported = true;
@@ -99,6 +142,17 @@ test('offline Follow Along importer creates a genuine browser-compatible local h
     const credential = portableManuscript();
     credential.tasks[0].consoleSteps[0].instructions.push('aws_secret_access_key=unsafe-example');
     assert.throws(() => normalizeOfflineManuscript(credential), /Credential-like content was rejected/);
+  });
+
+  await t.test('secure sources from registries and specialist publishers are accepted without a fixed domain list', () => {
+    const manuscript = portableManuscript();
+    manuscript.sources.push(
+      { id: 'source-registry', title: 'Registry module', url: 'https://registry.terraform.io/modules/cloudposse/label/null', publisher: 'Terraform Registry', purpose: 'Documents the selected module.', taskIds: [] },
+      { id: 'source-publisher', title: 'Module publisher documentation', url: 'https://docs.cloudposse.com/modules/library/null/label/', publisher: 'Cloud Posse', purpose: 'Documents the module inputs.', taskIds: [] }
+    );
+    assert.equal(normalizeOfflineManuscript(manuscript).proposal.sources.length, 3);
+    manuscript.sources[2].url = 'http://docs.cloudposse.com/modules/library/null/label/';
+    assert.throws(() => normalizeOfflineManuscript(manuscript), /valid secure HTTPS documentation address/);
   });
 
   await t.test('local package exposes the reusable no-API command', async () => {

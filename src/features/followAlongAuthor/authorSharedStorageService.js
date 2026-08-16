@@ -219,7 +219,7 @@ export function createAuthorSharedStorageService(client = supabase, { enabled = 
     async listReleaseCandidates() {
       if (!requireEnabled()) return disabled();
       try {
-        const { data, error } = await client.from(AUTHOR_SHARED_STORAGE_TABLES.candidates).select('*').order('created_at', { ascending: true });
+        const { data, error } = await client.from(AUTHOR_SHARED_STORAGE_TABLES.candidates).select('*').order('created_at', { ascending: false });
         if (error) return failure(error, 'Unable to load the approval queue.');
         return { success: true, storageMode: 'shared_supabase', candidates: data || [] };
       } catch (error) {

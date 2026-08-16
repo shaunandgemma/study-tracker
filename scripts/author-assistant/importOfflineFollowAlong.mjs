@@ -10,7 +10,8 @@ import {
   buildOfflineHandoff,
   defaultOfflineOutputRoot,
   OFFLINE_MANUSCRIPT_FILENAME,
-  OFFLINE_PREVIEW_FILENAME
+  OFFLINE_PREVIEW_FILENAME,
+  validateOfflinePreviewMatchesManuscript
 } from './authorAssistantOfflineImport.mjs';
 import { verifyStage90AAcceptance } from './authorAssistantStage90A.mjs';
 
@@ -44,6 +45,7 @@ try {
   catch { throw new Error('The offline manuscript is not valid UTF-8 JSON.'); }
   const readablePreview = await readFile(previewPath, 'utf8');
   if (!readablePreview.trim()) throw new Error('The offline readable preview is empty.');
+  validateOfflinePreviewMatchesManuscript(manuscript, readablePreview);
 
   const result = buildOfflineHandoff(manuscript);
   const outputRoot = defaultOfflineOutputRoot();

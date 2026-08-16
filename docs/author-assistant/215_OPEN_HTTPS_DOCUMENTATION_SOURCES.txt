@@ -1,0 +1,43 @@
+215. OPEN HTTPS DOCUMENTATION SOURCES
+
+1. PURPOSE
+Allow offline Follow Along manuscripts to use documentation from any secure HTTPS website instead of stopping when a domain is not on a fixed list.
+
+2. CHANGES
+2.1 The offline importer now accepts any correctly formed HTTPS documentation address.
+2.2 The Author content check uses the same HTTPS rule, preventing a package from passing offline validation and then failing in Author.
+2.3 HTTP links, malformed addresses and missing sources remain blocked.
+2.4 AWS and HashiCorp-specific URL detection remains available for classification and display.
+2.5 Other sources receive a publisher label based on their website hostname when one must be generated.
+
+3. REGISTRY MODULES MANUSCRIPT RESULT
+The exact Registry Modules and Version Constraints manuscript and preview were checked without writing a handoff.
+
+Result:
+- Preview and manuscript identity: matched
+- Phases: 6
+- Tasks: 14
+- Checkboxes: 100
+- Documentation sources: 18
+- Terraform Registry sources: accepted
+- Cloud Posse publisher documentation: accepted
+
+4. SAFETY BOUNDARIES RETAINED
+- No AI or API request is made by the offline importer.
+- No Author, Supabase or AWS connection is made.
+- Credential-like content remains blocked.
+- Unsafe destructive filesystem patterns remain blocked.
+- The matching manuscript and preview check remains active.
+- A fingerprint and human acceptance are still required before Author import.
+
+5. VERIFICATION
+- Offline importer and Author content tests: 23 passed
+- Linter: completed with existing unrelated warnings only
+- Production build: passed
+- Exact manuscript conversion: passed in memory without writing output
+
+6. NEXT COMMAND
+npm run author-assistant:import-offline -- "C:\Users\shaun\AppData\Local\StudyTracker\AuthorAssistant\Manuscripts\Terraform\Registry Modules and Version Constraints Follow Along\offline-follow-along-manuscript.json"
+
+7. IMPORTANT QUALITY NOTE
+The importer now checks that a source is a secure HTTPS address, not that its information is authoritative or accurate. Source quality should therefore be reviewed in the generated preview before accepting the fingerprint.

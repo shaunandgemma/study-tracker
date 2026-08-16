@@ -13,6 +13,7 @@ import {
   isApprovedAuthorDocumentationUrl,
   isOfficialAwsDocumentationUrl,
   isOfficialTerraformDocumentationUrl,
+  isOfficialHashicorpDocumentationUrl,
   removeAuthorInstructionStep,
   removeAuthorJsonBlock,
   removeAuthorResource,
@@ -58,12 +59,13 @@ function addCompleteConsolePath(draft) {
 }
 
 test('Follow Along Author sources, instructions, verification and cleanup', async t => {
-  await t.test('1. Only official HTTPS AWS documentation addresses are accepted', () => {
+  await t.test('1. Official AWS URL detection remains strict while Author sources accept secure HTTPS documentation', () => {
     assert.equal(isOfficialAwsDocumentationUrl('https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html'), true);
     assert.equal(isOfficialAwsDocumentationUrl('https://aws.amazon.com/vpc/'), true);
     assert.equal(isOfficialAwsDocumentationUrl('http://docs.aws.amazon.com/vpc/'), false);
     assert.equal(isOfficialAwsDocumentationUrl('https://example.com/aws-vpc'), false);
-    assert.equal(addAuthorSource(plannedDraft(), { title: 'Unofficial', url: 'https://example.com', purpose: 'No' }).success, false);
+    assert.equal(addAuthorSource(plannedDraft(), { title: 'External documentation', url: 'https://example.com/reference', purpose: 'Supports the task.' }).success, true);
+    assert.equal(addAuthorSource(plannedDraft(), { title: 'Insecure documentation', url: 'http://example.com/reference', purpose: 'No' }).success, false);
   });
 
   await t.test('1A. Official Terraform documentation is accepted without opening the source boundary', () => {
@@ -71,6 +73,11 @@ test('Follow Along Author sources, instructions, verification and cleanup', asyn
     assert.equal(isOfficialTerraformDocumentationUrl(terraformUrl), true);
     assert.equal(isApprovedAuthorDocumentationUrl(terraformUrl), true);
     assert.equal(isOfficialTerraformDocumentationUrl('https://developer.hashicorp.com/vault/docs'), false);
+    assert.equal(isOfficialHashicorpDocumentationUrl('https://developer.hashicorp.com/vault/docs'), true);
+    assert.equal(isApprovedAuthorDocumentationUrl('https://developer.hashicorp.com/vault/docs'), true);
+    assert.equal(isOfficialHashicorpDocumentationUrl('https://developer.hashicorp.com/consul/docs'), false);
+    assert.equal(isApprovedAuthorDocumentationUrl('https://registry.terraform.io/modules/cloudposse/label/null'), true);
+    assert.equal(isApprovedAuthorDocumentationUrl('https://docs.cloudposse.com/modules/library/null/label/'), true);
     assert.equal(isOfficialTerraformDocumentationUrl('https://terraform.io/docs'), false);
     assert.equal(isOfficialTerraformDocumentationUrl('http://developer.hashicorp.com/terraform/language'), false);
     const added = addAuthorSource(plannedDraft(), { title: 'S3 backend', url: terraformUrl, purpose: 'Configure Terraform state.' });
@@ -140,7 +147,7 @@ test('Follow Along Author sources, instructions, verification and cleanup', asyn
 
   await t.test('5. Every task requires a source, a usable path and verification', () => {
     const result = validateAuthorContent(plannedDraft());
-    assert.ok(result.errors.some(item => /official documentation source/i.test(item.message)));
+    assert.ok(result.errors.some(item => /documentation source/i.test(item.message)));
     assert.ok(result.errors.some(item => /Console or CLI learning path/i.test(item.message)));
     assert.ok(result.errors.some(item => /verification check/i.test(item.message)));
   });

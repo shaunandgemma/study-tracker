@@ -1,0 +1,25 @@
+216. APPROVAL QUEUE NEWEST FIRST
+
+1. REQUEST
+Display the latest Follow Along release candidate at the top of the Approvals lists so the Approver does not need to scroll to the bottom.
+
+2. CAUSE
+The shared release-candidate query requested created_at in ascending order. That placed the oldest candidate first.
+
+3. CHANGE
+The query now requests created_at in descending order.
+
+4. RESULT
+- Waiting: newest candidate first
+- History: newest approved candidate first
+- Rejects: newest rejected candidate first
+
+5. BOUNDARIES
+- No approval logic changed.
+- No rejection logic changed.
+- No publishing logic changed.
+- No database migration or database write is required.
+- Existing candidates and history are unchanged.
+
+6. VERIFICATION
+A dedicated service test confirms the candidate query orders created_at with ascending set to false.

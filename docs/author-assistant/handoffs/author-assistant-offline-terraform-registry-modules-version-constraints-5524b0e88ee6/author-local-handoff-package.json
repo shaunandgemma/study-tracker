@@ -1,0 +1,2902 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-offline-terraform-registry-modules-version-constraints-5524b0e88ee6",
+  "preparedAt": "2026-08-16T21:18:16.152Z",
+  "service": {
+    "officialName": "Terraform Registry Modules and Version Constraints",
+    "shortName": "TRMAVC"
+  },
+  "generationMode": "new_follow_along",
+  "updateTarget": null,
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "a79ff93333bc9b00f32178cc638c4677b9a1aef68b91caa599a71369d9b91926"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "a79ff93333bc9b00f32178cc638c4677b9a1aef68b91caa599a71369d9b91926"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-offline-import-v1"
+    },
+    "programme": {
+      "serviceSlug": "terraform-registry-modules-version-constraints",
+      "serviceName": "Terraform Registry Modules and Version Constraints",
+      "shortName": "TRMAVC",
+      "displayName": "Registry Modules and Version Constraints Follow Along",
+      "subtitle": "Terraform Registry Modules and Version Constraints",
+      "description": "A Beginner Follow Along for Terraform Registry Modules and Version Constraints.",
+      "learningOutcome": "Find and use a public Terraform Registry module; pin and verify an exact module version; practice pessimistic, compound and exact module version constraints; use terraform init -upgrade to change the selected registry module release; prove that .terraform.lock.hcl does not lock remote module versions; create and repair one unsatisfiable module-version failure; run reviewed plan/apply/destroy workflows without creating cloud resources; and safely remove all local training artifacts. This intentionally adds practical registry module-version coverage not claimed by the local-module refactoring lab.",
+      "programmeId": "terraform-registry-modules-version-constraints-learning-path",
+      "pathId": "terraform-registry-modules-version-constraints-learning-path",
+      "componentNamespace": "",
+      "category": "HashiCorp Terraform Associate 004",
+      "difficulty": "Beginner",
+      "estimatedMinutes": null,
+      "defaultRegion": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished",
+      "examId": "terraform-associate-004"
+    },
+    "sources": [
+      {
+        "id": "source-exam-content-list-terraform-associate-004",
+        "title": "Exam Content List - Terraform Associate 004",
+        "url": "https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Maps Terraform Associate 004 module objectives 5a through 5d to official documentation and tutorials.",
+        "taskIds": [
+          "task-trmavc-verify-terraform-and-the-lab-boundary-001",
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-module-block-reference",
+        "title": "module block reference",
+        "url": "https://developer.hashicorp.com/terraform/language/block/module",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Defines module source and version arguments and explains that version applies to registry modules.",
+        "taskIds": [
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003",
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-broaden-the-version-constraint-with-0-24-006",
+          "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008",
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-version-constraints",
+        "title": "Version constraints",
+        "url": "https://developer.hashicorp.com/terraform/language/expressions/version-constraints",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Defines exact, comparison, compound and pessimistic version constraint operators and best practices.",
+        "taskIds": [
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003",
+          "task-trmavc-broaden-the-version-constraint-with-0-24-006",
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+          "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009",
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010",
+          "task-trmavc-create-an-impossible-module-version-constraint-011",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-find-and-use-modules-in-the-terraform-registry",
+        "title": "Find and use modules in the Terraform registry",
+        "url": "https://developer.hashicorp.com/terraform/registry/modules/use",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explains public registry module discovery, registry source addresses, versioned modules and terraform init module installation.",
+        "taskIds": [
+          "task-trmavc-verify-terraform-and-the-lab-boundary-001",
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-use-registry-modules-in-configuration",
+        "title": "Use registry modules in configuration",
+        "url": "https://developer.hashicorp.com/terraform/tutorials/modules/module-use",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Official hands-on tutorial for selecting, configuring and using registry modules.",
+        "taskIds": [
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003"
+        ]
+      },
+      {
+        "id": "source-terraform-init-command-reference",
+        "title": "terraform init command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/init",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explains child module installation and the -upgrade behavior for already-installed modules.",
+        "taskIds": [
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+          "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008",
+          "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009",
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010",
+          "task-trmavc-create-an-impossible-module-version-constraint-011",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-dependency-lock-file",
+        "title": "Dependency Lock File",
+        "url": "https://developer.hashicorp.com/terraform/language/files/dependency-lock",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explains that the dependency lock file currently tracks provider selections, not remote module version selections.",
+        "taskIds": [
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+          "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008",
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ]
+      },
+      {
+        "id": "source-terraform-fmt-command-reference",
+        "title": "terraform fmt command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/fmt",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Formats Terraform configuration before validation.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005"
+        ]
+      },
+      {
+        "id": "source-terraform-validate-command-reference",
+        "title": "terraform validate command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/validate",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Validates the syntax and internal consistency of Terraform configuration.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005"
+        ]
+      },
+      {
+        "id": "source-terraform-plan-command-reference",
+        "title": "terraform plan command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Creates and saves an execution plan for review.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ]
+      },
+      {
+        "id": "source-terraform-show-command-reference",
+        "title": "terraform show command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/show",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Displays a saved Terraform plan for human review.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ]
+      },
+      {
+        "id": "source-terraform-apply-command-reference",
+        "title": "terraform apply command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/apply",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Applies a previously reviewed saved plan.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ]
+      },
+      {
+        "id": "source-terraform-output-command-reference",
+        "title": "terraform output command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/output",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Reads root module output values after apply.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005"
+        ]
+      },
+      {
+        "id": "source-terraform-state-list-command-reference",
+        "title": "terraform state list command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/state/list",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Shows that this module-version lab manages no cloud resources.",
+        "taskIds": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ]
+      },
+      {
+        "id": "source-terraform-destroy-command-reference",
+        "title": "terraform destroy command reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the teardown concept; this lab uses a saved destroy plan and verifies that no managed resources exist.",
+        "taskIds": [
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ]
+      },
+      {
+        "id": "source-cloudposse-label-null-terraform-registry",
+        "title": "cloudposse/label/null - Terraform Registry",
+        "url": "https://registry.terraform.io/modules/cloudposse/label/null",
+        "publisher": "Cloud Posse via Terraform Registry",
+        "sourceType": "official_documentation",
+        "purpose": "Registry page for the no-resource label module used to practice module installation and version selection; shows multiple versions and zero managed resources.",
+        "taskIds": [
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+          "task-trmavc-broaden-the-version-constraint-with-0-24-006",
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010",
+          "task-trmavc-create-an-impossible-module-version-constraint-011",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012"
+        ]
+      },
+      {
+        "id": "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+        "title": "cloudposse/label/null version 0.24.1 - Terraform Registry",
+        "url": "https://registry.terraform.io/modules/cloudposse/label/null/0.24.1",
+        "publisher": "Cloud Posse via Terraform Registry",
+        "sourceType": "official_documentation",
+        "purpose": "Confirms that the baseline module version 0.24.1 exists in the registry.",
+        "taskIds": [
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003",
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009"
+        ]
+      },
+      {
+        "id": "source-cloud-posse-label-module-documentation",
+        "title": "Cloud Posse label module documentation",
+        "url": "https://docs.cloudposse.com/modules/library/null/label",
+        "publisher": "Cloud Posse",
+        "sourceType": "official_documentation",
+        "purpose": "Primary module-publisher documentation for the label module inputs and naming behavior.",
+        "taskIds": [
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "TRM",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-trmavc-verify-terraform-and-the-lab-boundary-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-and-discover-registry-modules",
+        "phaseNumber": 1,
+        "title": "Prepare and discover registry modules",
+        "description": "Verify Terraform, understand the exam gap this lab fills, and inspect a real versioned public registry module before writing configuration.",
+        "taskIds": [
+          "task-trmavc-verify-terraform-and-the-lab-boundary-001",
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-install-and-use-an-exact-module-version",
+        "phaseNumber": 2,
+        "title": "Install and use an exact module version",
+        "description": "Call a public registry module at an exact version, initialize it, inspect the downloaded module metadata, and run the normal Terraform workflow safely.",
+        "taskIds": [
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-broaden-a-constraint-and-upgrade-the-module",
+        "phaseNumber": 3,
+        "title": "Broaden a constraint and upgrade the module",
+        "description": "Change the module constraint, deliberately allow a newer compatible release, run init -upgrade, and prove which version Terraform selected.",
+        "taskIds": [
+          "task-trmavc-broaden-the-version-constraint-with-0-24-006",
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+          "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-narrow-constraints-and-pin-versions",
+        "phaseNumber": 4,
+        "title": "Narrow constraints and pin versions",
+        "description": "Practice patch-line, compound-range and exact version constraints and observe how they change module selection.",
+        "taskIds": [
+          "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009",
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-create-and-repair-a-version-selection-failure",
+        "phaseNumber": 5,
+        "title": "Create and repair a version-selection failure",
+        "description": "Introduce an impossible module version constraint, read the init failure, and repair it without changing unrelated configuration.",
+        "taskIds": [
+          "task-trmavc-create-an-impossible-module-version-constraint-011",
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-6-verify-exam-coverage-and-clean-up",
+        "phaseNumber": 6,
+        "title": "Verify exam coverage and clean up",
+        "description": "Prove the module-version lessons, review the registry-versus-local-module boundary, and remove every local training artifact in reverse-dependency order.",
+        "taskIds": [
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013",
+          "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001",
+        "slug": "verify-terraform-and-the-lab-boundary",
+        "title": "Verify Terraform and the lab boundary",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Prerequisites",
+        "goal": "Confirm Terraform is installed and understand that this lab creates no cloud infrastructure or credentials.",
+        "whyItMatters": "The goal is module source and version behavior, so cloud authentication would add noise and risk without helping objective 5d.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-and-discover-registry-modules",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-exam-content-list-terraform-associate-004",
+          "source-find-and-use-modules-in-the-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Verify Terraform and the lab boundary",
+            "instruction": "Open Windows PowerShell. If you use Bash instead, the Bash commands are supplied where syntax differs.",
+            "instructions": [
+              {
+                "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary-instruction-1",
+                "text": "Open Windows PowerShell. If you use Bash instead, the Bash commands are supplied where syntax differs.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary-instruction-2",
+                "text": "Run terraform version. If Terraform is missing, install it from the official HashiCorp install page before continuing.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary-instruction-3",
+                "text": "Do not sign in to AWS, Azure, Google Cloud, HCP Terraform, or any other cloud for this lab. No credentials are required.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary-instruction-4",
+                "text": "Record the safety boundary: the public Terraform Registry is used only to download module source code; the selected training module defines zero managed resources.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-console-step-1-verify-terraform-and-the-lab-boundary-instruction-5",
+                "text": "Record the learning boundary: this programme does not teach creating or refactoring a local child module. It teaches registry source addresses and practical module version constraints.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Terraform prints its installed version. No cloud sign-in or credential is required. The learner can state that this lab covers registry module sourcing and version management rather than local-module refactoring.",
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-find-and-use-modules-in-the-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform version",
+            "explanation": "PowerShell - verify Terraform",
+            "expectedResult": "Terraform prints its installed version. No cloud sign-in or credential is required. The learner can state that this lab covers registry module sourcing and version management rather than local-module refactoring.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-find-and-use-modules-in-the-terraform-registry"
+            ]
+          },
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform version",
+            "explanation": "Bash - verify Terraform",
+            "expectedResult": "Terraform prints its installed version. No cloud sign-in or credential is required. The learner can state that this lab covers registry module sourcing and version management rather than local-module refactoring.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-find-and-use-modules-in-the-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-verification-1",
+            "title": "Verification 1",
+            "instruction": "terraform version completes successfully.",
+            "expectedResult": "terraform version completes successfully.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-verification-2",
+            "title": "Verification 2",
+            "instruction": "No cloud resource, account, workspace or credential has been created.",
+            "expectedResult": "No cloud resource, account, workspace or credential has been created.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-verify-terraform-and-the-lab-boundary-001-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learning boundary explicitly separates registry module versioning from local-module refactoring.",
+            "expectedResult": "The learning boundary explicitly separates registry module versioning from local-module refactoring.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002",
+        "slug": "find-the-training-module-and-inspect-its-versions",
+        "title": "Find the training module and inspect its versions",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Terraform Registry discovery",
+        "goal": "Use the public Terraform Registry to inspect the module source address, available versions, inputs, outputs and resource count before using it.",
+        "whyItMatters": "The version argument only makes sense when you know which registry module you are calling and which releases are available.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-and-discover-registry-modules",
+        "prerequisites": [
+          "task-trmavc-verify-terraform-and-the-lab-boundary-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-exam-content-list-terraform-associate-004",
+          "source-find-and-use-modules-in-the-terraform-registry",
+          "source-use-registry-modules-in-configuration",
+          "source-cloudposse-label-null-terraform-registry",
+          "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+          "source-cloud-posse-label-module-documentation"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Find the training module and inspect its versions",
+            "instruction": "Open https://registry.terraform.io in a browser.",
+            "instructions": [
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-1",
+                "text": "Open https://registry.terraform.io in a browser.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-2",
+                "text": "Search for cloudposse/label/null and open the module page.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-3",
+                "text": "Confirm the module source address shown by the Registry is cloudposse/label/null.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-4",
+                "text": "Open the version selector and confirm version 0.24.1 is available.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-5",
+                "text": "Confirm version 0.25.0 is also available and is the current latest release used by this lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-6",
+                "text": "Open the Resources tab and confirm the module defines 0 resources. This is why the lab can safely run plan and apply without cloud credentials.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-7",
+                "text": "Open the Outputs tab and confirm the module exposes an id output.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-console-step-1-find-the-training-module-and-inspect-its-versions-instruction-8",
+                "text": "Do not copy a latest-only example into the lab yet; the next task pins an exact baseline version so version changes are deliberate.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The Registry shows source cloudposse/label/null. Versions 0.24.1 and 0.25.0 are visible. The Registry reports zero resources for the module. The module exposes an id output.",
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-use-registry-modules-in-configuration",
+              "source-cloudposse-label-null-terraform-registry",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-cloud-posse-label-module-documentation"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "# This task is intentionally completed in the Terraform Registry browser.\n# No cloud or registry login is required for this public module.",
+            "explanation": "No CLI action for registry browsing",
+            "expectedResult": "The Registry shows source cloudposse/label/null. Versions 0.24.1 and 0.25.0 are visible. The Registry reports zero resources for the module. The module exposes an id output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-use-registry-modules-in-configuration",
+              "source-cloudposse-label-null-terraform-registry",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-cloud-posse-label-module-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-verification-1",
+            "title": "Verification 1",
+            "instruction": "Version 0.24.1 is visible in the Registry.",
+            "expectedResult": "Version 0.24.1 is visible in the Registry.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-verification-2",
+            "title": "Verification 2",
+            "instruction": "Version 0.25.0 is visible in the Registry.",
+            "expectedResult": "Version 0.25.0 is visible in the Registry.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-verification-3",
+            "title": "Verification 3",
+            "instruction": "The Resources view shows 0 resources.",
+            "expectedResult": "The Resources view shows 0 resources.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-find-the-training-module-and-inspect-its-versions-002-verification-4",
+            "title": "Verification 4",
+            "instruction": "The source address is exactly cloudposse/label/null.",
+            "expectedResult": "The source address is exactly cloudposse/label/null.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003",
+        "slug": "create-the-root-configuration-pinned-to-0-24-1",
+        "title": "Create the root configuration pinned to 0.24.1",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Registry module call",
+        "goal": "Create a new root module that calls cloudposse/label/null at the exact version 0.24.1 and exposes harmless calculated outputs.",
+        "whyItMatters": "An exact initial pin gives a known baseline that you can later widen, narrow, break and repair.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-and-discover-registry-modules",
+        "prerequisites": [
+          "task-trmavc-find-the-training-module-and-inspect-its-versions-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-module-block-reference",
+          "source-version-constraints",
+          "source-use-registry-modules-in-configuration",
+          "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+          "source-cloud-posse-label-module-documentation"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the root configuration pinned to 0.24.1",
+            "instruction": "Create the folder C:\\terraform-labs\\fa-registry-modules-terraform.",
+            "instructions": [
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-1",
+                "text": "Create the folder C:\\terraform-labs\\fa-registry-modules-terraform.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-2",
+                "text": "Open the folder and create main.tf. Ensure Windows does not save it as main.tf.txt.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-3",
+                "text": "Paste the complete main.tf block supplied in this task.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-4",
+                "text": "Create outputs.tf in the same folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-5",
+                "text": "Paste the complete outputs.tf block supplied in this task.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-6",
+                "text": "Confirm the module block uses source cloudposse/label/null and exact version = 0.24.1.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-instruction-7",
+                "text": "Confirm there are no provider blocks, backend blocks, cloud blocks or credentials in either file.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-json-1",
+                "title": "main.tf",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.24.1\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-module-block-reference",
+                  "source-version-constraints",
+                  "source-use-registry-modules-in-configuration",
+                  "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+                  "source-cloud-posse-label-module-documentation"
+                ]
+              },
+              {
+                "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-console-step-1-create-the-root-configuration-pinned-to-0-24-1-json-2",
+                "title": "outputs.tf",
+                "content": "output \"training_label_id\" {\n  description = \"Deterministic label generated by the registry module.\"\n  value       = module.training_label.id\n}\n\noutput \"training_label_tags\" {\n  description = \"Tags calculated by the registry module.\"\n  value       = module.training_label.tags\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-module-block-reference",
+                  "source-version-constraints",
+                  "source-use-registry-modules-in-configuration",
+                  "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+                  "source-cloud-posse-label-module-documentation"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The lab folder contains main.tf and outputs.tf. main.tf pins the module to = 0.24.1. No credential or cloud provider configuration exists.",
+            "warning": "",
+            "sourceIds": [
+              "source-module-block-reference",
+              "source-version-constraints",
+              "source-use-registry-modules-in-configuration",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-cloud-posse-label-module-documentation"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "New-Item -ItemType Directory -Force C:\\terraform-labs\\fa-registry-modules-terraform\nSet-Location C:\\terraform-labs\\fa-registry-modules-terraform\nGet-Location",
+            "explanation": "PowerShell - create and enter the lab folder",
+            "expectedResult": "The lab folder contains main.tf and outputs.tf. main.tf pins the module to = 0.24.1. No credential or cloud provider configuration exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-module-block-reference",
+              "source-version-constraints",
+              "source-use-registry-modules-in-configuration",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-cloud-posse-label-module-documentation"
+            ]
+          },
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "mkdir -p ~/terraform-labs/fa-registry-modules-terraform\ncd ~/terraform-labs/fa-registry-modules-terraform\npwd",
+            "explanation": "Bash - create and enter the lab folder",
+            "expectedResult": "The lab folder contains main.tf and outputs.tf. main.tf pins the module to = 0.24.1. No credential or cloud provider configuration exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-module-block-reference",
+              "source-version-constraints",
+              "source-use-registry-modules-in-configuration",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-cloud-posse-label-module-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-verification-1",
+            "title": "Verification 1",
+            "instruction": "main.tf exists with the exact registry source address.",
+            "expectedResult": "main.tf exists with the exact registry source address.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-verification-2",
+            "title": "Verification 2",
+            "instruction": "The version line is exactly version = \"= 0.24.1\".",
+            "expectedResult": "The version line is exactly version = \"= 0.24.1\".",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003-verification-3",
+            "title": "Verification 3",
+            "instruction": "outputs.tf references module.training_label.id and module.training_label.tags.",
+            "expectedResult": "outputs.tf references module.training_label.id and module.training_label.tags.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004",
+        "slug": "initialize-and-inspect-the-exact-downloaded-module",
+        "title": "Initialize and inspect the exact downloaded module",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Module installation",
+        "goal": "Run terraform init, then inspect the module cache metadata to prove Terraform installed version 0.24.1.",
+        "whyItMatters": "Registry module versions are resolved during initialization; the downloaded module metadata gives direct evidence of the selected release.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-2-install-and-use-an-exact-module-version",
+        "prerequisites": [
+          "task-trmavc-create-the-root-configuration-pinned-to-0-24-1-003"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-terraform-init-command-reference",
+          "source-module-block-reference",
+          "source-find-and-use-modules-in-the-terraform-registry",
+          "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+          "source-dependency-lock-file"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Initialize and inspect the exact downloaded module",
+            "instruction": "Open PowerShell or Bash in C:\\terraform-labs\\fa-registry-modules-terraform.",
+            "instructions": [
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-1",
+                "text": "Open PowerShell or Bash in C:\\terraform-labs\\fa-registry-modules-terraform.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-2",
+                "text": "Run terraform init.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-3",
+                "text": "Read the init output and find the line that says it is downloading cloudposse/label/null 0.24.1 for training_label.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-4",
+                "text": "Open the .terraform folder that init created. This is local working data and must not be committed as source.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-5",
+                "text": "Open .terraform/modules/modules.json and find the training_label entry. Confirm its Version is 0.24.1.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-6",
+                "text": "If .terraform.lock.hcl exists, do not use it as proof of the module version. HashiCorp documents that the dependency lock file currently tracks provider selections, not remote module selections.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-console-step-1-initialize-and-inspect-the-exact-downloaded-module-instruction-7",
+                "text": "Do not manually edit files under .terraform/modules. Terraform owns the downloaded cache.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "terraform init succeeds. The init output identifies cloudposse/label/null 0.24.1. .terraform/modules/modules.json records Version 0.24.1 for training_label.",
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-module-block-reference",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-dependency-lock-file"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init\nGet-Content .terraform\\modules\\modules.json",
+            "explanation": "PowerShell - initialize and inspect module metadata",
+            "expectedResult": "terraform init succeeds. The init output identifies cloudposse/label/null 0.24.1. .terraform/modules/modules.json records Version 0.24.1 for training_label.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-module-block-reference",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-dependency-lock-file"
+            ]
+          },
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init\ncat .terraform/modules/modules.json",
+            "explanation": "Bash - initialize and inspect module metadata",
+            "expectedResult": "terraform init succeeds. The init output identifies cloudposse/label/null 0.24.1. .terraform/modules/modules.json records Version 0.24.1 for training_label.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-module-block-reference",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry",
+              "source-dependency-lock-file"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-verification-1",
+            "title": "Verification 1",
+            "instruction": "Initialization completes without cloud authentication.",
+            "expectedResult": "Initialization completes without cloud authentication.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-verification-2",
+            "title": "Verification 2",
+            "instruction": "modules.json contains cloudposse/label/null and version 0.24.1.",
+            "expectedResult": "modules.json contains cloudposse/label/null and version 0.24.1.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learner can explain why .terraform.lock.hcl is not the module-version lock.",
+            "expectedResult": "The learner can explain why .terraform.lock.hcl is not the module-version lock.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005",
+        "slug": "format-validate-review-and-apply-the-baseline-configuration",
+        "title": "Format, validate, review and apply the baseline configuration",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Core workflow with a registry module",
+        "goal": "Run the normal Terraform workflow with the exact module version and verify the module output without creating infrastructure.",
+        "whyItMatters": "Module version management is easier to trust when the selected module actually participates in a validated, reviewed and applied root configuration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-2-install-and-use-an-exact-module-version",
+        "prerequisites": [
+          "task-trmavc-initialize-and-inspect-the-exact-downloaded-module-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-terraform-fmt-command-reference",
+          "source-terraform-validate-command-reference",
+          "source-terraform-plan-command-reference",
+          "source-terraform-show-command-reference",
+          "source-terraform-apply-command-reference",
+          "source-terraform-output-command-reference",
+          "source-terraform-state-list-command-reference",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Format, validate, review and apply the baseline configuration",
+            "instruction": "Run terraform fmt and confirm Terraform does not report a formatting error.",
+            "instructions": [
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-1",
+                "text": "Run terraform fmt and confirm Terraform does not report a formatting error.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-2",
+                "text": "Run terraform validate and confirm Success! The configuration is valid.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-3",
+                "text": "Create a saved plan named fa-registry-modules-baseline.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-4",
+                "text": "Review that saved plan with terraform show before applying it.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-5",
+                "text": "Confirm the plan proposes no cloud resources and only calculates root outputs.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-6",
+                "text": "Apply the reviewed saved plan by filename. Do not run an unreviewed terraform apply.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-7",
+                "text": "Run terraform output training_label_id.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-console-step-1-format-validate-review-and-apply-the-baseline-configuration-instruction-8",
+                "text": "Run terraform state list and confirm it prints no managed resource addresses.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Validation succeeds. The saved plan contains no managed cloud resource creation. Apply succeeds. training_label_id prints fa-gbl-training-registry-modules-versioning. terraform state list prints no managed resource address.",
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-fmt-command-reference",
+              "source-terraform-validate-command-reference",
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-output-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt\nterraform validate\nterraform plan -out=fa-registry-modules-baseline.tfplan\nterraform show fa-registry-modules-baseline.tfplan\nterraform apply fa-registry-modules-baseline.tfplan\nterraform output training_label_id\nterraform state list",
+            "explanation": "PowerShell and Bash - baseline workflow",
+            "expectedResult": "Validation succeeds. The saved plan contains no managed cloud resource creation. Apply succeeds. training_label_id prints fa-gbl-training-registry-modules-versioning. terraform state list prints no managed resource address.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-fmt-command-reference",
+              "source-terraform-validate-command-reference",
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-output-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-verification-1",
+            "title": "Verification 1",
+            "instruction": "The saved plan was reviewed before apply.",
+            "expectedResult": "The saved plan was reviewed before apply.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-verification-2",
+            "title": "Verification 2",
+            "instruction": "training_label_id equals fa-gbl-training-registry-modules-versioning.",
+            "expectedResult": "training_label_id equals fa-gbl-training-registry-modules-versioning.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-verification-3",
+            "title": "Verification 3",
+            "instruction": "terraform state list is empty.",
+            "expectedResult": "terraform state list is empty.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005-verification-4",
+            "title": "Verification 4",
+            "instruction": "No cloud credentials or resources were used.",
+            "expectedResult": "No cloud credentials or resources were used.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006",
+        "slug": "broaden-the-version-constraint-with-0-24",
+        "title": "Broaden the version constraint with ~> 0.24",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Pessimistic constraint",
+        "goal": "Replace the exact module pin with ~> 0.24 and understand exactly which version range that syntax permits.",
+        "whyItMatters": "The pessimistic operator is easy to misread; the number of version components changes the upper bound.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-3-broaden-a-constraint-and-upgrade-the-module",
+        "prerequisites": [
+          "task-trmavc-format-validate-review-and-apply-the-baseline-configuration-005"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-version-constraints",
+          "source-module-block-reference",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Broaden the version constraint with ~> 0.24",
+            "instruction": "Open main.tf.",
+            "instructions": [
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-instruction-1",
+                "text": "Open main.tf.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-instruction-2",
+                "text": "Replace only version = \"= 0.24.1\" with version = \"~> 0.24\".",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-instruction-3",
+                "text": "Do not change the source address or any module inputs.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-instruction-4",
+                "text": "Understand the constraint before running init: ~> 0.24 allows 0.24 and later 0.x releases but not 1.0 or later. Therefore 0.25.0 is acceptable.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-instruction-5",
+                "text": "Save main.tf.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-console-step-1-broaden-the-version-constraint-with-0-24-json-1",
+                "title": "main.tf after broadening the constraint",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"~> 0.24\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-version-constraints",
+                  "source-module-block-reference",
+                  "source-cloudposse-label-null-terraform-registry"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "main.tf uses version = \"~> 0.24\". The learner predicts that 0.25.0 is acceptable before running Terraform.",
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-module-block-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "# Edit main.tf first using the complete replacement block below.\n# The upgrade is deliberately performed in the next task.",
+            "explanation": "No upgrade yet",
+            "expectedResult": "main.tf uses version = \"~> 0.24\". The learner predicts that 0.25.0 is acceptable before running Terraform.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-module-block-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-verification-1",
+            "title": "Verification 1",
+            "instruction": "The source remains cloudposse/label/null.",
+            "expectedResult": "The source remains cloudposse/label/null.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-verification-2",
+            "title": "Verification 2",
+            "instruction": "The version line is exactly ~> 0.24.",
+            "expectedResult": "The version line is exactly ~> 0.24.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-broaden-the-version-constraint-with-0-24-006-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learner can state that 1.0.0 would be outside this constraint.",
+            "expectedResult": "The learner can state that 1.0.0 would be outside this constraint.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007",
+        "slug": "run-init-upgrade-and-prove-terraform-selects-0-25-0",
+        "title": "Run init -upgrade and prove Terraform selects 0.25.0",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Registry module upgrade",
+        "goal": "Force Terraform to reconsider the already-installed module and select the newest version allowed by ~> 0.24.",
+        "whyItMatters": "Re-running plain init does not necessarily replace an already-installed module; -upgrade is the deliberate signal to update module source selections.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-3-broaden-a-constraint-and-upgrade-the-module",
+        "prerequisites": [
+          "task-trmavc-broaden-the-version-constraint-with-0-24-006"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-terraform-init-command-reference",
+          "source-version-constraints",
+          "source-dependency-lock-file",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Run init -upgrade and prove Terraform selects 0.25.0",
+            "instruction": "Run terraform init -upgrade.",
+            "instructions": [
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-1",
+                "text": "Run terraform init -upgrade.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-2",
+                "text": "Read the init output and confirm Terraform downloads cloudposse/label/null 0.25.0 for training_label.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-3",
+                "text": "Open .terraform/modules/modules.json and confirm the training_label Version changed from 0.24.1 to 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-4",
+                "text": "Run terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-5",
+                "text": "Create a saved plan named fa-registry-modules-upgrade-0250.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-6",
+                "text": "Review the saved plan with terraform show.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-7",
+                "text": "Apply the reviewed saved plan by filename.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-console-step-1-run-init-upgrade-and-prove-terraform-selects-0-25-0-instruction-8",
+                "text": "Run terraform output training_label_id and confirm the result remains stable.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Terraform selects module version 0.25.0. modules.json records Version 0.25.0. Validation succeeds. The reviewed apply succeeds and the calculated label remains fa-gbl-training-registry-modules-versioning.",
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-dependency-lock-file",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-upgrade-0250.tfplan\nterraform show fa-registry-modules-upgrade-0250.tfplan\nterraform apply fa-registry-modules-upgrade-0250.tfplan\nterraform output training_label_id",
+            "explanation": "PowerShell - upgrade and inspect",
+            "expectedResult": "Terraform selects module version 0.25.0. modules.json records Version 0.25.0. Validation succeeds. The reviewed apply succeeds and the calculated label remains fa-gbl-training-registry-modules-versioning.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-dependency-lock-file",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          },
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-upgrade-0250.tfplan\nterraform show fa-registry-modules-upgrade-0250.tfplan\nterraform apply fa-registry-modules-upgrade-0250.tfplan\nterraform output training_label_id",
+            "explanation": "Bash - upgrade and inspect",
+            "expectedResult": "Terraform selects module version 0.25.0. modules.json records Version 0.25.0. Validation succeeds. The reviewed apply succeeds and the calculated label remains fa-gbl-training-registry-modules-versioning.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-dependency-lock-file",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-verification-1",
+            "title": "Verification 1",
+            "instruction": "modules.json shows 0.25.0.",
+            "expectedResult": "modules.json shows 0.25.0.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-verification-2",
+            "title": "Verification 2",
+            "instruction": "The saved plan was reviewed before apply.",
+            "expectedResult": "The saved plan was reviewed before apply.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007-verification-3",
+            "title": "Verification 3",
+            "instruction": "The module output remains stable after the version upgrade.",
+            "expectedResult": "The module output remains stable after the version upgrade.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008",
+        "slug": "prove-module-versions-are-not-locked-in-terraform-lock-hcl",
+        "title": "Prove module versions are not locked in .terraform.lock.hcl",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Dependency locking distinction",
+        "goal": "Compare module installation metadata with Terraform dependency lock behavior and explain where the selected remote module version is remembered.",
+        "whyItMatters": "A common exam and real-world mistake is assuming .terraform.lock.hcl locks both providers and registry modules.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-3-broaden-a-constraint-and-upgrade-the-module",
+        "prerequisites": [
+          "task-trmavc-run-init-upgrade-and-prove-terraform-selects-0-25-0-007"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-dependency-lock-file",
+          "source-terraform-init-command-reference",
+          "source-module-block-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Prove module versions are not locked in .terraform.lock.hcl",
+            "instruction": "Open .terraform/modules/modules.json and locate training_label Version 0.25.0.",
+            "instructions": [
+              {
+                "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl-instruction-1",
+                "text": "Open .terraform/modules/modules.json and locate training_label Version 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl-instruction-2",
+                "text": "Look in the root folder for .terraform.lock.hcl.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl-instruction-3",
+                "text": "If no lock file exists, note that this configuration has no provider dependency requiring a lock selection.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl-instruction-4",
+                "text": "If a lock file exists because of a local Terraform behavior or prior experiment, search it for cloudposse/label/null and confirm it does not contain a remote module version selection.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-console-step-1-prove-module-versions-are-not-locked-in-terraform-lock-hcl-instruction-5",
+                "text": "State the rule: module version constraints live in the module block; exact pins are the way to force the same registry module version across fresh installations.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "modules.json shows the selected module version. .terraform.lock.hcl is not used to pin the remote module version. The learner can explain why an exact module version constraint provides reproducible registry module selection.",
+            "warning": "",
+            "sourceIds": [
+              "source-dependency-lock-file",
+              "source-terraform-init-command-reference",
+              "source-module-block-reference"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "Get-Content .terraform\\modules\\modules.json\nTest-Path .terraform.lock.hcl\nif (Test-Path .terraform.lock.hcl) { Select-String -Path .terraform.lock.hcl -SimpleMatch \"cloudposse/label/null\" }",
+            "explanation": "PowerShell - compare module metadata and lock file",
+            "expectedResult": "modules.json shows the selected module version. .terraform.lock.hcl is not used to pin the remote module version. The learner can explain why an exact module version constraint provides reproducible registry module selection.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-dependency-lock-file",
+              "source-terraform-init-command-reference",
+              "source-module-block-reference"
+            ]
+          },
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "cat .terraform/modules/modules.json\ntest -f .terraform.lock.hcl && echo \"lock file exists\" || echo \"no lock file\"\nif [ -f .terraform.lock.hcl ]; then grep -F \"cloudposse/label/null\" .terraform.lock.hcl || true; fi",
+            "explanation": "Bash - compare module metadata and lock file",
+            "expectedResult": "modules.json shows the selected module version. .terraform.lock.hcl is not used to pin the remote module version. The learner can explain why an exact module version constraint provides reproducible registry module selection.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-dependency-lock-file",
+              "source-terraform-init-command-reference",
+              "source-module-block-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-verification-1",
+            "title": "Verification 1",
+            "instruction": "The selected module version is visible in modules.json.",
+            "expectedResult": "The selected module version is visible in modules.json.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-verification-2",
+            "title": "Verification 2",
+            "instruction": "No cloudposse/label/null module selection is treated as a provider lock entry.",
+            "expectedResult": "No cloudposse/label/null module selection is treated as a provider lock entry.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learner can distinguish provider locking from remote module version constraints.",
+            "expectedResult": "The learner can distinguish provider locking from remote module version constraints.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009",
+        "slug": "narrow-the-constraint-to-the-0-24-patch-line",
+        "title": "Narrow the constraint to the 0.24 patch line",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Pessimistic patch constraint",
+        "goal": "Use ~> 0.24.0, reinitialize with -upgrade, and prove Terraform returns to the newest 0.24.x release.",
+        "whyItMatters": "Adding the patch component changes the pessimistic upper bound, which is a practical version-constraint distinction worth seeing directly.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-4-narrow-constraints-and-pin-versions",
+        "prerequisites": [
+          "task-trmavc-prove-module-versions-are-not-locked-in-terraform-lock-hcl-008"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-version-constraints",
+          "source-terraform-init-command-reference",
+          "source-cloudposse-label-null-version-0-24-1-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Narrow the constraint to the 0.24 patch line",
+            "instruction": "Replace version = \"~> 0.24\" with version = \"~> 0.24.0\" in main.tf.",
+            "instructions": [
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-1",
+                "text": "Replace version = \"~> 0.24\" with version = \"~> 0.24.0\" in main.tf.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-2",
+                "text": "Understand the new range: versions from 0.24.0 up to but not including 0.25.0 are acceptable.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-3",
+                "text": "Run terraform init -upgrade.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-4",
+                "text": "Inspect modules.json and confirm Terraform selects 0.24.1.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-5",
+                "text": "Run terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-6",
+                "text": "Create and review a saved plan named fa-registry-modules-patch-line.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-instruction-7",
+                "text": "Apply the reviewed saved plan and confirm the label output is unchanged.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-console-step-1-narrow-the-constraint-to-the-0-24-patch-line-json-1",
+                "title": "main.tf with patch-line constraint",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"~> 0.24.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-version-constraints",
+                  "source-terraform-init-command-reference",
+                  "source-cloudposse-label-null-version-0-24-1-terraform-registry"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Terraform selects 0.24.1 because 0.25.0 is outside ~> 0.24.0. Validation and reviewed apply succeed. The output remains stable.",
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-patch-line.tfplan\nterraform show fa-registry-modules-patch-line.tfplan\nterraform apply fa-registry-modules-patch-line.tfplan\nterraform output training_label_id",
+            "explanation": "PowerShell - patch-line selection",
+            "expectedResult": "Terraform selects 0.24.1 because 0.25.0 is outside ~> 0.24.0. Validation and reviewed apply succeed. The output remains stable.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry"
+            ]
+          },
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-patch-line.tfplan\nterraform show fa-registry-modules-patch-line.tfplan\nterraform apply fa-registry-modules-patch-line.tfplan\nterraform output training_label_id",
+            "explanation": "Bash - patch-line selection",
+            "expectedResult": "Terraform selects 0.24.1 because 0.25.0 is outside ~> 0.24.0. Validation and reviewed apply succeed. The output remains stable.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-version-0-24-1-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-verification-1",
+            "title": "Verification 1",
+            "instruction": "modules.json shows Version 0.24.1.",
+            "expectedResult": "modules.json shows Version 0.24.1.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-verification-2",
+            "title": "Verification 2",
+            "instruction": "The learner can explain the difference between ~> 0.24 and ~> 0.24.0.",
+            "expectedResult": "The learner can explain the difference between ~> 0.24 and ~> 0.24.0.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009-verification-3",
+            "title": "Verification 3",
+            "instruction": "The saved plan was reviewed before apply.",
+            "expectedResult": "The saved plan was reviewed before apply.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010",
+        "slug": "practice-a-compound-range-and-then-an-exact-pin",
+        "title": "Practice a compound range and then an exact pin",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Version constraint forms",
+        "goal": "Use an explicit lower/upper range and then finish with an exact module version pin.",
+        "whyItMatters": "Being able to read equivalent constraints helps you understand what versions Terraform may select and when upgrades can happen.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-4-narrow-constraints-and-pin-versions",
+        "prerequisites": [
+          "task-trmavc-narrow-the-constraint-to-the-0-24-patch-line-009"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-version-constraints",
+          "source-module-block-reference",
+          "source-terraform-init-command-reference",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Practice a compound range and then an exact pin",
+            "instruction": "Replace the version line with version = \">= 0.24.0, < 0.25.0\" using the complete file below.",
+            "instructions": [
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-1",
+                "text": "Replace the version line with version = \">= 0.24.0, < 0.25.0\" using the complete file below.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-2",
+                "text": "Run terraform init -upgrade and confirm modules.json still selects 0.24.1.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-3",
+                "text": "Notice that this compound range expresses the same practical 0.24.x ceiling as ~> 0.24.0 for the versions used in this lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-4",
+                "text": "Now replace the version line with version = \"= 0.25.0\" using the second complete file below.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-5",
+                "text": "Run terraform init -upgrade again and confirm modules.json selects exactly 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-instruction-6",
+                "text": "Run terraform validate after the final exact pin.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-json-1",
+                "title": "main.tf with compound 0.24.x range",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \">= 0.24.0, < 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-version-constraints",
+                  "source-module-block-reference",
+                  "source-terraform-init-command-reference",
+                  "source-cloudposse-label-null-terraform-registry"
+                ]
+              },
+              {
+                "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-console-step-1-practice-a-compound-range-and-then-an-exact-pin-json-2",
+                "title": "main.tf final exact 0.25.0 pin",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-version-constraints",
+                  "source-module-block-reference",
+                  "source-terraform-init-command-reference",
+                  "source-cloudposse-label-null-terraform-registry"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The compound range selects 0.24.1. The final exact pin selects only 0.25.0. Validation succeeds after the exact pin.",
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-module-block-reference",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate",
+            "explanation": "PowerShell - reinitialize after each edit",
+            "expectedResult": "The compound range selects 0.24.1. The final exact pin selects only 0.25.0. Validation succeeds after the exact pin.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-module-block-reference",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          },
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate",
+            "explanation": "Bash - reinitialize after each edit",
+            "expectedResult": "The compound range selects 0.24.1. The final exact pin selects only 0.25.0. Validation succeeds after the exact pin.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-module-block-reference",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-verification-1",
+            "title": "Verification 1",
+            "instruction": "The learner can read >= 0.24.0, < 0.25.0 as an explicit range.",
+            "expectedResult": "The learner can read >= 0.24.0, < 0.25.0 as an explicit range.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-verification-2",
+            "title": "Verification 2",
+            "instruction": "modules.json shows 0.25.0 after the final exact pin.",
+            "expectedResult": "modules.json shows 0.25.0 after the final exact pin.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010-verification-3",
+            "title": "Verification 3",
+            "instruction": "main.tf ends this task with version = \"= 0.25.0\".",
+            "expectedResult": "main.tf ends this task with version = \"= 0.25.0\".",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-create-an-impossible-module-version-constraint-011",
+        "slug": "create-an-impossible-module-version-constraint",
+        "title": "Create an impossible module version constraint",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Troubleshooting version resolution",
+        "goal": "Intentionally request a version range the Registry cannot satisfy and diagnose the failure at terraform init.",
+        "whyItMatters": "Version constraint failures happen before plan/apply; recognizing that boundary prevents you from troubleshooting unrelated providers or resources.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-5-create-and-repair-a-version-selection-failure",
+        "prerequisites": [
+          "task-trmavc-practice-a-compound-range-and-then-an-exact-pin-010"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-version-constraints",
+          "source-terraform-init-command-reference",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create an impossible module version constraint",
+            "instruction": "Replace the exact version line with version = \">= 1.0.0\" using the complete failure file below.",
+            "instructions": [
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-1",
+                "text": "Replace the exact version line with version = \">= 1.0.0\" using the complete failure file below.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-2",
+                "text": "Save main.tf.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-3",
+                "text": "Run terraform init -upgrade.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-4",
+                "text": "Expect initialization to fail because the Registry module used by this lab has no 1.x release and the current latest verified release is 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-5",
+                "text": "Read the error and identify that Terraform cannot find an available module version matching the configured constraint.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-instruction-6",
+                "text": "Do not run terraform plan or apply after the failed init. The working directory is not successfully initialized for the requested dependency set.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-create-an-impossible-module-version-constraint-011-console-step-1-create-an-impossible-module-version-constraint-json-1",
+                "title": "main.tf with intentionally impossible constraint",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \">= 1.0.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-version-constraints",
+                  "source-terraform-init-command-reference",
+                  "source-cloudposse-label-null-terraform-registry"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "terraform init -upgrade fails safely. The error identifies the module version constraint as unsatisfied. No resource or state change occurs because initialization stops first.",
+            "warning": "This failure is intentional. Do not change the source address, delete state, or add credentials to try to fix it.",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-create-an-impossible-module-version-constraint-011-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init -upgrade",
+            "explanation": "PowerShell and Bash - trigger the safe failure",
+            "expectedResult": "terraform init -upgrade fails safely. The error identifies the module version constraint as unsatisfied. No resource or state change occurs because initialization stops first.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This failure is intentional. Do not change the source address, delete state, or add credentials to try to fix it.",
+            "sourceIds": [
+              "source-version-constraints",
+              "source-terraform-init-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-create-an-impossible-module-version-constraint-011-verification-1",
+            "title": "Verification 1",
+            "instruction": "The failure happens during init.",
+            "expectedResult": "The failure happens during init.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-create-an-impossible-module-version-constraint-011-verification-2",
+            "title": "Verification 2",
+            "instruction": "No plan or apply is attempted after the failure.",
+            "expectedResult": "No plan or apply is attempted after the failure.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-create-an-impossible-module-version-constraint-011-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learner identifies >= 1.0.0 as the deliberate cause.",
+            "expectedResult": "The learner identifies >= 1.0.0 as the deliberate cause.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012",
+        "slug": "repair-the-failed-init-and-re-establish-the-exact-pin",
+        "title": "Repair the failed init and re-establish the exact pin",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Controlled repair",
+        "goal": "Restore version 0.25.0, reinitialize, validate, review a saved plan and apply it.",
+        "whyItMatters": "A controlled repair changes only the faulty version constraint and then re-runs the normal verification workflow.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-5-create-and-repair-a-version-selection-failure",
+        "prerequisites": [
+          "task-trmavc-create-an-impossible-module-version-constraint-011"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-terraform-init-command-reference",
+          "source-version-constraints",
+          "source-terraform-plan-command-reference",
+          "source-terraform-show-command-reference",
+          "source-terraform-apply-command-reference",
+          "source-cloudposse-label-null-terraform-registry"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Repair the failed init and re-establish the exact pin",
+            "instruction": "Replace the impossible version line with version = \"= 0.25.0\" using the complete repaired main.tf below.",
+            "instructions": [
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-1",
+                "text": "Replace the impossible version line with version = \"= 0.25.0\" using the complete repaired main.tf below.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-2",
+                "text": "Run terraform init -upgrade.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-3",
+                "text": "Inspect modules.json and confirm Version 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-4",
+                "text": "Run terraform validate.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-5",
+                "text": "Create a saved plan named fa-registry-modules-repaired.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-6",
+                "text": "Review it with terraform show.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-7",
+                "text": "Apply the reviewed plan by filename.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-instruction-8",
+                "text": "Run terraform output training_label_id and confirm the expected deterministic value.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-console-step-1-repair-the-failed-init-and-re-establish-the-exact-pin-json-1",
+                "title": "main.tf repaired to exact 0.25.0",
+                "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-terraform-init-command-reference",
+                  "source-version-constraints",
+                  "source-terraform-plan-command-reference",
+                  "source-terraform-show-command-reference",
+                  "source-terraform-apply-command-reference",
+                  "source-cloudposse-label-null-terraform-registry"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Initialization succeeds again. modules.json shows 0.25.0. Validation succeeds. The reviewed apply succeeds. training_label_id is fa-gbl-training-registry-modules-versioning.",
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-repaired.tfplan\nterraform show fa-registry-modules-repaired.tfplan\nterraform apply fa-registry-modules-repaired.tfplan\nterraform output training_label_id",
+            "explanation": "PowerShell - repair and verify",
+            "expectedResult": "Initialization succeeds again. modules.json shows 0.25.0. Validation succeeds. The reviewed apply succeeds. training_label_id is fa-gbl-training-registry-modules-versioning.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          },
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-repaired.tfplan\nterraform show fa-registry-modules-repaired.tfplan\nterraform apply fa-registry-modules-repaired.tfplan\nterraform output training_label_id",
+            "explanation": "Bash - repair and verify",
+            "expectedResult": "Initialization succeeds again. modules.json shows 0.25.0. Validation succeeds. The reviewed apply succeeds. training_label_id is fa-gbl-training-registry-modules-versioning.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-terraform-init-command-reference",
+              "source-version-constraints",
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-cloudposse-label-null-terraform-registry"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-verification-1",
+            "title": "Verification 1",
+            "instruction": "The repaired file changes only the version constraint from the deliberate failure.",
+            "expectedResult": "The repaired file changes only the version constraint from the deliberate failure.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-verification-2",
+            "title": "Verification 2",
+            "instruction": "The saved plan was reviewed before apply.",
+            "expectedResult": "The saved plan was reviewed before apply.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012-verification-3",
+            "title": "Verification 3",
+            "instruction": "The expected label output returns.",
+            "expectedResult": "The expected label output returns.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013",
+        "slug": "review-registry-module-and-version-constraint-exam-points",
+        "title": "Review Registry module and version-constraint exam points",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Exam consolidation",
+        "goal": "Turn the completed commands into a clear Terraform Associate 004 mental model for objectives 5a, 5c and 5d.",
+        "whyItMatters": "The hands-on work matters only if you can explain the general Terraform behavior without relying on this one module.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-6-verify-exam-coverage-and-clean-up",
+        "prerequisites": [
+          "task-trmavc-repair-the-failed-init-and-re-establish-the-exact-pin-012"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-exam-content-list-terraform-associate-004",
+          "source-module-block-reference",
+          "source-version-constraints",
+          "source-find-and-use-modules-in-the-terraform-registry",
+          "source-dependency-lock-file",
+          "source-terraform-init-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Review Registry module and version-constraint exam points",
+            "instruction": "State the registry source rule: a public registry module source uses namespace/name/provider syntax, such as cloudposse/label/null.",
+            "instructions": [
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-1",
+                "text": "State the registry source rule: a public registry module source uses namespace/name/provider syntax, such as cloudposse/label/null.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-2",
+                "text": "State the version rule: the version argument is available for modules sourced from a registry; local filesystem modules do not use the version argument.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-3",
+                "text": "State the init rule: terraform init downloads child modules; terraform init -upgrade deliberately reconsiders already-installed module versions against the current constraints.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-4",
+                "text": "State the exact-pin rule: = 0.25.0 allows only 0.25.0.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-5",
+                "text": "State the pessimistic rule shown in the lab: ~> 0.24 allowed 0.25.0, while ~> 0.24.0 kept selection within the 0.24.x line.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-6",
+                "text": "State the compound rule: >= 0.24.0, < 0.25.0 expresses explicit lower and upper bounds.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-7",
+                "text": "State the lock-file rule: .terraform.lock.hcl currently records provider selections, not remote module version selections.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-8",
+                "text": "State the failure rule: if no module release satisfies the configured constraint, initialization fails before plan/apply.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-console-step-1-review-registry-module-and-version-constraint-exam-points-instruction-9",
+                "text": "State the boundary with the separate local-module refactoring lab: local module structure/refactoring and registry module release selection are different skills; this Follow Along intentionally covers the latter.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The learner can explain all nine review points in their own words. Final configuration is initialized, valid and pinned to 0.25.0. No cloud infrastructure exists.",
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-module-block-reference",
+              "source-version-constraints",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-dependency-lock-file",
+              "source-terraform-init-command-reference"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform init\nterraform validate\nterraform output training_label_id",
+            "explanation": "Final module metadata check",
+            "expectedResult": "The learner can explain all nine review points in their own words. Final configuration is initialized, valid and pinned to 0.25.0. No cloud infrastructure exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-exam-content-list-terraform-associate-004",
+              "source-module-block-reference",
+              "source-version-constraints",
+              "source-find-and-use-modules-in-the-terraform-registry",
+              "source-dependency-lock-file",
+              "source-terraform-init-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-verification-1",
+            "title": "Verification 1",
+            "instruction": "main.tf is pinned to = 0.25.0.",
+            "expectedResult": "main.tf is pinned to = 0.25.0.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-verification-2",
+            "title": "Verification 2",
+            "instruction": "The learner can explain why local modules do not use the registry version argument.",
+            "expectedResult": "The learner can explain why local modules do not use the registry version argument.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-verification-3",
+            "title": "Verification 3",
+            "instruction": "The learner can explain why .terraform.lock.hcl is not a remote-module lock.",
+            "expectedResult": "The learner can explain why .terraform.lock.hcl is not a remote-module lock.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-review-registry-module-and-version-constraint-exam-points-013-verification-4",
+            "title": "Verification 4",
+            "instruction": "The learner can explain when init -upgrade is required.",
+            "expectedResult": "The learner can explain when init -upgrade is required.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014",
+        "slug": "run-a-saved-destroy-review-and-remove-all-local-lab-artifacts",
+        "title": "Run a saved destroy review and remove all local lab artifacts",
+        "service": "Terraform Registry Modules and Version Constraints",
+        "feature": "Reverse-dependency cleanup",
+        "goal": "Verify there is no managed infrastructure, review a saved destroy plan, and delete the local module cache, state, plan files and lab folder in safe order.",
+        "whyItMatters": "Even a no-cloud lab should prove what Terraform manages before local state and caches are removed.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+        "status": "draft",
+        "phaseId": "phase-6-verify-exam-coverage-and-clean-up",
+        "prerequisites": [
+          "task-trmavc-review-registry-module-and-version-constraint-exam-points-013"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-terraform-plan-command-reference",
+          "source-terraform-show-command-reference",
+          "source-terraform-apply-command-reference",
+          "source-terraform-state-list-command-reference",
+          "source-terraform-destroy-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Run a saved destroy review and remove all local lab artifacts",
+            "instruction": "Run terraform state list and confirm it prints no managed resource addresses.",
+            "instructions": [
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-1",
+                "text": "Run terraform state list and confirm it prints no managed resource addresses.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-2",
+                "text": "Create a saved destroy plan named fa-registry-modules-destroy.tfplan with terraform plan -destroy -out=....",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-3",
+                "text": "Review the destroy plan with terraform show. It must not contain any cloud resource destruction.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-4",
+                "text": "Apply the reviewed destroy plan by filename. Because the training module defines zero resources, Terraform has no infrastructure object to destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-5",
+                "text": "Run terraform state list again and confirm it is still empty.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-6",
+                "text": "Delete the generated saved plan files from this lab only: baseline, upgrade-0250, patch-line, repaired and destroy plan files.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-7",
+                "text": "Delete the .terraform module cache only after the final Terraform verification is complete.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-8",
+                "text": "Delete any local terraform.tfstate or terraform.tfstate.backup files created by the local apply only after the final state verification.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-9",
+                "text": "Delete the exact lab folder C:\\terraform-labs\\fa-registry-modules-terraform last. Do not delete C:\\terraform-labs or any sibling lab folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-10",
+                "text": "Verify the exact fa-registry-modules-terraform folder no longer exists.",
+                "detail": ""
+              },
+              {
+                "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-console-step-1-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-instruction-11",
+                "text": "Affirm the programme cleanup acknowledgement supplied below.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The saved destroy plan contains no cloud resource destruction. terraform state list is empty before and after the destroy review. All lab-only plan, cache and state files are removed. The exact fa-registry-modules-terraform folder is removed last.",
+            "warning": "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab.",
+            "sourceIds": [
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-terraform-destroy-command-reference"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list",
+            "explanation": "PowerShell - saved destroy review",
+            "expectedResult": "The saved destroy plan contains no cloud resource destruction. terraform state list is empty before and after the destroy review. All lab-only plan, cache and state files are removed. The exact fa-registry-modules-terraform folder is removed last.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab.",
+            "sourceIds": [
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-terraform-destroy-command-reference"
+            ]
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform",
+            "explanation": "PowerShell - local file cleanup",
+            "expectedResult": "The saved destroy plan contains no cloud resource destruction. terraform state list is empty before and after the destroy review. All lab-only plan, cache and state files are removed. The exact fa-registry-modules-terraform folder is removed last.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab.",
+            "sourceIds": [
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-terraform-destroy-command-reference"
+            ]
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list",
+            "explanation": "Bash - saved destroy review",
+            "expectedResult": "The saved destroy plan contains no cloud resource destruction. terraform state list is empty before and after the destroy review. All lab-only plan, cache and state files are removed. The exact fa-registry-modules-terraform folder is removed last.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab.",
+            "sourceIds": [
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-terraform-destroy-command-reference"
+            ]
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+            "explanation": "Bash - local file cleanup",
+            "expectedResult": "The saved destroy plan contains no cloud resource destruction. terraform state list is empty before and after the destroy review. All lab-only plan, cache and state files are removed. The exact fa-registry-modules-terraform folder is removed last.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab.",
+            "sourceIds": [
+              "source-terraform-plan-command-reference",
+              "source-terraform-show-command-reference",
+              "source-terraform-apply-command-reference",
+              "source-terraform-state-list-command-reference",
+              "source-terraform-destroy-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-verification-1",
+            "title": "Verification 1",
+            "instruction": "No managed resource address exists before cleanup.",
+            "expectedResult": "No managed resource address exists before cleanup.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-verification-2",
+            "title": "Verification 2",
+            "instruction": "The saved destroy plan was reviewed before apply.",
+            "expectedResult": "The saved destroy plan was reviewed before apply.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-verification-3",
+            "title": "Verification 3",
+            "instruction": "No cloud resource was destroyed because none was created.",
+            "expectedResult": "No cloud resource was destroyed because none was created.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-verification-4",
+            "title": "Verification 4",
+            "instruction": "The exact local lab folder is absent after cleanup.",
+            "expectedResult": "The exact local lab folder is absent after cleanup.",
+            "mode": "either"
+          },
+          {
+            "id": "task-trmavc-run-a-saved-destroy-review-and-remove-all-local-lab-artifacts-014-verification-5",
+            "title": "Verification 5",
+            "instruction": "No sibling lab folder or unrelated file was removed.",
+            "expectedResult": "No sibling lab folder or unrelated file was removed.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created."
+      }
+    },
+    "warnings": {
+      "cost": "This Follow Along downloads public Terraform Registry module source code but intentionally creates zero cloud resources, accounts, workspaces or paid services. No cloud resource charges are expected from the lab itself.",
+      "safety": "Delete only the exact local folder C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/cache/state files created inside it. Never delete the parent terraform-labs folder or a sibling lab.",
+      "credentials": "No cloud or registry credentials are required. Do not add AWS, HCP Terraform, GitHub or other credentials to the configuration or command history.",
+      "region": "The public Terraform Registry is global and this Follow Along runs locally. It intentionally creates no AWS or other cloud resource, so no cloud Region selection is required."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Remove Saved destroy plan",
+          "instruction": "Console:\n- Create and review the saved destroy plan, then apply that reviewed plan. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-destroy.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Create and review the saved destroy plan, then apply that reviewed plan. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-destroy.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "terraform state list is empty and no cloud resource destruction appears in the destroy plan. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-destroy.tfplan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Remove Local Terraform state",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\terraform.tfstate.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\terraform.tfstate.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\terraform.tfstate.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Remove Baseline saved plan",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-baseline.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-baseline.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-baseline.tfplan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Remove 0.25.0 upgrade saved plan",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-upgrade-0250.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-upgrade-0250.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-upgrade-0250.tfplan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Remove 0.24.x patch-line saved plan",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-patch-line.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-patch-line.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-patch-line.tfplan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Remove Repaired exact-pin saved plan",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-repaired.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-repaired.tfplan.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-repaired.tfplan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-7",
+          "stepNumber": 7,
+          "title": "Remove Terraform downloaded module cache",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\.terraform\\modules.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\.terraform\\modules.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\.terraform\\modules.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-8",
+          "stepNumber": 8,
+          "title": "Remove Root module main.tf",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\main.tf.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\main.tf.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\main.tf.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-9",
+          "stepNumber": 9,
+          "title": "Remove Root module outputs.tf",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\outputs.tf.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform\\outputs.tf.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform\\outputs.tf.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-10",
+          "stepNumber": 10,
+          "title": "Remove Local lab folder",
+          "instruction": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "description": "Console:\n- Delete the exact lab folder last. Do not delete its parent or sibling labs. Exact target: C:\\terraform-labs\\fa-registry-modules-terraform.\nCLI:\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform\n- terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list\n- rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform",
+          "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain. Exact target checked: C:\\terraform-labs\\fa-registry-modules-terraform.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-terraform-plan-command-reference",
+            "source-terraform-show-command-reference",
+            "source-terraform-apply-command-reference",
+            "source-terraform-state-list-command-reference",
+            "source-terraform-destroy-command-reference"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": []
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "terraform-registry-modules-version-constraints-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 6,
+    "taskCount": 14,
+    "checkboxCount": 100,
+    "cliCommandCount": 25,
+    "verificationCheckCount": 47,
+    "cleanupItemCount": 10,
+    "learnerResourceValueCount": 0,
+    "officialSourceCount": 18,
+    "officialAwsSourceCount": 0,
+    "officialTerraformSourceCount": 15
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "4341b176cf84943f7de995f4774b02781ccd1747c89b8a9bd5cfbd1273c00212"
+  },
+  "offlineImport": {
+    "manuscriptFilename": "offline-follow-along-manuscript.json",
+    "previewFilename": "offline-follow-along-preview.md",
+    "manuscriptFingerprint": {
+      "algorithm": "sha256-json-v1",
+      "value": "5524b0e88ee66510c71477f2df019f02be7fa07415e00a56151d21a6dce557bd"
+    }
+  }
+}

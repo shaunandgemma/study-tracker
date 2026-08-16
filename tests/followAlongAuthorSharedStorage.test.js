@@ -113,6 +113,14 @@ test('Follow Along Author disabled shared-storage foundation', async t => {
     assert.ok(results.every(result => result.disabled && result.storageMode === 'private_local_browser'));
   });
 
+  await t.test('9A. Approval candidates are requested newest first for every queue tab', async () => {
+    const calls = [];
+    const client = { from(name) { assert.equal(name, AUTHOR_SHARED_STORAGE_TABLES.candidates); return builder({ data: [], error: null }, calls); } };
+    const result = await createAuthorSharedStorageService(client, { enabled: true }).listReleaseCandidates();
+    assert.equal(result.success, true);
+    assert.ok(calls.some(call => call[0] === 'order' && call[1] === 'created_at' && call[2]?.ascending === false));
+  });
+
   await t.test('10. New shared draft writes are forced private and unpublished', async () => {
     const calls = [];
     let inserted;

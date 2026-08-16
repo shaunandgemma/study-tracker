@@ -12,17 +12,6 @@ import {
 export const OFFLINE_MANUSCRIPT_FILENAME = 'offline-follow-along-manuscript.json';
 export const OFFLINE_PREVIEW_FILENAME = 'offline-follow-along-preview.md';
 
-const OFFICIAL_HOSTS = new Set([
-  'docs.aws.amazon.com',
-  'developer.hashicorp.com',
-  'cloud.google.com',
-  'kubernetes.io',
-  'learn.microsoft.com',
-  'docs.github.com',
-  'docs.docker.com',
-  'docs.dynatrace.com',
-  'docs.redhat.com'
-]);
 const PROGRAMME_DIFFICULTIES = new Set(['Beginner', 'Beginner to Intermediate', 'Intermediate', 'Intermediate to Advanced', 'Advanced']);
 const TASK_DIFFICULTIES = new Set(['Easy', 'Medium', 'Hard']);
 const CREDENTIAL_PATTERN = /AKIA[0-9A-Z]{12,}|aws_secret_access_key\s*[=:]|aws_session_token\s*[=:]|-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]+/i;
@@ -48,7 +37,7 @@ function slugify(value, maximum = 70) {
 function officialSource(url) {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'https:' && [...OFFICIAL_HOSTS].some(host => parsed.hostname === host || parsed.hostname.endsWith(`.${host}`));
+    return parsed.protocol === 'https:' && Boolean(parsed.hostname);
   } catch {
     return false;
   }
@@ -161,12 +150,158 @@ function commandBlockExpectedResult(task) {
 }
 
 function externalResourceTarget(resource) {
-  if (clean(resource?.name)) return clean(resource.name);
-  if (!clean(resource?.nameRule)) return '';
-  return `[${clean(resource.nameRule).replace(/[^A-Za-z0-9]+/g, '_').toUpperCase()}]`;
+  const exactName = clean(resource?.exactName || resource?.resourceNameOrPlaceholder || resource?.name);
+  if (exactName) return exactName;
+  const generatedValue = clean(resource?.generatedValue || resource?.nameRule);
+  if (!generatedValue) return '';
+  return `[${generatedValue.replace(/[^A-Za-z0-9]+/g, '_').toUpperCase()}]`;
+}
+
+function alternateCleanupMatch(resource, cleanupSteps) {
+  const target = externalResourceTarget(resource);
+  const resourceText = [resource?.id, resource?.label, target, resource?.generatedValue].map(clean).join(' ').toLowerCase();
+  if (/ephemeral/.test(resourceText)) {
+    const destroyStep = cleanupSteps.find(step => /terraform destroy/i.test(`${clean(step?.resource)} ${clean(step?.action)}`));
+    if (destroyStep) return destroyStep;
+  }
+  const targetText = target.toLowerCase();
+  const direct = cleanupSteps.find(step => {
+    const cleanupTarget = clean(step?.resource).toLowerCase();
+    return cleanupTarget.length >= 4 && targetText.length >= 4
+      && (cleanupTarget.includes(targetText) || targetText.includes(cleanupTarget));
+  });
+  if (direct) return direct;
+  const ignored = new Set(['resource', 'temporary', 'training', 'terraform', 'providers', 'provider', 'created', 'this', 'only', 'with', 'from', 'then', 'after']);
+  const terms = new Set(resourceText.split(/[^a-z0-9]+/).filter(term => term.length > 2 && !ignored.has(term)));
+  return cleanupSteps
+    .map(step => {
+      const candidate = `${clean(step?.resource)} ${clean(step?.action)}`.toLowerCase();
+      const score = [...terms].filter(term => candidate.includes(term)).length;
+      return { step, score };
+    })
+    .sort((left, right) => right.score - left.score)[0]?.step || cleanupSteps.at(-1);
+}
+
+function dependencyDepth(resourceId, resourceById, seen = new Set()) {
+  if (seen.has(resourceId)) return 0;
+  const nextSeen = new Set(seen).add(resourceId);
+  const dependencies = list(resourceById.get(resourceId)?.dependsOn).map(clean).filter(Boolean);
+  return dependencies.length
+    ? 1 + Math.max(...dependencies.map(id => dependencyDepth(id, resourceById, nextSeen)))
+    : 0;
+}
+
+function canonicalizeAlternatePortableFormat(manuscript) {
+  const tasks = list(manuscript.tasks);
+  if (clean(manuscript?.manuscriptVersion) !== '1.0' || !tasks.some(task => list(task?.browserSteps).length || list(task?.cliBlocks).length)) return null;
+  const resources = list(manuscript.resources);
+  const cleanupSteps = list(manuscript.programmeCleanup);
+  const taskById = new Map(tasks.map(task => [clean(task.id), task]));
+  const resourceById = new Map(resources.map(resource => [clean(resource.id), resource]));
+  const cleanupByResourceId = new Map(resources.map(resource => [clean(resource.id), alternateCleanupMatch(resource, cleanupSteps)]));
+  const orderedResources = [...resources].sort((left, right) => {
+    const depthDifference = dependencyDepth(clean(right.id), resourceById) - dependencyDepth(clean(left.id), resourceById);
+    if (depthDifference) return depthDifference;
+    return Number(cleanupByResourceId.get(clean(left.id))?.sequence || 999) - Number(cleanupByResourceId.get(clean(right.id))?.sequence || 999);
+  });
+  return {
+    ...manuscript,
+    tasks: tasks.map(task => {
+      const taskSourceIds = list(task.sourceIds).map(clean).filter(Boolean);
+      const expectedResult = list(task.expectedResults).map(text).filter(Boolean).join(' ')
+        || 'The documented task result is visible.';
+      const warning = list(task.warnings).map(warningText).filter(Boolean).join(' ');
+      return {
+        id: clean(task.id),
+        phaseId: clean(task.phaseId),
+        title: clean(task.title),
+        feature: clean(task.feature),
+        goal: clean(task.goal),
+        whyItMatters: clean(task.whyItMatters),
+        difficulty: clean(task.difficulty),
+        prerequisites: list(task.prerequisites).map(clean).filter(Boolean),
+        sourceIds: taskSourceIds,
+        createdResourceIds: resources.filter(resource => clean(resource.createdByTaskId) === clean(task.id)).map(resource => clean(resource.id)),
+        consoleSteps: [{
+          title: clean(task.title),
+          instructions: list(task.browserSteps).map(step => text(step?.instruction || step)).filter(Boolean),
+          editableBlocks: list(task.editableBlocks).map(block => ({
+            title: clean(block?.title || block?.filename),
+            filename: clean(block?.filename),
+            language: clean(block?.language) || 'text',
+            content: clean(block?.content),
+            sourceIds: taskSourceIds
+          })),
+          expectedResult,
+          warning,
+          sourceIds: taskSourceIds
+        }],
+        cliSteps: list(task.cliBlocks).map(block => ({
+          title: clean(block?.title) || clean(task.title),
+          command: clean(block?.content),
+          explanation: clean(block?.note || block?.title) || `Complete the ${clean(task.title)} command route.`,
+          expectedResult,
+          warning,
+          sourceIds: taskSourceIds
+        })),
+        verification: list(task.verificationChecks).map((check, index) => ({
+          id: clean(check?.id),
+          title: clean(check?.title) || `Verification ${index + 1}`,
+          instruction: clean(check?.instruction || check?.text),
+          expectedResult: clean(check?.expectedResult || check?.text),
+          route: clean(check?.route) || 'either'
+        })),
+        cleanup: []
+      };
+    }),
+    phases: list(manuscript.phases).map(phase => ({
+      ...phase,
+      description: clean(phase?.description || phase?.goal) || clean(phase?.title)
+    })),
+    resources: resources.map(resource => ({
+      id: clean(resource.id),
+      label: clean(resource.label),
+      type: clean(resource.type || resource.label) || 'other',
+      exactName: clean(resource.exactName),
+      generatedValue: clean(resource.generatedValue),
+      createdByTaskId: clean(resource.createdByTaskId),
+      dependsOn: list(resource.dependsOn).map(clean).filter(Boolean),
+      sensitive: Boolean(resource.sensitive),
+      chargeable: Boolean(resource.chargeable)
+    })),
+    programmeCleanup: orderedResources.map(resource => {
+      const cleanup = cleanupByResourceId.get(clean(resource.id));
+      const cleanupTask = taskById.get(clean(cleanup?.taskId));
+      const target = externalResourceTarget(resource);
+      const sourceIds = list(cleanupTask?.sourceIds).map(clean).filter(Boolean);
+      const cliCommands = list(cleanupTask?.cliBlocks).map(block => clean(block?.content)).filter(Boolean);
+      return {
+        resourceId: clean(resource.id),
+        title: `Remove ${clean(resource.label || resource.id)}`,
+        consoleInstructions: [`${clean(cleanup?.action) || 'Remove only the documented training resource.'} Exact target: ${target}.`],
+        cliCommands: cliCommands.length ? cliCommands : [`# Manually remove only ${target} using the documented cleanup route.`],
+        verification: `${clean(cleanup?.verification) || 'The documented training resource is absent.'} Exact target checked: ${target}.`,
+        sourceIds
+      };
+    }),
+    warnings: {
+      cost: warningText(manuscript.warnings?.cost),
+      safety: warningText(manuscript.warnings?.safety),
+      credentials: warningText(manuscript.warnings?.credentials),
+      region: warningText(manuscript.warnings?.region)
+    },
+    qualityReport: {
+      unresolvedIssues: [
+        ...list(manuscript.qualityReport?.missingItems).map(text).filter(Boolean),
+        ...list(manuscript.qualityReport?.uncertainItems).map(text).filter(Boolean)
+      ]
+    }
+  };
 }
 
 function canonicalizeExternalFormat(manuscript) {
+  const alternate = canonicalizeAlternatePortableFormat(manuscript);
+  if (alternate) return alternate;
   if (clean(manuscript?.manuscriptVersion) === '1.0') return manuscript;
   if (clean(manuscript?.artifactType) !== 'offline-follow-along-manuscript' || clean(manuscript?.artifactVersion) !== '1.0') return manuscript;
   const sourceTaskIds = new Map(list(manuscript.sources).map(source => [clean(source.id), list(source.usedByTaskIds).map(clean).filter(Boolean)]));
@@ -291,6 +426,25 @@ function canonicalizeExternalFormat(manuscript) {
   };
 }
 
+export function validateOfflinePreviewMatchesManuscript(manuscript, previewText) {
+  const programme = manuscript?.programme || {};
+  const title = clean(programme.title || programme.name);
+  const resourcePrefix = clean(programme.resourcePrefix || programme.trainingResourcePrefix);
+  const preview = clean(previewText);
+  const heading = preview.match(/^#\s+(.+)$/m)?.[1]?.trim() || '';
+  const missingTaskIds = list(manuscript?.tasks).map(task => clean(task?.id)).filter(id => id && !preview.includes(id));
+  if (!title || heading.toLowerCase() !== title.toLowerCase()) {
+    throw new Error(`The preview and manuscript programme titles do not match. Preview: ${heading || '(missing)'}. Manuscript: ${title || '(missing)'}.`);
+  }
+  if (resourcePrefix && !preview.includes(resourcePrefix)) {
+    throw new Error(`The preview does not contain the manuscript training prefix ${resourcePrefix}.`);
+  }
+  if (missingTaskIds.length) {
+    throw new Error(`The preview is missing ${missingTaskIds.length} manuscript task ID(s), beginning with ${missingTaskIds[0]}.`);
+  }
+  return { valid: true, title, resourcePrefix, taskCount: list(manuscript?.tasks).length };
+}
+
 export function normalizeOfflineManuscript(manuscript) {
   manuscript = canonicalizeExternalFormat(manuscript);
   const errors = [];
@@ -311,7 +465,7 @@ export function normalizeOfflineManuscript(manuscript) {
   requireValue(sourceIds.every(Boolean) && new Set(sourceIds).size === sourceIds.length, 'Every source requires a unique id.', errors);
   sources.forEach((source, index) => {
     requireValue(clean(source?.title), `Source ${index + 1} requires a title.`, errors);
-    requireValue(officialSource(source?.url), `Source ${index + 1} must use a supported official HTTPS documentation domain.`, errors);
+    requireValue(officialSource(source?.url), `Source ${index + 1} must use a valid secure HTTPS documentation address.`, errors);
     requireValue(clean(source?.purpose), `Source ${index + 1} requires a purpose.`, errors);
   });
   const normalizedSources = sources.map(source => ({

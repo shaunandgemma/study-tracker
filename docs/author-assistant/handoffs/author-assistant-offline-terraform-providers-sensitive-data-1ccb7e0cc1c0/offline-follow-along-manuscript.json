@@ -1,0 +1,2843 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "Providers and Sensitive Data Follow Along",
+    "suggestedProgrammeId": "terraform-providers-sensitive-data-learning-path",
+    "topic": "Terraform Providers and Sensitive Data",
+    "examWorkspace": "HashiCorp Terraform Associate 004",
+    "learnerLevel": "Beginner",
+    "outcome": "Cover multiple providers, provider versioning, aliases, authentication methods and Terraform Associate 004 objective 4h, including sensitive values, state exposure, ephemeral/write-only patterns and Vault, using HCP Terraform global resources and AWS eu-west-2.",
+    "region": "HCP Terraform global/control-plane resources and AWS eu-west-2",
+    "resourcePrefix": "fa-providers-terraform",
+    "selfPaced": true,
+    "statusNotice": "**Status:** Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "examObjectivesCovered": [
+      {
+        "objective": "2a",
+        "text": "Install and version Terraform providers"
+      },
+      {
+        "objective": "2b",
+        "text": "Describe how Terraform uses providers"
+      },
+      {
+        "objective": "2c",
+        "text": "Write Terraform configuration using multiple providers"
+      },
+      {
+        "objective": "4h",
+        "text": "Understand best practices for managing sensitive data, including secrets management with Vault"
+      },
+      {
+        "objective": "3b-3f",
+        "text": "Initialize, validate, plan, apply and destroy during the provider exercises"
+      },
+      {
+        "objective": "5c",
+        "text": "Pass an aliased provider configuration into a child module"
+      },
+      {
+        "objective": "7b",
+        "text": "Inspect state to understand sensitive versus ephemeral persistence"
+      },
+      {
+        "objective": "8a/8d",
+        "text": "Use HCP Terraform remote execution and integration with dynamic provider credentials"
+      }
+    ],
+    "completionDefinition": [
+      "A temporary AWS bootstrap IAM user and named CLI profile are created without root access keys.",
+      "Local AWS provider authentication through a shared profile is proven with a data-only configuration.",
+      "A dedicated HCP Terraform organization, project and CLI-driven remote workspace are created.",
+      "HCP Terraform authenticates the AWS provider with OIDC dynamic credentials rather than static AWS access keys.",
+      "The workspace has a default AWS credential configuration and a tagged LONDON credential configuration for an aliased provider.",
+      "The main configuration installs and versions AWS and Random providers and records selections in .terraform.lock.hcl.",
+      "The learner uses a default AWS provider, aws.london alias and explicit alias passing into a child module.",
+      "A stateful random_password and a fake sensitive Terraform variable demonstrate that redaction does not remove secrets from state.",
+      "An ephemeral random_password demonstrates a value that is not persisted in state.",
+      "A write-only resource argument pattern is reviewed without creating cost-bearing RDS infrastructure.",
+      "A local Vault development server and Terraform Vault provider read a fake secret, demonstrating both Vault usage and Terraform state implications.",
+      "All Terraform-managed AWS resources are destroyed before the HCP workspace/state, authentication resources, temporary credentials and local files are removed."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-exam-004",
+      "title": "Exam Content List - Terraform Associate 004",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004",
+      "purpose": "Official exam mapping for provider objectives 2a-2c and sensitive-data objective 4h.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-15-ephemeral-write-only",
+        "task-16-vault-dev",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-tf-install",
+      "title": "Install Terraform",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/install",
+      "purpose": "Install or verify the Terraform CLI.",
+      "taskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-provider-requirements",
+      "title": "Provider Requirements",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/providers/requirements",
+      "purpose": "Declare provider source addresses and version constraints.",
+      "taskIds": [
+        "task-04-local-auth-demo",
+        "task-09-build-config",
+        "task-10-init-lock-inspect",
+        "task-17-vault-provider",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-provider-block",
+      "title": "Provider block reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/block/provider",
+      "purpose": "Configure providers, aliases and alternate provider selections.",
+      "taskIds": [
+        "task-09-build-config",
+        "task-11-plan-apply",
+        "task-12-provider-verification",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-configure-providers",
+      "title": "Configure Terraform providers",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/configuration-language/configure-providers",
+      "purpose": "Provider authentication methods and warning against hard-coded credentials.",
+      "taskIds": [
+        "task-03-cli-profile",
+        "task-04-local-auth-demo",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-provider-modules",
+      "title": "Providers Within Modules",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/modules/develop/providers",
+      "purpose": "Provider inheritance, configuration_aliases and explicit provider passing.",
+      "taskIds": [
+        "task-09-build-config",
+        "task-11-plan-apply",
+        "task-12-provider-verification",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-provider-meta",
+      "title": "providers meta-argument reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/meta-arguments/providers",
+      "purpose": "Pass specific provider configurations to child modules.",
+      "taskIds": [
+        "task-09-build-config",
+        "task-12-provider-verification"
+      ]
+    },
+    {
+      "id": "src-lock-file",
+      "title": "Dependency Lock File",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/files/dependency-lock",
+      "purpose": "Explain .terraform.lock.hcl and provider selection locking.",
+      "taskIds": [
+        "task-10-init-lock-inspect"
+      ]
+    },
+    {
+      "id": "src-init",
+      "title": "Initialize Terraform configuration",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/cli/init",
+      "purpose": "Initialize providers and HCP Terraform integration.",
+      "taskIds": [
+        "task-04-local-auth-demo",
+        "task-10-init-lock-inspect",
+        "task-19-destroy-main"
+      ]
+    },
+    {
+      "id": "src-providers-command",
+      "title": "terraform providers command",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/providers",
+      "purpose": "Inspect provider requirements and module/provider relationships.",
+      "taskIds": [
+        "task-10-init-lock-inspect",
+        "task-12-provider-verification"
+      ]
+    },
+    {
+      "id": "src-cloud-block",
+      "title": "terraform block reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/block/terraform",
+      "purpose": "Use cloud block environment variables such as TF_CLOUD_ORGANIZATION and TF_WORKSPACE.",
+      "taskIds": [
+        "task-05-hcp-org-project-workspace",
+        "task-10-init-lock-inspect"
+      ]
+    },
+    {
+      "id": "src-terraform-login",
+      "title": "terraform login command",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/login",
+      "purpose": "Authenticate the local Terraform CLI to HCP Terraform.",
+      "taskIds": [
+        "task-05-hcp-org-project-workspace"
+      ]
+    },
+    {
+      "id": "src-hcp-org",
+      "title": "Organizations overview",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/users-teams-organizations/organizations",
+      "purpose": "Create and understand the HCP Terraform organization boundary.",
+      "taskIds": [
+        "task-05-hcp-org-project-workspace",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-hcp-projects",
+      "title": "Organize workspaces with projects",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/cloud/projects",
+      "purpose": "Create a dedicated HCP Terraform project.",
+      "taskIds": [
+        "task-05-hcp-org-project-workspace",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-hcp-workspaces",
+      "title": "HCP Terraform workspaces overview",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces",
+      "purpose": "Create and configure the CLI-driven remote workspace.",
+      "taskIds": [
+        "task-05-hcp-org-project-workspace",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-hcp-variables",
+      "title": "Workspace variables",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/variables",
+      "purpose": "Configure Terraform and environment variables, including sensitive values.",
+      "taskIds": [
+        "task-08-hcp-variables"
+      ]
+    },
+    {
+      "id": "src-hcp-dynamic-aws",
+      "title": "Use dynamic credentials with the AWS provider",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/aws-configuration",
+      "purpose": "Configure HCP Terraform OIDC credentials for AWS provider runs.",
+      "taskIds": [
+        "task-06-oidc-provider",
+        "task-07-run-role",
+        "task-08-hcp-variables",
+        "task-11-plan-apply"
+      ]
+    },
+    {
+      "id": "src-hcp-multi-creds",
+      "title": "Specify multiple dynamic credential configurations",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/specifying-multiple-configurations",
+      "purpose": "Use tagged dynamic credential variables for multiple provider configurations/aliases.",
+      "taskIds": [
+        "task-08-hcp-variables",
+        "task-09-build-config",
+        "task-11-plan-apply"
+      ]
+    },
+    {
+      "id": "src-sensitive-data",
+      "title": "Manage sensitive data in your configuration",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/manage-sensitive-data",
+      "purpose": "Explain sensitive values, state exposure, ephemeral values and write-only arguments.",
+      "taskIds": [
+        "task-08-hcp-variables",
+        "task-09-build-config",
+        "task-13-sensitive-state",
+        "task-14-reduce-sensitive-state",
+        "task-15-ephemeral-write-only",
+        "task-17-vault-provider",
+        "task-18-exam-review",
+        "task-19-destroy-main"
+      ]
+    },
+    {
+      "id": "src-sensitive-vars",
+      "title": "Protect sensitive input variables",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables",
+      "purpose": "Demonstrate sensitive input/output redaction and state implications.",
+      "taskIds": [
+        "task-11-plan-apply",
+        "task-13-sensitive-state"
+      ]
+    },
+    {
+      "id": "src-variable-block",
+      "title": "variable block reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/block/variable",
+      "purpose": "Define sensitive and ephemeral input variables.",
+      "taskIds": [
+        "task-13-sensitive-state"
+      ]
+    },
+    {
+      "id": "src-output-block",
+      "title": "output block reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/block/output",
+      "purpose": "Understand sensitive output behavior and state persistence.",
+      "taskIds": [
+        "task-13-sensitive-state",
+        "task-14-reduce-sensitive-state"
+      ]
+    },
+    {
+      "id": "src-ephemeral",
+      "title": "Ephemeral values in resources",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/manage-sensitive-data/ephemeral",
+      "purpose": "Demonstrate ephemeral resources that are omitted from state and plan artifacts.",
+      "taskIds": [
+        "task-09-build-config",
+        "task-13-sensitive-state",
+        "task-14-reduce-sensitive-state",
+        "task-15-ephemeral-write-only"
+      ]
+    },
+    {
+      "id": "src-write-only",
+      "title": "Use temporary write-only arguments",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/manage-sensitive-data/write-only",
+      "purpose": "Explain write-only arguments and how they pair with ephemeral values.",
+      "taskIds": [
+        "task-14-reduce-sensitive-state",
+        "task-15-ephemeral-write-only"
+      ]
+    },
+    {
+      "id": "src-vault-install",
+      "title": "Install Vault",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/vault/install",
+      "purpose": "Install the Vault CLI/server for the local training-only Vault exercise.",
+      "taskIds": [
+        "task-16-vault-dev"
+      ]
+    },
+    {
+      "id": "src-vault-get-started",
+      "title": "Vault foundations",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/vault/tutorials/get-started",
+      "purpose": "Run a local Vault development server and learn the security boundary.",
+      "taskIds": [
+        "task-16-vault-dev",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-vault-provider",
+      "title": "Learn to use the Terraform Vault provider",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/vault/tutorials/get-started/learn-terraform",
+      "purpose": "Configure Terraform to authenticate to and read from Vault.",
+      "taskIds": [
+        "task-17-vault-provider"
+      ]
+    },
+    {
+      "id": "src-vault-secrets",
+      "title": "Inject secrets into Terraform using the Vault provider",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/secrets/secrets-vault",
+      "purpose": "Objective 4h Vault pattern and state-sensitivity implications.",
+      "taskIds": [
+        "task-16-vault-dev",
+        "task-17-vault-provider",
+        "task-18-exam-review"
+      ]
+    },
+    {
+      "id": "src-aws-cli-install",
+      "title": "Install or update to the latest version of the AWS CLI",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html",
+      "purpose": "Install AWS CLI v2.",
+      "taskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-aws-cli-config",
+      "title": "aws configure",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/configure/",
+      "purpose": "Create the dedicated named AWS CLI profile.",
+      "taskIds": [
+        "task-03-cli-profile",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-sts",
+      "title": "get-caller-identity",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sts/get-caller-identity.html",
+      "purpose": "Verify the caller and derive the AWS account ID.",
+      "taskIds": [
+        "task-03-cli-profile",
+        "task-04-local-auth-demo"
+      ]
+    },
+    {
+      "id": "src-aws-iam-intro",
+      "title": "What is IAM?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html",
+      "purpose": "Explain authentication, authorization, users and roles.",
+      "taskIds": [
+        "task-02-aws-bootstrap"
+      ]
+    },
+    {
+      "id": "src-aws-iam-best",
+      "title": "Security best practices in IAM",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+      "purpose": "Prefer temporary role credentials over long-lived user credentials.",
+      "taskIds": [
+        "task-02-aws-bootstrap",
+        "task-06-oidc-provider",
+        "task-07-run-role"
+      ]
+    },
+    {
+      "id": "src-aws-oidc-role",
+      "title": "Create a role for OpenID Connect federation",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html",
+      "purpose": "Create the app.terraform.io OIDC provider and restricted role trust.",
+      "taskIds": [
+        "task-02-aws-bootstrap",
+        "task-06-oidc-provider",
+        "task-07-run-role",
+        "task-20-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-oidc-cli",
+      "title": "create-open-id-connect-provider",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/iam/create-open-id-connect-provider.html",
+      "purpose": "CLI route for creating the HCP Terraform OIDC provider.",
+      "taskIds": [
+        "task-06-oidc-provider"
+      ]
+    },
+    {
+      "id": "src-aws-ssm",
+      "title": "AWS Systems Manager Parameter Store",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html",
+      "purpose": "Verify the small training resources managed by the AWS provider.",
+      "taskIds": [
+        "task-07-run-role",
+        "task-11-plan-apply",
+        "task-12-provider-verification"
+      ]
+    },
+    {
+      "id": "src-aws-ssm-delete",
+      "title": "Deleting parameters from Parameter Store",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/deleting-parameters.html",
+      "purpose": "Verify destroy and cleanup.",
+      "taskIds": [
+        "task-19-destroy-main",
+        "task-20-final-cleanup"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-preparation-and-safe-bootstrap",
+      "sequence": 1,
+      "title": "Preparation and safe bootstrap",
+      "goal": "Verify local tools, create a temporary training IAM identity and establish a named AWS CLI profile."
+    },
+    {
+      "id": "phase-02-provider-authentication-patterns",
+      "sequence": 2,
+      "title": "Provider authentication patterns",
+      "goal": "See local shared-profile authentication, then replace static provider credentials with HCP Terraform OIDC dynamic credentials."
+    },
+    {
+      "id": "phase-03-hcp-terraform-organization-project-and-workspace",
+      "sequence": 3,
+      "title": "HCP Terraform organization, project and workspace",
+      "goal": "Create isolated HCP Terraform control-plane resources and configure two AWS dynamic credential configurations."
+    },
+    {
+      "id": "phase-04-multiple-providers-aliases-and-modules",
+      "sequence": 4,
+      "title": "Multiple providers, aliases and modules",
+      "goal": "Install and version AWS and Random providers, inspect the lock file, use an AWS alias, and pass that alias into a child module."
+    },
+    {
+      "id": "phase-05-sensitive-data-state-and-ephemeral-values",
+      "sequence": 5,
+      "title": "Sensitive data, state and ephemeral values",
+      "goal": "Observe the difference between redaction and storage, then reduce sensitive state exposure using ephemeral patterns."
+    },
+    {
+      "id": "phase-06-vault-provider-and-secrets-management",
+      "sequence": 6,
+      "title": "Vault provider and secrets management",
+      "goal": "Use a local development Vault with a fake secret to understand Vault authentication, data sources and Terraform state implications."
+    },
+    {
+      "id": "phase-07-exam-review-and-ordered-cleanup",
+      "sequence": 7,
+      "title": "Exam review and ordered cleanup",
+      "goal": "Review provider/authentication exam points and remove only resources created by this Follow Along in reverse-dependency order."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-preparation-and-safe-bootstrap",
+      "title": "Verify accounts and local tools",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm Terraform, AWS CLI, HCP Terraform access and a safe training AWS account before creating anything.",
+      "whyItMatters": "Provider and authentication problems are much easier to diagnose when the CLI tools and account access are known to work first.",
+      "examRelevance": "This Follow Along concentrates on 2a, 2b, 2c and 4h, while still using the normal init/plan/apply/destroy workflow.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-exam-004",
+        "src-tf-install",
+        "src-aws-cli-install"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the AWS account that will be used only for training. Do not create resources yet."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open https://app.terraform.io and confirm that you can sign in to HCP Terraform."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell. Run the version checks below."
+        },
+        {
+          "sequence": 4,
+          "instruction": "If Terraform is missing, install it from the official HashiCorp install page, then reopen PowerShell."
+        },
+        {
+          "sequence": 5,
+          "instruction": "If AWS CLI is missing, install AWS CLI v2 from the official AWS guide, then reopen PowerShell."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not create or use root access keys. Root is used only for the one-time training IAM bootstrap in the next task."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Tool checks",
+          "language": "text",
+          "content": "terraform version\naws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Terraform prints a version.",
+        "AWS CLI prints a version.",
+        "AWS and HCP Terraform browser sign-in both work."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "Both commands run without command-not-found errors."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No lab resource has been created yet."
+        }
+      ]
+    },
+    {
+      "id": "task-02-aws-bootstrap",
+      "phaseId": "phase-01-preparation-and-safe-bootstrap",
+      "title": "Create the temporary IAM training identity",
+      "feature": "AWS IAM bootstrap",
+      "difficulty": "Medium",
+      "goal": "Use root only to create a dedicated IAM user, console sign-in, access key and tightly-scoped training policy, then sign out of root.",
+      "whyItMatters": "HCP Terraform will later use temporary role credentials, but the learner still needs a separate bootstrap identity to create the OIDC trust and verify resources.",
+      "examRelevance": "Authentication is proving identity; authorization is deciding which API actions that identity can perform. The exam expects you to separate those concepts.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-aws-iam-intro",
+        "src-aws-iam-best",
+        "src-aws-oidc-role"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Never create root access keys.",
+        "The bootstrap access key is temporary and must be removed during cleanup."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to AWS as the root user only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Users > Create user."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set the user name to fa-providers-terraform-admin. Enable AWS Management Console access so the rest of the browser route can be completed without root."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create a customer managed policy named fa-providers-terraform-admin-policy using the JSON policy block supplied below, then attach it to fa-providers-terraform-admin."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create one access key for fa-providers-terraform-admin for CLI training use. Copy the Access key ID and Secret access key immediately to a temporary secure place; AWS will not show the secret again."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Sign out of the root user."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Sign in as the new IAM user fa-providers-terraform-admin. Do not use root again until final deletion of this temporary training identity."
+        },
+        {
+          "sequence": 8,
+          "instruction": "The access key is long-lived authentication. This lab uses it only for bootstrap/verification and deliberately does not store it in Terraform or HCP Terraform."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI commands",
+          "language": "text",
+          "content": "# No root CLI command is required or permitted for this Follow Along.\n# Complete this one-time bootstrap in the AWS IAM console."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "Training bootstrap IAM policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadIamForTrainingConsole\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:Get*\",\n        \"iam:List*\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageHcpOidcProvider\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateOpenIDConnectProvider\",\n        \"iam:DeleteOpenIDConnectProvider\",\n        \"iam:UpdateOpenIDConnectProviderThumbprint\",\n        \"iam:AddClientIDToOpenIDConnectProvider\",\n        \"iam:RemoveClientIDFromOpenIDConnectProvider\",\n        \"iam:TagOpenIDConnectProvider\",\n        \"iam:UntagOpenIDConnectProvider\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:oidc-provider/app.terraform.io\"\n    },\n    {\n      \"Sid\": \"ManageOnlyNamedRunRoles\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateRole\",\n        \"iam:DeleteRole\",\n        \"iam:UpdateAssumeRolePolicy\",\n        \"iam:TagRole\",\n        \"iam:UntagRole\",\n        \"iam:PutRolePolicy\",\n        \"iam:GetRolePolicy\",\n        \"iam:DeleteRolePolicy\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:role/fa-providers-terraform-*\"\n    },\n    {\n      \"Sid\": \"VerifyOnlyTrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DescribeParameters\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The IAM user exists and can sign in to the AWS console.",
+        "Exactly one access key exists for the training user.",
+        "The custom policy is attached.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-aws-bootstrap-verify-01",
+          "text": "IAM shows user fa-providers-terraform-admin."
+        },
+        {
+          "id": "task-02-aws-bootstrap-verify-02",
+          "text": "Attached policies include fa-providers-terraform-admin-policy."
+        },
+        {
+          "id": "task-02-aws-bootstrap-verify-03",
+          "text": "The browser session is the IAM user, not root."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-profile",
+      "phaseId": "phase-01-preparation-and-safe-bootstrap",
+      "title": "Configure and verify the named AWS CLI profile",
+      "feature": "AWS CLI authentication",
+      "difficulty": "Easy",
+      "goal": "Store the temporary IAM user's access key only in the named AWS CLI profile fa-providers-terraform-admin, verify the identity and derive deterministic HCP names.",
+      "whyItMatters": "The named profile demonstrates shared-credentials-file authentication without hard-coding credentials in Terraform configuration.",
+      "examRelevance": "AWS shared profiles are one provider authentication method; provider credentials should not be embedded directly in provider blocks.",
+      "prerequisites": [
+        "task-02-aws-bootstrap"
+      ],
+      "sourceIds": [
+        "src-aws-cli-config",
+        "src-aws-sts",
+        "src-configure-providers"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Never paste the secret access key into Terraform .tf files or HCP workspace variables in this lab."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell as your normal Windows user."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-providers-terraform-admin. Paste the training user's Access key ID and Secret access key when prompted."
+        },
+        {
+          "sequence": 3,
+          "instruction": "For Default region name enter eu-west-2. For output format enter json."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run get-caller-identity and check that the ARN contains the training IAM user name."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run the PowerShell variable commands below. They derive the HCP organization from your AWS account ID so you do not need to invent a placeholder name."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Record the printed values. They are used exactly in later browser steps and IAM trust."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Create profile and derive lab names",
+          "language": "text",
+          "content": "aws configure --profile fa-providers-terraform-admin\n\n$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\n$HCP_ORG = \"fa-providers-terraform-$AWS_ACCOUNT_ID\"\n$HCP_PROJECT = \"fa-providers-terraform-project\"\n$HCP_WORKSPACE = \"fa-providers-terraform-providers-sensitive\"\n\naws sts get-caller-identity --profile fa-providers-terraform-admin\n\"ACCOUNT_ID=$AWS_ACCOUNT_ID\"\n\"HCP_ORG=$HCP_ORG\"\n\"HCP_PROJECT=$HCP_PROJECT\"\n\"HCP_WORKSPACE=$HCP_WORKSPACE\""
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "get-caller-identity returns the correct AWS account.",
+        "The ARN identifies the training IAM user.",
+        "HCP_ORG is fa-providers-terraform followed by the 12-digit AWS account ID."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-profile-verify-01",
+          "text": "AWS account ID is 12 digits."
+        },
+        {
+          "id": "task-03-cli-profile-verify-02",
+          "text": "The profile name is exactly fa-providers-terraform-admin."
+        },
+        {
+          "id": "task-03-cli-profile-verify-03",
+          "text": "HCP project/workspace names exactly match the printed values."
+        }
+      ]
+    },
+    {
+      "id": "task-04-local-auth-demo",
+      "phaseId": "phase-02-provider-authentication-patterns",
+      "title": "Prove local shared-profile provider authentication",
+      "feature": "Provider authentication",
+      "difficulty": "Medium",
+      "goal": "Use a small data-only local Terraform configuration to authenticate the AWS provider through the named CLI profile without creating AWS infrastructure.",
+      "whyItMatters": "Seeing one successful local authentication path makes it easier to understand why HCP remote runners need a different authentication path later.",
+      "examRelevance": "Objective 2b: providers authenticate to remote APIs; the authentication method is provider-specific. Static credentials in provider configuration are a bad practice.",
+      "prerequisites": [
+        "task-03-cli-profile"
+      ],
+      "sourceIds": [
+        "src-provider-requirements",
+        "src-configure-providers",
+        "src-init",
+        "src-aws-sts"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create a new folder C:\\terraform-labs\\fa-providers-terraform\\auth-demo. If C:\\terraform-labs does not exist, create it."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Inside auth-demo create a file named main.tf and paste the supplied Local AWS authentication demo configuration."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Notice that the provider block contains a profile name but no access key or secret key."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform init, terraform validate and terraform apply. This configuration uses only the aws_caller_identity data source, so it creates no AWS resource."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Compare the Terraform output account ID with aws sts get-caller-identity."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Local shared-profile authentication",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force C:\\terraform-labs\\fa-providers-terraform\\auth-demo | Out-Null\nSet-Location C:\\terraform-labs\\fa-providers-terraform\\auth-demo\n\nterraform fmt\nterraform init\nterraform validate\nterraform apply -auto-approve\n\naws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\nterraform output authenticated_account_id"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "auth-demo/main.tf",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.11.0, < 2.0.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.55\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  region  = \"eu-west-2\"\n  profile = \"fa-providers-terraform-admin\"\n}\n\ndata \"aws_caller_identity\" \"current\" {}\n\noutput \"authenticated_account_id\" {\n  value = data.aws_caller_identity.current.account_id\n}"
+        }
+      ],
+      "expectedResults": [
+        "Terraform initializes the AWS provider.",
+        "terraform validate succeeds.",
+        "terraform apply reads the caller identity and reports no managed infrastructure creation.",
+        "The Terraform account ID matches the AWS CLI account ID."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-local-auth-demo-verify-01",
+          "text": "No access_key or secret_key argument exists in main.tf."
+        },
+        {
+          "id": "task-04-local-auth-demo-verify-02",
+          "text": "The two account IDs match."
+        },
+        {
+          "id": "task-04-local-auth-demo-verify-03",
+          "text": "AWS Resource Groups/SSM show no resource from this task."
+        }
+      ]
+    },
+    {
+      "id": "task-05-hcp-org-project-workspace",
+      "phaseId": "phase-03-hcp-terraform-organization-project-and-workspace",
+      "title": "Create the HCP Terraform organization, project and workspace",
+      "feature": "HCP Terraform setup",
+      "difficulty": "Medium",
+      "goal": "Create dedicated HCP Terraform control-plane resources for the provider and sensitive-data exercises.",
+      "whyItMatters": "A separate organization/project/workspace keeps the lab state and variables isolated and makes cleanup unambiguous.",
+      "examRelevance": "HCP Terraform is not a provider; it supplies remote execution/state/collaboration while providers communicate with target APIs.",
+      "prerequisites": [
+        "task-04-local-auth-demo"
+      ],
+      "sourceIds": [
+        "src-hcp-org",
+        "src-hcp-projects",
+        "src-hcp-workspaces",
+        "src-cloud-block",
+        "src-terraform-login"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Treat the terraform login token as sensitive. Do not commit Terraform CLI credentials files."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In PowerShell rerun the three name derivation lines from Task 3 if the variables are no longer in your shell."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open HCP Terraform in the browser."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create an organization using the exact HCP_ORG value printed in Task 3. If HCP reports that the name is already taken, stop: do not reuse an unrelated organization for this lab."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Inside that organization create a project named fa-providers-terraform-project."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Inside the project create a CLI-driven workspace named fa-providers-terraform-providers-sensitive. Do not connect a VCS repository."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open workspace Settings > General. Keep execution mode Remote. Select a stable Terraform version 1.11.0 or later; a current 1.15.x stable version is suitable."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Return to PowerShell and run terraform login. Follow the browser flow and paste the generated HCP Terraform token when prompted."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not print or copy the HCP CLI token into this manuscript or a .tf file."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Rebuild names and authenticate Terraform CLI",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\n$HCP_ORG = \"fa-providers-terraform-$AWS_ACCOUNT_ID\"\n$HCP_PROJECT = \"fa-providers-terraform-project\"\n$HCP_WORKSPACE = \"fa-providers-terraform-providers-sensitive\"\n\nterraform login"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The organization exists with the exact derived name.",
+        "The project contains the workspace.",
+        "The workspace uses Remote execution.",
+        "terraform login reports successful token retrieval/storage."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-hcp-org-project-workspace-verify-01",
+          "text": "HCP organization name ends with the current AWS account ID."
+        },
+        {
+          "id": "task-05-hcp-org-project-workspace-verify-02",
+          "text": "Project is fa-providers-terraform-project."
+        },
+        {
+          "id": "task-05-hcp-org-project-workspace-verify-03",
+          "text": "Workspace is fa-providers-terraform-providers-sensitive."
+        },
+        {
+          "id": "task-05-hcp-org-project-workspace-verify-04",
+          "text": "Workspace Terraform version is at least 1.11.0."
+        }
+      ]
+    },
+    {
+      "id": "task-06-oidc-provider",
+      "phaseId": "phase-03-hcp-terraform-organization-project-and-workspace",
+      "title": "Create the HCP Terraform OIDC identity provider in AWS",
+      "feature": "OIDC federation",
+      "difficulty": "Medium",
+      "goal": "Create the AWS OIDC identity provider that allows AWS to validate HCP Terraform workload identity tokens.",
+      "whyItMatters": "OIDC lets HCP Terraform exchange signed workload identity for short-lived AWS role credentials instead of storing AWS access keys in HCP.",
+      "examRelevance": "Dynamic credentials are a best-practice provider authentication pattern because HCP receives temporary credentials only for the run.",
+      "prerequisites": [
+        "task-05-hcp-org-project-workspace"
+      ],
+      "sourceIds": [
+        "src-hcp-dynamic-aws",
+        "src-aws-oidc-role",
+        "src-aws-oidc-cli",
+        "src-aws-iam-best"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "If an app.terraform.io OIDC provider already exists from unrelated infrastructure, stop rather than deleting/replacing it."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In the AWS console, confirm you are signed in as the training IAM user, not root."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Identity providers > Add provider."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose OpenID Connect."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Provider URL: https://app.terraform.io"
+        },
+        {
+          "sequence": 5,
+          "instruction": "Audience: aws.workload.identity"
+        },
+        {
+          "sequence": 6,
+          "instruction": "Add the provider."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open the new provider and verify the provider URL and audience exactly. Record its ARN."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Use either the Console route above OR the CLI create command below. Do not create the same OIDC provider twice."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "OIDC CLI alternative",
+          "language": "text",
+          "content": "# Run the create command only if you did NOT create the provider in the console.\naws iam create-open-id-connect-provider `\n  --url https://app.terraform.io `\n  --client-id-list aws.workload.identity `\n  --profile fa-providers-terraform-admin\n\n$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\n$OIDC_ARN = \"arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/app.terraform.io\"\n\naws iam get-open-id-connect-provider `\n  --open-id-connect-provider-arn $OIDC_ARN `\n  --profile fa-providers-terraform-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "IAM contains one app.terraform.io OIDC identity provider for the lab.",
+        "The client ID/audience is aws.workload.identity."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-oidc-provider-verify-01",
+          "text": "The OIDC provider ARN contains the current AWS account ID and app.terraform.io."
+        },
+        {
+          "id": "task-06-oidc-provider-verify-02",
+          "text": "The audience exactly equals aws.workload.identity."
+        }
+      ]
+    },
+    {
+      "id": "task-07-run-role",
+      "phaseId": "phase-03-hcp-terraform-organization-project-and-workspace",
+      "title": "Create the restricted HCP Terraform AWS run role",
+      "feature": "Dynamic provider credentials",
+      "difficulty": "Hard",
+      "goal": "Create one role trusted only by this HCP organization/project/workspace and allow it to manage only /fa-providers-terraform/* SSM parameters.",
+      "whyItMatters": "The trust policy limits who may assume the role, while the permissions policy limits what the assumed role may do.",
+      "examRelevance": "Authentication (OIDC trust) and authorization (SSM permission policy) are separate. This distinction is central to understanding provider authentication securely.",
+      "prerequisites": [
+        "task-06-oidc-provider"
+      ],
+      "sourceIds": [
+        "src-hcp-dynamic-aws",
+        "src-aws-oidc-role",
+        "src-aws-iam-best",
+        "src-aws-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In IAM open Roles > Create role."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Web identity and select the app.terraform.io identity provider with audience aws.workload.identity."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create a role named fa-providers-terraform-run-role."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Replace its trust policy with the exact trust structure shown below, substituting the AWS account ID and HCP organization value you derived in Task 3. The subject must remain restricted to this project, workspace and run_phase:*."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create an inline permissions policy named fa-providers-terraform-run-policy using the supplied JSON. It can manage only SSM parameters under /fa-providers-terraform/* in eu-west-2 plus DescribeParameters."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not attach AdministratorAccess."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Record the role ARN."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Create the HCP run role and inline policy",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\n$HCP_ORG = \"fa-providers-terraform-$AWS_ACCOUNT_ID\"\n\n$TrustPolicy = @\"\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Federated\": \"arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/app.terraform.io\"\n      },\n      \"Action\": \"sts:AssumeRoleWithWebIdentity\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"app.terraform.io:aud\": \"aws.workload.identity\"\n        },\n        \"StringLike\": {\n          \"app.terraform.io:sub\": \"organization:${HCP_ORG}:project:fa-providers-terraform-project:workspace:fa-providers-terraform-providers-sensitive:run_phase:*\"\n        }\n      }\n    }\n  ]\n}\n\"@\n$TrustPolicy | Set-Content -Encoding utf8 .\\hcp-trust-policy.json\n\naws iam create-role `\n  --role-name fa-providers-terraform-run-role `\n  --assume-role-policy-document file://hcp-trust-policy.json `\n  --profile fa-providers-terraform-admin\n\n$RunPolicy = @'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageOnlyTrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-providers-terraform/*\"\n    },\n    {\n      \"Sid\": \"DescribeParametersForRefresh\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:DescribeParameters\",\n      \"Resource\": \"*\"\n    }\n  ]\n}\n'@\n$RunPolicy | Set-Content -Encoding utf8 .\\hcp-run-policy.json\n\naws iam put-role-policy `\n  --role-name fa-providers-terraform-run-role `\n  --policy-name fa-providers-terraform-run-policy `\n  --policy-document file://hcp-run-policy.json `\n  --profile fa-providers-terraform-admin\n\naws iam get-role --role-name fa-providers-terraform-run-role --profile fa-providers-terraform-admin\naws iam get-role-policy --role-name fa-providers-terraform-run-role --policy-name fa-providers-terraform-run-policy --profile fa-providers-terraform-admin\n\nRemove-Item .\\hcp-trust-policy.json, .\\hcp-run-policy.json -Force"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "Run-role trust policy shape",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Federated\": \"arn:aws:iam::AWS_ACCOUNT_ID:oidc-provider/app.terraform.io\"\n      },\n      \"Action\": \"sts:AssumeRoleWithWebIdentity\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"app.terraform.io:aud\": \"aws.workload.identity\"\n        },\n        \"StringLike\": {\n          \"app.terraform.io:sub\": \"organization:HCP_ORG:project:fa-providers-terraform-project:workspace:fa-providers-terraform-providers-sensitive:run_phase:*\"\n        }\n      }\n    }\n  ]\n}"
+        },
+        {
+          "title": "Run-role inline permissions policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageOnlyTrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-providers-terraform/*\"\n    },\n    {\n      \"Sid\": \"DescribeParametersForRefresh\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:DescribeParameters\",\n      \"Resource\": \"*\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The role exists.",
+        "The trust policy checks app.terraform.io:aud and a workspace-specific app.terraform.io:sub.",
+        "The inline policy manages only the training SSM parameter path."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-run-role-verify-01",
+          "text": "Role name is exactly fa-providers-terraform-run-role."
+        },
+        {
+          "id": "task-07-run-role-verify-02",
+          "text": "Trust subject contains the exact organization/project/workspace."
+        },
+        {
+          "id": "task-07-run-role-verify-03",
+          "text": "No AdministratorAccess policy is attached."
+        }
+      ]
+    },
+    {
+      "id": "task-08-hcp-variables",
+      "phaseId": "phase-03-hcp-terraform-organization-project-and-workspace",
+      "title": "Configure default and aliased AWS dynamic credentials plus a sensitive variable",
+      "feature": "HCP Terraform variables",
+      "difficulty": "Hard",
+      "goal": "Configure HCP Terraform to generate two AWS dynamic credential configurations and store one fake sensitive Terraform input.",
+      "whyItMatters": "This demonstrates alias-specific authentication without duplicating long-lived access keys and shows that HCP variable sensitivity is a display/access control, not a guarantee that Terraform state cannot contain the value.",
+      "examRelevance": "Multiple dynamic credential configurations use tagged environment variables. Sensitive workspace variables hide values after entry, but downstream Terraform usage can still persist values in state.",
+      "prerequisites": [
+        "task-07-run-role"
+      ],
+      "sourceIds": [
+        "src-hcp-dynamic-aws",
+        "src-hcp-multi-creds",
+        "src-hcp-variables",
+        "src-sensitive-data"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Use only the literal fake value training-secret-not-real. Never substitute a real password, API token or production secret."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open HCP Terraform > fa-providers-terraform-providers-sensitive > Variables."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Add Environment variable TFC_AWS_PROVIDER_AUTH with value true. Leave Sensitive off."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Add Environment variable TFC_AWS_PROVIDER_AUTH_LONDON with value true. Leave Sensitive off. LONDON is the tag for the aliased provider credential configuration."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Add Environment variable TFC_DEFAULT_AWS_RUN_ROLE_ARN with the ARN of fa-providers-terraform-run-role. Leave Sensitive off; an IAM role ARN is not a secret."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Add Environment variable TF_VAR_training_secret with value training-secret-not-real and turn Sensitive ON before saving."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Add Terraform variable aws_region with value eu-west-2, or rely on the default in variables.tf. Do not create AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY variables in HCP Terraform."
+        },
+        {
+          "sequence": 7,
+          "instruction": "After saving TF_VAR_training_secret, confirm HCP no longer displays its value."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Understand the design: the default and LONDON configurations each request their own workload identity token, while the default role ARN supplies the same lab role to both."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No secret CLI export",
+          "language": "text",
+          "content": "# Configure these values in the HCP Terraform workspace Variables page.\n# Do not export the fake training secret into your general shell profile."
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "HCP Variables contains TFC_AWS_PROVIDER_AUTH=true.",
+        "HCP Variables contains TFC_AWS_PROVIDER_AUTH_LONDON=true.",
+        "TFC_DEFAULT_AWS_RUN_ROLE_ARN points to the lab run role.",
+        "TF_VAR_training_secret is marked Sensitive.",
+        "No static AWS access key is stored in HCP."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-hcp-variables-verify-01",
+          "text": "Both provider-auth toggles exist."
+        },
+        {
+          "id": "task-08-hcp-variables-verify-02",
+          "text": "The role ARN is correct."
+        },
+        {
+          "id": "task-08-hcp-variables-verify-03",
+          "text": "The fake training secret is masked in the HCP UI."
+        },
+        {
+          "id": "task-08-hcp-variables-verify-04",
+          "text": "There is no AWS_SECRET_ACCESS_KEY variable in the workspace."
+        }
+      ]
+    },
+    {
+      "id": "task-09-build-config",
+      "phaseId": "phase-04-multiple-providers-aliases-and-modules",
+      "title": "Build the multi-provider Terraform configuration",
+      "feature": "Provider requirements and aliases",
+      "difficulty": "Hard",
+      "goal": "Create the complete HCP Terraform configuration with AWS, an AWS alias, Random, a child module and sensitive/ephemeral demonstrations.",
+      "whyItMatters": "This is the main practical exercise for objectives 2a, 2b, 2c and 4h.",
+      "examRelevance": "2a: install/version providers. 2b: provider blocks configure API clients. 2c: multiple providers and aliases. 4h: sensitive/ephemeral handling.",
+      "prerequisites": [
+        "task-08-hcp-variables"
+      ],
+      "sourceIds": [
+        "src-provider-requirements",
+        "src-provider-block",
+        "src-provider-modules",
+        "src-provider-meta",
+        "src-hcp-multi-creds",
+        "src-sensitive-data",
+        "src-ephemeral"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create C:\\terraform-labs\\fa-providers-terraform\\hcp-main and a child folder modules\\alias-demo."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create versions.tf, variables.tf, providers.tf, main.tf, outputs.tf, .gitignore, modules\\alias-demo\\versions.tf and modules\\alias-demo\\main.tf."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Paste the supplied blocks into the matching files exactly."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Notice required_providers declares two provider TYPES: hashicorp/aws and hashicorp/random."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Notice there are two CONFIGURATIONS of the AWS provider: the default and aws.london. Both target eu-west-2 so this lab remains in the requested Region; the alias demonstrates configuration selection rather than cross-Region deployment."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Notice HCP Terraform supplies the tfc_aws_dynamic_credentials object at run time. The default provider uses .default.shared_config_file and aws.london uses aliases[\"LONDON\"].shared_config_file."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Notice the child module declares configuration_aliases = [aws.london], and the root module passes aws.london explicitly."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Notice random_password.persisted_demo is a normal managed logical resource, while ephemeral.random_password.ephemeral_demo is intentionally not persisted in state."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Notice .gitignore excludes local state and tfvars but DOES NOT exclude .terraform.lock.hcl; the lock file should normally be committed to version control."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Create directories",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force C:\\terraform-labs\\fa-providers-terraform\\hcp-main\\modules\\alias-demo | Out-Null\nSet-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "hcp-main/versions.tf",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.11.0, < 2.0.0\"\n\n  cloud {}\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.55\"\n    }\n\n    random = {\n      source  = \"hashicorp/random\"\n      version = \"~> 3.9\"\n    }\n  }\n}"
+        },
+        {
+          "title": "hcp-main/variables.tf",
+          "language": "text",
+          "content": "variable \"aws_region\" {\n  description = \"AWS Region used by this Follow Along.\"\n  type        = string\n  default     = \"eu-west-2\"\n}\n\nvariable \"training_secret\" {\n  description = \"Fake training-only value used to demonstrate sensitive handling. Never replace this with a real password or credential.\"\n  type        = string\n  sensitive   = true\n}\n\nvariable \"tfc_aws_dynamic_credentials\" {\n  description = \"Object populated automatically by HCP Terraform for the default and tagged AWS dynamic credential configurations.\"\n  type = object({\n    default = object({\n      shared_config_file = string\n    })\n    aliases = map(object({\n      shared_config_file = string\n    }))\n  })\n}"
+        },
+        {
+          "title": "hcp-main/providers.tf",
+          "language": "text",
+          "content": "provider \"aws\" {\n  region = var.aws_region\n\n  shared_config_files = [\n    var.tfc_aws_dynamic_credentials.default.shared_config_file\n  ]\n\n  default_tags {\n    tags = {\n      FollowAlong = \"fa-providers-terraform\"\n      ManagedBy   = \"Terraform\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  alias  = \"london\"\n  region = var.aws_region\n\n  shared_config_files = [\n    var.tfc_aws_dynamic_credentials.aliases[\"LONDON\"].shared_config_file\n  ]\n\n  default_tags {\n    tags = {\n      FollowAlong       = \"fa-providers-terraform\"\n      ManagedBy         = \"Terraform\"\n      ProviderSelection = \"aws.london\"\n    }\n  }\n}\n\nprovider \"random\" {}"
+        },
+        {
+          "title": "hcp-main/main.tf",
+          "language": "text",
+          "content": "data \"aws_caller_identity\" \"default\" {}\n\ndata \"aws_caller_identity\" \"london\" {\n  provider = aws.london\n}\n\nresource \"random_password\" \"persisted_demo\" {\n  length  = 20\n  special = false\n}\n\nephemeral \"random_password\" \"ephemeral_demo\" {\n  length  = 20\n  special = false\n}\n\nresource \"aws_ssm_parameter\" \"default_provider\" {\n  name  = \"/fa-providers-terraform/default-provider\"\n  type  = \"String\"\n  value = \"created-by-default-aws-provider\"\n}\n\nresource \"aws_ssm_parameter\" \"aliased_provider\" {\n  provider = aws.london\n\n  name  = \"/fa-providers-terraform/aliased-provider\"\n  type  = \"String\"\n  value = \"created-by-aws-london-alias\"\n}\n\nresource \"aws_ssm_parameter\" \"sensitive_demo\" {\n  provider = aws.london\n\n  name  = \"/fa-providers-terraform/sensitive-demo\"\n  type  = \"SecureString\"\n  value = var.training_secret\n}\n\nmodule \"alias_demo\" {\n  source = \"./modules/alias-demo\"\n\n  providers = {\n    aws.london = aws.london\n  }\n}"
+        },
+        {
+          "title": "hcp-main/outputs.tf",
+          "language": "text",
+          "content": "output \"default_provider_account_id\" {\n  description = \"AWS account reached through the default provider configuration.\"\n  value       = data.aws_caller_identity.default.account_id\n}\n\noutput \"aliased_provider_account_id\" {\n  description = \"AWS account reached through the aws.london provider alias.\"\n  value       = data.aws_caller_identity.london.account_id\n}\n\noutput \"persisted_password_demo\" {\n  description = \"Training-only random value. It is redacted in normal output but persisted in Terraform state.\"\n  value       = random_password.persisted_demo.result\n  sensitive   = true\n}\n\noutput \"training_secret_echo\" {\n  description = \"Fake training-only sensitive input, redacted in normal output but persisted because it is used by a managed resource/output.\"\n  value       = var.training_secret\n  sensitive   = true\n}"
+        },
+        {
+          "title": "hcp-main/modules/alias-demo/versions.tf",
+          "language": "text",
+          "content": "terraform {\n  required_providers {\n    aws = {\n      source = \"hashicorp/aws\"\n      configuration_aliases = [\n        aws.london\n      ]\n    }\n  }\n}"
+        },
+        {
+          "title": "hcp-main/modules/alias-demo/main.tf",
+          "language": "text",
+          "content": "resource \"aws_ssm_parameter\" \"module_alias\" {\n  provider = aws.london\n\n  name  = \"/fa-providers-terraform/module-alias\"\n  type  = \"String\"\n  value = \"child-module-used-aws-london\"\n}"
+        },
+        {
+          "title": "hcp-main/.gitignore",
+          "language": "text",
+          "content": ".terraform/\n*.tfstate\n*.tfstate.*\ncrash.log\ncrash.*.log\n*.tfvars\n*.tfvars.json\noverride.tf\noverride.tf.json\n*_override.tf\n*_override.tf.json\n.terraformrc\nterraform.rc"
+        }
+      ],
+      "expectedResults": [
+        "All eight files exist.",
+        "No AWS access key, secret key, Vault token or HCP token appears in any .tf file.",
+        "The configuration has AWS and Random required providers plus the aws.london alias."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-build-config-verify-01",
+          "text": "versions.tf contains cloud {} and both provider requirements."
+        },
+        {
+          "id": "task-09-build-config-verify-02",
+          "text": "providers.tf contains default aws, aws.london and random provider blocks."
+        },
+        {
+          "id": "task-09-build-config-verify-03",
+          "text": "Child module declares configuration_aliases."
+        },
+        {
+          "id": "task-09-build-config-verify-04",
+          "text": "training_secret is marked sensitive."
+        },
+        {
+          "id": "task-09-build-config-verify-05",
+          "text": "The ephemeral random_password block exists."
+        }
+      ]
+    },
+    {
+      "id": "task-10-init-lock-inspect",
+      "phaseId": "phase-04-multiple-providers-aliases-and-modules",
+      "title": "Initialize providers and inspect the dependency lock file",
+      "feature": "Provider installation and versioning",
+      "difficulty": "Medium",
+      "goal": "Connect the directory to the existing HCP workspace, install provider plugins and inspect the exact selected versions recorded in .terraform.lock.hcl.",
+      "whyItMatters": "The exam distinguishes the version constraints you write from the concrete provider selections Terraform records in the dependency lock file.",
+      "examRelevance": "Objective 2a explicitly covers installing/versioning providers and the dependency lock file.",
+      "prerequisites": [
+        "task-09-build-config"
+      ],
+      "sourceIds": [
+        "src-init",
+        "src-lock-file",
+        "src-providers-command",
+        "src-cloud-block",
+        "src-provider-requirements"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open PowerShell in hcp-main."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Rebuild HCP_ORG from the AWS account ID if needed."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set TF_CLOUD_ORGANIZATION and TF_WORKSPACE only for this PowerShell session. The empty cloud {} block reads these values."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform fmt -recursive, terraform init and terraform validate."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform providers and inspect how the root and child module require providers."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open .terraform.lock.hcl. Find hashicorp/aws and hashicorp/random and note the concrete versions Terraform selected."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Run terraform init -upgrade once. With the current constraints, Terraform checks for the newest acceptable provider versions and updates the lock selection only if needed."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not manually edit .terraform.lock.hcl."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Initialize and inspect providers",
+          "language": "text",
+          "content": "Set-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main\n\n$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-providers-terraform-admin --query Account --output text\n$env:TF_CLOUD_ORGANIZATION = \"fa-providers-terraform-$AWS_ACCOUNT_ID\"\n$env:TF_WORKSPACE = \"fa-providers-terraform-providers-sensitive\"\n\nterraform fmt -recursive\nterraform init\nterraform validate\nterraform providers\nGet-Content .terraform.lock.hcl\nterraform init -upgrade\nterraform validate"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "terraform init says HCP Terraform initialized successfully.",
+        "AWS and Random provider plugins install or reuse locked versions.",
+        "terraform validate succeeds.",
+        "terraform providers shows root requirements and the child module AWS requirement.",
+        ".terraform.lock.hcl exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-init-lock-inspect-verify-01",
+          "text": ".terraform.lock.hcl contains registry.terraform.io/hashicorp/aws."
+        },
+        {
+          "id": "task-10-init-lock-inspect-verify-02",
+          "text": ".terraform.lock.hcl contains registry.terraform.io/hashicorp/random."
+        },
+        {
+          "id": "task-10-init-lock-inspect-verify-03",
+          "text": "The child module is visible in terraform providers output."
+        },
+        {
+          "id": "task-10-init-lock-inspect-verify-04",
+          "text": "Validation reports Success."
+        }
+      ]
+    },
+    {
+      "id": "task-11-plan-apply",
+      "phaseId": "phase-04-multiple-providers-aliases-and-modules",
+      "title": "Run the remote plan and apply with multiple provider configurations",
+      "feature": "Remote provider execution",
+      "difficulty": "Hard",
+      "goal": "Use HCP Terraform remote execution to authenticate both AWS configurations dynamically and create only the small training resources.",
+      "whyItMatters": "A successful apply proves that provider installation, default/aliased authentication, module provider passing and sensitive input handling all work together.",
+      "examRelevance": "Provider aliases select specific configurations; dynamic credentials authenticate each configuration; sensitive outputs redact normal display.",
+      "prerequisites": [
+        "task-10-init-lock-inspect"
+      ],
+      "sourceIds": [
+        "src-hcp-dynamic-aws",
+        "src-hcp-multi-creds",
+        "src-provider-block",
+        "src-provider-modules",
+        "src-sensitive-vars",
+        "src-aws-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The fake training_secret is intentionally allowed into state for the next objective-4h demonstration. Never perform that step with a real secret."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In PowerShell run terraform plan. The local CLI uploads the configuration and HCP Terraform performs the remote operation."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open the run link shown by Terraform or open the workspace Runs page in your browser."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review the plan before applying. Expected managed additions are four SSM parameters plus one normal random_password logical resource. The ephemeral random_password is not a persisted managed resource."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm every AWS SSM name begins /fa-providers-terraform/."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform apply and type yes only after the plan is correct."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Watch the HCP run until it finishes Applied."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not copy sensitive output values from HCP or state."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Remote plan and apply",
+          "language": "text",
+          "content": "Set-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main\nterraform plan\nterraform apply"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The remote plan succeeds without AWS access-key variables.",
+        "The plan contains /fa-providers-terraform/default-provider, /aliased-provider, /sensitive-demo and /module-alias.",
+        "Apply finishes successfully.",
+        "Outputs for persisted_password_demo and training_secret_echo are shown as sensitive/redacted."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-plan-apply-verify-01",
+          "text": "HCP run status is Applied."
+        },
+        {
+          "id": "task-11-plan-apply-verify-02",
+          "text": "No resource name falls outside the fa-providers-terraform prefix."
+        },
+        {
+          "id": "task-11-plan-apply-verify-03",
+          "text": "No AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY was added to HCP."
+        },
+        {
+          "id": "task-11-plan-apply-verify-04",
+          "text": "The two account-ID outputs match."
+        }
+      ]
+    },
+    {
+      "id": "task-12-provider-verification",
+      "phaseId": "phase-04-multiple-providers-aliases-and-modules",
+      "title": "Verify default provider, alias and child-module routing",
+      "feature": "Provider selection",
+      "difficulty": "Medium",
+      "goal": "Prove which resources were created through the default provider, the aws.london alias and the aliased provider passed to the child module.",
+      "whyItMatters": "Explicit verification prevents a common beginner mistake: assuming that declaring an alias automatically makes resources use it.",
+      "examRelevance": "Objective 2c: aliases do nothing until a resource/data/module selects or receives the alternate provider configuration.",
+      "prerequisites": [
+        "task-11-plan-apply"
+      ],
+      "sourceIds": [
+        "src-provider-block",
+        "src-provider-modules",
+        "src-provider-meta",
+        "src-providers-command",
+        "src-aws-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In the HCP run, inspect resource addresses. aws_ssm_parameter.default_provider has no provider meta-argument and therefore uses the default AWS provider."
+        },
+        {
+          "sequence": 2,
+          "instruction": "aws_ssm_parameter.aliased_provider explicitly sets provider = aws.london."
+        },
+        {
+          "sequence": 3,
+          "instruction": "module.alias_demo.aws_ssm_parameter.module_alias is inside the child module, whose aws.london alias was declared and passed by the root module."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform providers again and inspect the module/provider tree."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Use AWS CLI with the bootstrap profile only for verification. Read the three non-secret parameters and list the sensitive-demo parameter WITHOUT requesting decryption."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm all AWS resources are in eu-west-2."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Verify provider-routed AWS resources",
+          "language": "text",
+          "content": "Set-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main\nterraform providers\n\naws ssm get-parameter --name \"/fa-providers-terraform/default-provider\" --region eu-west-2 --profile fa-providers-terraform-admin\naws ssm get-parameter --name \"/fa-providers-terraform/aliased-provider\" --region eu-west-2 --profile fa-providers-terraform-admin\naws ssm get-parameter --name \"/fa-providers-terraform/module-alias\" --region eu-west-2 --profile fa-providers-terraform-admin\n\naws ssm get-parameter `\n  --name \"/fa-providers-terraform/sensitive-demo\" `\n  --region eu-west-2 `\n  --profile fa-providers-terraform-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The three String parameters return their expected training values.",
+        "The SecureString parameter is present, but its value is not intentionally decrypted in this verification.",
+        "terraform providers shows the child module requires AWS and the root has AWS/Random."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-provider-verification-verify-01",
+          "text": "default-provider value is created-by-default-aws-provider."
+        },
+        {
+          "id": "task-12-provider-verification-verify-02",
+          "text": "aliased-provider value is created-by-aws-london-alias."
+        },
+        {
+          "id": "task-12-provider-verification-verify-03",
+          "text": "module-alias value is child-module-used-aws-london."
+        },
+        {
+          "id": "task-12-provider-verification-verify-04",
+          "text": "All parameter ARNs/locations are eu-west-2."
+        }
+      ]
+    },
+    {
+      "id": "task-13-sensitive-state",
+      "phaseId": "phase-05-sensitive-data-state-and-ephemeral-values",
+      "title": "Compare sensitive redaction with actual state storage",
+      "feature": "Sensitive data and state",
+      "difficulty": "Hard",
+      "goal": "Show that sensitive=true hides values from normal output but does not automatically remove them from Terraform state.",
+      "whyItMatters": "This is one of the most important objective-4h distinctions: redaction protects accidental display; state access still requires strong security controls.",
+      "examRelevance": "Objective 4h: sensitive does not mean 'not stored'. Ephemeral values and provider write-only arguments are the tools designed to avoid persistence when supported.",
+      "prerequisites": [
+        "task-12-provider-verification"
+      ],
+      "sourceIds": [
+        "src-sensitive-data",
+        "src-sensitive-vars",
+        "src-variable-block",
+        "src-output-block",
+        "src-ephemeral"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The raw state command can expose secrets. Use only the fake lab value and never paste state output into external systems."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Run terraform output. Confirm persisted_password_demo and training_secret_echo display as sensitive rather than showing their values."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform state list. Confirm random_password.persisted_demo is listed."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Confirm there is NO ephemeral.random_password.ephemeral_demo entry. Ephemeral resources are not persisted in state."
+        },
+        {
+          "sequence": 4,
+          "instruction": "For this fake-secret exercise only, pull the current state and search for training-secret-not-real. The match demonstrates that sensitive redaction is not state omission."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not run state-pull searches for real secrets in shared terminals, tickets or screen recordings."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open HCP Terraform > workspace > States and note that HCP retains state versions. State access itself must be protected."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Inspect redaction and state using only the fake secret",
+          "language": "text",
+          "content": "terraform output\nterraform state list\n\n# Training-only proof. This literal value is deliberately fake.\nterraform state pull | Select-String -SimpleMatch \"training-secret-not-real\"\n\n# Ephemeral resources should not appear as managed state addresses.\nterraform state list | Select-String -SimpleMatch \"ephemeral.random_password.ephemeral_demo\""
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "terraform output redacts both sensitive outputs.",
+        "Current raw state contains the fake training-secret-not-real because it is used by a persisted managed resource/output.",
+        "random_password.persisted_demo is in state.",
+        "ephemeral.random_password.ephemeral_demo is absent from state."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-sensitive-state-verify-01",
+          "text": "Sensitive values are redacted in normal output."
+        },
+        {
+          "id": "task-13-sensitive-state-verify-02",
+          "text": "The fake secret match proves state can contain sensitive values."
+        },
+        {
+          "id": "task-13-sensitive-state-verify-03",
+          "text": "The ephemeral resource has no state address."
+        }
+      ]
+    },
+    {
+      "id": "task-14-reduce-sensitive-state",
+      "phaseId": "phase-05-sensitive-data-state-and-ephemeral-values",
+      "title": "Remove the deliberately persisted secret from current state",
+      "feature": "Sensitive-data remediation",
+      "difficulty": "Hard",
+      "goal": "Change the configuration so the fake secret and stateful random password are no longer persisted in the current state, then apply the change.",
+      "whyItMatters": "Good secret handling includes removing unnecessary secret consumers, but historical state versions may still contain older values and must remain protected.",
+      "examRelevance": "State hygiene is part of sensitive-data management. Historical state versions still justify treating remote state as sensitive.",
+      "prerequisites": [
+        "task-13-sensitive-state"
+      ],
+      "sourceIds": [
+        "src-sensitive-data",
+        "src-ephemeral",
+        "src-write-only",
+        "src-output-block"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Edit main.tf and remove the entire random_password.persisted_demo resource block."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Keep ephemeral.random_password.ephemeral_demo."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Remove the aws_ssm_parameter.sensitive_demo resource block."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Edit outputs.tf and remove persisted_password_demo and training_secret_echo output blocks. Keep only the two account-ID outputs."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform fmt, terraform validate and terraform plan."
+        },
+        {
+          "sequence": 6,
+          "instruction": "The plan should destroy the stateful random password and the /fa-providers-terraform/sensitive-demo SSM parameter while leaving the three non-secret SSM parameters."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Apply the plan."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run state pull and search for training-secret-not-real again. The CURRENT state should no longer contain the value."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Remember: an earlier HCP state version was created while the fake secret existed. Removing it from current configuration is not equivalent to erasing every historical copy."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Apply the sensitive-state reduction",
+          "language": "text",
+          "content": "terraform fmt -recursive\nterraform validate\nterraform plan\nterraform apply\n\nterraform state list\nterraform state pull | Select-String -SimpleMatch \"training-secret-not-real\"\n\naws ssm get-parameter `\n  --name \"/fa-providers-terraform/sensitive-demo\" `\n  --region eu-west-2 `\n  --profile fa-providers-terraform-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The sensitive-demo parameter is destroyed.",
+        "random_password.persisted_demo is removed from state.",
+        "The current state search returns no training-secret-not-real match.",
+        "The three non-secret parameters remain."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-reduce-sensitive-state-verify-01",
+          "text": "AWS returns ParameterNotFound for /fa-providers-terraform/sensitive-demo."
+        },
+        {
+          "id": "task-14-reduce-sensitive-state-verify-02",
+          "text": "Current terraform state list has no random_password.persisted_demo."
+        },
+        {
+          "id": "task-14-reduce-sensitive-state-verify-03",
+          "text": "Current state has no fake training secret."
+        }
+      ]
+    },
+    {
+      "id": "task-15-ephemeral-write-only",
+      "phaseId": "phase-05-sensitive-data-state-and-ephemeral-values",
+      "title": "Practice the ephemeral and write-only mental model",
+      "feature": "Ephemeral values",
+      "difficulty": "Medium",
+      "goal": "Confirm the ephemeral random value is never stored and study the write-only resource argument pattern without creating a database.",
+      "whyItMatters": "Terraform 1.10+ ephemeral values and 1.11+ write-only provider arguments address a limitation of sensitive=true by preventing selected values from being persisted.",
+      "examRelevance": "Objective 4h includes best practices for sensitive data; modern Terraform adds ephemeral values and write-only arguments to avoid persistence where supported.",
+      "prerequisites": [
+        "task-14-reduce-sensitive-state"
+      ],
+      "sourceIds": [
+        "src-sensitive-data",
+        "src-ephemeral",
+        "src-write-only",
+        "src-exam-004"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Run terraform plan again with only ephemeral.random_password.ephemeral_demo remaining from the Random provider."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform state list and confirm no random_password address exists."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review the supplied write-only example. Do NOT paste it into the live lab because a real aws_db_instance requires networking, storage and cost-bearing resources."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Read the flow: ephemeral random_password exists only during the operation; password_wo is a provider-defined write-only argument; Terraform does not store either value in plan/state."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Contrast this with sensitive=true: sensitive normally redacts UI/CLI output but still allows persistence in state."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Also note that not every provider/resource has ephemeral resources or write-only arguments; provider documentation determines support."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Confirm there is no password state address",
+          "language": "text",
+          "content": "terraform plan\nterraform state list | Select-String -Pattern \"random_password|ephemeral\""
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "Study-only ephemeral/write-only example",
+          "language": "text",
+          "content": "# EXAM STUDY EXAMPLE ONLY — DO NOT APPLY IN THIS LAB.\n# This illustrates the modern pattern: an ephemeral value is passed to a\n# provider-defined write-only argument, so Terraform does not persist it.\n\nephemeral \"random_password\" \"database_password\" {\n  length  = 24\n  special = true\n}\n\nresource \"aws_db_instance\" \"example\" {\n  # Other required database arguments would be needed in a real configuration.\n  password_wo         = ephemeral.random_password.database_password.result\n  password_wo_version = 1\n}"
+        }
+      ],
+      "expectedResults": [
+        "No normal random_password managed resource is in state.",
+        "The supplied write-only example is understood but not applied.",
+        "The learner can explain sensitive vs ephemeral vs write-only in one sentence each."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-ephemeral-write-only-verify-01",
+          "text": "terraform state list contains no random_password.persisted_demo."
+        },
+        {
+          "id": "task-15-ephemeral-write-only-verify-02",
+          "text": "No database resource is created."
+        },
+        {
+          "id": "task-15-ephemeral-write-only-verify-03",
+          "text": "The current plan does not reintroduce the fake training secret."
+        }
+      ]
+    },
+    {
+      "id": "task-16-vault-dev",
+      "phaseId": "phase-06-vault-provider-and-secrets-management",
+      "title": "Start a local Vault development server and store a fake secret",
+      "feature": "Vault foundations",
+      "difficulty": "Medium",
+      "goal": "Create a local, disposable Vault development server and write one fake training secret.",
+      "whyItMatters": "Objective 4h explicitly includes secrets management with Vault. A local dev server lets a beginner practice the provider flow without provisioning a paid or production Vault cluster.",
+      "examRelevance": "4h specifically names Vault. Vault can centralize secret storage and issue dynamic credentials, but Terraform/Vault integration must still consider what is persisted in Terraform state.",
+      "prerequisites": [
+        "task-15-ephemeral-write-only"
+      ],
+      "sourceIds": [
+        "src-vault-install",
+        "src-vault-get-started",
+        "src-vault-secrets",
+        "src-exam-004"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Vault dev mode and its root token are intentionally insecure and local-only. Never use this pattern for real secrets."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Check vault version in PowerShell. If Vault is not installed, install it using the official HashiCorp Vault installation page."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open PowerShell terminal A and start the dev server with the exact dev root token fa-providers-terraform-dev-token."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Leave terminal A running. Vault dev mode is in-memory, automatically initialized/unsealed and NOT secure for production."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open a second PowerShell terminal B."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Set VAULT_ADDR to http://127.0.0.1:8200 and VAULT_TOKEN to the training dev token."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Run vault status."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Write one fake KV secret at secret/fa-providers-terraform with api_key=training-vault-secret-not-real."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Read it back once. It is fake training data only."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Do not expose terminal A or this dev token to other machines; the server should bind only for local development."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Terminal A - local Vault dev server",
+          "language": "text",
+          "content": "vault server -dev -dev-root-token-id=\"fa-providers-terraform-dev-token\""
+        },
+        {
+          "title": "Terminal B - write fake Vault secret",
+          "language": "text",
+          "content": "$env:VAULT_ADDR = \"http://127.0.0.1:8200\"\n$env:VAULT_TOKEN = \"fa-providers-terraform-dev-token\"\n\nvault status\nvault kv put secret/fa-providers-terraform api_key=\"training-vault-secret-not-real\"\nvault kv get secret/fa-providers-terraform"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Vault dev server reports initialized and unsealed.",
+        "vault status succeeds from terminal B.",
+        "The fake KV secret can be read from secret/fa-providers-terraform."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-vault-dev-verify-01",
+          "text": "VAULT_ADDR points to 127.0.0.1:8200."
+        },
+        {
+          "id": "task-16-vault-dev-verify-02",
+          "text": "Only the fake training secret is stored."
+        },
+        {
+          "id": "task-16-vault-dev-verify-03",
+          "text": "The learner understands dev mode must never be treated as production Vault."
+        }
+      ]
+    },
+    {
+      "id": "task-17-vault-provider",
+      "phaseId": "phase-06-vault-provider-and-secrets-management",
+      "title": "Read the fake secret with the Terraform Vault provider",
+      "feature": "Vault provider",
+      "difficulty": "Hard",
+      "goal": "Use a separate local Terraform directory to authenticate the Vault provider from VAULT_TOKEN and read the fake KV value as a sensitive output.",
+      "whyItMatters": "This shows the good practice of keeping the Vault token out of .tf files while also proving that data retrieved from Vault can still be persisted by Terraform if the configuration stores it in state.",
+      "examRelevance": "Vault is a secrets-management system, not a magic exemption from Terraform state behavior. Provider/data-source design and downstream usage determine what Terraform persists.",
+      "prerequisites": [
+        "task-16-vault-dev"
+      ],
+      "sourceIds": [
+        "src-vault-provider",
+        "src-vault-secrets",
+        "src-sensitive-data",
+        "src-provider-requirements"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create C:\\terraform-labs\\fa-providers-terraform\\vault-demo."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create main.tf using the supplied Vault provider configuration."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Notice the provider block contains the Vault address but NO token. The provider reads VAULT_TOKEN from terminal B's environment."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform init, validate and apply locally. This mini-exercise intentionally does not use HCP Terraform because the remote runner cannot reach your laptop's 127.0.0.1 Vault server."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform output. vault_secret_demo should display as sensitive."
+        },
+        {
+          "sequence": 6,
+          "instruction": "For the fake secret only, run terraform state pull and search for training-vault-secret-not-real. A match demonstrates why retrieving a secret from Vault does not automatically guarantee Terraform state will be secret-free."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not commit this local state."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Vault provider exercise",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force C:\\terraform-labs\\fa-providers-terraform\\vault-demo | Out-Null\nSet-Location C:\\terraform-labs\\fa-providers-terraform\\vault-demo\n\n$env:VAULT_ADDR = \"http://127.0.0.1:8200\"\n$env:VAULT_TOKEN = \"fa-providers-terraform-dev-token\"\n\nterraform fmt\nterraform init\nterraform validate\nterraform apply -auto-approve\nterraform output\nterraform state pull | Select-String -SimpleMatch \"training-vault-secret-not-real\""
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "vault-demo/main.tf",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.11.0, < 2.0.0\"\n\n  required_providers {\n    vault = {\n      source  = \"hashicorp/vault\"\n      version = \">= 4.0.0\"\n    }\n  }\n}\n\nprovider \"vault\" {\n  address = \"http://127.0.0.1:8200\"\n}\n\ndata \"vault_kv_secret_v2\" \"training\" {\n  mount = \"secret\"\n  name  = \"fa-providers-terraform\"\n}\n\noutput \"vault_secret_demo\" {\n  description = \"Fake training secret read from Vault. Sensitive output redacts display but the data source can still place the value in Terraform state.\"\n  value       = data.vault_kv_secret_v2.training.data[\"api_key\"]\n  sensitive   = true\n}"
+        }
+      ],
+      "expectedResults": [
+        "Terraform installs the Vault provider.",
+        "Vault provider authenticates without a token in main.tf.",
+        "vault_secret_demo is redacted in normal output.",
+        "The fake secret can be found in local Terraform state because the data source result is stateful."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-vault-provider-verify-01",
+          "text": "main.tf contains no Vault token."
+        },
+        {
+          "id": "task-17-vault-provider-verify-02",
+          "text": "terraform validate succeeds."
+        },
+        {
+          "id": "task-17-vault-provider-verify-03",
+          "text": "Sensitive output is redacted."
+        },
+        {
+          "id": "task-17-vault-provider-verify-04",
+          "text": "Fake secret state search produces the expected training-only proof."
+        }
+      ]
+    },
+    {
+      "id": "task-18-exam-review",
+      "phaseId": "phase-07-exam-review-and-ordered-cleanup",
+      "title": "Review provider, authentication and objective 4h exam points",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Turn the completed hands-on work into a clear Terraform Associate 004 mental model before cleanup.",
+      "whyItMatters": "The exam tests concepts rather than AWS-specific memorization, so the learner should be able to describe the general Terraform behavior shown by the lab.",
+      "examRelevance": "Official exam mapping: 2a provider installation/versioning, 2b provider use, 2c multiple providers, 4h sensitive data including Vault.",
+      "prerequisites": [
+        "task-17-vault-provider"
+      ],
+      "sourceIds": [
+        "src-exam-004",
+        "src-provider-requirements",
+        "src-provider-block",
+        "src-provider-modules",
+        "src-configure-providers",
+        "src-sensitive-data",
+        "src-vault-secrets"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Provider requirement: required_providers tells Terraform the provider source and acceptable versions."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Provider installation: terraform init installs/selects providers and writes concrete selections/checksums to .terraform.lock.hcl."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Provider block: configures a provider client, such as region or authentication-related settings."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Multiple provider types: this lab used AWS, Random and Vault."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Provider aliases: aws.london is a second configuration of the AWS provider. A resource/module must explicitly select/receive it; declaring an alias alone changes nothing."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Modules: provider configurations are defined in the root; child modules declare requirements and configuration_aliases, then the root can pass providers explicitly."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Authentication: local shared profile used long-lived bootstrap credentials; HCP remote runs used OIDC dynamic short-lived role credentials; Vault provider used a token from an environment variable instead of hard-coding it."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Sensitive: sensitive=true redacts normal display but values can still exist in state."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Ephemeral: values/resources marked/defined as ephemeral are omitted from persistent plan/state artifacts and may be used only in allowed ephemeral contexts."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Write-only: provider-defined write-only resource arguments accept values during an operation without persisting those argument values."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Vault: centralizes secrets and can issue dynamic secrets/credentials, but Terraform configurations using Vault must still protect state and avoid unnecessary secret persistence."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Final provider/state inventory before destroy",
+          "language": "text",
+          "content": "Set-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main\nterraform providers\nterraform state list\n\naws ssm describe-parameters `\n  --parameter-filters \"Key=Name,Option=BeginsWith,Values=/fa-providers-terraform/\" `\n  --region eu-west-2 `\n  --profile fa-providers-terraform-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can explain 2a, 2b, 2c and 4h without relying on AWS-specific trivia.",
+        "Current HCP state contains only the three non-secret SSM parameters managed by the main configuration.",
+        "Vault demo remains local and disposable."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-exam-review-verify-01",
+          "text": "terraform providers shows AWS and Random plus module AWS requirement."
+        },
+        {
+          "id": "task-18-exam-review-verify-02",
+          "text": "terraform state list has no sensitive-demo or persisted random password."
+        },
+        {
+          "id": "task-18-exam-review-verify-03",
+          "text": "AWS lists exactly the three remaining /fa-providers-terraform/ parameters."
+        }
+      ]
+    },
+    {
+      "id": "task-19-destroy-main",
+      "phaseId": "phase-07-exam-review-and-ordered-cleanup",
+      "title": "Destroy the Terraform-managed AWS training resources",
+      "feature": "Terraform destroy",
+      "difficulty": "Hard",
+      "goal": "Run destroy while the HCP workspace still owns its state and verify all Terraform-managed AWS resources are gone.",
+      "whyItMatters": "Destroying from the owning state first preserves dependency information and prevents orphaned resources.",
+      "examRelevance": "Objective 3f destroy: Terraform should destroy resources it manages before you delete the state/workspace that describes them.",
+      "prerequisites": [
+        "task-18-exam-review"
+      ],
+      "sourceIds": [
+        "src-aws-ssm-delete",
+        "src-sensitive-data",
+        "src-init"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Stop immediately if the destroy plan includes any resource outside the exact training prefix."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Return to hcp-main in PowerShell and ensure TF_CLOUD_ORGANIZATION and TF_WORKSPACE still identify the lab workspace."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform plan -destroy and review every resource. It must target only /fa-providers-terraform/* resources."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Run terraform destroy and type yes."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Wait for the HCP run to finish Applied/Destroyed."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform state list. It should be empty of managed lab resources."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Use AWS CLI describe-parameters with the prefix filter. No lab parameter should remain."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not delete the HCP workspace until this verification passes."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Destroy and verify",
+          "language": "text",
+          "content": "Set-Location C:\\terraform-labs\\fa-providers-terraform\\hcp-main\nterraform plan -destroy\nterraform destroy\n\nterraform state list\n\naws ssm describe-parameters `\n  --parameter-filters \"Key=Name,Option=BeginsWith,Values=/fa-providers-terraform/\" `\n  --region eu-west-2 `\n  --profile fa-providers-terraform-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The destroy run succeeds.",
+        "terraform state list contains no managed lab resource.",
+        "AWS returns no /fa-providers-terraform/ parameter."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-19-destroy-main-verify-01",
+          "text": "No SSM parameter with the training prefix remains."
+        },
+        {
+          "id": "task-19-destroy-main-verify-02",
+          "text": "HCP current state manages zero training AWS resources."
+        },
+        {
+          "id": "task-19-destroy-main-verify-03",
+          "text": "The workspace still exists temporarily for safe post-destroy cleanup."
+        }
+      ]
+    },
+    {
+      "id": "task-20-final-cleanup",
+      "phaseId": "phase-07-exam-review-and-ordered-cleanup",
+      "title": "Remove HCP, Vault, AWS authentication and local training artifacts",
+      "feature": "Ordered cleanup",
+      "difficulty": "Hard",
+      "goal": "Complete the manual reverse-dependency cleanup and acknowledge that only lab-created resources were removed.",
+      "whyItMatters": "Provider credentials, state and local files are intentionally removed after managed cloud infrastructure so cleanup does not destroy the information needed to remove resources safely.",
+      "examRelevance": "Cleanup reinforces ownership boundaries: destroy managed resources first, then state/workspace, then authentication material and local files.",
+      "prerequisites": [
+        "task-19-destroy-main"
+      ],
+      "sourceIds": [
+        "src-hcp-org",
+        "src-hcp-projects",
+        "src-hcp-workspaces",
+        "src-aws-oidc-role",
+        "src-aws-ssm-delete",
+        "src-vault-get-started",
+        "src-aws-cli-config"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Never delete an OIDC provider or HCP organization that existed before this lab or is shared with other workloads."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm Task 19 destroy and AWS parameter verification are complete before deleting HCP state/workspace."
+        },
+        {
+          "sequence": 2,
+          "instruction": "In HCP Terraform delete workspace fa-providers-terraform-providers-sensitive. Do not force-delete a workspace that still reports managed resources."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete project fa-providers-terraform-project after it is empty."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Delete the dedicated HCP organization whose name begins fa-providers-terraform- and ends with your recorded AWS account ID, but only if it was created solely for this Follow Along."
+        },
+        {
+          "sequence": 5,
+          "instruction": "In the local Vault demo terminal, delete the fake secret if the dev server is still running, then stop the dev server with Ctrl+C. Because dev mode is memory-only, stopping the server removes its in-memory data."
+        },
+        {
+          "sequence": 6,
+          "instruction": "In AWS IAM delete inline policy fa-providers-terraform-run-policy from role fa-providers-terraform-run-role, then delete the role."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete the app.terraform.io OIDC provider only if this Follow Along created it and no other workspace depends on it."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Sign in as root only to remove the temporary training IAM user's access key, delete user fa-providers-terraform-admin and delete customer policy fa-providers-terraform-admin-policy. Then sign out of root."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Remove only the [fa-providers-terraform-admin] sections from your local AWS credentials/config files or use aws configure commands to clear that named profile. Do not delete unrelated profiles."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Clear the current shell environment variables TF_CLOUD_ORGANIZATION, TF_WORKSPACE, VAULT_ADDR and VAULT_TOKEN."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete C:\\terraform-labs\\fa-providers-terraform last, after every cloud/HCP/authentication verification is complete."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Read and affirm the programme cleanup acknowledgement in the cleanup section."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Cleanup verification commands",
+          "language": "text",
+          "content": "# Verify the Terraform-managed AWS objects are already gone.\naws ssm describe-parameters `\n  --parameter-filters \"Key=Name,Option=BeginsWith,Values=/fa-providers-terraform/\" `\n  --region eu-west-2 `\n  --profile fa-providers-terraform-admin\n\n# After deleting the run role, this should fail with NoSuchEntity.\naws iam get-role --role-name fa-providers-terraform-run-role --profile fa-providers-terraform-admin\n\n# Remove session-only environment variables.\nRemove-Item Env:TF_CLOUD_ORGANIZATION -ErrorAction SilentlyContinue\nRemove-Item Env:TF_WORKSPACE -ErrorAction SilentlyContinue\nRemove-Item Env:VAULT_ADDR -ErrorAction SilentlyContinue\nRemove-Item Env:VAULT_TOKEN -ErrorAction SilentlyContinue"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "No training SSM parameter exists.",
+        "HCP workspace/project/dedicated organization are removed.",
+        "Vault dev process/data are gone.",
+        "HCP AWS run role and lab-created OIDC provider are removed.",
+        "Temporary IAM user/access key/policy and named CLI profile are removed.",
+        "Local lab directory is removed last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-20-final-cleanup-verify-01",
+          "text": "Every cleanup step was performed only against exact lab names."
+        },
+        {
+          "id": "task-20-final-cleanup-verify-02",
+          "text": "No unrelated AWS IAM/OIDC/HCP object was deleted."
+        },
+        {
+          "id": "task-20-final-cleanup-verify-03",
+          "text": "No lab credential or local state remains."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "resource-iam-user",
+      "label": "Temporary IAM training user",
+      "exactName": "fa-providers-terraform-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-aws-bootstrap",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-iam-policy",
+      "label": "Training bootstrap customer managed IAM policy",
+      "exactName": "fa-providers-terraform-admin-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-aws-bootstrap",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-iam-access-key",
+      "label": "Temporary IAM user access key",
+      "exactName": null,
+      "generatedValue": "Access key ID and Secret access key for fa-providers-terraform-admin",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-02-aws-bootstrap",
+      "dependsOn": [
+        "resource-iam-user"
+      ]
+    },
+    {
+      "id": "resource-aws-cli-profile",
+      "label": "AWS CLI named profile",
+      "exactName": "fa-providers-terraform-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-profile",
+      "dependsOn": [
+        "resource-iam-access-key"
+      ]
+    },
+    {
+      "id": "resource-auth-demo-folder",
+      "label": "Local Terraform authentication demo folder",
+      "exactName": "C:\\terraform-labs\\fa-providers-terraform\\auth-demo",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-local-auth-demo",
+      "dependsOn": [
+        "resource-aws-cli-profile"
+      ]
+    },
+    {
+      "id": "resource-hcp-organization",
+      "label": "Dedicated HCP Terraform organization",
+      "exactName": null,
+      "generatedValue": "fa-providers-terraform-<12-digit AWS account ID derived in Task 3>",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-05-hcp-org-project-workspace",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-hcp-project",
+      "label": "HCP Terraform project",
+      "exactName": "fa-providers-terraform-project",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-hcp-org-project-workspace",
+      "dependsOn": [
+        "resource-hcp-organization"
+      ]
+    },
+    {
+      "id": "resource-hcp-workspace",
+      "label": "HCP Terraform CLI-driven workspace",
+      "exactName": "fa-providers-terraform-providers-sensitive",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-05-hcp-org-project-workspace",
+      "dependsOn": [
+        "resource-hcp-project"
+      ]
+    },
+    {
+      "id": "resource-aws-oidc-provider",
+      "label": "AWS IAM OIDC identity provider for HCP Terraform",
+      "exactName": "app.terraform.io",
+      "generatedValue": "OIDC provider ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-oidc-provider",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-hcp-run-role",
+      "label": "HCP Terraform AWS run role",
+      "exactName": "fa-providers-terraform-run-role",
+      "generatedValue": "IAM role ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-run-role",
+      "dependsOn": [
+        "resource-aws-oidc-provider",
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-hcp-run-policy",
+      "label": "HCP Terraform run-role inline permissions policy",
+      "exactName": "fa-providers-terraform-run-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-run-role",
+      "dependsOn": [
+        "resource-hcp-run-role"
+      ]
+    },
+    {
+      "id": "resource-hcp-workspace-variables",
+      "label": "HCP Terraform workspace variables for provider authentication and training input",
+      "exactName": "TFC_AWS_PROVIDER_AUTH, TFC_AWS_PROVIDER_AUTH_LONDON, TFC_DEFAULT_AWS_RUN_ROLE_ARN, TF_VAR_training_secret, aws_region",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-08-hcp-variables",
+      "dependsOn": [
+        "resource-hcp-workspace",
+        "resource-hcp-run-role"
+      ]
+    },
+    {
+      "id": "resource-hcp-main-folder",
+      "label": "Main local Terraform configuration folder",
+      "exactName": "C:\\terraform-labs\\fa-providers-terraform\\hcp-main",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-build-config",
+      "dependsOn": [
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-terraform-lock-file",
+      "label": "Terraform dependency lock file",
+      "exactName": "C:\\terraform-labs\\fa-providers-terraform\\hcp-main\\.terraform.lock.hcl",
+      "generatedValue": "Concrete AWS and Random provider versions/checksums selected by terraform init",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-init-lock-inspect",
+      "dependsOn": [
+        "resource-hcp-main-folder"
+      ]
+    },
+    {
+      "id": "resource-ssm-default-provider",
+      "label": "Default-provider training parameter",
+      "exactName": "/fa-providers-terraform/default-provider",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-run-role",
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-ssm-aliased-provider",
+      "label": "Aliased-provider training parameter",
+      "exactName": "/fa-providers-terraform/aliased-provider",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-run-role",
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-ssm-sensitive-demo",
+      "label": "Sensitive-data demonstration SecureString parameter",
+      "exactName": "/fa-providers-terraform/sensitive-demo",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-run-role",
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-ssm-module-alias",
+      "label": "Child-module aliased-provider training parameter",
+      "exactName": "/fa-providers-terraform/module-alias",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-run-role",
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-random-password-persisted",
+      "label": "Stateful random_password demonstration resource",
+      "exactName": "random_password.persisted_demo",
+      "generatedValue": "Training-only random password value",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-random-password-ephemeral",
+      "label": "Ephemeral random_password demonstration",
+      "exactName": "ephemeral.random_password.ephemeral_demo",
+      "generatedValue": "Operation-only random password value",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-11-plan-apply",
+      "dependsOn": [
+        "resource-hcp-workspace"
+      ]
+    },
+    {
+      "id": "resource-vault-dev-server",
+      "label": "Local Vault development server",
+      "exactName": "http://127.0.0.1:8200",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-16-vault-dev",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-vault-training-secret",
+      "label": "Fake local Vault KV training secret",
+      "exactName": "secret/fa-providers-terraform",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-16-vault-dev",
+      "dependsOn": [
+        "resource-vault-dev-server"
+      ]
+    },
+    {
+      "id": "resource-vault-demo-folder",
+      "label": "Local Terraform Vault-provider demo folder and local state",
+      "exactName": "C:\\terraform-labs\\fa-providers-terraform\\vault-demo",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-17-vault-provider",
+      "dependsOn": [
+        "resource-vault-training-secret"
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "terraform init cannot select the HCP organization or workspace",
+      "likelyCause": "TF_CLOUD_ORGANIZATION or TF_WORKSPACE is not set in the current shell, or terraform login has not completed.",
+      "fix": "Rebuild HCP_ORG from the AWS account ID, set both environment variables, run terraform login if needed, then rerun terraform init."
+    },
+    {
+      "id": "trouble-02",
+      "title": "HCP plan fails with no valid credential sources",
+      "likelyCause": "One or more TFC_AWS_* dynamic credential variables are missing, or static AWS arguments interfere with HCP dynamic credentials.",
+      "fix": "Confirm TFC_AWS_PROVIDER_AUTH=true, TFC_AWS_PROVIDER_AUTH_LONDON=true and TFC_DEFAULT_AWS_RUN_ROLE_ARN is correct; remove access_key/secret_key/profile arguments from the HCP AWS provider blocks."
+    },
+    {
+      "id": "trouble-03",
+      "title": "Invalid index for tfc_aws_dynamic_credentials.aliases[\"LONDON\"]",
+      "likelyCause": "The LONDON tagged dynamic credential configuration was not created in HCP Terraform.",
+      "fix": "Add Environment variable TFC_AWS_PROVIDER_AUTH_LONDON=true, keep the default run role ARN, save, and queue a new run."
+    },
+    {
+      "id": "trouble-04",
+      "title": "AssumeRoleWithWebIdentity AccessDenied",
+      "likelyCause": "The role trust subject does not exactly match organization, project, workspace or run phase, or the audience is wrong.",
+      "fix": "Compare the trust policy with the exact recorded HCP names and aws.workload.identity audience. Do not broaden the trust to all organizations."
+    },
+    {
+      "id": "trouble-05",
+      "title": "AccessDenied on ssm:PutParameter",
+      "likelyCause": "The run role inline policy is missing an action or the parameter name is outside /fa-providers-terraform/*.",
+      "fix": "Keep the parameter names under the exact training prefix and compare the inline policy with the supplied policy; do not grant AdministratorAccess."
+    },
+    {
+      "id": "trouble-06",
+      "title": "Child module reports missing provider configuration aws.london",
+      "likelyCause": "configuration_aliases or the root module providers map is missing.",
+      "fix": "Ensure child versions.tf declares configuration_aliases=[aws.london] and the root module block maps aws.london = aws.london."
+    },
+    {
+      "id": "trouble-07",
+      "title": "terraform output says a sensitive value cannot be displayed",
+      "likelyCause": "The output is marked sensitive as intended.",
+      "fix": "Do not remove sensitive=true merely to reveal it. This lab uses state pull only with an explicitly fake value to demonstrate persistence."
+    },
+    {
+      "id": "trouble-08",
+      "title": "Fake training secret remains in current state after Task 14",
+      "likelyCause": "A resource/output still references var.training_secret or the apply was not completed.",
+      "fix": "Search the .tf files for training_secret, keep only the variable declaration, apply the removals, then pull current state again."
+    },
+    {
+      "id": "trouble-09",
+      "title": "vault status returns connection refused",
+      "likelyCause": "The local Vault dev server stopped or VAULT_ADDR is missing.",
+      "fix": "Restart the dev server in terminal A and set VAULT_ADDR=http://127.0.0.1:8200 in terminal B."
+    },
+    {
+      "id": "trouble-10",
+      "title": "Vault provider returns permission denied",
+      "likelyCause": "VAULT_TOKEN is absent/wrong in the terminal running Terraform.",
+      "fix": "For this dev-only exercise set VAULT_TOKEN=fa-providers-terraform-dev-token in that terminal. Never put the token in main.tf."
+    },
+    {
+      "id": "trouble-11",
+      "title": "Destroy plan contains an unexpected AWS resource",
+      "likelyCause": "Wrong HCP workspace/environment variables or an unintended resource was added.",
+      "fix": "Cancel destroy immediately. Verify TF_CLOUD_ORGANIZATION, TF_WORKSPACE and terraform state list before retrying."
+    },
+    {
+      "id": "trouble-12",
+      "title": "IAM refuses to create a second app.terraform.io OIDC provider",
+      "likelyCause": "That issuer already exists in the AWS account.",
+      "fix": "Do not overwrite or delete an existing shared provider. Stop and determine ownership before continuing; this manuscript assumes no pre-existing infrastructure."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "/fa-providers-terraform/sensitive-demo and random_password.persisted_demo",
+      "action": "Task 14 removes the deliberately persisted fake secret and stateful random password as soon as their lesson is complete.",
+      "verification": "Current state no longer contains the fake training secret or random_password.persisted_demo.",
+      "taskId": "task-14-reduce-sensitive-state"
+    },
+    {
+      "sequence": 2,
+      "resource": "/fa-providers-terraform/default-provider, /aliased-provider and /module-alias",
+      "action": "Run terraform destroy from the HCP-connected main directory.",
+      "verification": "AWS prefix query returns no parameters and terraform state list is empty.",
+      "taskId": "task-19-destroy-main"
+    },
+    {
+      "sequence": 3,
+      "resource": "fa-providers-terraform-providers-sensitive",
+      "action": "Delete the empty HCP Terraform workspace only after AWS destroy verification.",
+      "verification": "Workspace no longer appears in HCP Terraform.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-providers-terraform-project",
+      "action": "Delete the project after the workspace is gone.",
+      "verification": "Project no longer appears.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "Dedicated HCP organization derived from the AWS account ID",
+      "action": "Delete only the organization created solely for this lab.",
+      "verification": "The dedicated lab organization no longer exists.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "Local Vault secret secret/fa-providers-terraform and Vault dev server",
+      "action": "Delete the fake secret if the server is still running, then stop the local dev server.",
+      "verification": "Vault process is stopped; dev-mode in-memory data is gone.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-providers-terraform-run-policy then fa-providers-terraform-run-role",
+      "action": "Delete the inline run policy and then the role.",
+      "verification": "iam get-role for fa-providers-terraform-run-role returns NoSuchEntity.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "app.terraform.io OIDC provider created by this lab",
+      "action": "Delete only after no HCP workspace needs it and only if this lab created it.",
+      "verification": "IAM identity-provider list no longer contains the lab-owned provider.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-providers-terraform-admin access key/user and fa-providers-terraform-admin-policy",
+      "action": "Use root only to remove the temporary bootstrap access key, user and customer policy; then sign out root.",
+      "verification": "The training IAM user and policy are absent.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 10,
+      "resource": "AWS CLI profile fa-providers-terraform-admin",
+      "action": "Remove only this named profile's config/credentials sections.",
+      "verification": "The profile is absent while unrelated profiles remain untouched.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 11,
+      "resource": "Session environment variables",
+      "action": "Remove TF_CLOUD_ORGANIZATION, TF_WORKSPACE, VAULT_ADDR and VAULT_TOKEN from the current shell.",
+      "verification": "The variables are no longer defined in the shell.",
+      "taskId": "task-20-final-cleanup"
+    },
+    {
+      "sequence": 12,
+      "resource": "C:\\terraform-labs\\fa-providers-terraform",
+      "action": "Delete the local lab folder only after cloud, HCP and authentication cleanup is verified.",
+      "verification": "The local training folder is absent.",
+      "taskId": "task-20-final-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "completionGate": "acknowledgement",
+    "manualOnly": true,
+    "ordering": "reverse_dependency"
+  },
+  "programmeCleanupAcknowledgement": "I verified that all /fa-providers-terraform/* AWS parameters are absent from eu-west-2; the HCP Terraform workspace fa-providers-terraform-providers-sensitive, project fa-providers-terraform-project, and dedicated lab organization are removed; the local Vault development server and fake secret are gone; fa-providers-terraform-run-role, its inline policy and the lab-owned app.terraform.io OIDC provider are removed; the temporary IAM user/access key/policy and named AWS CLI profile are removed; the shell variables are cleared; and only then was C:\\terraform-labs\\fa-providers-terraform deleted.",
+  "warnings": {
+    "cost": "The AWS portion intentionally uses only IAM objects and a few small Systems Manager Parameter Store parameters, but AWS/HCP pricing and limits can change. Review your account information and complete cleanup.",
+    "safety": "Destroy only resources created by this Follow Along. Stop if Terraform proposes deleting anything outside the fa-providers-terraform prefix.",
+    "credentials": "Never create root access keys; never put AWS access keys, the HCP token or Vault token in Terraform configuration. HCP remote AWS runs use OIDC dynamic credentials. All demonstrated secret values are deliberately fake.",
+    "region": "HCP Terraform organization/project/workspace resources are control-plane/global for this lab. Every AWS service resource is created in eu-west-2. The aws.london alias intentionally targets eu-west-2 as a second configuration, not a second Region."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 20,
+    "checkboxCount": 66,
+    "cliCommandCount": 106,
+    "editableBlockCount": 14,
+    "verificationCount": 66,
+    "cleanupItemCount": 12,
+    "officialSourceCount": 37,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and its JSON manuscript are intentionally offline authoring artifacts. They have not been locally validated by Study Tracker, imported, accepted, approved, published, or fingerprinted. Local Codex should convert and validate them using the repository's controlled workflow."
+  }
+}

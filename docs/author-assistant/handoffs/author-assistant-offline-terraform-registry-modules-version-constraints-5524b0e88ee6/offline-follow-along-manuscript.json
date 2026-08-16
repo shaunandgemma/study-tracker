@@ -1,0 +1,1832 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "Registry Modules and Version Constraints Follow Along",
+    "suggestedProgrammeId": "terraform-registry-modules-version-constraints-learning-path",
+    "topic": "Terraform Registry Modules and Version Constraints",
+    "examWorkspace": "HashiCorp Terraform Associate 004",
+    "learnerLevel": "Beginner",
+    "outcome": "Find and use a public Terraform Registry module; pin and verify an exact module version; practice pessimistic, compound and exact module version constraints; use terraform init -upgrade to change the selected registry module release; prove that .terraform.lock.hcl does not lock remote module versions; create and repair one unsatisfiable module-version failure; run reviewed plan/apply/destroy workflows without creating cloud resources; and safely remove all local training artifacts. This intentionally adds practical registry module-version coverage not claimed by the local-module refactoring lab.",
+    "region": "Terraform public Registry global resources and local workstation only; no AWS or other cloud resources are created.",
+    "resourcePrefix": "fa-registry-modules-terraform",
+    "selfPaced": true,
+    "statusNotice": "**Status:** Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "examObjectivesCovered": [
+      {
+        "objective": "5a",
+        "text": "Explain how Terraform sources modules"
+      },
+      {
+        "objective": "5b",
+        "text": "Describe variable scope within modules"
+      },
+      {
+        "objective": "5c",
+        "text": "Use modules in configuration"
+      },
+      {
+        "objective": "5d",
+        "text": "Manage module versions"
+      },
+      {
+        "objective": "3b-3f",
+        "text": "Initialize, validate, plan, apply and destroy during the registry-module workflow"
+      }
+    ],
+    "completionDefinition": [
+      "The learner finds cloudposse/label/null in the public Terraform Registry and verifies baseline version 0.24.1 and current lab target 0.25.0.",
+      "The root module calls the registry module with an exact version and uses module inputs and outputs without creating any cloud resource.",
+      "terraform init installs the exact module version and .terraform/modules/modules.json is used to verify the selected release.",
+      "A saved plan is reviewed before every apply in the lab.",
+      "The learner broadens the constraint to ~> 0.24 and deliberately upgrades to 0.25.0.",
+      "The learner narrows the constraint to ~> 0.24.0 and proves selection returns to 0.24.1.",
+      "The learner practices the compound range >= 0.24.0, < 0.25.0 and the exact pin = 0.25.0.",
+      "The learner proves .terraform.lock.hcl does not lock remote module version selections.",
+      "An impossible >= 1.0.0 module constraint fails during init and is repaired by restoring the exact 0.25.0 pin.",
+      "The learner can distinguish public registry module version management from local-module creation/refactoring.",
+      "A saved destroy plan confirms no managed infrastructure exists, then all lab-only plan, cache, state and configuration files are removed in reverse-dependency order."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-exam-004",
+      "title": "Exam Content List - Terraform Associate 004",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004",
+      "purpose": "Maps Terraform Associate 004 module objectives 5a through 5d to official documentation and tutorials.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-registry-discovery",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-module-block",
+      "title": "module block reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/block/module",
+      "purpose": "Defines module source and version arguments and explains that version applies to registry modules.",
+      "taskIds": [
+        "task-03-create-root-config",
+        "task-04-init-exact-version",
+        "task-06-broaden-constraint",
+        "task-08-lock-file-distinction",
+        "task-10-compound-and-exact",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-version-constraints",
+      "title": "Version constraints",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/expressions/version-constraints",
+      "purpose": "Defines exact, comparison, compound and pessimistic version constraint operators and best practices.",
+      "taskIds": [
+        "task-03-create-root-config",
+        "task-06-broaden-constraint",
+        "task-07-upgrade-to-0250",
+        "task-09-narrow-patch-line",
+        "task-10-compound-and-exact",
+        "task-11-break-version-selection",
+        "task-12-repair-version-selection",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-find-use-modules",
+      "title": "Find and use modules in the Terraform registry",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/registry/modules/use",
+      "purpose": "Explains public registry module discovery, registry source addresses, versioned modules and terraform init module installation.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-registry-discovery",
+        "task-04-init-exact-version",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-use-registry-modules",
+      "title": "Use registry modules in configuration",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/modules/module-use",
+      "purpose": "Official hands-on tutorial for selecting, configuring and using registry modules.",
+      "taskIds": [
+        "task-02-registry-discovery",
+        "task-03-create-root-config"
+      ]
+    },
+    {
+      "id": "src-init",
+      "title": "terraform init command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/init",
+      "purpose": "Explains child module installation and the -upgrade behavior for already-installed modules.",
+      "taskIds": [
+        "task-04-init-exact-version",
+        "task-07-upgrade-to-0250",
+        "task-08-lock-file-distinction",
+        "task-09-narrow-patch-line",
+        "task-10-compound-and-exact",
+        "task-11-break-version-selection",
+        "task-12-repair-version-selection",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-lock-file",
+      "title": "Dependency Lock File",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/language/files/dependency-lock",
+      "purpose": "Explains that the dependency lock file currently tracks provider selections, not remote module version selections.",
+      "taskIds": [
+        "task-04-init-exact-version",
+        "task-07-upgrade-to-0250",
+        "task-08-lock-file-distinction",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-fmt",
+      "title": "terraform fmt command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/fmt",
+      "purpose": "Formats Terraform configuration before validation.",
+      "taskIds": [
+        "task-05-plan-apply-baseline"
+      ]
+    },
+    {
+      "id": "src-validate",
+      "title": "terraform validate command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/validate",
+      "purpose": "Validates the syntax and internal consistency of Terraform configuration.",
+      "taskIds": [
+        "task-05-plan-apply-baseline"
+      ]
+    },
+    {
+      "id": "src-plan",
+      "title": "terraform plan command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+      "purpose": "Creates and saves an execution plan for review.",
+      "taskIds": [
+        "task-05-plan-apply-baseline",
+        "task-12-repair-version-selection",
+        "task-14-cleanup"
+      ]
+    },
+    {
+      "id": "src-show",
+      "title": "terraform show command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/show",
+      "purpose": "Displays a saved Terraform plan for human review.",
+      "taskIds": [
+        "task-05-plan-apply-baseline",
+        "task-12-repair-version-selection",
+        "task-14-cleanup"
+      ]
+    },
+    {
+      "id": "src-apply",
+      "title": "terraform apply command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/apply",
+      "purpose": "Applies a previously reviewed saved plan.",
+      "taskIds": [
+        "task-05-plan-apply-baseline",
+        "task-12-repair-version-selection",
+        "task-14-cleanup"
+      ]
+    },
+    {
+      "id": "src-output",
+      "title": "terraform output command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/output",
+      "purpose": "Reads root module output values after apply.",
+      "taskIds": [
+        "task-05-plan-apply-baseline"
+      ]
+    },
+    {
+      "id": "src-state-list",
+      "title": "terraform state list command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/state/list",
+      "purpose": "Shows that this module-version lab manages no cloud resources.",
+      "taskIds": [
+        "task-05-plan-apply-baseline",
+        "task-14-cleanup"
+      ]
+    },
+    {
+      "id": "src-destroy",
+      "title": "terraform destroy command reference",
+      "publisher": "HashiCorp",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+      "purpose": "Supports the teardown concept; this lab uses a saved destroy plan and verifies that no managed resources exist.",
+      "taskIds": [
+        "task-14-cleanup"
+      ]
+    },
+    {
+      "id": "src-registry-label-current",
+      "title": "cloudposse/label/null - Terraform Registry",
+      "publisher": "Cloud Posse via Terraform Registry",
+      "url": "https://registry.terraform.io/modules/cloudposse/label/null",
+      "purpose": "Registry page for the no-resource label module used to practice module installation and version selection; shows multiple versions and zero managed resources.",
+      "taskIds": [
+        "task-02-registry-discovery",
+        "task-05-plan-apply-baseline",
+        "task-06-broaden-constraint",
+        "task-07-upgrade-to-0250",
+        "task-10-compound-and-exact",
+        "task-11-break-version-selection",
+        "task-12-repair-version-selection"
+      ]
+    },
+    {
+      "id": "src-registry-label-0241",
+      "title": "cloudposse/label/null version 0.24.1 - Terraform Registry",
+      "publisher": "Cloud Posse via Terraform Registry",
+      "url": "https://registry.terraform.io/modules/cloudposse/label/null/0.24.1",
+      "purpose": "Confirms that the baseline module version 0.24.1 exists in the registry.",
+      "taskIds": [
+        "task-02-registry-discovery",
+        "task-03-create-root-config",
+        "task-04-init-exact-version",
+        "task-09-narrow-patch-line"
+      ]
+    },
+    {
+      "id": "src-cloudposse-label-docs",
+      "title": "Cloud Posse label module documentation",
+      "publisher": "Cloud Posse",
+      "url": "https://docs.cloudposse.com/modules/library/null/label/",
+      "purpose": "Primary module-publisher documentation for the label module inputs and naming behavior.",
+      "taskIds": [
+        "task-02-registry-discovery",
+        "task-03-create-root-config"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare-and-discover",
+      "sequence": 1,
+      "title": "Prepare and discover registry modules",
+      "goal": "Verify Terraform, understand the exam gap this lab fills, and inspect a real versioned public registry module before writing configuration."
+    },
+    {
+      "id": "phase-02-install-exact-version",
+      "sequence": 2,
+      "title": "Install and use an exact module version",
+      "goal": "Call a public registry module at an exact version, initialize it, inspect the downloaded module metadata, and run the normal Terraform workflow safely."
+    },
+    {
+      "id": "phase-03-broaden-and-upgrade",
+      "sequence": 3,
+      "title": "Broaden a constraint and upgrade the module",
+      "goal": "Change the module constraint, deliberately allow a newer compatible release, run init -upgrade, and prove which version Terraform selected."
+    },
+    {
+      "id": "phase-04-narrow-and-pin",
+      "sequence": 4,
+      "title": "Narrow constraints and pin versions",
+      "goal": "Practice patch-line, compound-range and exact version constraints and observe how they change module selection."
+    },
+    {
+      "id": "phase-05-fail-and-repair",
+      "sequence": 5,
+      "title": "Create and repair a version-selection failure",
+      "goal": "Introduce an impossible module version constraint, read the init failure, and repair it without changing unrelated configuration."
+    },
+    {
+      "id": "phase-06-verify-and-cleanup",
+      "sequence": 6,
+      "title": "Verify exam coverage and clean up",
+      "goal": "Prove the module-version lessons, review the registry-versus-local-module boundary, and remove every local training artifact in reverse-dependency order."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare-and-discover",
+      "title": "Verify Terraform and the lab boundary",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm Terraform is installed and understand that this lab creates no cloud infrastructure or credentials.",
+      "whyItMatters": "The goal is module source and version behavior, so cloud authentication would add noise and risk without helping objective 5d.",
+      "examRelevance": "Objectives 5a, 5c and especially 5d are the focus. This lab intentionally adds registry module version-management practice that a local-module refactoring lab does not claim.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-exam-004",
+        "src-find-use-modules"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell. If you use Bash instead, the Bash commands are supplied where syntax differs."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform version. If Terraform is missing, install it from the official HashiCorp install page before continuing."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Do not sign in to AWS, Azure, Google Cloud, HCP Terraform, or any other cloud for this lab. No credentials are required."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Record the safety boundary: the public Terraform Registry is used only to download module source code; the selected training module defines zero managed resources."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Record the learning boundary: this programme does not teach creating or refactoring a local child module. It teaches registry source addresses and practical module version constraints."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify Terraform",
+          "language": "text",
+          "content": "terraform version"
+        },
+        {
+          "title": "Bash - verify Terraform",
+          "language": "text",
+          "content": "terraform version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Terraform prints its installed version.",
+        "No cloud sign-in or credential is required.",
+        "The learner can state that this lab covers registry module sourcing and version management rather than local-module refactoring."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "terraform version completes successfully."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No cloud resource, account, workspace or credential has been created."
+        },
+        {
+          "id": "task-01-prerequisites-verify-03",
+          "text": "The learning boundary explicitly separates registry module versioning from local-module refactoring."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-02-registry-discovery",
+      "phaseId": "phase-01-prepare-and-discover",
+      "title": "Find the training module and inspect its versions",
+      "feature": "Terraform Registry discovery",
+      "difficulty": "Easy",
+      "goal": "Use the public Terraform Registry to inspect the module source address, available versions, inputs, outputs and resource count before using it.",
+      "whyItMatters": "The version argument only makes sense when you know which registry module you are calling and which releases are available.",
+      "examRelevance": "Objective 5a requires understanding how Terraform sources modules; objective 5d requires managing registry module versions.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-exam-004",
+        "src-find-use-modules",
+        "src-use-registry-modules",
+        "src-registry-label-current",
+        "src-registry-label-0241",
+        "src-cloudposse-label-docs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open https://registry.terraform.io in a browser."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Search for cloudposse/label/null and open the module page."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Confirm the module source address shown by the Registry is cloudposse/label/null."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open the version selector and confirm version 0.24.1 is available."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm version 0.25.0 is also available and is the current latest release used by this lab."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open the Resources tab and confirm the module defines 0 resources. This is why the lab can safely run plan and apply without cloud credentials."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open the Outputs tab and confirm the module exposes an id output."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not copy a latest-only example into the lab yet; the next task pins an exact baseline version so version changes are deliberate."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No CLI action for registry browsing",
+          "language": "text",
+          "content": "# This task is intentionally completed in the Terraform Registry browser.\n# No cloud or registry login is required for this public module."
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The Registry shows source cloudposse/label/null.",
+        "Versions 0.24.1 and 0.25.0 are visible.",
+        "The Registry reports zero resources for the module.",
+        "The module exposes an id output."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-registry-discovery-verify-01",
+          "text": "Version 0.24.1 is visible in the Registry."
+        },
+        {
+          "id": "task-02-registry-discovery-verify-02",
+          "text": "Version 0.25.0 is visible in the Registry."
+        },
+        {
+          "id": "task-02-registry-discovery-verify-03",
+          "text": "The Resources view shows 0 resources."
+        },
+        {
+          "id": "task-02-registry-discovery-verify-04",
+          "text": "The source address is exactly cloudposse/label/null."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-03-create-root-config",
+      "phaseId": "phase-01-prepare-and-discover",
+      "title": "Create the root configuration pinned to 0.24.1",
+      "feature": "Registry module call",
+      "difficulty": "Medium",
+      "goal": "Create a new root module that calls cloudposse/label/null at the exact version 0.24.1 and exposes harmless calculated outputs.",
+      "whyItMatters": "An exact initial pin gives a known baseline that you can later widen, narrow, break and repair.",
+      "examRelevance": "Objectives 5b and 5c are reinforced through module input values and outputs; objective 5d starts with an exact registry module version.",
+      "prerequisites": [
+        "task-02-registry-discovery"
+      ],
+      "sourceIds": [
+        "src-module-block",
+        "src-version-constraints",
+        "src-use-registry-modules",
+        "src-registry-label-0241",
+        "src-cloudposse-label-docs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create the folder C:\\terraform-labs\\fa-registry-modules-terraform."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open the folder and create main.tf. Ensure Windows does not save it as main.tf.txt."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Paste the complete main.tf block supplied in this task."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create outputs.tf in the same folder."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Paste the complete outputs.tf block supplied in this task."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm the module block uses source cloudposse/label/null and exact version = 0.24.1."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Confirm there are no provider blocks, backend blocks, cloud blocks or credentials in either file."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create and enter the lab folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force C:\\terraform-labs\\fa-registry-modules-terraform\nSet-Location C:\\terraform-labs\\fa-registry-modules-terraform\nGet-Location"
+        },
+        {
+          "title": "Bash - create and enter the lab folder",
+          "language": "text",
+          "content": "mkdir -p ~/terraform-labs/fa-registry-modules-terraform\ncd ~/terraform-labs/fa-registry-modules-terraform\npwd"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.24.1\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        },
+        {
+          "title": "outputs.tf",
+          "language": "text",
+          "content": "output \"training_label_id\" {\n  description = \"Deterministic label generated by the registry module.\"\n  value       = module.training_label.id\n}\n\noutput \"training_label_tags\" {\n  description = \"Tags calculated by the registry module.\"\n  value       = module.training_label.tags\n}"
+        }
+      ],
+      "expectedResults": [
+        "The lab folder contains main.tf and outputs.tf.",
+        "main.tf pins the module to = 0.24.1.",
+        "No credential or cloud provider configuration exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-create-root-config-verify-01",
+          "text": "main.tf exists with the exact registry source address."
+        },
+        {
+          "id": "task-03-create-root-config-verify-02",
+          "text": "The version line is exactly version = \"= 0.24.1\"."
+        },
+        {
+          "id": "task-03-create-root-config-verify-03",
+          "text": "outputs.tf references module.training_label.id and module.training_label.tags."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-04-init-exact-version",
+      "phaseId": "phase-02-install-exact-version",
+      "title": "Initialize and inspect the exact downloaded module",
+      "feature": "Module installation",
+      "difficulty": "Medium",
+      "goal": "Run terraform init, then inspect the module cache metadata to prove Terraform installed version 0.24.1.",
+      "whyItMatters": "Registry module versions are resolved during initialization; the downloaded module metadata gives direct evidence of the selected release.",
+      "examRelevance": "Objective 5d is practical here: Terraform resolves an exact registry module version and installs it during init.",
+      "prerequisites": [
+        "task-03-create-root-config"
+      ],
+      "sourceIds": [
+        "src-init",
+        "src-module-block",
+        "src-find-use-modules",
+        "src-registry-label-0241",
+        "src-lock-file"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open PowerShell or Bash in C:\\terraform-labs\\fa-registry-modules-terraform."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform init."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Read the init output and find the line that says it is downloading cloudposse/label/null 0.24.1 for training_label."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open the .terraform folder that init created. This is local working data and must not be committed as source."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open .terraform/modules/modules.json and find the training_label entry. Confirm its Version is 0.24.1."
+        },
+        {
+          "sequence": 6,
+          "instruction": "If .terraform.lock.hcl exists, do not use it as proof of the module version. HashiCorp documents that the dependency lock file currently tracks provider selections, not remote module selections."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not manually edit files under .terraform/modules. Terraform owns the downloaded cache."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - initialize and inspect module metadata",
+          "language": "text",
+          "content": "terraform init\nGet-Content .terraform\\modules\\modules.json"
+        },
+        {
+          "title": "Bash - initialize and inspect module metadata",
+          "language": "text",
+          "content": "terraform init\ncat .terraform/modules/modules.json"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "terraform init succeeds.",
+        "The init output identifies cloudposse/label/null 0.24.1.",
+        ".terraform/modules/modules.json records Version 0.24.1 for training_label."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-init-exact-version-verify-01",
+          "text": "Initialization completes without cloud authentication."
+        },
+        {
+          "id": "task-04-init-exact-version-verify-02",
+          "text": "modules.json contains cloudposse/label/null and version 0.24.1."
+        },
+        {
+          "id": "task-04-init-exact-version-verify-03",
+          "text": "The learner can explain why .terraform.lock.hcl is not the module-version lock."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-05-plan-apply-baseline",
+      "phaseId": "phase-02-install-exact-version",
+      "title": "Format, validate, review and apply the baseline configuration",
+      "feature": "Core workflow with a registry module",
+      "difficulty": "Medium",
+      "goal": "Run the normal Terraform workflow with the exact module version and verify the module output without creating infrastructure.",
+      "whyItMatters": "Module version management is easier to trust when the selected module actually participates in a validated, reviewed and applied root configuration.",
+      "examRelevance": "Objectives 3b through 3e and 5c support the module-version exercise; the module itself defines zero managed resources.",
+      "prerequisites": [
+        "task-04-init-exact-version"
+      ],
+      "sourceIds": [
+        "src-fmt",
+        "src-validate",
+        "src-plan",
+        "src-show",
+        "src-apply",
+        "src-output",
+        "src-state-list",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Run terraform fmt and confirm Terraform does not report a formatting error."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform validate and confirm Success! The configuration is valid."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create a saved plan named fa-registry-modules-baseline.tfplan."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review that saved plan with terraform show before applying it."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm the plan proposes no cloud resources and only calculates root outputs."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Apply the reviewed saved plan by filename. Do not run an unreviewed terraform apply."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Run terraform output training_label_id."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run terraform state list and confirm it prints no managed resource addresses."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell and Bash - baseline workflow",
+          "language": "text",
+          "content": "terraform fmt\nterraform validate\nterraform plan -out=fa-registry-modules-baseline.tfplan\nterraform show fa-registry-modules-baseline.tfplan\nterraform apply fa-registry-modules-baseline.tfplan\nterraform output training_label_id\nterraform state list"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Validation succeeds.",
+        "The saved plan contains no managed cloud resource creation.",
+        "Apply succeeds.",
+        "training_label_id prints fa-gbl-training-registry-modules-versioning.",
+        "terraform state list prints no managed resource address."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-plan-apply-baseline-verify-01",
+          "text": "The saved plan was reviewed before apply."
+        },
+        {
+          "id": "task-05-plan-apply-baseline-verify-02",
+          "text": "training_label_id equals fa-gbl-training-registry-modules-versioning."
+        },
+        {
+          "id": "task-05-plan-apply-baseline-verify-03",
+          "text": "terraform state list is empty."
+        },
+        {
+          "id": "task-05-plan-apply-baseline-verify-04",
+          "text": "No cloud credentials or resources were used."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-06-broaden-constraint",
+      "phaseId": "phase-03-broaden-and-upgrade",
+      "title": "Broaden the version constraint with ~> 0.24",
+      "feature": "Pessimistic constraint",
+      "difficulty": "Hard",
+      "goal": "Replace the exact module pin with ~> 0.24 and understand exactly which version range that syntax permits.",
+      "whyItMatters": "The pessimistic operator is easy to misread; the number of version components changes the upper bound.",
+      "examRelevance": "Objective 5d includes module version management. HashiCorp documents that ~> allows the right-most specified component to increment.",
+      "prerequisites": [
+        "task-05-plan-apply-baseline"
+      ],
+      "sourceIds": [
+        "src-version-constraints",
+        "src-module-block",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open main.tf."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Replace only version = \"= 0.24.1\" with version = \"~> 0.24\"."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Do not change the source address or any module inputs."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Understand the constraint before running init: ~> 0.24 allows 0.24 and later 0.x releases but not 1.0 or later. Therefore 0.25.0 is acceptable."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Save main.tf."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No upgrade yet",
+          "language": "text",
+          "content": "# Edit main.tf first using the complete replacement block below.\n# The upgrade is deliberately performed in the next task."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf after broadening the constraint",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"~> 0.24\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        }
+      ],
+      "expectedResults": [
+        "main.tf uses version = \"~> 0.24\".",
+        "The learner predicts that 0.25.0 is acceptable before running Terraform."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-broaden-constraint-verify-01",
+          "text": "The source remains cloudposse/label/null."
+        },
+        {
+          "id": "task-06-broaden-constraint-verify-02",
+          "text": "The version line is exactly ~> 0.24."
+        },
+        {
+          "id": "task-06-broaden-constraint-verify-03",
+          "text": "The learner can state that 1.0.0 would be outside this constraint."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-07-upgrade-to-0250",
+      "phaseId": "phase-03-broaden-and-upgrade",
+      "title": "Run init -upgrade and prove Terraform selects 0.25.0",
+      "feature": "Registry module upgrade",
+      "difficulty": "Hard",
+      "goal": "Force Terraform to reconsider the already-installed module and select the newest version allowed by ~> 0.24.",
+      "whyItMatters": "Re-running plain init does not necessarily replace an already-installed module; -upgrade is the deliberate signal to update module source selections.",
+      "examRelevance": "Objective 5d is demonstrated by changing a registry module constraint and using init -upgrade to select a newer allowed release.",
+      "prerequisites": [
+        "task-06-broaden-constraint"
+      ],
+      "sourceIds": [
+        "src-init",
+        "src-version-constraints",
+        "src-lock-file",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Run terraform init -upgrade."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Read the init output and confirm Terraform downloads cloudposse/label/null 0.25.0 for training_label."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open .terraform/modules/modules.json and confirm the training_label Version changed from 0.24.1 to 0.25.0."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform validate."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create a saved plan named fa-registry-modules-upgrade-0250.tfplan."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Review the saved plan with terraform show."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Apply the reviewed saved plan by filename."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run terraform output training_label_id and confirm the result remains stable."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - upgrade and inspect",
+          "language": "text",
+          "content": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-upgrade-0250.tfplan\nterraform show fa-registry-modules-upgrade-0250.tfplan\nterraform apply fa-registry-modules-upgrade-0250.tfplan\nterraform output training_label_id"
+        },
+        {
+          "title": "Bash - upgrade and inspect",
+          "language": "text",
+          "content": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-upgrade-0250.tfplan\nterraform show fa-registry-modules-upgrade-0250.tfplan\nterraform apply fa-registry-modules-upgrade-0250.tfplan\nterraform output training_label_id"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Terraform selects module version 0.25.0.",
+        "modules.json records Version 0.25.0.",
+        "Validation succeeds.",
+        "The reviewed apply succeeds and the calculated label remains fa-gbl-training-registry-modules-versioning."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-upgrade-to-0250-verify-01",
+          "text": "modules.json shows 0.25.0."
+        },
+        {
+          "id": "task-07-upgrade-to-0250-verify-02",
+          "text": "The saved plan was reviewed before apply."
+        },
+        {
+          "id": "task-07-upgrade-to-0250-verify-03",
+          "text": "The module output remains stable after the version upgrade."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-08-lock-file-distinction",
+      "phaseId": "phase-03-broaden-and-upgrade",
+      "title": "Prove module versions are not locked in .terraform.lock.hcl",
+      "feature": "Dependency locking distinction",
+      "difficulty": "Medium",
+      "goal": "Compare module installation metadata with Terraform dependency lock behavior and explain where the selected remote module version is remembered.",
+      "whyItMatters": "A common exam and real-world mistake is assuming .terraform.lock.hcl locks both providers and registry modules.",
+      "examRelevance": "HashiCorp states that the dependency lock file currently tracks provider dependencies only; remote module versions are re-selected from their constraints.",
+      "prerequisites": [
+        "task-07-upgrade-to-0250"
+      ],
+      "sourceIds": [
+        "src-lock-file",
+        "src-init",
+        "src-module-block"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open .terraform/modules/modules.json and locate training_label Version 0.25.0."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Look in the root folder for .terraform.lock.hcl."
+        },
+        {
+          "sequence": 3,
+          "instruction": "If no lock file exists, note that this configuration has no provider dependency requiring a lock selection."
+        },
+        {
+          "sequence": 4,
+          "instruction": "If a lock file exists because of a local Terraform behavior or prior experiment, search it for cloudposse/label/null and confirm it does not contain a remote module version selection."
+        },
+        {
+          "sequence": 5,
+          "instruction": "State the rule: module version constraints live in the module block; exact pins are the way to force the same registry module version across fresh installations."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - compare module metadata and lock file",
+          "language": "text",
+          "content": "Get-Content .terraform\\modules\\modules.json\nTest-Path .terraform.lock.hcl\nif (Test-Path .terraform.lock.hcl) { Select-String -Path .terraform.lock.hcl -SimpleMatch \"cloudposse/label/null\" }"
+        },
+        {
+          "title": "Bash - compare module metadata and lock file",
+          "language": "text",
+          "content": "cat .terraform/modules/modules.json\ntest -f .terraform.lock.hcl && echo \"lock file exists\" || echo \"no lock file\"\nif [ -f .terraform.lock.hcl ]; then grep -F \"cloudposse/label/null\" .terraform.lock.hcl || true; fi"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "modules.json shows the selected module version.",
+        ".terraform.lock.hcl is not used to pin the remote module version.",
+        "The learner can explain why an exact module version constraint provides reproducible registry module selection."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-lock-file-distinction-verify-01",
+          "text": "The selected module version is visible in modules.json."
+        },
+        {
+          "id": "task-08-lock-file-distinction-verify-02",
+          "text": "No cloudposse/label/null module selection is treated as a provider lock entry."
+        },
+        {
+          "id": "task-08-lock-file-distinction-verify-03",
+          "text": "The learner can distinguish provider locking from remote module version constraints."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-09-narrow-patch-line",
+      "phaseId": "phase-04-narrow-and-pin",
+      "title": "Narrow the constraint to the 0.24 patch line",
+      "feature": "Pessimistic patch constraint",
+      "difficulty": "Hard",
+      "goal": "Use ~> 0.24.0, reinitialize with -upgrade, and prove Terraform returns to the newest 0.24.x release.",
+      "whyItMatters": "Adding the patch component changes the pessimistic upper bound, which is a practical version-constraint distinction worth seeing directly.",
+      "examRelevance": "Objective 5d: manage module versions with precise version ranges rather than assuming all ~> expressions behave the same.",
+      "prerequisites": [
+        "task-08-lock-file-distinction"
+      ],
+      "sourceIds": [
+        "src-version-constraints",
+        "src-init",
+        "src-registry-label-0241"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Replace version = \"~> 0.24\" with version = \"~> 0.24.0\" in main.tf."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Understand the new range: versions from 0.24.0 up to but not including 0.25.0 are acceptable."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Run terraform init -upgrade."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Inspect modules.json and confirm Terraform selects 0.24.1."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform validate."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create and review a saved plan named fa-registry-modules-patch-line.tfplan."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Apply the reviewed saved plan and confirm the label output is unchanged."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - patch-line selection",
+          "language": "text",
+          "content": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-patch-line.tfplan\nterraform show fa-registry-modules-patch-line.tfplan\nterraform apply fa-registry-modules-patch-line.tfplan\nterraform output training_label_id"
+        },
+        {
+          "title": "Bash - patch-line selection",
+          "language": "text",
+          "content": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-patch-line.tfplan\nterraform show fa-registry-modules-patch-line.tfplan\nterraform apply fa-registry-modules-patch-line.tfplan\nterraform output training_label_id"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf with patch-line constraint",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"~> 0.24.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        }
+      ],
+      "expectedResults": [
+        "Terraform selects 0.24.1 because 0.25.0 is outside ~> 0.24.0.",
+        "Validation and reviewed apply succeed.",
+        "The output remains stable."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-narrow-patch-line-verify-01",
+          "text": "modules.json shows Version 0.24.1."
+        },
+        {
+          "id": "task-09-narrow-patch-line-verify-02",
+          "text": "The learner can explain the difference between ~> 0.24 and ~> 0.24.0."
+        },
+        {
+          "id": "task-09-narrow-patch-line-verify-03",
+          "text": "The saved plan was reviewed before apply."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-10-compound-and-exact",
+      "phaseId": "phase-04-narrow-and-pin",
+      "title": "Practice a compound range and then an exact pin",
+      "feature": "Version constraint forms",
+      "difficulty": "Hard",
+      "goal": "Use an explicit lower/upper range and then finish with an exact module version pin.",
+      "whyItMatters": "Being able to read equivalent constraints helps you understand what versions Terraform may select and when upgrades can happen.",
+      "examRelevance": "Objective 5d covers managing module versions; this task compares compound constraints with an exact pin.",
+      "prerequisites": [
+        "task-09-narrow-patch-line"
+      ],
+      "sourceIds": [
+        "src-version-constraints",
+        "src-module-block",
+        "src-init",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Replace the version line with version = \">= 0.24.0, < 0.25.0\" using the complete file below."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform init -upgrade and confirm modules.json still selects 0.24.1."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Notice that this compound range expresses the same practical 0.24.x ceiling as ~> 0.24.0 for the versions used in this lab."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Now replace the version line with version = \"= 0.25.0\" using the second complete file below."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform init -upgrade again and confirm modules.json selects exactly 0.25.0."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Run terraform validate after the final exact pin."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - reinitialize after each edit",
+          "language": "text",
+          "content": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate"
+        },
+        {
+          "title": "Bash - reinitialize after each edit",
+          "language": "text",
+          "content": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf with compound 0.24.x range",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \">= 0.24.0, < 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        },
+        {
+          "title": "main.tf final exact 0.25.0 pin",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The compound range selects 0.24.1.",
+        "The final exact pin selects only 0.25.0.",
+        "Validation succeeds after the exact pin."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-compound-and-exact-verify-01",
+          "text": "The learner can read >= 0.24.0, < 0.25.0 as an explicit range."
+        },
+        {
+          "id": "task-10-compound-and-exact-verify-02",
+          "text": "modules.json shows 0.25.0 after the final exact pin."
+        },
+        {
+          "id": "task-10-compound-and-exact-verify-03",
+          "text": "main.tf ends this task with version = \"= 0.25.0\"."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-11-break-version-selection",
+      "phaseId": "phase-05-fail-and-repair",
+      "title": "Create an impossible module version constraint",
+      "feature": "Troubleshooting version resolution",
+      "difficulty": "Hard",
+      "goal": "Intentionally request a version range the Registry cannot satisfy and diagnose the failure at terraform init.",
+      "whyItMatters": "Version constraint failures happen before plan/apply; recognizing that boundary prevents you from troubleshooting unrelated providers or resources.",
+      "examRelevance": "Objective 5d: an invalid or unsatisfiable module constraint prevents Terraform from installing an acceptable module version.",
+      "prerequisites": [
+        "task-10-compound-and-exact"
+      ],
+      "sourceIds": [
+        "src-version-constraints",
+        "src-init",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "This failure is intentional. Do not change the source address, delete state, or add credentials to try to fix it."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Replace the exact version line with version = \">= 1.0.0\" using the complete failure file below."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Save main.tf."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Run terraform init -upgrade."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Expect initialization to fail because the Registry module used by this lab has no 1.x release and the current latest verified release is 0.25.0."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Read the error and identify that Terraform cannot find an available module version matching the configured constraint."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not run terraform plan or apply after the failed init. The working directory is not successfully initialized for the requested dependency set."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell and Bash - trigger the safe failure",
+          "language": "text",
+          "content": "terraform init -upgrade"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf with intentionally impossible constraint",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \">= 1.0.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        }
+      ],
+      "expectedResults": [
+        "terraform init -upgrade fails safely.",
+        "The error identifies the module version constraint as unsatisfied.",
+        "No resource or state change occurs because initialization stops first."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-break-version-selection-verify-01",
+          "text": "The failure happens during init."
+        },
+        {
+          "id": "task-11-break-version-selection-verify-02",
+          "text": "No plan or apply is attempted after the failure."
+        },
+        {
+          "id": "task-11-break-version-selection-verify-03",
+          "text": "The learner identifies >= 1.0.0 as the deliberate cause."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-12-repair-version-selection",
+      "phaseId": "phase-05-fail-and-repair",
+      "title": "Repair the failed init and re-establish the exact pin",
+      "feature": "Controlled repair",
+      "difficulty": "Hard",
+      "goal": "Restore version 0.25.0, reinitialize, validate, review a saved plan and apply it.",
+      "whyItMatters": "A controlled repair changes only the faulty version constraint and then re-runs the normal verification workflow.",
+      "examRelevance": "Objective 5d plus troubleshooting discipline: fix the dependency constraint itself rather than changing unrelated infrastructure settings.",
+      "prerequisites": [
+        "task-11-break-version-selection"
+      ],
+      "sourceIds": [
+        "src-init",
+        "src-version-constraints",
+        "src-plan",
+        "src-show",
+        "src-apply",
+        "src-registry-label-current"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Replace the impossible version line with version = \"= 0.25.0\" using the complete repaired main.tf below."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run terraform init -upgrade."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Inspect modules.json and confirm Version 0.25.0."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run terraform validate."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create a saved plan named fa-registry-modules-repaired.tfplan."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Review it with terraform show."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Apply the reviewed plan by filename."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run terraform output training_label_id and confirm the expected deterministic value."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - repair and verify",
+          "language": "text",
+          "content": "terraform init -upgrade\nGet-Content .terraform\\modules\\modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-repaired.tfplan\nterraform show fa-registry-modules-repaired.tfplan\nterraform apply fa-registry-modules-repaired.tfplan\nterraform output training_label_id"
+        },
+        {
+          "title": "Bash - repair and verify",
+          "language": "text",
+          "content": "terraform init -upgrade\ncat .terraform/modules/modules.json\nterraform validate\nterraform plan -out=fa-registry-modules-repaired.tfplan\nterraform show fa-registry-modules-repaired.tfplan\nterraform apply fa-registry-modules-repaired.tfplan\nterraform output training_label_id"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "main.tf repaired to exact 0.25.0",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.5.0, < 2.0.0\"\n}\n\nmodule \"training_label\" {\n  source  = \"cloudposse/label/null\"\n  version = \"= 0.25.0\"\n\n  namespace   = \"fa\"\n  environment = \"gbl\"\n  stage       = \"training\"\n  name        = \"registry-modules\"\n  attributes  = [\"versioning\"]\n}"
+        }
+      ],
+      "expectedResults": [
+        "Initialization succeeds again.",
+        "modules.json shows 0.25.0.",
+        "Validation succeeds.",
+        "The reviewed apply succeeds.",
+        "training_label_id is fa-gbl-training-registry-modules-versioning."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-repair-version-selection-verify-01",
+          "text": "The repaired file changes only the version constraint from the deliberate failure."
+        },
+        {
+          "id": "task-12-repair-version-selection-verify-02",
+          "text": "The saved plan was reviewed before apply."
+        },
+        {
+          "id": "task-12-repair-version-selection-verify-03",
+          "text": "The expected label output returns."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-13-exam-review",
+      "phaseId": "phase-06-verify-and-cleanup",
+      "title": "Review Registry module and version-constraint exam points",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Turn the completed commands into a clear Terraform Associate 004 mental model for objectives 5a, 5c and 5d.",
+      "whyItMatters": "The hands-on work matters only if you can explain the general Terraform behavior without relying on this one module.",
+      "examRelevance": "Official exam mapping: 5a module sourcing, 5c using modules, and 5d managing module versions.",
+      "prerequisites": [
+        "task-12-repair-version-selection"
+      ],
+      "sourceIds": [
+        "src-exam-004",
+        "src-module-block",
+        "src-version-constraints",
+        "src-find-use-modules",
+        "src-lock-file",
+        "src-init"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "State the registry source rule: a public registry module source uses namespace/name/provider syntax, such as cloudposse/label/null."
+        },
+        {
+          "sequence": 2,
+          "instruction": "State the version rule: the version argument is available for modules sourced from a registry; local filesystem modules do not use the version argument."
+        },
+        {
+          "sequence": 3,
+          "instruction": "State the init rule: terraform init downloads child modules; terraform init -upgrade deliberately reconsiders already-installed module versions against the current constraints."
+        },
+        {
+          "sequence": 4,
+          "instruction": "State the exact-pin rule: = 0.25.0 allows only 0.25.0."
+        },
+        {
+          "sequence": 5,
+          "instruction": "State the pessimistic rule shown in the lab: ~> 0.24 allowed 0.25.0, while ~> 0.24.0 kept selection within the 0.24.x line."
+        },
+        {
+          "sequence": 6,
+          "instruction": "State the compound rule: >= 0.24.0, < 0.25.0 expresses explicit lower and upper bounds."
+        },
+        {
+          "sequence": 7,
+          "instruction": "State the lock-file rule: .terraform.lock.hcl currently records provider selections, not remote module version selections."
+        },
+        {
+          "sequence": 8,
+          "instruction": "State the failure rule: if no module release satisfies the configured constraint, initialization fails before plan/apply."
+        },
+        {
+          "sequence": 9,
+          "instruction": "State the boundary with the separate local-module refactoring lab: local module structure/refactoring and registry module release selection are different skills; this Follow Along intentionally covers the latter."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "Final module metadata check",
+          "language": "text",
+          "content": "terraform init\nterraform validate\nterraform output training_label_id"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can explain all nine review points in their own words.",
+        "Final configuration is initialized, valid and pinned to 0.25.0.",
+        "No cloud infrastructure exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-exam-review-verify-01",
+          "text": "main.tf is pinned to = 0.25.0."
+        },
+        {
+          "id": "task-13-exam-review-verify-02",
+          "text": "The learner can explain why local modules do not use the registry version argument."
+        },
+        {
+          "id": "task-13-exam-review-verify-03",
+          "text": "The learner can explain why .terraform.lock.hcl is not a remote-module lock."
+        },
+        {
+          "id": "task-13-exam-review-verify-04",
+          "text": "The learner can explain when init -upgrade is required."
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-14-cleanup",
+      "phaseId": "phase-06-verify-and-cleanup",
+      "title": "Run a saved destroy review and remove all local lab artifacts",
+      "feature": "Reverse-dependency cleanup",
+      "difficulty": "Medium",
+      "goal": "Verify there is no managed infrastructure, review a saved destroy plan, and delete the local module cache, state, plan files and lab folder in safe order.",
+      "whyItMatters": "Even a no-cloud lab should prove what Terraform manages before local state and caches are removed.",
+      "examRelevance": "Objective 3f is reinforced safely: the destroy review confirms there are no managed resources, then local training artifacts are removed.",
+      "prerequisites": [
+        "task-13-exam-review"
+      ],
+      "sourceIds": [
+        "src-plan",
+        "src-show",
+        "src-apply",
+        "src-state-list",
+        "src-destroy"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Delete only C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/state/cache artifacts named by this lab."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Run terraform state list and confirm it prints no managed resource addresses."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create a saved destroy plan named fa-registry-modules-destroy.tfplan with terraform plan -destroy -out=...."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review the destroy plan with terraform show. It must not contain any cloud resource destruction."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Apply the reviewed destroy plan by filename. Because the training module defines zero resources, Terraform has no infrastructure object to destroy."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run terraform state list again and confirm it is still empty."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete the generated saved plan files from this lab only: baseline, upgrade-0250, patch-line, repaired and destroy plan files."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete the .terraform module cache only after the final Terraform verification is complete."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete any local terraform.tfstate or terraform.tfstate.backup files created by the local apply only after the final state verification."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete the exact lab folder C:\\terraform-labs\\fa-registry-modules-terraform last. Do not delete C:\\terraform-labs or any sibling lab folder."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Verify the exact fa-registry-modules-terraform folder no longer exists."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Affirm the programme cleanup acknowledgement supplied below."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - saved destroy review",
+          "language": "text",
+          "content": "terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list"
+        },
+        {
+          "title": "PowerShell - local file cleanup",
+          "language": "text",
+          "content": "Remove-Item .\\fa-registry-modules-baseline.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-upgrade-0250.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-patch-line.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-repaired.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\fa-registry-modules-destroy.tfplan -ErrorAction SilentlyContinue\nRemove-Item .\\.terraform -Recurse -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate -Force -ErrorAction SilentlyContinue\nRemove-Item .\\terraform.tfstate.backup -Force -ErrorAction SilentlyContinue\nSet-Location ..\nRemove-Item .\\fa-registry-modules-terraform -Recurse -Force\nTest-Path .\\fa-registry-modules-terraform"
+        },
+        {
+          "title": "Bash - saved destroy review",
+          "language": "text",
+          "content": "terraform state list\nterraform plan -destroy -out=fa-registry-modules-destroy.tfplan\nterraform show fa-registry-modules-destroy.tfplan\nterraform apply fa-registry-modules-destroy.tfplan\nterraform state list"
+        },
+        {
+          "title": "Bash - local file cleanup",
+          "language": "text",
+          "content": "rm -f fa-registry-modules-baseline.tfplan\nrm -f fa-registry-modules-upgrade-0250.tfplan\nrm -f fa-registry-modules-patch-line.tfplan\nrm -f fa-registry-modules-repaired.tfplan\nrm -f fa-registry-modules-destroy.tfplan\nrm -rf .terraform\nrm -f terraform.tfstate\nrm -f terraform.tfstate.backup\ncd ..\nrm -rf fa-registry-modules-terraform\ntest ! -d fa-registry-modules-terraform"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The saved destroy plan contains no cloud resource destruction.",
+        "terraform state list is empty before and after the destroy review.",
+        "All lab-only plan, cache and state files are removed.",
+        "The exact fa-registry-modules-terraform folder is removed last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-cleanup-verify-01",
+          "text": "No managed resource address exists before cleanup."
+        },
+        {
+          "id": "task-14-cleanup-verify-02",
+          "text": "The saved destroy plan was reviewed before apply."
+        },
+        {
+          "id": "task-14-cleanup-verify-03",
+          "text": "No cloud resource was destroyed because none was created."
+        },
+        {
+          "id": "task-14-cleanup-verify-04",
+          "text": "The exact local lab folder is absent after cleanup."
+        },
+        {
+          "id": "task-14-cleanup-verify-05",
+          "text": "No sibling lab folder or unrelated file was removed."
+        }
+      ],
+      "troubleshooting": []
+    }
+  ],
+  "resources": [
+    {
+      "id": "resource-lab-folder",
+      "label": "Local lab folder",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-create-root-config",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-main-tf",
+      "label": "Root module main.tf",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\main.tf",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-create-root-config",
+      "dependsOn": [
+        "resource-lab-folder"
+      ]
+    },
+    {
+      "id": "resource-outputs-tf",
+      "label": "Root module outputs.tf",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\outputs.tf",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-create-root-config",
+      "dependsOn": [
+        "resource-lab-folder"
+      ]
+    },
+    {
+      "id": "resource-module-cache",
+      "label": "Terraform downloaded module cache",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\.terraform\\modules",
+      "generatedValue": "Downloaded registry module source and modules.json metadata",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-init-exact-version",
+      "dependsOn": [
+        "resource-main-tf"
+      ]
+    },
+    {
+      "id": "resource-state",
+      "label": "Local Terraform state",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\terraform.tfstate",
+      "generatedValue": "May be created by local apply; contains outputs but no managed resource address",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-plan-apply-baseline",
+      "dependsOn": [
+        "resource-main-tf",
+        "resource-outputs-tf",
+        "resource-module-cache"
+      ]
+    },
+    {
+      "id": "resource-plan-baseline",
+      "label": "Baseline saved plan",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-baseline.tfplan",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-plan-apply-baseline",
+      "dependsOn": [
+        "resource-module-cache"
+      ]
+    },
+    {
+      "id": "resource-plan-upgrade",
+      "label": "0.25.0 upgrade saved plan",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-upgrade-0250.tfplan",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-upgrade-to-0250",
+      "dependsOn": [
+        "resource-module-cache"
+      ]
+    },
+    {
+      "id": "resource-plan-patch",
+      "label": "0.24.x patch-line saved plan",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-patch-line.tfplan",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-narrow-patch-line",
+      "dependsOn": [
+        "resource-module-cache"
+      ]
+    },
+    {
+      "id": "resource-plan-repaired",
+      "label": "Repaired exact-pin saved plan",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-repaired.tfplan",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-repair-version-selection",
+      "dependsOn": [
+        "resource-module-cache"
+      ]
+    },
+    {
+      "id": "resource-plan-destroy",
+      "label": "Saved destroy plan",
+      "exactName": "C:\\terraform-labs\\fa-registry-modules-terraform\\fa-registry-modules-destroy.tfplan",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-14-cleanup",
+      "dependsOn": [
+        "resource-state",
+        "resource-module-cache"
+      ]
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-registry-modules-destroy.tfplan",
+      "action": "Create and review the saved destroy plan, then apply that reviewed plan.",
+      "verification": "terraform state list is empty and no cloud resource destruction appears in the destroy plan.",
+      "taskId": "task-14-cleanup"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-registry-modules-baseline.tfplan, fa-registry-modules-upgrade-0250.tfplan, fa-registry-modules-patch-line.tfplan, fa-registry-modules-repaired.tfplan, fa-registry-modules-destroy.tfplan",
+      "action": "Delete only the named saved plan files after final Terraform verification.",
+      "verification": "None of the five lab plan files remains.",
+      "taskId": "task-14-cleanup"
+    },
+    {
+      "sequence": 3,
+      "resource": ".terraform module cache",
+      "action": "Delete the exact .terraform directory inside the lab folder.",
+      "verification": ".terraform/modules and modules.json are absent.",
+      "taskId": "task-14-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "terraform.tfstate and terraform.tfstate.backup",
+      "action": "Delete only the lab-local state files after state list and destroy verification are complete.",
+      "verification": "No lab-local state file remains.",
+      "taskId": "task-14-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "main.tf and outputs.tf",
+      "action": "Remove the configuration only as part of deleting the exact lab folder after all verification is finished.",
+      "verification": "The files disappear with the exact lab folder.",
+      "taskId": "task-14-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "C:\\terraform-labs\\fa-registry-modules-terraform",
+      "action": "Delete the exact lab folder last. Do not delete its parent or sibling labs.",
+      "verification": "The exact fa-registry-modules-terraform folder is absent and unrelated folders remain.",
+      "taskId": "task-14-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "completionGate": "acknowledgement",
+    "manualOnly": true,
+    "ordering": "reverse_dependency"
+  },
+  "programmeCleanupAcknowledgement": "I verified that terraform state list contained no managed resource addresses; the saved destroy plan contained no cloud resource destruction; all five fa-registry-modules-terraform saved plan files, the .terraform module cache, and any lab-local Terraform state files were removed; and only then was the exact folder C:\\terraform-labs\\fa-registry-modules-terraform deleted without changing any sibling lab or unrelated file.",
+  "warnings": {
+    "cost": "This Follow Along downloads public Terraform Registry module source code but intentionally creates zero cloud resources, accounts, workspaces or paid services. No cloud resource charges are expected from the lab itself.",
+    "safety": "Delete only the exact local folder C:\\terraform-labs\\fa-registry-modules-terraform and the exact plan/cache/state files created inside it. Never delete the parent terraform-labs folder or a sibling lab.",
+    "credentials": "No cloud or registry credentials are required. Do not add AWS, HCP Terraform, GitHub or other credentials to the configuration or command history.",
+    "region": "The public Terraform Registry is global and this Follow Along runs locally. It intentionally creates no AWS or other cloud resource, so no cloud Region selection is required."
+  },
+  "qualityReport": {
+    "phaseCount": 6,
+    "taskCount": 14,
+    "checkboxCount": 47,
+    "cliCommandCount": 109,
+    "editableBlockCount": 8,
+    "verificationCount": 47,
+    "cleanupItemCount": 6,
+    "officialSourceCount": 18,
+    "missingItems": [],
+    "uncertainItems": [],
+    "selfReview": {
+      "uniqueTaskIds": true,
+      "prerequisitesReferenceEarlierTasksOnly": true,
+      "browserAndCliRoutesPresent": true,
+      "completeEditableFilesIncluded": true,
+      "commandsHaveExpectedResults": true,
+      "everyTaskHasVerification": true,
+      "sourceLinksReciprocal": true,
+      "cleanupReverseDependency": true,
+      "cloudCleanupBeforeLocalState": true,
+      "realCredentialsPresent": false,
+      "placeholderOrDeferredContentPresent": false,
+      "registryModuleVersionCoveragePractical": true,
+      "localModuleRefactoringClaimed": false
+    }
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and its JSON manuscript are intentionally offline authoring artifacts. They have not been locally validated by Study Tracker, imported, accepted, approved, published, or fingerprinted. Local Codex should convert and validate them using the repository's controlled workflow."
+  }
+}
