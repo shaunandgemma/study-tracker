@@ -1,0 +1,3340 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-api-gateway-e1ea3d7e-d986-465f-ae98-a4b72f9698b4",
+  "preparedAt": "2026-08-11T22:09:34.148Z",
+  "service": {
+    "officialName": "Amazon API Gateway",
+    "shortName": "API Gateway"
+  },
+  "generationMode": "new_follow_along",
+  "updateTarget": null,
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "79a7d5d5a47863a8b2ccdd84212e6f43835569de14f7d51861a2a9055f59f630"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "79a7d5d5a47863a8b2ccdd84212e6f43835569de14f7d51861a2a9055f59f630"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "api-gateway",
+      "serviceName": "Amazon API Gateway",
+      "shortName": "API Gateway",
+      "displayName": "Amazon API Gateway Secure REST and HTTP APIs Follow Along",
+      "subtitle": "Build Lambda-backed APIs with Amazon Cognito authorization, REST API usage plans, and deliberate CORS policies",
+      "description": "Create two small public API front doors without creating a VPC: a REST API that uses a Cognito user-pool authorizer plus an API key and usage plan, and an HTTP API that uses a JWT authorizer. Both APIs invoke the same Lambda function. The exercise uses a fixed trusted browser origin, https://example.com, to demonstrate restrictive CORS configuration rather than permissive wildcard production defaults.",
+      "learningOutcome": "Construct secure REST and HTTP APIs with Lambda integrations, Cognito authorizers, usage plans, and CORS controls.",
+      "programmeId": "api-gateway-learning-path",
+      "pathId": "api-gateway-learning-path",
+      "componentNamespace": "",
+      "category": "Amazon API Gateway",
+      "difficulty": "Beginner",
+      "estimatedMinutes": 70,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-get-started-with-the-rest-api-console",
+        "title": "Get started with the REST API console",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-rest-new-console.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "REST API creation, Lambda proxy integration, deployment, invocation, and basic cleanup.",
+        "taskIds": [
+          "task-api-gateway-create-and-verify-temporary-training-access-001",
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004",
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005",
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-control-access-to-rest-apis-using-amazon-cognito-user-pools-as-an-auth",
+        "title": "Control access to REST APIs using Amazon Cognito user pools as an authorizer",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "REST API Cognito authorization behavior and Authorization header token use.",
+        "taskIds": [
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-integrate-a-rest-api-with-an-amazon-cognito-user-pool",
+        "title": "Integrate a REST API with an Amazon Cognito user pool",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console steps for a REST API Cognito authorizer.",
+        "taskIds": [
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005"
+        ]
+      },
+      {
+        "id": "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway",
+        "title": "Usage plans and API keys for REST APIs in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Usage-plan and API-key security limitations.",
+        "taskIds": [
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004",
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005",
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-set-up-usage-plans-for-rest-apis-in-api-gateway",
+        "title": "Set up usage plans for REST APIs in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-usage-plans.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Usage-plan, stage, and API-key association steps.",
+        "taskIds": [
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005"
+        ]
+      },
+      {
+        "id": "source-cors-for-rest-apis-in-api-gateway",
+        "title": "CORS for REST APIs in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "REST API proxy-integration CORS responsibilities.",
+        "taskIds": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002",
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005"
+        ]
+      },
+      {
+        "id": "source-configure-cors-for-http-apis-in-api-gateway",
+        "title": "Configure CORS for HTTP APIs in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-cors.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "HTTP API CORS configuration and preflight behavior.",
+        "taskIds": [
+          "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007",
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway",
+        "title": "Control access to HTTP APIs with JWT authorizers in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "HTTP API JWT authorizer creation and route attachment.",
+        "taskIds": [
+          "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007"
+        ]
+      },
+      {
+        "id": "source-invoking-a-lambda-function-using-an-amazon-api-gateway-endpoint",
+        "title": "Invoking a Lambda function using an Amazon API Gateway endpoint",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda proxy integration concepts and API Gateway invocation permissions.",
+        "taskIds": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002",
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004"
+        ]
+      },
+      {
+        "id": "source-granting-lambda-function-access-to-aws-services",
+        "title": "Granting Lambda function access to AWS services",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/permissions-function-services.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda resource-based invocation permissions.",
+        "taskIds": [
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004",
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006"
+        ]
+      },
+      {
+        "id": "source-create-function-aws-cli",
+        "title": "create-function — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda function CLI creation requirements.",
+        "taskIds": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ]
+      },
+      {
+        "id": "source-create-authorizer-aws-cli",
+        "title": "create-authorizer — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/apigateway/create-authorizer.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "REST API Cognito authorizer CLI syntax.",
+        "taskIds": [
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005"
+        ]
+      },
+      {
+        "id": "source-create-integration-aws-cli",
+        "title": "create-integration — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/apigatewayv2/create-integration.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "HTTP API Lambda integration CLI syntax.",
+        "taskIds": [
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006"
+        ]
+      },
+      {
+        "id": "source-create-an-amazon-cognito-user-pool-for-a-rest-api",
+        "title": "Create an Amazon Cognito user pool for a REST API",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-create-cognito-user-pool.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Cognito user-pool, app-client, and token values required by API Gateway.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ]
+      },
+      {
+        "id": "source-create-user-pool-aws-cli",
+        "title": "create-user-pool — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cognito-idp/create-user-pool.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Amazon Cognito user-pool CLI creation.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ]
+      },
+      {
+        "id": "source-create-user-pool-client-aws-cli",
+        "title": "create-user-pool-client — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cognito-idp/create-user-pool-client.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Amazon Cognito app-client CLI creation.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ]
+      },
+      {
+        "id": "source-admin-create-user-aws-cli",
+        "title": "admin-create-user — AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cognito-idp/admin-create-user.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Amazon Cognito test-user CLI creation.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ]
+      },
+      {
+        "id": "source-test-cors-for-an-api-gateway-api",
+        "title": "Test CORS for an API Gateway API",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-test-cors.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "CORS preflight verification.",
+        "taskIds": [
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/permissions.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-api-gateway-create-and-verify-temporary-training-access-001"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-2",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway-tutorial.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-3",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cognito-idp",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-4",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006",
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-5",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "API",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-api-gateway-create-and-verify-temporary-training-access-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-safe-training-access",
+        "phaseNumber": 1,
+        "title": "Prepare safe training access",
+        "description": "Create a temporary non-root IAM identity and grant it the training permissions needed to create the named resources.",
+        "taskIds": [
+          "task-api-gateway-create-and-verify-temporary-training-access-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-create-the-shared-lambda-backend",
+        "phaseNumber": 2,
+        "title": "Create the shared Lambda backend",
+        "description": "Create the Lambda execution role, function, and API response behavior used by both APIs.",
+        "taskIds": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-create-amazon-cognito-authentication",
+        "phaseNumber": 3,
+        "title": "Create Amazon Cognito authentication",
+        "description": "Create a user pool, app client, and harmless training user that can obtain tokens.",
+        "taskIds": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-build-and-secure-the-rest-api",
+        "phaseNumber": 4,
+        "title": "Build and secure the REST API",
+        "description": "Create a REST API resource, Lambda proxy integration, Cognito authorizer, deployment, API key, usage plan, and CORS behavior.",
+        "taskIds": [
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004",
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-build-and-secure-the-http-api",
+        "phaseNumber": 5,
+        "title": "Build and secure the HTTP API",
+        "description": "Create an HTTP API, Lambda integration, Cognito JWT authorizer, protected route, stage, and HTTP API CORS policy.",
+        "taskIds": [
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006",
+          "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-6-validate-controls-and-remove-the-lab",
+        "phaseNumber": 6,
+        "title": "Validate controls and remove the lab",
+        "description": "Verify authorization, API-key, usage-plan, and CORS behavior, then delete every resource created by this Follow Along.",
+        "taskIds": [
+          "task-api-gateway-test-all-security-boundaries-and-review-logs-008"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-api-gateway-create-and-verify-temporary-training-access-001",
+        "slug": "create-and-verify-temporary-training-access",
+        "title": "Create and verify temporary training access",
+        "service": "Amazon API Gateway",
+        "feature": "IAM identity and access",
+        "goal": "Using an existing non-root administrator, create fa-api-gateway-lab-user, attach AdministratorAccess only for this disposable lab, create one access key, configure the fa-api-gateway-lab CLI profile, and verify the caller.",
+        "whyItMatters": "The root user must not be used for ordinary lab work. AdministratorAccess is deliberately broad for a short-lived beginner lab and must be detached before the user is deleted.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 20,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-safe-training-access",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-official-aws-documentation",
+          "source-get-started-with-the-rest-api-console"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Establish the administrator starting point",
+            "instruction": "Sign in to AWS as an existing non-root administrator. If the account has no administrator, stop and have the account owner create one; do not create root access keys.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point-instruction-1",
+                "text": "Sign in to AWS as an existing non-root administrator. If the account has no administrator, stop and have the account owner create one; do not create root access keys.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point-instruction-2",
+                "text": "In the console header, choose the Region selector and select Europe (London), eu-west-2. IAM is global, but later resources use this Region.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point-instruction-3",
+                "text": "Open IAM from the Services menu.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point-instruction-4",
+                "text": "Choose Users.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-1-establish-the-administrator-starting-point-instruction-5",
+                "text": "Choose Create user.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "You are signed in as an administrator and are at the IAM Create user page.",
+            "warning": "Do not use root access keys or share root credentials.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the console and CLI lab identity",
+            "instruction": "Enter fa-api-gateway-lab-user for User name.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-1",
+                "text": "Enter fa-api-gateway-lab-user for User name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-2",
+                "text": "Select Provide user access to the AWS Management Console, select I want to create an IAM user, select Custom password, enter a new temporary password, and select Users must create a new password at next sign-in.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-3",
+                "text": "Choose Next, select Attach policies directly, select AdministratorAccess, choose Next, and choose Create user.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-4",
+                "text": "Open the created user and record the displayed IAM-user sign-in URL. This is the URL used to sign in as the lab user.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-5",
+                "text": "Choose Security credentials, choose Create access key, select Command Line Interface (CLI), select the acknowledgement checkbox, and choose Create access key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-and-verify-temporary-training-access-001-console-step-2-create-the-console-and-cli-lab-identity-instruction-6",
+                "text": "Record the displayed access-key ID as [LAB_ACCESS_KEY_ID]. Copy the secret access key only into the local AWS CLI prompt in the next step; it is shown once.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "fa-api-gateway-lab-user exists, AdministratorAccess is attached, [LAB_ACCESS_KEY_ID] exists for that user, and the IAM-user sign-in URL is recorded.",
+            "warning": "Never put the secret access key in notes, screenshots, code, a command, or source control.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws iam create-user --user-name fa-api-gateway-lab-user --profile <ADMIN_PROFILE>",
+            "explanation": "<ADMIN_PROFILE> is the name of a pre-existing local AWS CLI profile whose caller is an account administrator. IAM is global, so no --region is used.",
+            "expectedResult": "The output contains UserName fa-api-gateway-lab-user.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Stop if <ADMIN_PROFILE> is not an administrator profile.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws iam attach-user-policy --user-name fa-api-gateway-lab-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --profile <ADMIN_PROFILE>",
+            "explanation": "Attach the temporary AWS managed AdministratorAccess policy to only fa-api-gateway-lab-user.",
+            "expectedResult": "The command completes without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This attachment is removed during final cleanup.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws iam create-access-key --user-name fa-api-gateway-lab-user --profile <ADMIN_PROFILE>",
+            "explanation": "Record AccessKey.AccessKeyId as [LAB_ACCESS_KEY_ID]. Copy SecretAccessKey directly to the next interactive command; do not save it in this guide.",
+            "expectedResult": "The response has AccessKeyId and one-time SecretAccessKey fields.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not continue if you did not securely capture the secret access key.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws configure --profile fa-api-gateway-lab",
+            "explanation": "At the prompts enter the newly created access key ID, its secret access key, eu-west-2 for Default Region, and json for Default output format.",
+            "expectedResult": "The local profile fa-api-gateway-lab is saved.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The command writes credentials to the local AWS shared credentials file.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sts get-caller-identity --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Verify the just-configured CLI profile before it creates any resources.",
+            "expectedResult": "Arn ends in user/fa-api-gateway-lab-user.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Stop if Account or Arn is not the intended account and user.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-verification-1",
+            "title": "Verify the lab user policy",
+            "instruction": "In IAM, open fa-api-gateway-lab-user, choose Permissions, and inspect attached managed policies.",
+            "expectedResult": "AdministratorAccess is attached to fa-api-gateway-lab-user only.",
+            "mode": "console"
+          },
+          {
+            "id": "task-api-gateway-create-and-verify-temporary-training-access-001-verification-2",
+            "title": "Verify local CLI identity",
+            "instruction": "Inspect the Arn returned by get-caller-identity.",
+            "expectedResult": "It identifies fa-api-gateway-lab-user.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002",
+        "slug": "create-the-lambda-execution-role-and-shared-backend",
+        "title": "Create the Lambda execution role and shared backend",
+        "service": "Amazon API Gateway",
+        "feature": "AWS Lambda integration",
+        "goal": "Create the Lambda logging role and fa-api-gateway-lab-hello with a complete Node.js handler that returns the REST API CORS headers.",
+        "whyItMatters": "Lambda proxy integrations return Lambda's status, body, and headers directly. The Lambda execution role needs logging permission; API Gateway invocation permission is added later per API.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 25,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-create-the-shared-lambda-backend",
+        "prerequisites": [
+          "task-api-gateway-create-and-verify-temporary-training-access-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-function-aws-cli",
+          "source-invoking-a-lambda-function-using-an-amazon-api-gateway-endpoint",
+          "source-cors-for-rest-apis-in-api-gateway",
+          "source-official-aws-documentation-2"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-1-create-the-logging-role",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the logging role",
+            "instruction": "Open IAM, choose Roles, and choose Create role.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-1-create-the-logging-role-instruction-1",
+                "text": "Open IAM, choose Roles, and choose Create role.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-1-create-the-logging-role-instruction-2",
+                "text": "Select AWS service, select Lambda, and choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-1-create-the-logging-role-instruction-3",
+                "text": "Select AWSLambdaBasicExecutionRole, choose Next, enter fa-api-gateway-lab-lambda-role for Role name, and choose Create role.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "fa-api-gateway-lab-lambda-role exists and lists AWSLambdaBasicExecutionRole.",
+            "warning": "Do not add VPC, database, or broad service permissions; this function only writes logs.",
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create and deploy the function",
+            "instruction": "Open Lambda, choose Functions, and choose Create function.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function-instruction-1",
+                "text": "Open Lambda, choose Functions, and choose Create function.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function-instruction-2",
+                "text": "Select Author from scratch. Set Function name to fa-api-gateway-lab-hello and Runtime to Node.js 22.x.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function-instruction-3",
+                "text": "Expand Change default execution role, select Use an existing role, select fa-api-gateway-lab-lambda-role, and choose Create function.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function-instruction-4",
+                "text": "On the Code tab, open index.mjs, replace all editor content with the supplied index.mjs block, and choose Deploy.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-console-step-2-create-and-deploy-the-function-json-1",
+                "title": "index.mjs",
+                "content": "export const handler = async (event) => {\n  return {\n    statusCode: 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      \"Access-Control-Allow-Origin\": \"https://example.com\",\n      \"Access-Control-Allow-Headers\": \"Content-Type,Authorization,X-Api-Key\",\n      \"Access-Control-Allow-Methods\": \"GET,OPTIONS\"\n    },\n    body: JSON.stringify({ message: \"Hello from the API Gateway lab\", path: event.rawPath || event.path || \"/hello\" })\n  };\n};",
+                "language": "text",
+                "sourceIds": [
+                  "source-cors-for-rest-apis-in-api-gateway"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The function becomes Active and deployed code returns statusCode 200, JSON, and the stated CORS headers.",
+            "warning": "The origin is deliberately fixed. CORS is not authentication.",
+            "sourceIds": [
+              "source-create-function-aws-cli",
+              "source-cors-for-rest-apis-in-api-gateway"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "mkdir -p fa-api-gateway-lab && cd fa-api-gateway-lab && cat > index.mjs <<'EOF'\nexport const handler = async (event) => {\n  return {\n    statusCode: 200,\n    headers: {\n      \"Content-Type\": \"application/json\",\n      \"Access-Control-Allow-Origin\": \"https://example.com\",\n      \"Access-Control-Allow-Headers\": \"Content-Type,Authorization,X-Api-Key\",\n      \"Access-Control-Allow-Methods\": \"GET,OPTIONS\"\n    },\n    body: JSON.stringify({ message: \"Hello from the API Gateway lab\", path: event.rawPath || event.path || \"/hello\" })\n  };\n};\nEOF",
+            "explanation": "Create a new local fa-api-gateway-lab directory and save the complete Lambda source as fa-api-gateway-lab/index.mjs.",
+            "expectedResult": "index.mjs exists in the new directory.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The file contains no credentials, token, or API-key value.",
+            "sourceIds": [
+              "source-cors-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws iam create-role --role-name fa-api-gateway-lab-lambda-role --assume-role-policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}' --profile fa-api-gateway-lab",
+            "explanation": "Create the Lambda-trusted role and record Role.Arn as [LAMBDA_ROLE_ARN].",
+            "expectedResult": "The response contains [LAMBDA_ROLE_ARN].",
+            "instructions": [],
+            "commands": [],
+            "warning": "IAM is global.",
+            "sourceIds": [
+              "source-create-function-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws iam attach-role-policy --role-name fa-api-gateway-lab-lambda-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --profile fa-api-gateway-lab",
+            "explanation": "Attach the Lambda basic logging managed policy.",
+            "expectedResult": "The command completes successfully.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Wait briefly for IAM propagation before creating the function.",
+            "sourceIds": [
+              "source-create-function-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "cd fa-api-gateway-lab && zip fa-api-gateway-lab-hello.zip index.mjs",
+            "explanation": "Package exactly the complete index.mjs file created in this task.",
+            "expectedResult": "fa-api-gateway-lab-hello.zip exists in fa-api-gateway-lab.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this from the parent directory.",
+            "sourceIds": [
+              "source-create-function-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws lambda create-function --function-name fa-api-gateway-lab-hello --runtime nodejs22.x --handler index.handler --role [LAMBDA_ROLE_ARN] --zip-file fileb://fa-api-gateway-lab/fa-api-gateway-lab-hello.zip --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace [LAMBDA_ROLE_ARN] with the create-role output and record FunctionArn as [LAMBDA_FUNCTION_ARN].",
+            "expectedResult": "The response includes FunctionArn and State Pending or Active.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If role assumption has not propagated, wait and retry rather than changing the trust policy.",
+            "sourceIds": [
+              "source-create-function-aws-cli"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-verification-1",
+            "title": "Verify the handler",
+            "instruction": "Test the function with {} in the Lambda console, or invoke it after State is Active.",
+            "expectedResult": "The result has statusCode 200 and Access-Control-Allow-Origin https://example.com.",
+            "mode": "either"
+          },
+          {
+            "id": "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002-verification-2",
+            "title": "Verify function state",
+            "instruction": "Run aws lambda get-function --function-name fa-api-gateway-lab-hello --query 'Configuration.State' --output text --profile fa-api-gateway-lab --region eu-west-2.",
+            "expectedResult": "Active.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003",
+        "slug": "create-cognito-authentication-and-a-test-token",
+        "title": "Create Cognito authentication and a test token",
+        "service": "Amazon API Gateway",
+        "feature": "Amazon Cognito authorization",
+        "goal": "Create fa-api-gateway-lab-users, fa-api-gateway-lab-client without a secret, and api-learner, then obtain an ID token without printing a password in a command.",
+        "whyItMatters": "The REST authorizer accepts the user-pool identity token, and the HTTP JWT authorizer validates its issuer and app-client audience.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 25,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-create-amazon-cognito-authentication",
+        "prerequisites": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-an-amazon-cognito-user-pool-for-a-rest-api",
+          "source-create-user-pool-aws-cli",
+          "source-create-user-pool-client-aws-cli",
+          "source-admin-create-user-aws-cli",
+          "source-official-aws-documentation-3"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-1-create-the-pool-and-app-client",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the pool and app client",
+            "instruction": "Open Amazon Cognito, choose User pools, then choose Create user pool.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-1-create-the-pool-and-app-client-instruction-1",
+                "text": "Open Amazon Cognito, choose User pools, then choose Create user pool.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-1-create-the-pool-and-app-client-instruction-2",
+                "text": "Set User pool name to fa-api-gateway-lab-users. Select Cognito user pool sign-in options and User name. Keep self-registration disabled and complete the wizard.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-1-create-the-pool-and-app-client-instruction-3",
+                "text": "At the app-client step, set App client name to fa-api-gateway-lab-client and ensure Generate a client secret is off. Create the user pool.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-1-create-the-pool-and-app-client-instruction-4",
+                "text": "On the pool Overview, record User pool ID as [USER_POOL_ID] and User pool ARN as [USER_POOL_ARN]. Open App clients, select fa-api-gateway-lab-client, and record Client ID as [APP_CLIENT_ID].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The eu-west-2 user pool and public app client exist.",
+            "warning": "Do not record a password or JWT in notes or screenshots.",
+            "sourceIds": [
+              "source-create-an-amazon-cognito-user-pool-for-a-rest-api"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-2-create-a-permanent-test-user",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create a permanent test user",
+            "instruction": "In fa-api-gateway-lab-users, choose Users and Create user.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-2-create-a-permanent-test-user-instruction-1",
+                "text": "In fa-api-gateway-lab-users, choose Users and Create user.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-2-create-a-permanent-test-user-instruction-2",
+                "text": "Set Username to api-learner. Enter a new temporary lab-only password and create the user.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-console-step-2-create-a-permanent-test-user-instruction-3",
+                "text": "Open api-learner, choose Reset password if needed, and set a new permanent lab-only password.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "api-learner is Enabled and has a permanent password.",
+            "warning": "Use a unique non-production password.",
+            "sourceIds": [
+              "source-admin-create-user-aws-cli"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws cognito-idp create-user-pool --pool-name fa-api-gateway-lab-users --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Create a standard username user pool. Record UserPool.Id as [USER_POOL_ID] and UserPool.Arn as [USER_POOL_ARN].",
+            "expectedResult": "The response contains the pool ID and ARN.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not use --username-attributes username.",
+            "sourceIds": [
+              "source-create-user-pool-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws cognito-idp create-user-pool-client --user-pool-id [USER_POOL_ID] --client-name fa-api-gateway-lab-client --no-generate-secret --explicit-auth-flows ALLOW_USER_PASSWORD_AUTH ALLOW_REFRESH_TOKEN_AUTH --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace [USER_POOL_ID] and record UserPoolClient.ClientId as [APP_CLIENT_ID].",
+            "expectedResult": "The client has a ClientId and no ClientSecret.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This public client is only for the lab.",
+            "sourceIds": [
+              "source-create-user-pool-client-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "read -s -p 'Temporary lab password: ' TEMP_PASSWORD; echo; aws cognito-idp admin-create-user --user-pool-id [USER_POOL_ID] --username api-learner --temporary-password \"$TEMP_PASSWORD\" --message-action SUPPRESS --profile fa-api-gateway-lab --region eu-west-2; unset TEMP_PASSWORD",
+            "explanation": "Replace [USER_POOL_ID]. The shell does not echo the temporary password; SUPPRESS prevents email delivery.",
+            "expectedResult": "api-learner has UserStatus FORCE_CHANGE_PASSWORD.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use a new lab-only password.",
+            "sourceIds": [
+              "source-admin-create-user-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "read -s -p 'Permanent lab password: ' PERM_PASSWORD; echo; aws cognito-idp admin-set-user-password --user-pool-id [USER_POOL_ID] --username api-learner --password \"$PERM_PASSWORD\" --permanent --profile fa-api-gateway-lab --region eu-west-2; unset PERM_PASSWORD",
+            "explanation": "Replace [USER_POOL_ID] and establish the permanent password needed for USER_PASSWORD_AUTH.",
+            "expectedResult": "The command completes successfully.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The password is not echoed, but avoid shared terminals.",
+            "sourceIds": [
+              "source-admin-create-user-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "read -s -p 'Permanent lab password: ' PERM_PASSWORD; echo; export ID_TOKEN=$(aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id [APP_CLIENT_ID] --auth-parameters USERNAME=api-learner,PASSWORD=\"$PERM_PASSWORD\" --query 'AuthenticationResult.IdToken' --output text --profile fa-api-gateway-lab --region eu-west-2); unset PERM_PASSWORD; test -n \"$ID_TOKEN\" && echo 'ID_TOKEN obtained'",
+            "explanation": "Replace [APP_CLIENT_ID]. Keep [ID_TOKEN] only in this terminal environment for later requests.",
+            "expectedResult": "ID_TOKEN obtained is printed; the token itself is not printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Close the terminal or unset ID_TOKEN after the lab.",
+            "sourceIds": [
+              "source-official-aws-documentation-3"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-verification-1",
+            "title": "Verify recorded identifiers",
+            "instruction": "Inspect the user-pool Overview and app-client details.",
+            "expectedResult": "[USER_POOL_ID], [USER_POOL_ARN], and [APP_CLIENT_ID] are recorded from visible fields.",
+            "mode": "console"
+          },
+          {
+            "id": "task-api-gateway-create-cognito-authentication-and-a-test-token-003-verification-2",
+            "title": "Verify token acquisition",
+            "instruction": "Run test -n \"$ID_TOKEN\" && echo token-present in the same terminal.",
+            "expectedResult": "token-present is printed.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004",
+        "slug": "create-the-rest-api-and-lambda-proxy-integration",
+        "title": "Create the REST API and Lambda proxy integration",
+        "service": "Amazon API Gateway",
+        "feature": "API Gateway REST API",
+        "goal": "Create fa-api-gateway-lab-rest with GET /hello and integrate it with the shared Lambda function.",
+        "whyItMatters": "REST API methods invoke an integration. A Lambda proxy integration passes the request to Lambda and returns the Lambda response to the caller.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-build-and-secure-the-rest-api",
+        "prerequisites": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-get-started-with-the-rest-api-console",
+          "source-invoking-a-lambda-function-using-an-amazon-api-gateway-endpoint",
+          "source-granting-lambda-function-access-to-aws-services",
+          "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the Regional REST API and /hello resource",
+            "instruction": "☐ Open the API Gateway console.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-1",
+                "text": "☐ Open the API Gateway console.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-2",
+                "text": "☐ Choose Create API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-3",
+                "text": "☐ Under REST API, choose Build.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-4",
+                "text": "☐ Enter fa-api-gateway-lab-rest in API name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-5",
+                "text": "☐ Enter Beginner REST API lab in Description.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-6",
+                "text": "☐ Select Regional in API endpoint type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-7",
+                "text": "☐ Select IPv4 in IP address type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-8",
+                "text": "☐ Choose Create API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-9",
+                "text": "☐ Select the root / resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-10",
+                "text": "☐ Choose Create resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-11",
+                "text": "☐ Enter hello in Resource name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-12",
+                "text": "☐ Choose Create resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-13",
+                "text": "☐ Select the /hello resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-1-create-the-regional-rest-api-and-hello-resource-instruction-14",
+                "text": "☐ Record the Resource ID as [REST_HELLO_RESOURCE_ID].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "A Regional REST API contains the /hello resource.",
+            "warning": "No VPC is created because this public API invokes a managed Lambda service directly and has no VPC integration in this scope.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the GET Lambda proxy method",
+            "instruction": "☐ Select the /hello resource.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-1",
+                "text": "☐ Select the /hello resource.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-2",
+                "text": "☐ Choose Create method.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-3",
+                "text": "☐ Select GET in Method type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-4",
+                "text": "☐ Select Lambda in Integration type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-5",
+                "text": "☐ Turn on Lambda proxy integration.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-6",
+                "text": "☐ Enter fa-api-gateway-lab-hello in Lambda function.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-7",
+                "text": "☐ Choose Create method.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-console-step-2-create-the-get-lambda-proxy-method-instruction-8",
+                "text": "☐ Choose OK if prompted to grant API Gateway permission to invoke the function.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "GET /hello has a Lambda proxy integration to fa-api-gateway-lab-hello.",
+            "warning": "The Console adds the Lambda resource-based permission when you approve the prompt.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console",
+              "source-granting-lambda-function-access-to-aws-services"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws apigateway create-rest-api --name fa-api-gateway-lab-rest --description 'Beginner REST API lab' --endpoint-configuration types=REGIONAL,ipAddressType=ipv4 --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record id as [REST_API_ID] and rootResourceId as [REST_ROOT_RESOURCE_ID].",
+            "expectedResult": "The response contains a REST API ID and root resource ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the returned IDs only for this lab API.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws apigateway create-resource --rest-api-id [REST_API_ID] --parent-id [REST_ROOT_RESOURCE_ID] --path-part hello --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record id as [REST_HELLO_RESOURCE_ID].",
+            "expectedResult": "The response path is /hello.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Replace both placeholders from the prior command output.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws apigateway put-method --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --authorization-type NONE --api-key-required --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Create GET /hello and require an API key. Cognito authorization is attached in the next phase.",
+            "expectedResult": "The response identifies GET as the method.",
+            "instructions": [],
+            "commands": [],
+            "warning": "API keys are not authentication or authorization; Cognito is added later.",
+            "sourceIds": [
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws apigateway put-integration --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --type AWS_PROXY --integration-http-method POST --uri arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/[LAMBDA_FUNCTION_ARN]/invocations --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace [LAMBDA_FUNCTION_ARN] with the full Lambda function ARN recorded in Task 2.",
+            "expectedResult": "The response identifies an AWS_PROXY integration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The integration URI uses the API Gateway Lambda invocation URI format.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws lambda add-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-rest-invoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn arn:aws:execute-api:eu-west-2:<ACCOUNT_ID>:[REST_API_ID]/*/GET/hello --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace <ACCOUNT_ID> with the account ID from get-caller-identity and [REST_API_ID] with the REST API ID. The SourceArn restricts invocation to this API method path.",
+            "expectedResult": "The response contains a Lambda policy statement.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not grant apigateway.amazonaws.com unrestricted permission without a SourceArn.",
+            "sourceIds": [
+              "source-granting-lambda-function-access-to-aws-services"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-verification-1",
+            "title": "Confirm the method integration",
+            "instruction": "Open GET under /hello and inspect Integration request.",
+            "expectedResult": "Integration type is Lambda proxy integration and the Lambda function is fa-api-gateway-lab-hello.",
+            "mode": "console"
+          },
+          {
+            "id": "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004-verification-2",
+            "title": "Confirm Lambda permission scope",
+            "instruction": "Run aws lambda get-policy --function-name fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2.",
+            "expectedResult": "The policy includes statement ID fa-api-gateway-lab-rest-invoke restricted to the REST API SourceArn.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005",
+        "slug": "secure-deploy-meter-and-configure-cors-for-the-rest-api",
+        "title": "Secure, deploy, meter, and configure CORS for the REST API",
+        "service": "Amazon API Gateway",
+        "feature": "REST API Cognito authorizer, usage plan, API key, and CORS",
+        "goal": "Attach a Cognito authorizer to GET /hello, deploy prod, create a usage plan and generated API key, and retain restrictive CORS headers in the Lambda proxy response.",
+        "whyItMatters": "Cognito validates user identity; the API key and usage plan identify a consumer and apply quota/throttle settings. AWS documents that API keys must not be used as authorization. With a Lambda proxy integration, Lambda returns actual-response CORS headers.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-build-and-secure-the-rest-api",
+        "prerequisites": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003",
+          "task-api-gateway-create-the-rest-api-and-lambda-proxy-integration-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-integrate-a-rest-api-with-an-amazon-cognito-user-pool",
+          "source-set-up-usage-plans-for-rest-apis-in-api-gateway",
+          "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway",
+          "source-cors-for-rest-apis-in-api-gateway",
+          "source-get-started-with-the-rest-api-console",
+          "source-create-authorizer-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and attach the REST API Cognito authorizer",
+            "instruction": "☐ Open fa-api-gateway-lab-rest in API Gateway.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-1",
+                "text": "☐ Open fa-api-gateway-lab-rest in API Gateway.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-2",
+                "text": "☐ Choose Authorizers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-3",
+                "text": "☐ Choose Create authorizer.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-4",
+                "text": "☐ Enter fa-api-gateway-lab-rest-cognito in Authorizer name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-5",
+                "text": "☐ Select Cognito in Authorizer type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-6",
+                "text": "☐ Select eu-west-2 in Cognito user pool Region.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-7",
+                "text": "☐ Select fa-api-gateway-lab-users in Cognito user pool.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-8",
+                "text": "☐ Enter Authorization in Token source.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-9",
+                "text": "☐ Choose Create authorizer.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-10",
+                "text": "☐ Choose Resources.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-11",
+                "text": "☐ Select GET under /hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-12",
+                "text": "☐ Choose Method request.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-13",
+                "text": "☐ Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-14",
+                "text": "☐ Select fa-api-gateway-lab-rest-cognito in Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-15",
+                "text": "☐ Keep API key required selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-1-create-and-attach-the-rest-api-cognito-authorizer-instruction-16",
+                "text": "☐ Choose Save.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "GET /hello requires both a valid Cognito token in Authorization and an API key in x-api-key.",
+            "warning": "Do not treat the API key as a password, user identity, or authorization control.",
+            "sourceIds": [
+              "source-integrate-a-rest-api-with-an-amazon-cognito-user-pool",
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Deploy the REST API and record its invoke URL",
+            "instruction": "☐ Choose Deploy API.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-1",
+                "text": "☐ Choose Deploy API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-2",
+                "text": "☐ Select New stage.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-3",
+                "text": "☐ Enter prod in Stage name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-4",
+                "text": "☐ Choose Deploy.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-5",
+                "text": "☐ Choose Stages.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-6",
+                "text": "☐ Select prod.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-2-deploy-the-rest-api-and-record-its-invoke-url-instruction-7",
+                "text": "☐ Record Invoke URL as [REST_INVOKE_URL].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The prod stage exists and its invoke URL ends with /prod.",
+            "warning": "Redeploy this REST API after method or authorizer changes.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create the usage plan and generated API key",
+            "instruction": "☐ Choose Usage plans.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-1",
+                "text": "☐ Choose Usage plans.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-2",
+                "text": "☐ Choose Create usage plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-3",
+                "text": "☐ Enter fa-api-gateway-lab-plan in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-4",
+                "text": "☐ Enter 1 in Rate.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-5",
+                "text": "☐ Enter 2 in Burst.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-6",
+                "text": "☐ Enter 20 in Requests.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-7",
+                "text": "☐ Select DAY in Period.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-8",
+                "text": "☐ Choose Create usage plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-9",
+                "text": "☐ Open Associated stages.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-10",
+                "text": "☐ Choose Add stage.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-11",
+                "text": "☐ Select fa-api-gateway-lab-rest in API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-12",
+                "text": "☐ Select prod in Stage.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-13",
+                "text": "☐ Choose Add to usage plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-14",
+                "text": "☐ Open Associated API keys.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-15",
+                "text": "☐ Choose Add API key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-16",
+                "text": "☐ Select Create and add new key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-17",
+                "text": "☐ Enter fa-api-gateway-lab-key in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-18",
+                "text": "☐ Choose Save.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-19",
+                "text": "☐ Select fa-api-gateway-lab-key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-20",
+                "text": "☐ Choose Show.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-3-create-the-usage-plan-and-generated-api-key-instruction-21",
+                "text": "☐ Record the displayed key value only as [REST_API_KEY] in a secure local terminal variable.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The usage plan is associated with REST API stage prod and contains one generated API key.",
+            "warning": "API key values are transmitted in headers and can be logged. Do not put the value in source code or screenshots.",
+            "sourceIds": [
+              "source-set-up-usage-plans-for-rest-apis-in-api-gateway",
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Confirm the REST API proxy CORS policy",
+            "instruction": "☐ Open the Lambda console.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-1",
+                "text": "☐ Open the Lambda console.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-2",
+                "text": "☐ Open fa-api-gateway-lab-hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-3",
+                "text": "☐ Open the Code tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-4",
+                "text": "☐ Confirm Access-Control-Allow-Origin is https://example.com.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-5",
+                "text": "☐ Confirm Access-Control-Allow-Headers includes Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-6",
+                "text": "☐ Confirm Access-Control-Allow-Headers includes X-Api-Key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-7",
+                "text": "☐ Confirm Access-Control-Allow-Methods is GET,OPTIONS.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-8",
+                "text": "☐ Choose Deploy only if you changed the code.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-9",
+                "text": "☐ Return to API Gateway.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-10",
+                "text": "☐ Choose Deploy API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-11",
+                "text": "☐ Select prod.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-console-step-4-confirm-the-rest-api-proxy-cors-policy-instruction-12",
+                "text": "☐ Choose Deploy.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The Lambda proxy response supplies restrictive CORS headers for the REST API actual response.",
+            "warning": "For Lambda proxy integrations, API Gateway does not generate actual-response CORS headers; the backend must return them.",
+            "sourceIds": [
+              "source-cors-for-rest-apis-in-api-gateway"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws apigateway create-authorizer --rest-api-id [REST_API_ID] --name fa-api-gateway-lab-rest-cognito --type COGNITO_USER_POOLS --provider-arns [USER_POOL_ARN] --identity-source method.request.header.Authorization --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace [REST_API_ID] and [USER_POOL_ARN]. Record id as [REST_AUTHORIZER_ID].",
+            "expectedResult": "The response type is COGNITO_USER_POOLS.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The user pool and REST API must be in eu-west-2.",
+            "sourceIds": [
+              "source-create-authorizer-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws apigateway update-method --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --patch-operations op=replace,path=/authorizationType,value=COGNITO_USER_POOLS op=replace,path=/authorizerId,value=[REST_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Attach the Cognito authorizer to GET /hello while retaining the earlier API-key requirement.",
+            "expectedResult": "The method shows authorizationType COGNITO_USER_POOLS.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use an identity token in Authorization when no authorization scope is configured.",
+            "sourceIds": [
+              "source-integrate-a-rest-api-with-an-amazon-cognito-user-pool"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws apigateway create-deployment --rest-api-id [REST_API_ID] --stage-name prod --description 'Initial secure REST API deployment' --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record id as [REST_DEPLOYMENT_ID]. The REST invoke URL is https://[REST_API_ID].execute-api.eu-west-2.amazonaws.com/prod.",
+            "expectedResult": "The deployment response contains stageName prod.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Deploy again after subsequent REST API configuration changes.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws apigateway create-usage-plan --name fa-api-gateway-lab-plan --description 'Training plan for one REST API stage' --throttle burstLimit=2,rateLimit=1 --quota limit=20,offset=0,period=DAY --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record id as [USAGE_PLAN_ID].",
+            "expectedResult": "The response contains the throttle and quota configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Usage-plan quotas and throttles are best-effort controls and must not be used as a cost-control guarantee.",
+            "sourceIds": [
+              "source-set-up-usage-plans-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws apigateway update-usage-plan --usage-plan-id [USAGE_PLAN_ID] --patch-operations op=add,path=/apiStages,value='[REST_API_ID]:prod' --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Associate the REST API prod stage with the usage plan.",
+            "expectedResult": "The response apiStages contains the REST API and prod stage.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Replace both placeholders with values from this lab.",
+            "sourceIds": [
+              "source-set-up-usage-plans-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws apigateway create-api-key --name fa-api-gateway-lab-key --enabled --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record id as [REST_API_KEY_ID]. Retrieve the value only when required for local testing.",
+            "expectedResult": "The response identifies an enabled API key.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not provide an API-key value yourself; allow API Gateway to generate it.",
+            "sourceIds": [
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws apigateway create-usage-plan-key --usage-plan-id [USAGE_PLAN_ID] --key-type API_KEY --key-id [REST_API_KEY_ID] --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Associate the generated key with the training usage plan.",
+            "expectedResult": "The response contains keyType API_KEY.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Association propagation can take a few minutes.",
+            "sourceIds": [
+              "source-set-up-usage-plans-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws apigateway create-deployment --rest-api-id [REST_API_ID] --stage-name prod --description 'Deploy Cognito authorization and CORS-capable backend' --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Redeploy the REST API after authorizer configuration. The CORS headers are returned by the Lambda proxy backend code from Task 2.",
+            "expectedResult": "The prod stage points at the new deployment.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not attempt to configure proxy-integration actual-response CORS headers through API Gateway integration responses.",
+            "sourceIds": [
+              "source-cors-for-rest-apis-in-api-gateway"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-verification-1",
+            "title": "Verify required REST API controls",
+            "instruction": "Call curl -i -H \"Authorization: [ID_TOKEN]\" -H \"x-api-key: [REST_API_KEY]\" [REST_INVOKE_URL]/hello from a local terminal.",
+            "expectedResult": "The response is HTTP 200, includes the JSON message, and includes Access-Control-Allow-Origin: https://example.com.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005-verification-2",
+            "title": "Verify rejected incomplete requests",
+            "instruction": "Call the same REST URL once without Authorization and once without x-api-key.",
+            "expectedResult": "The requests are rejected because Cognito authorization and API-key requirement are both enforced.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006",
+        "slug": "create-the-http-api-and-lambda-integration",
+        "title": "Create the HTTP API and Lambda integration",
+        "service": "Amazon API Gateway",
+        "feature": "API Gateway HTTP API",
+        "goal": "Create fa-api-gateway-lab-http, its GET /hello route, a Lambda proxy integration, and a named prod stage.",
+        "whyItMatters": "HTTP APIs are a separate API Gateway API type with a simpler feature set, lower-price design, built-in CORS support, and automatic deployment support.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-build-and-secure-the-http-api",
+        "prerequisites": [
+          "task-api-gateway-create-the-lambda-execution-role-and-shared-backend-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-official-aws-documentation-4",
+          "source-create-integration-aws-cli",
+          "source-granting-lambda-function-access-to-aws-services",
+          "source-official-aws-documentation-5"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the HTTP API and Lambda integration",
+            "instruction": "☐ Open the API Gateway console.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-1",
+                "text": "☐ Open the API Gateway console.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-2",
+                "text": "☐ Choose Create API.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-3",
+                "text": "☐ Under HTTP API, choose Build.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-4",
+                "text": "☐ Enter fa-api-gateway-lab-http in API name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-5",
+                "text": "☐ Choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-6",
+                "text": "☐ Choose Add integration.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-7",
+                "text": "☐ Select Lambda.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-8",
+                "text": "☐ Select eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-9",
+                "text": "☐ Select fa-api-gateway-lab-hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-10",
+                "text": "☐ Choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-11",
+                "text": "☐ Enter GET in Method.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-12",
+                "text": "☐ Enter /hello in Resource path.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-13",
+                "text": "☐ Choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-14",
+                "text": "☐ Enter prod in Stage name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-15",
+                "text": "☐ Turn Auto-deploy on.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-16",
+                "text": "☐ Choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-17",
+                "text": "☐ Choose Create.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-18",
+                "text": "☐ Record API ID as [HTTP_API_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-1-create-the-http-api-and-lambda-integration-instruction-19",
+                "text": "☐ Record Invoke URL as [HTTP_INVOKE_URL].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The HTTP API contains a GET /hello route backed by the Lambda function and an auto-deploy prod stage.",
+            "warning": "Keep the HTTP API separate from the REST API; usage plans and REST API keys are not HTTP API controls.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Confirm the Lambda invocation permission",
+            "instruction": "☐ Open the Lambda console.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-1",
+                "text": "☐ Open the Lambda console.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-2",
+                "text": "☐ Open fa-api-gateway-lab-hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-3",
+                "text": "☐ Open Configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-4",
+                "text": "☐ Choose Permissions.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-5",
+                "text": "☐ Open Resource-based policy statements.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-console-step-2-confirm-the-lambda-invocation-permission-instruction-6",
+                "text": "☐ Confirm an API Gateway statement exists for fa-api-gateway-lab-http.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "API Gateway has permission to invoke the Lambda function for the HTTP API.",
+            "warning": "Use a source ARN restriction whenever granting a service permission to invoke Lambda.",
+            "sourceIds": [
+              "source-granting-lambda-function-access-to-aws-services"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws apigatewayv2 create-api --name fa-api-gateway-lab-http --protocol-type HTTP --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record ApiId as [HTTP_API_ID].",
+            "expectedResult": "The response ProtocolType is HTTP.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This does not create a VPC or private integration.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws apigatewayv2 create-integration --api-id [HTTP_API_ID] --integration-type AWS_PROXY --integration-uri [LAMBDA_FUNCTION_ARN] --payload-format-version 2.0 --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace [HTTP_API_ID] and [LAMBDA_FUNCTION_ARN]. Record IntegrationId as [HTTP_INTEGRATION_ID].",
+            "expectedResult": "The integration response contains IntegrationType AWS_PROXY and payload format version 2.0.",
+            "instructions": [],
+            "commands": [],
+            "warning": "HTTP API Lambda proxy integrations support payload format version 2.0.",
+            "sourceIds": [
+              "source-create-integration-aws-cli"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws apigatewayv2 create-route --api-id [HTTP_API_ID] --route-key 'GET /hello' --target integrations/[HTTP_INTEGRATION_ID] --authorization-type NONE --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Record RouteId as [HTTP_ROUTE_ID]. JWT authorization is attached in the next task.",
+            "expectedResult": "The route response contains RouteKey GET /hello.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not use a $default route here because the lab needs a single clear protected route.",
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws lambda add-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-http-invoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn arn:aws:execute-api:eu-west-2:<ACCOUNT_ID>:[HTTP_API_ID]/*/GET/hello --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace <ACCOUNT_ID> and [HTTP_API_ID]. This statement limits API Gateway invocation to the HTTP API GET /hello route.",
+            "expectedResult": "The response contains the new Lambda resource-based-policy statement.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not reuse the REST API statement ID.",
+            "sourceIds": [
+              "source-granting-lambda-function-access-to-aws-services"
+            ]
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws apigatewayv2 create-stage --api-id [HTTP_API_ID] --stage-name prod --auto-deploy --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Create a named auto-deploy stage. The invoke URL is https://[HTTP_API_ID].execute-api.eu-west-2.amazonaws.com/prod.",
+            "expectedResult": "The stage response shows AutoDeploy true.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not create a $default stage in this lab because later verification uses the explicit prod path.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-verification-1",
+            "title": "Confirm the HTTP API route",
+            "instruction": "Open fa-api-gateway-lab-http, choose Routes, and select GET /hello.",
+            "expectedResult": "The route points to the Lambda integration and currently has no authorization until the next task.",
+            "mode": "console"
+          },
+          {
+            "id": "task-api-gateway-create-the-http-api-and-lambda-integration-006-verification-2",
+            "title": "Confirm the stage URL",
+            "instruction": "Run aws apigatewayv2 get-stages --api-id [HTTP_API_ID] --profile fa-api-gateway-lab --region eu-west-2.",
+            "expectedResult": "The output includes a prod stage with AutoDeploy true.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007",
+        "slug": "protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor",
+        "title": "Protect the HTTP API with a Cognito JWT authorizer and restrictive CORS",
+        "service": "Amazon API Gateway",
+        "feature": "HTTP API JWT authorization and CORS",
+        "goal": "Create a Cognito JWT authorizer for the HTTP API, attach it to GET /hello, and configure CORS to accept only https://example.com.",
+        "whyItMatters": "The HTTP API validates the token issuer and audience before Lambda runs. HTTP API CORS is configured at the API level; API Gateway automatically responds to preflight OPTIONS requests and adds configured CORS headers to integration responses.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-build-and-secure-the-http-api",
+        "prerequisites": [
+          "task-api-gateway-create-cognito-authentication-and-a-test-token-003",
+          "task-api-gateway-create-the-http-api-and-lambda-integration-006"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway",
+          "source-configure-cors-for-http-apis-in-api-gateway"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and attach the JWT authorizer",
+            "instruction": "☐ Open fa-api-gateway-lab-http in API Gateway.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-1",
+                "text": "☐ Open fa-api-gateway-lab-http in API Gateway.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-2",
+                "text": "☐ Choose Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-3",
+                "text": "☐ Choose the Manage authorizers tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-4",
+                "text": "☐ Choose Create.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-5",
+                "text": "☐ Enter fa-api-gateway-lab-http-jwt in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-6",
+                "text": "☐ Select JWT in Authorizer type.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-7",
+                "text": "☐ Enter $request.header.Authorization in Identity source.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-8",
+                "text": "☐ Enter https://cognito-idp.eu-west-2.amazonaws.com/[USER_POOL_ID] in Issuer URL.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-9",
+                "text": "☐ Enter [APP_CLIENT_ID] in Audience.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-10",
+                "text": "☐ Choose Create.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-11",
+                "text": "☐ Choose Routes.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-12",
+                "text": "☐ Select GET /hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-13",
+                "text": "☐ Choose Attach authorizer.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-14",
+                "text": "☐ Select fa-api-gateway-lab-http-jwt.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-1-create-and-attach-the-jwt-authorizer-instruction-15",
+                "text": "☐ Choose Attach authorizer.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "GET /hello requires a JWT whose issuer is the training user pool and audience is the training app client.",
+            "warning": "Replace only [USER_POOL_ID] and [APP_CLIENT_ID] with values recorded in Task 3.",
+            "sourceIds": [
+              "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Configure the HTTP API CORS policy",
+            "instruction": "☐ Choose CORS.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-1",
+                "text": "☐ Choose CORS.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-2",
+                "text": "☐ Choose Configure.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-3",
+                "text": "☐ Enter https://example.com in Access-Control-Allow-Origin.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-4",
+                "text": "☐ Choose Add.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-5",
+                "text": "☐ Select GET in Access-Control-Allow-Methods.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-6",
+                "text": "☐ Select OPTIONS in Access-Control-Allow-Methods.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-7",
+                "text": "☐ Enter Authorization in Access-Control-Allow-Headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-8",
+                "text": "☐ Choose Add.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-9",
+                "text": "☐ Enter X-Api-Key in Access-Control-Allow-Headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-10",
+                "text": "☐ Choose Add.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-11",
+                "text": "☐ Enter Content-Type in Access-Control-Allow-Headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-12",
+                "text": "☐ Choose Add.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-13",
+                "text": "☐ Choose Save.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-14",
+                "text": "☐ Open Stages.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-15",
+                "text": "☐ Select prod.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-console-step-2-configure-the-http-api-cors-policy-instruction-16",
+                "text": "☐ Confirm Auto-deploy is enabled.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The API-level CORS configuration allows only the specified origin and the headers required by this lab.",
+            "warning": "Do not use * when you need a precise origin policy. HTTP API CORS configuration overrides CORS headers returned by the backend.",
+            "sourceIds": [
+              "source-configure-cors-for-http-apis-in-api-gateway"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws apigatewayv2 create-authorizer --name fa-api-gateway-lab-http-jwt --api-id [HTTP_API_ID] --authorizer-type JWT --identity-source '$request.header.Authorization' --jwt-configuration Audience=[APP_CLIENT_ID],Issuer=https://cognito-idp.eu-west-2.amazonaws.com/[USER_POOL_ID] --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Replace the three placeholders. Record AuthorizerId as [HTTP_AUTHORIZER_ID].",
+            "expectedResult": "The response authorizerType is JWT.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The issuer URL must exactly use the user-pool ID and eu-west-2.",
+            "sourceIds": [
+              "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws apigatewayv2 update-route --api-id [HTTP_API_ID] --route-id [HTTP_ROUTE_ID] --authorization-type JWT --authorizer-id [HTTP_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Attach the JWT authorizer to GET /hello.",
+            "expectedResult": "The route response has AuthorizationType JWT and the named authorizer ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "An invalid or absent token is rejected before the Lambda integration runs.",
+            "sourceIds": [
+              "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws apigatewayv2 update-api --api-id [HTTP_API_ID] --cors-configuration AllowOrigins=https://example.com,AllowMethods=GET,OPTIONS,AllowHeaders=Authorization,X-Api-Key,Content-Type,MaxAge=300 --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Set API-level CORS. API Gateway responds to eligible preflight requests and adds the configured headers to responses.",
+            "expectedResult": "The API response includes CorsConfiguration with the supplied origin, methods, headers, and max age.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not configure AllowCredentials with a wildcard origin.",
+            "sourceIds": [
+              "source-configure-cors-for-http-apis-in-api-gateway"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-verification-1",
+            "title": "Verify HTTP API JWT authorization",
+            "instruction": "Call curl -i -H \"Authorization: [ID_TOKEN]\" [HTTP_INVOKE_URL]/hello from a local terminal.",
+            "expectedResult": "The response is HTTP 200 only when a valid token for the pool and client is supplied.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007-verification-2",
+            "title": "Verify HTTP API CORS preflight",
+            "instruction": "Call curl -i -X OPTIONS -H \"Origin: https://example.com\" -H \"Access-Control-Request-Method: GET\" [HTTP_INVOKE_URL]/hello.",
+            "expectedResult": "The response includes Access-Control-Allow-Origin: https://example.com and allows GET and OPTIONS.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008",
+        "slug": "test-all-security-boundaries-and-review-logs",
+        "title": "Test all security boundaries and review logs",
+        "service": "Amazon API Gateway",
+        "feature": "API validation and observability",
+        "goal": "Observe successful and rejected requests, inspect the Lambda log group created by invocation, and record the difference between REST API and HTTP API features used in this lab.",
+        "whyItMatters": "A secure API must reject missing credentials and unexpected browser origins as designed. CloudWatch Logs provide the first troubleshooting location for backend Lambda execution.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-6-validate-controls-and-remove-the-lab",
+        "prerequisites": [
+          "task-api-gateway-secure-deploy-meter-and-configure-cors-for-the-rest-api-005",
+          "task-api-gateway-protect-the-http-api-with-a-cognito-jwt-authorizer-and-restrictive-cor-007"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway",
+          "source-control-access-to-rest-apis-using-amazon-cognito-user-pools-as-an-auth",
+          "source-configure-cors-for-http-apis-in-api-gateway",
+          "source-test-cors-for-an-api-gateway-api",
+          "source-get-started-with-the-rest-api-console",
+          "source-official-aws-documentation-4"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Test successful and rejected API calls",
+            "instruction": "☐ Open fa-api-gateway-lab-rest.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-1",
+                "text": "☐ Open fa-api-gateway-lab-rest.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-2",
+                "text": "☐ Choose Resources.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-3",
+                "text": "☐ Select GET under /hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-4",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-5",
+                "text": "☐ Enter Authorization in Headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-6",
+                "text": "☐ Enter [ID_TOKEN] as the Authorization value.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-7",
+                "text": "☐ Enter x-api-key in Headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-8",
+                "text": "☐ Enter [REST_API_KEY] as the x-api-key value.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-9",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-10",
+                "text": "☐ Remove Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-11",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-12",
+                "text": "☐ Restore Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-13",
+                "text": "☐ Remove x-api-key.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-14",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-15",
+                "text": "☐ Open fa-api-gateway-lab-http.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-16",
+                "text": "☐ Choose Routes.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-17",
+                "text": "☐ Select GET /hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-18",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-19",
+                "text": "☐ Enter Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-20",
+                "text": "☐ Enter [ID_TOKEN].",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-21",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-22",
+                "text": "☐ Remove Authorization.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-1-test-successful-and-rejected-api-calls-instruction-23",
+                "text": "☐ Choose Test.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Both APIs succeed with valid authorization; the REST API additionally requires its API key.",
+            "warning": "Do not paste production tokens or keys into console test panels.",
+            "sourceIds": [
+              "source-control-access-to-rest-apis-using-amazon-cognito-user-pools-as-an-auth",
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Inspect the Lambda log group",
+            "instruction": "☐ Open the CloudWatch console.",
+            "instructions": [
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-1",
+                "text": "☐ Open the CloudWatch console.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-2",
+                "text": "☐ Choose Log groups.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-3",
+                "text": "☐ Search for /aws/lambda/fa-api-gateway-lab-hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-4",
+                "text": "☐ Open /aws/lambda/fa-api-gateway-lab-hello.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-5",
+                "text": "☐ Open the most recent log stream.",
+                "detail": ""
+              },
+              {
+                "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-console-step-2-inspect-the-lambda-log-group-instruction-6",
+                "text": "☐ Confirm recent Lambda invocations appear.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The Lambda-created log group contains invocation log streams.",
+            "warning": "Logs can contain request metadata. Do not intentionally log authorization headers, API keys, passwords, or tokens.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws apigateway get-api-key --api-key [REST_API_KEY_ID] --include-value --query value --output text --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Retrieve the generated REST API key value only for an immediate local test and treat it as sensitive operational data.",
+            "expectedResult": "The command prints the key value.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not redirect the key to a shared file or paste it into source code.",
+            "sourceIds": [
+              "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "curl -i -H \"Authorization: [ID_TOKEN]\" -H \"x-api-key: [REST_API_KEY]\" https://[REST_API_ID].execute-api.eu-west-2.amazonaws.com/prod/hello",
+            "explanation": "Invoke the protected REST API with both required controls.",
+            "expectedResult": "HTTP 200 with the Lambda JSON response and REST proxy CORS headers.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Replace terminal-only token and key placeholders; do not save the command in shell history if it contains real values.",
+            "sourceIds": [
+              "source-control-access-to-rest-apis-using-amazon-cognito-user-pools-as-an-auth"
+            ]
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "curl -i -H \"Authorization: [ID_TOKEN]\" https://[HTTP_API_ID].execute-api.eu-west-2.amazonaws.com/prod/hello",
+            "explanation": "Invoke the HTTP API with a valid JWT.",
+            "expectedResult": "HTTP 200 with the Lambda JSON response and HTTP API CORS headers when an Origin header is supplied.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The HTTP API has no REST API usage-plan or API-key requirement.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "curl -i -X OPTIONS -H \"Origin: https://not-example.com\" -H \"Access-Control-Request-Method: GET\" https://[HTTP_API_ID].execute-api.eu-west-2.amazonaws.com/prod/hello",
+            "explanation": "Test an origin that is not in the configured HTTP API CORS allow list.",
+            "expectedResult": "The response does not allow https://not-example.com as Access-Control-Allow-Origin.",
+            "instructions": [],
+            "commands": [],
+            "warning": "A non-browser curl request is not blocked by CORS; browsers enforce the CORS policy.",
+            "sourceIds": [
+              "source-configure-cors-for-http-apis-in-api-gateway"
+            ]
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws logs describe-log-groups --log-group-name-prefix /aws/lambda/fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2",
+            "explanation": "Confirm that invocation created the Lambda log group.",
+            "expectedResult": "The output contains /aws/lambda/fa-api-gateway-lab-hello.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This command only reads log-group metadata.",
+            "sourceIds": [
+              "source-get-started-with-the-rest-api-console"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-verification-1",
+            "title": "State the security division of responsibility",
+            "instruction": "Explain the REST API controls and the HTTP API controls used here.",
+            "expectedResult": "REST API: Cognito authorizer validates identity and API key/usage plan applies consumer quota and throttling; HTTP API: Cognito JWT authorizer validates issuer and audience; both: Lambda integration provides the backend response; CORS controls browser cross-origin access rather than API authentication.",
+            "mode": "either"
+          },
+          {
+            "id": "task-api-gateway-test-all-security-boundaries-and-review-logs-008-verification-2",
+            "title": "Confirm no VPC resources were needed",
+            "instruction": "Review the created-resource inventory.",
+            "expectedResult": "No VPC, subnet, route table, security group, NAT gateway, or internet gateway was created because neither API uses a VPC integration in this requested scope.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "API Gateway, Lambda, Amazon Cognito, and CloudWatch Logs can incur charges depending on account usage and Free Tier eligibility. Usage plans do not guarantee spend control. Delete the resources promptly after testing.",
+      "safety": "No VPC, subnet, security group, NAT gateway, internet gateway, database, or public compute instance is required for this managed Lambda integration lab. The REST API requires Cognito plus an API key. The HTTP API requires a Cognito JWT. CORS is configured for https://example.com and is not an authentication mechanism.",
+      "credentials": "Never create root access keys. Never place access-key secrets, passwords, API-key values, JWTs, or session tokens in source code, user data, screenshots, notes, command history, or shared terminals. Delete the local fa-api-gateway-lab AWS CLI profile manually after deleting its IAM access key.",
+      "region": "Use Europe (London), eu-west-2, for every regional resource and CLI command. IAM commands intentionally omit --region because IAM is global."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Delete the Lambda log group",
+          "instruction": "Console:\n- Open CloudWatch Log groups.\n- Select /aws/lambda/fa-api-gateway-lab-hello.\n- Choose Actions.\n- Choose Delete log group(s).\n- Choose Delete.\nCLI:\n- aws logs delete-log-group --log-group-name /aws/lambda/fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open CloudWatch Log groups.\n- Select /aws/lambda/fa-api-gateway-lab-hello.\n- Choose Actions.\n- Choose Delete log group(s).\n- Choose Delete.\nCLI:\n- aws logs delete-log-group --log-group-name /aws/lambda/fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Log groups list and describe-log-groups output no longer show /aws/lambda/fa-api-gateway-lab-hello.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Delete the HTTP API prod stage",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Stages.\n- Select prod.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-stage --api-id [HTTP_API_ID] --stage-name prod --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Stages.\n- Select prod.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-stage --api-id [HTTP_API_ID] --stage-name prod --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The HTTP API Stages page no longer lists prod.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-4"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Delete the HTTP API CORS configuration",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose CORS.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-cors-configuration --api-id [HTTP_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose CORS.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-cors-configuration --api-id [HTTP_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The HTTP API CORS page shows no configured CORS policy.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-configure-cors-for-http-apis-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Delete the HTTP API JWT authorizer",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Authorization.\n- Choose Manage authorizers.\n- Select fa-api-gateway-lab-http-jwt.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-authorizer --api-id [HTTP_API_ID] --authorizer-id [HTTP_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Authorization.\n- Choose Manage authorizers.\n- Select fa-api-gateway-lab-http-jwt.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-authorizer --api-id [HTTP_API_ID] --authorizer-id [HTTP_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Manage authorizers tab no longer lists fa-api-gateway-lab-http-jwt.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-control-access-to-http-apis-with-jwt-authorizers-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Delete the HTTP API GET route",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Routes.\n- Select GET /hello.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-route --api-id [HTTP_API_ID] --route-id [HTTP_ROUTE_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Routes.\n- Select GET /hello.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-route --api-id [HTTP_API_ID] --route-id [HTTP_ROUTE_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The HTTP API Routes page no longer lists GET /hello.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-5"
+          ]
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Delete the HTTP API Lambda integration",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Integrations.\n- Select the fa-api-gateway-lab-hello integration.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-integration --api-id [HTTP_API_ID] --integration-id [HTTP_INTEGRATION_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-http.\n- Choose Integrations.\n- Select the fa-api-gateway-lab-hello integration.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigatewayv2 delete-integration --api-id [HTTP_API_ID] --integration-id [HTTP_INTEGRATION_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The HTTP API Integrations page no longer lists the Lambda integration.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-integration-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-7",
+          "stepNumber": 7,
+          "title": "Remove the HTTP API Lambda invoke permission",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Choose Configuration.\n- Choose Permissions.\n- Select statement fa-api-gateway-lab-http-invoke.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws lambda remove-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-http-invoke --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Choose Configuration.\n- Choose Permissions.\n- Select statement fa-api-gateway-lab-http-invoke.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws lambda remove-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-http-invoke --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Lambda resource-based policy no longer contains fa-api-gateway-lab-http-invoke.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-granting-lambda-function-access-to-aws-services"
+          ]
+        },
+        {
+          "id": "programme-cleanup-8",
+          "stepNumber": 8,
+          "title": "Delete the HTTP API",
+          "instruction": "Console:\n- Open the API Gateway APIs page.\n- Select fa-api-gateway-lab-http.\n- Choose Delete.\n- Enter confirm.\n- Choose Delete.\nCLI:\n- aws apigatewayv2 delete-api --api-id [HTTP_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open the API Gateway APIs page.\n- Select fa-api-gateway-lab-http.\n- Choose Delete.\n- Enter confirm.\n- Choose Delete.\nCLI:\n- aws apigatewayv2 delete-api --api-id [HTTP_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The API Gateway APIs page and get-apis output no longer list fa-api-gateway-lab-http.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-4"
+          ]
+        },
+        {
+          "id": "programme-cleanup-9",
+          "stepNumber": 9,
+          "title": "Remove the API-key association from the REST usage plan",
+          "instruction": "Console:\n- Open Usage plans.\n- Open fa-api-gateway-lab-plan.\n- Open Associated API keys.\n- Select fa-api-gateway-lab-key.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws apigateway delete-usage-plan-key --usage-plan-id [USAGE_PLAN_ID] --key-id [REST_API_KEY_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open Usage plans.\n- Open fa-api-gateway-lab-plan.\n- Open Associated API keys.\n- Select fa-api-gateway-lab-key.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws apigateway delete-usage-plan-key --usage-plan-id [USAGE_PLAN_ID] --key-id [REST_API_KEY_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Associated API keys tab no longer lists fa-api-gateway-lab-key.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-set-up-usage-plans-for-rest-apis-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-10",
+          "stepNumber": 10,
+          "title": "Delete the REST API key",
+          "instruction": "Console:\n- Open API keys.\n- Select fa-api-gateway-lab-key.\n- Choose Actions.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-api-key --api-key [REST_API_KEY_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open API keys.\n- Select fa-api-gateway-lab-key.\n- Choose Actions.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-api-key --api-key [REST_API_KEY_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The API keys page no longer lists fa-api-gateway-lab-key.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-usage-plans-and-api-keys-for-rest-apis-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-11",
+          "stepNumber": 11,
+          "title": "Delete the REST API usage plan",
+          "instruction": "Console:\n- Open Usage plans.\n- Select fa-api-gateway-lab-plan.\n- Choose Actions.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-usage-plan --usage-plan-id [USAGE_PLAN_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open Usage plans.\n- Select fa-api-gateway-lab-plan.\n- Choose Actions.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-usage-plan --usage-plan-id [USAGE_PLAN_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Usage plans page no longer lists fa-api-gateway-lab-plan.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-set-up-usage-plans-for-rest-apis-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-12",
+          "stepNumber": 12,
+          "title": "Delete the REST API prod stage",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Stages.\n- Select prod.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-stage --rest-api-id [REST_API_ID] --stage-name prod --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Stages.\n- Select prod.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-stage --rest-api-id [REST_API_ID] --stage-name prod --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The REST API Stages page no longer lists prod.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-13",
+          "stepNumber": 13,
+          "title": "Delete the REST API deployment",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Deployments.\n- Select [REST_DEPLOYMENT_ID].\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-deployment --rest-api-id [REST_API_ID] --deployment-id [REST_DEPLOYMENT_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Deployments.\n- Select [REST_DEPLOYMENT_ID].\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-deployment --rest-api-id [REST_API_ID] --deployment-id [REST_DEPLOYMENT_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The REST API Deployments page no longer lists [REST_DEPLOYMENT_ID].",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-14",
+          "stepNumber": 14,
+          "title": "Delete the REST API Cognito authorizer",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Authorizers.\n- Select fa-api-gateway-lab-rest-cognito.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-authorizer --rest-api-id [REST_API_ID] --authorizer-id [REST_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Authorizers.\n- Select fa-api-gateway-lab-rest-cognito.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-authorizer --rest-api-id [REST_API_ID] --authorizer-id [REST_AUTHORIZER_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The REST API Authorizers page no longer lists fa-api-gateway-lab-rest-cognito.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-integrate-a-rest-api-with-an-amazon-cognito-user-pool"
+          ]
+        },
+        {
+          "id": "programme-cleanup-15",
+          "stepNumber": 15,
+          "title": "Remove the REST API proxy CORS behavior",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Open the Code tab.\n- Delete the three Access-Control-Allow header lines.\n- Choose Deploy.\nCLI:\n- aws lambda update-function-code --function-name fa-api-gateway-lab-hello --zip-file fileb://fa-api-gateway-lab-hello.zip --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Open the Code tab.\n- Delete the three Access-Control-Allow header lines.\n- Choose Deploy.\nCLI:\n- aws lambda update-function-code --function-name fa-api-gateway-lab-hello --zip-file fileb://fa-api-gateway-lab-hello.zip --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Lambda handler no longer contains Access-Control-Allow-Origin, Access-Control-Allow-Headers, or Access-Control-Allow-Methods before the function itself is deleted.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-cors-for-rest-apis-in-api-gateway"
+          ]
+        },
+        {
+          "id": "programme-cleanup-16",
+          "stepNumber": 16,
+          "title": "Delete the REST API Lambda integration",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select GET under /hello.\n- Choose Integration request.\n- Choose Delete integration.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-integration --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select GET under /hello.\n- Choose Integration request.\n- Choose Delete integration.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-integration --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "GET /hello no longer has an integration request.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-17",
+          "stepNumber": 17,
+          "title": "Delete the REST API GET method",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select GET under /hello.\n- Choose Delete method.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-method --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select GET under /hello.\n- Choose Delete method.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-method --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --http-method GET --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The /hello resource no longer lists a GET method.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-18",
+          "stepNumber": 18,
+          "title": "Delete the REST API /hello resource",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select /hello.\n- Choose Delete resource.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-resource --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-rest.\n- Choose Resources.\n- Select /hello.\n- Choose Delete resource.\n- Confirm deletion.\nCLI:\n- aws apigateway delete-resource --rest-api-id [REST_API_ID] --resource-id [REST_HELLO_RESOURCE_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The REST API Resources page no longer lists /hello.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-19",
+          "stepNumber": 19,
+          "title": "Remove the REST API Lambda invoke permission",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Choose Configuration.\n- Choose Permissions.\n- Select statement fa-api-gateway-lab-rest-invoke.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws lambda remove-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-rest-invoke --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-hello in Lambda.\n- Choose Configuration.\n- Choose Permissions.\n- Select statement fa-api-gateway-lab-rest-invoke.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws lambda remove-permission --function-name fa-api-gateway-lab-hello --statement-id fa-api-gateway-lab-rest-invoke --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Lambda resource-based policy no longer contains fa-api-gateway-lab-rest-invoke.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-granting-lambda-function-access-to-aws-services"
+          ]
+        },
+        {
+          "id": "programme-cleanup-20",
+          "stepNumber": 20,
+          "title": "Delete the REST API",
+          "instruction": "Console:\n- Open the API Gateway APIs page.\n- Select fa-api-gateway-lab-rest.\n- Choose Actions.\n- Choose Delete API.\n- Enter confirm.\n- Choose Delete.\nCLI:\n- aws apigateway delete-rest-api --rest-api-id [REST_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open the API Gateway APIs page.\n- Select fa-api-gateway-lab-rest.\n- Choose Actions.\n- Choose Delete API.\n- Enter confirm.\n- Choose Delete.\nCLI:\n- aws apigateway delete-rest-api --rest-api-id [REST_API_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The API Gateway APIs page and get-rest-apis output no longer list fa-api-gateway-lab-rest.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-21",
+          "stepNumber": 21,
+          "title": "Delete the Cognito test user",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-users in Amazon Cognito.\n- Choose Users.\n- Select api-learner.\n- Choose Delete user.\n- Confirm deletion.\nCLI:\n- aws cognito-idp admin-delete-user --user-pool-id [USER_POOL_ID] --username api-learner --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-users in Amazon Cognito.\n- Choose Users.\n- Select api-learner.\n- Choose Delete user.\n- Confirm deletion.\nCLI:\n- aws cognito-idp admin-delete-user --user-pool-id [USER_POOL_ID] --username api-learner --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The user-pool Users page no longer lists api-learner.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-admin-create-user-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-22",
+          "stepNumber": 22,
+          "title": "Delete the Cognito app client",
+          "instruction": "Console:\n- Open fa-api-gateway-lab-users in Amazon Cognito.\n- Choose App clients.\n- Select fa-api-gateway-lab-client.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws cognito-idp delete-user-pool-client --user-pool-id [USER_POOL_ID] --client-id [APP_CLIENT_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open fa-api-gateway-lab-users in Amazon Cognito.\n- Choose App clients.\n- Select fa-api-gateway-lab-client.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws cognito-idp delete-user-pool-client --user-pool-id [USER_POOL_ID] --client-id [APP_CLIENT_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The user-pool App clients page no longer lists fa-api-gateway-lab-client.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-user-pool-client-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-23",
+          "stepNumber": 23,
+          "title": "Delete the Cognito user pool",
+          "instruction": "Console:\n- Open Amazon Cognito User pools.\n- Select fa-api-gateway-lab-users.\n- Choose Delete.\n- Enter the user pool name when prompted.\n- Choose Delete.\nCLI:\n- aws cognito-idp delete-user-pool --user-pool-id [USER_POOL_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open Amazon Cognito User pools.\n- Select fa-api-gateway-lab-users.\n- Choose Delete.\n- Enter the user pool name when prompted.\n- Choose Delete.\nCLI:\n- aws cognito-idp delete-user-pool --user-pool-id [USER_POOL_ID] --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Cognito User pools page no longer lists fa-api-gateway-lab-users.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-user-pool-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-24",
+          "stepNumber": 24,
+          "title": "Delete the Lambda function",
+          "instruction": "Console:\n- Open the Lambda Functions page.\n- Select fa-api-gateway-lab-hello.\n- Choose Actions.\n- Choose Delete.\n- Enter delete.\n- Choose Delete.\nCLI:\n- aws lambda delete-function --function-name fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2",
+          "description": "Console:\n- Open the Lambda Functions page.\n- Select fa-api-gateway-lab-hello.\n- Choose Actions.\n- Choose Delete.\n- Enter delete.\n- Choose Delete.\nCLI:\n- aws lambda delete-function --function-name fa-api-gateway-lab-hello --profile fa-api-gateway-lab --region eu-west-2",
+          "verification": "The Lambda Functions page and get-function command no longer find fa-api-gateway-lab-hello.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-25",
+          "stepNumber": 25,
+          "title": "Detach the Lambda basic execution policy",
+          "instruction": "Console:\n- Open IAM Roles.\n- Open fa-api-gateway-lab-lambda-role.\n- Open Permissions.\n- Select AWSLambdaBasicExecutionRole.\n- Choose Detach.\n- Confirm detachment.\nCLI:\n- aws iam detach-role-policy --role-name fa-api-gateway-lab-lambda-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --profile fa-api-gateway-lab",
+          "description": "Console:\n- Open IAM Roles.\n- Open fa-api-gateway-lab-lambda-role.\n- Open Permissions.\n- Select AWSLambdaBasicExecutionRole.\n- Choose Detach.\n- Confirm detachment.\nCLI:\n- aws iam detach-role-policy --role-name fa-api-gateway-lab-lambda-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --profile fa-api-gateway-lab",
+          "verification": "The role Permissions tab no longer lists AWSLambdaBasicExecutionRole.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-2"
+          ]
+        },
+        {
+          "id": "programme-cleanup-26",
+          "stepNumber": 26,
+          "title": "Delete the Lambda execution role",
+          "instruction": "Console:\n- Open IAM Roles.\n- Select fa-api-gateway-lab-lambda-role.\n- Choose Delete.\n- Enter the role name.\n- Choose Delete.\nCLI:\n- aws iam delete-role --role-name fa-api-gateway-lab-lambda-role --profile fa-api-gateway-lab",
+          "description": "Console:\n- Open IAM Roles.\n- Select fa-api-gateway-lab-lambda-role.\n- Choose Delete.\n- Enter the role name.\n- Choose Delete.\nCLI:\n- aws iam delete-role --role-name fa-api-gateway-lab-lambda-role --profile fa-api-gateway-lab",
+          "verification": "The IAM Roles page no longer lists fa-api-gateway-lab-lambda-role.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-27",
+          "stepNumber": 27,
+          "title": "Delete the temporary IAM access key",
+          "instruction": "Console:\n- Open IAM Users.\n- Open fa-api-gateway-lab-user.\n- Choose Security credentials.\n- Select [LAB_ACCESS_KEY_ID].\n- Choose Actions.\n- Choose Delete access key.\n- Confirm deletion.\nCLI:\n- aws iam delete-access-key --user-name fa-api-gateway-lab-user --access-key-id [LAB_ACCESS_KEY_ID] --profile <ADMIN_PROFILE>",
+          "description": "Console:\n- Open IAM Users.\n- Open fa-api-gateway-lab-user.\n- Choose Security credentials.\n- Select [LAB_ACCESS_KEY_ID].\n- Choose Actions.\n- Choose Delete access key.\n- Confirm deletion.\nCLI:\n- aws iam delete-access-key --user-name fa-api-gateway-lab-user --access-key-id [LAB_ACCESS_KEY_ID] --profile <ADMIN_PROFILE>",
+          "verification": "The user Security credentials page no longer lists [LAB_ACCESS_KEY_ID].",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        },
+        {
+          "id": "programme-cleanup-28",
+          "stepNumber": 28,
+          "title": "Detach AdministratorAccess from the training user",
+          "instruction": "Console:\n- Open IAM Users.\n- Open fa-api-gateway-lab-user.\n- Choose Permissions.\n- Select AdministratorAccess.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws iam detach-user-policy --user-name fa-api-gateway-lab-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --profile <ADMIN_PROFILE>",
+          "description": "Console:\n- Open IAM Users.\n- Open fa-api-gateway-lab-user.\n- Choose Permissions.\n- Select AdministratorAccess.\n- Choose Remove.\n- Confirm removal.\nCLI:\n- aws iam detach-user-policy --user-name fa-api-gateway-lab-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --profile <ADMIN_PROFILE>",
+          "verification": "The user Permissions tab no longer lists AdministratorAccess.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation"
+          ]
+        },
+        {
+          "id": "programme-cleanup-29",
+          "stepNumber": 29,
+          "title": "Delete the training IAM user",
+          "instruction": "Console:\n- Open IAM Users.\n- Select fa-api-gateway-lab-user.\n- Choose Delete.\n- Enter the user name.\n- Choose Delete.\nCLI:\n- aws iam delete-user --user-name fa-api-gateway-lab-user --profile <ADMIN_PROFILE>",
+          "description": "Console:\n- Open IAM Users.\n- Select fa-api-gateway-lab-user.\n- Choose Delete.\n- Enter the user name.\n- Choose Delete.\nCLI:\n- aws iam delete-user --user-name fa-api-gateway-lab-user --profile <ADMIN_PROFILE>",
+          "verification": "The IAM Users page no longer lists fa-api-gateway-lab-user.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-get-started-with-the-rest-api-console"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The CLI cleanup entry for restCorsConfiguration updates Lambda source from a local zip archive. Before executing it, a human should confirm the intended cleanup outcome because deleting the Lambda function shortly afterward makes separate source modification unnecessary.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The console navigation for Cognito can vary slightly between Cognito console releases. Confirm the currently visible app-client and user-pool labels while preserving the fixed names and recorded placeholders in this Follow Along.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The command shown for the REST API CORS configuration deliberately relies on Lambda proxy response headers, as AWS documents for proxy integrations. It does not create a REST OPTIONS mock method because the protected GET route demonstrates actual-response CORS behavior and the HTTP API task demonstrates API Gateway-managed preflight handling.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Task 4 was reported as needing correction, but no corrected task was returned. The original generated task was preserved for manual review.",
+          "status": "open"
+        },
+        {
+          "id": "finding-5",
+          "findingNumber": 5,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Task 5 was reported as needing correction, but no corrected task was returned. The original generated task was preserved for manual review.",
+          "status": "open"
+        },
+        {
+          "id": "finding-6",
+          "findingNumber": 6,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Task 6 was reported as needing correction, but no corrected task was returned. The original generated task was preserved for manual review.",
+          "status": "open"
+        },
+        {
+          "id": "finding-7",
+          "findingNumber": 7,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Task 7 was reported as needing correction, but no corrected task was returned. The original generated task was preserved for manual review.",
+          "status": "open"
+        },
+        {
+          "id": "finding-8",
+          "findingNumber": 8,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Task 8 was reported as needing correction, but no corrected task was returned. The original generated task was preserved for manual review.",
+          "status": "open"
+        },
+        {
+          "id": "finding-9",
+          "findingNumber": 9,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 2 CLI step 1 contains more than one shell operation. Replace it with separate CLI steps that each contain exactly one command.",
+          "status": "open"
+        },
+        {
+          "id": "finding-10",
+          "findingNumber": 10,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 2 CLI step 4 contains more than one shell operation. Replace it with separate CLI steps that each contain exactly one command.",
+          "status": "open"
+        },
+        {
+          "id": "finding-11",
+          "findingNumber": 11,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 3 CLI step 5 contains more than one shell operation. Replace it with separate CLI steps that each contain exactly one command.",
+          "status": "open"
+        },
+        {
+          "id": "finding-12",
+          "findingNumber": 12,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 2 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-13",
+          "findingNumber": 13,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 3 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-14",
+          "findingNumber": 14,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 4 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-15",
+          "findingNumber": 15,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 5 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-16",
+          "findingNumber": 16,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 6 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-17",
+          "findingNumber": 17,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 7 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-18",
+          "findingNumber": 18,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 8 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-19",
+          "findingNumber": 19,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource labUserAdministratorAttachment does not name its exact target AdministratorAccess attached to fa-api-gateway-lab-user.",
+          "status": "open"
+        },
+        {
+          "id": "finding-20",
+          "findingNumber": 20,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource labAccessKey does not name its exact target [LAB_ACCESS_KEY_ID] for fa-api-gateway-lab-user.",
+          "status": "open"
+        },
+        {
+          "id": "finding-21",
+          "findingNumber": 21,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource lambdaBasicExecutionAttachment does not name its exact target service-role/AWSLambdaBasicExecutionRole attached to fa-api-gateway-lab-lambda-role.",
+          "status": "open"
+        },
+        {
+          "id": "finding-22",
+          "findingNumber": 22,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource restHelloResource does not name its exact target /hello, recorded as [REST_HELLO_RESOURCE_ID].",
+          "status": "open"
+        },
+        {
+          "id": "finding-23",
+          "findingNumber": 23,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource restGetMethod does not name its exact target GET /hello.",
+          "status": "open"
+        },
+        {
+          "id": "finding-24",
+          "findingNumber": 24,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource restLambdaIntegration does not name its exact target GET /hello to fa-api-gateway-lab-hello.",
+          "status": "open"
+        },
+        {
+          "id": "finding-25",
+          "findingNumber": 25,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource restCorsConfiguration does not name its exact target Lambda proxy headers for https://example.com.",
+          "status": "open"
+        },
+        {
+          "id": "finding-26",
+          "findingNumber": 26,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource restUsagePlanKey does not name its exact target fa-api-gateway-lab-key associated with fa-api-gateway-lab-plan.",
+          "status": "open"
+        },
+        {
+          "id": "finding-27",
+          "findingNumber": 27,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource httpLambdaIntegration does not name its exact target [HTTP_INTEGRATION_ID] to fa-api-gateway-lab-hello.",
+          "status": "open"
+        },
+        {
+          "id": "finding-28",
+          "findingNumber": 28,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource httpCorsConfiguration does not name its exact target allow https://example.com, GET, Authorization, and X-Api-Key.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "api-gateway-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 6,
+    "taskCount": 8,
+    "checkboxCount": 188,
+    "cliCommandCount": 41,
+    "verificationCheckCount": 16,
+    "cleanupItemCount": 29,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 23
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "9c524d45cd66f8f4924963cfc5c4dc93a444aceb9f7527e98cd3e160022b2037"
+  }
+}

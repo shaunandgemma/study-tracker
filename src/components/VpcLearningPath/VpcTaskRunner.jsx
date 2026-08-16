@@ -4,10 +4,8 @@ import {
   ChevronRight,
   Save,
   CheckCircle2,
-  AlertTriangle,
   Terminal,
   Layers,
-  Zap,
   Cpu
 } from 'lucide-react';
 import { interpolateResourceVariables, validateResourceRecord } from '../../services/vpcLearningPathService.js';
@@ -20,11 +18,9 @@ export const VpcTaskRunner = ({
   preferredMode = 'console',
   resourcesMap = {},
   stepProgressMap = {},
-  resourceDecisionsMap = {},
   onSaveProgress = () => {},
   onCompleteTask = () => {},
-  onNavigateTask = () => {},
-  onUpdateResources = () => {}
+  onNavigateTask = () => {}
 }) => {
   const taskId = task?.id || null;
   const isCompleted = completedTaskIds.includes(taskId);
@@ -33,7 +29,6 @@ export const VpcTaskRunner = ({
   const [activeMode, setActiveMode] = useState(preferredMode);
   const [checkedSteps, setCheckedSteps] = useState(() => taskId ? stepProgressMap[taskId] || [] : []);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [showDecisionModal, setShowDecisionModal] = useState(false);
   const [editableResources, setEditableResources] = useState(() => {
     const keys = task?.createdResourceKeys || [];
     const initial = {};
@@ -133,13 +128,7 @@ export const VpcTaskRunner = ({
     if (hasUnsavedChanges) {
       handleSave();
     }
-    setShowDecisionModal(true);
-  };
-
-  // Decision Modal selection handler
-  const handleSelectDecision = (decision) => {
-    setShowDecisionModal(false);
-    onCompleteTask(taskId, decision);
+    onCompleteTask(taskId, 'retained');
     onNavigateTask('next');
   };
 
@@ -347,46 +336,6 @@ export const VpcTaskRunner = ({
         </div>
       </div>
 
-      {/* Resource Decision Modal */}
-      {showDecisionModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Zap className="w-5 h-5 text-cyan-400" />
-              Resource Retention Decision
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Choose whether to keep resources created in this task for subsequent connected tasks or tear them down now.
-            </p>
-
-            <div className="space-y-2 pt-2">
-              <button
-                onClick={() => handleSelectDecision('retained')}
-                className="w-full p-3 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition-all"
-              >
-                <span className="font-bold text-xs text-cyan-300 block">
-                  Keep resources for the next task (Recommended)
-                </span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
-                  Retains saved VPC, subnet, and gateway IDs for automatic prefill in later tasks.
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleSelectDecision('cleaned')}
-                className="w-full p-3 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition-all"
-              >
-                <span className="font-bold text-xs text-amber-300 block">
-                  Clean up resources from this task
-                </span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
-                  Deletes resources for this task before continuing to the next task.
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

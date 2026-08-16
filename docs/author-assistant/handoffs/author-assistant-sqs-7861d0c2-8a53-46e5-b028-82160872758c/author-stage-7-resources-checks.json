@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_stage_7_local_resources_checks",
+  "status": "human_accepted",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "responseId": "resp_05cf4a9ccc0c0906016a79a1af8c908192a75a5e072703e171",
+  "model": "gpt-5.6-terra",
+  "generatedAt": "2026-08-10T10:02:35.383Z",
+  "basedOnStage6Fingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "937d22f6e55bb02128139d0eed3056722068503742ff56ff78c91cf27669b1c6"
+  },
+  "stageBoundary": {
+    "preparedLocally": [
+      7
+    ],
+    "notPrepared": [
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "writtenToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "candidatePrepared": false,
+    "published": false
+  },
+  "resources": {
+    "schema": [],
+    "interpolationAliases": {},
+    "chargeableResourceKeys": [],
+    "variables": {}
+  },
+  "tasks": [
+    {
+      "taskId": "task-sqs-confirm-safe-scope-and-required-access-001",
+      "title": "Confirm safe scope and required access",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-the-selected-region",
+          "title": "Verify the selected Region",
+          "instruction": "Inspect the Console Region selector.",
+          "expectedResult": "eu-west-2 is selected.",
+          "mode": "console"
+        },
+        {
+          "id": "verify-2-verify-the-queue-name-is-non-confidential",
+          "title": "Verify the queue name is non-confidential",
+          "instruction": "Inspect the chosen queue name before creating the queue.",
+          "expectedResult": "The name is sqs-beginner-test and contains no sensitive information.",
+          "mode": "console"
+        }
+      ]
+    },
+    {
+      "taskId": "task-sqs-create-a-standard-queue-002",
+      "title": "Create a standard queue",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-queue-creation",
+          "title": "Verify queue creation",
+          "instruction": "Inspect the page displayed after creating the queue.",
+          "expectedResult": "The Details page for sqs-beginner-test is displayed.",
+          "mode": "console"
+        }
+      ]
+    },
+    {
+      "taskId": "task-sqs-send-one-harmless-test-message-003",
+      "title": "Send one harmless test message",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-message-submission",
+          "title": "Verify message submission",
+          "instruction": "Inspect the confirmation shown after sending the message.",
+          "expectedResult": "The Console displays a message-sent success confirmation.",
+          "mode": "console"
+        }
+      ]
+    },
+    {
+      "taskId": "task-sqs-receive-and-inspect-the-test-message-004",
+      "title": "Receive and inspect the test message",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-the-received-message",
+          "title": "Verify the received message",
+          "instruction": "Inspect the Messages section after polling.",
+          "expectedResult": "The received test message shows a Message ID, Sent date, Size, and Receive count.",
+          "mode": "console"
+        }
+      ]
+    },
+    {
+      "taskId": "task-sqs-delete-the-received-test-message-005",
+      "title": "Delete the received test message",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-deletion-confirmation",
+          "title": "Verify deletion confirmation",
+          "instruction": "Inspect the Messages section after confirming deletion.",
+          "expectedResult": "The selected test message is no longer shown.",
+          "mode": "console"
+        }
+      ]
+    },
+    {
+      "taskId": "task-sqs-review-queue-deletion-effects-006",
+      "title": "Review queue deletion effects",
+      "createdResourceKeys": [],
+      "verification": [
+        {
+          "id": "verify-1-verify-lifecycle-understanding",
+          "title": "Verify lifecycle understanding",
+          "instruction": "Inspect the queue-deletion guidance.",
+          "expectedResult": "It states that a queue can be deleted even when it is not empty.",
+          "mode": "console"
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "resources": [],
+    "verifications": [
+      {
+        "taskId": "task-sqs-confirm-safe-scope-and-required-access-001",
+        "verificationId": "verify-1-verify-the-selected-region",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-confirm-safe-scope-and-required-access-001",
+        "verificationId": "verify-2-verify-the-queue-name-is-non-confidential",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-create-a-standard-queue-002",
+        "verificationId": "verify-1-verify-queue-creation",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-send-one-harmless-test-message-003",
+        "verificationId": "verify-1-verify-message-submission",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-receive-and-inspect-the-test-message-004",
+        "verificationId": "verify-1-verify-the-received-message",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-receive-delete-message.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-delete-the-received-test-message-005",
+        "verificationId": "verify-1-verify-deletion-confirmation",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-receive-delete-message.html"
+        ]
+      },
+      {
+        "taskId": "task-sqs-review-queue-deletion-effects-006",
+        "verificationId": "verify-1-verify-lifecycle-understanding",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+        ]
+      }
+    ],
+    "protectedSourceUrls": [
+      "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html",
+      "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-receive-delete-message.html",
+      "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html",
+      "https://docs.aws.amazon.com/service-authorization/latest/reference/list_sqs.html",
+      "https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html",
+      "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-using-identity-based-policies.html"
+    ]
+  },
+  "consoleBoundary": {
+    "verificationModes": [
+      "console"
+    ],
+    "cliCommandsPrepared": false
+  },
+  "futureCliBoundary": {
+    "prepared": false,
+    "guidancePreservedFromStage6": {
+      "task-sqs-receive-and-inspect-the-test-message-004": "A future CLI path must retain the ReceiptHandle returned by receive-message for the later delete-message command.",
+      "task-sqs-delete-the-received-test-message-005": "A future CLI path must use the most recently returned ReceiptHandle with delete-message.",
+      "task-sqs-review-queue-deletion-effects-006": "A future CLI cleanup path may use delete-queue only in Stage 8.",
+      "task-sqs-confirm-safe-scope-and-required-access-001": "A future CLI path may use --region eu-west-2 and must still rely on access already granted by the learner's administrator."
+    }
+  },
+  "manualReviewFindings": [
+    "An exact least-privilege policy must not be inferred. The learner must use an account or role already authorized for the required SQS Console actions.",
+    "Standard queues use at-least-once delivery and can occasionally return messages out of order; use one harmless test message and do not claim exactly-once or ordered delivery.",
+    "A Console-retrieved message is not deleted automatically and must be selected and deleted after verification.",
+    "FIFO-only requirements remain outside this standard-queue Follow Along.",
+    "Receipt-handle capture is preserved only for a future CLI path and is not required by the Console instructions.",
+    "Stage 6 provides queue lifecycle awareness only; actual manual queue deletion belongs to Stage 8 cleanup.",
+    "The accepted sources identify SQS permissions and actions but do not support an exact Console-only inspection that proves the signed-in identity has every required permission before performing the tasks.",
+    "The accepted Console receive/delete documentation does not support capturing a receipt handle in the Console; no transient receipt-handle resource was captured."
+  ],
+  "acceptedAt": "2026-08-10T10:42:45.035Z",
+  "acceptanceFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "34bb5ae9f036bd3906eddca93c540b674c65f5a8e7d638268e15806243d557fc"
+  }
+}

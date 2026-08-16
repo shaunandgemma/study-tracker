@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "kind": "aws_documentation_research_result",
+  "status": "awaiting_source_acceptance",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "responseId": "resp_015735405bc9a1cf016a78fcf5d0ec819cadbd286f87d24e6c",
+  "model": "gpt-5.6-terra",
+  "protectedSourceCorrectionApplied": false,
+  "protectedSourceCorrectionResponseId": "",
+  "completedAt": "2026-08-09T22:19:54.945Z",
+  "allowedDomains": [
+    "docs.aws.amazon.com"
+  ],
+  "summary": "Found official AWS documentation sources for a beginner Amazon SQS follow-along that creates a standard queue, sends a test message, receives and deletes it, and then deletes the queue. The Console coverage is in the SQS Developer Guide, command and parameter coverage is in individual AWS CLI Command Reference pages, and IAM action/resource coverage is in the Amazon SQS Service Authorization Reference.",
+  "proposedSources": [
+    {
+      "sourceType": "service_guide",
+      "documentTitle": "Creating an Amazon SQS standard queue and sending a message - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "Console procedure to create a standard queue.",
+        "Console procedure to send a test message.",
+        "Beginner-safe queue configuration context, including visibility timeout, message retention, delivery delay, maximum message size, and receive-message wait time.",
+        "Safety guidance not to include PII or other confidential information in the queue name."
+      ],
+      "whyThisSourceApplies": "It directly documents the Console workflow for the first two steps of a basic standard-queue exercise, which is appropriate for a beginner."
+    },
+    {
+      "sourceType": "service_guide",
+      "documentTitle": "Receiving and deleting a message in Amazon SQS - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-receive-delete-message.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "Console procedure to poll a queue for messages.",
+        "Console procedure to select and delete received messages.",
+        "Explanation that received messages are not automatically deleted.",
+        "Guidance on long polling and visibility timeout for safe message handling."
+      ],
+      "whyThisSourceApplies": "It directly covers the required Console-based test and cleanup of the test message after it has been sent."
+    },
+    {
+      "sourceType": "service_guide",
+      "documentTitle": "Deleting an Amazon SQS queue - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "Queue cleanup after the follow-along.",
+        "Reference to the AWS CLI delete-queue command."
+      ],
+      "whyThisSourceApplies": "Deleting the temporary queue is a safety-oriented cleanup step for a basic hands-on exercise."
+    },
+    {
+      "sourceType": "cli_reference",
+      "documentTitle": "create-queue — AWS CLI 2.35.24 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/create-queue.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "aws sqs create-queue command.",
+        "Required --queue-name parameter.",
+        "Optional --attributes and --tags parameters.",
+        "Queue-name restrictions and standard-queue default behavior.",
+        "Queue URL output."
+      ],
+      "whyThisSourceApplies": "It is the command-level AWS CLI reference for creating the queue and documents the command syntax and supported parameters."
+    },
+    {
+      "sourceType": "cli_reference",
+      "documentTitle": "send-message — AWS CLI 2.35.23 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/send-message.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "aws sqs send-message command.",
+        "Required --queue-url and --message-body parameters.",
+        "Optional --delay-seconds and message-attribute parameters.",
+        "Message-content character restrictions."
+      ],
+      "whyThisSourceApplies": "It is the command-level AWS CLI reference for placing a test message on the queue."
+    },
+    {
+      "sourceType": "cli_reference",
+      "documentTitle": "receive-message — AWS CLI 2.35.19 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/receive-message.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "aws sqs receive-message command.",
+        "Required --queue-url parameter.",
+        "--max-number-of-messages, --visibility-timeout, and --wait-time-seconds parameters.",
+        "ReceiptHandle output needed for deletion.",
+        "Long-polling and visibility-timeout behavior."
+      ],
+      "whyThisSourceApplies": "It documents the command and parameters needed to test receiving a message safely and obtain the receipt handle for deletion."
+    },
+    {
+      "sourceType": "cli_reference",
+      "documentTitle": "delete-message — AWS CLI 2.35.21 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/delete-message.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "aws sqs delete-message command.",
+        "Required --queue-url and --receipt-handle parameters.",
+        "Requirement to use the most recently received receipt handle.",
+        "Standard-queue duplicate-delivery caveat."
+      ],
+      "whyThisSourceApplies": "It documents the message-cleanup command and the receipt-handle requirement needed to complete the test safely."
+    },
+    {
+      "sourceType": "cli_reference",
+      "documentTitle": "delete-queue — AWS CLI 2.35.14 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/delete-queue.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "aws sqs delete-queue command.",
+        "Required --queue-url parameter.",
+        "Warning that deleting a queue permanently removes its messages.",
+        "Deletion timing and same-name recreation wait guidance."
+      ],
+      "whyThisSourceApplies": "It documents the final resource-cleanup command and its destructive effects."
+    },
+    {
+      "sourceType": "service_authorization",
+      "documentTitle": "Actions, resources, and condition keys for Amazon SQS - Service Authorization Reference",
+      "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_sqs.html",
+      "checkedAt": "2026-08-09T22:19:54.945Z",
+      "supports": [
+        "IAM actions sqs:CreateQueue, sqs:SendMessage, sqs:ReceiveMessage, sqs:DeleteMessage, and sqs:DeleteQueue.",
+        "Access levels for the relevant actions.",
+        "The queue resource type and its ARN format.",
+        "Applicable aws:ResourceTag/${TagKey} condition-key coverage for queue-scoped actions.",
+        "CreateQueue tagging-related authorization information."
+      ],
+      "whyThisSourceApplies": "It is the required AWS Service Authorization Reference and maps the follow-along operations to supported IAM actions and SQS queue resources."
+    }
+  ],
+  "manualReviewFindings": [
+    "The sources found do not provide a follow-along-specific instruction for selecting the preferred Region, eu-west-2. The learner instructions should explicitly tell the learner to confirm eu-west-2 in the AWS Management Console or use the AWS CLI global --region eu-west-2 option, but this exact regional setup guidance was not taken from a proposed source.",
+    "A least-privilege IAM policy document should be manually reviewed before inclusion. The Service Authorization Reference confirms the relevant actions and the queue ARN resource type, but policy construction—especially the resource scope required for sqs:CreateQueue and any console-dependent permissions—should not be inferred without additional sourced authorization guidance.",
+    "The Console guide states that standard queues have at-least-once delivery and can occasionally return messages out of order. The exercise should therefore use a single harmless test message and should not claim exactly-once processing or ordered delivery.",
+    "The Console receive/delete workflow notes that console-retrieved messages remain visible for re-retrieval; the learner should explicitly delete the test message after verifying it.",
+    "The exact source pages found support standard queues. FIFO-specific requirements, including message group IDs and deduplication IDs, are outside the recommended beginner scope unless the follow-along is intentionally changed to FIFO."
+  ]
+}

@@ -111,6 +111,25 @@ test('exam-first landing navigation', async t => {
     assert.equal(terraformCard.examId, 'aws-saa-c03');
     assert.equal(isFollowAlongProgrammeForExam(terraformCard, 'terraform-associate-004'), false);
     assert.equal(isFollowAlongProgrammeForExam(terraformCard, 'aws-saa-c03'), true);
+
+    const hcpTerraformCard = buildPublishedProgrammeCard({
+      candidate_id: 'candidate-hcp-terraform',
+      source_revision: 1,
+      runtime_content: {
+        programme: {
+          programmeId: 'hcp-terraform-remote-runs-collaboration-learning-path',
+          serviceSlug: 'hcp-terraform-remote-runs-collaboration',
+          serviceName: 'HCP Terraform Remote Runs and Collaboration',
+          displayName: 'HCP Terraform Remote Runs and Collaboration Follow Along',
+          shortName: 'HCP TF',
+          category: 'HashiCorp Terraform Associate 004'
+        },
+        phases: [],
+        tasks: []
+      }
+    });
+    assert.equal(hcpTerraformCard.examId, 'terraform-associate-004');
+    assert.equal(isFollowAlongProgrammeForExam(hcpTerraformCard, 'terraform-associate-004'), true);
     assert.match(terraformFollowAlongOrder, /terraform-configuration-foundations-learning-path/);
     assert.match(followAlongLanding, /sortTerraformFollowAlongs/);
     assert.match(followAlongLanding, /cardNumber=\{numberedProgrammeIds\.get\(prog\.id\) \?\? null\}/);

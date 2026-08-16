@@ -1,0 +1,1277 @@
+{
+  "sessionId": "author-assistant-sqs-c2800154-3e0c-4030-b7c9-5b2e40ed7016",
+  "status": "handoff_package_ready_for_review",
+  "createdAt": "2026-08-10T17:57:13.400Z",
+  "inputs": {
+    "generationMode": "update_existing",
+    "updateTarget": {
+      "programmeId": "sqs-learning-path",
+      "displayName": "Amazon SQS: Basic Message Queue Test",
+      "serviceName": "Amazon Simple Queue Service",
+      "shortName": "SQS",
+      "serviceSlug": "sqs",
+      "sourceRevision": 3,
+      "candidateId": "release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r3-8af6b67146bf",
+      "contentHash": "6a521eb06fb8793c17746c0276e9d134fea2b9c519c1478fb272740c2ec09313",
+      "publishedAt": "2026-08-10T17:51:30.705799+00:00",
+      "runtimeContent": {
+        "tasks": [
+          {
+            "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001",
+            "goal": "Create a console-only IAM lab user named sqs-lab-user, explain why routine SQS work should not use the root user, and verify that an administrator has granted the user the minimum approved access needed for the selected lab.",
+            "slug": "1-create-an-iam-user-for-the-sqs-labs",
+            "title": "1. Create an IAM User for the SQS Labs",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "IAM; Amazon SQS",
+            "phaseId": "phase-1-identity-access-and-sqs-foundations",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-cli-step-1",
+                "number": 1,
+                "command": "aws iam get-user --user-name sqs-lab-user",
+                "warning": "No credentials or IAM policy are provided in this catalogue.",
+                "commands": [
+                  {
+                    "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-cli-step-1-command-1",
+                    "text": "aws iam get-user --user-name sqs-lab-user",
+                    "explanation": "Planned verification command after an administrator creates the lab user; it requires credentials configured outside this catalogue.",
+                    "expectedOutput": "The command returns the IAM user metadata when authorized."
+                  }
+                ],
+                "sourceIds": [
+                  "source-create-an-iam-user-in-your-aws-account"
+                ],
+                "stepNumber": 1,
+                "explanation": "Planned verification command after an administrator creates the lab user; it requires credentials configured outside this catalogue.",
+                "instructions": [],
+                "expectedResult": "The command returns the IAM user metadata when authorized."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account",
+              "source-how-do-i-manage-iam",
+              "source-control-iam-user-access-to-the-aws-management-console",
+              "source-permissions-required-to-access-iam-resources"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Do not create access keys for a console-only learner account.",
+                "commands": [],
+                "sourceIds": [
+                  "source-create-an-iam-user-in-your-aws-account"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "This catalogue identifies IAM setup as the first hands-on lab."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm this is the first lab in the learning order.",
+                "expectedResult": "The IAM setup lab is numbered 1."
+              }
+            ],
+            "whyItMatters": "SAA-C03 expects secure identity choices. IAM users have no permissions by default; AWS recommends federation for human users where possible and limiting root-user use to tasks that require it.",
+            "prerequisites": [],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002",
+            "goal": "Sign in using the approved lab identity, open Amazon SQS, select Europe (London) eu-west-2, and confirm that permitted queue actions are visible.",
+            "slug": "2-verify-amazon-sqs-console-access-and-select-eu-west-2",
+            "title": "2. Verify Amazon SQS Console Access and Select eu-west-2",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS; IAM",
+            "phaseId": "phase-1-identity-access-and-sqs-foundations",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-cli-step-1",
+                "number": 1,
+                "command": "aws sqs list-queues --region eu-west-2",
+                "warning": "This command requires preconfigured authorized CLI credentials.",
+                "commands": [
+                  {
+                    "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-cli-step-1-command-1",
+                    "text": "aws sqs list-queues --region eu-west-2",
+                    "explanation": "Planned non-destructive access check for the selected regional SQS endpoint.",
+                    "expectedOutput": "The command returns accessible queue URLs or an authorization error to investigate."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "Planned non-destructive access check for the selected regional SQS endpoint.",
+                "instructions": [],
+                "expectedResult": "The command returns accessible queue URLs or an authorization error to investigate."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-control-iam-user-access-to-the-aws-management-console",
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Permission failures must be investigated rather than bypassed with root-user credentials.",
+                "commands": [],
+                "sourceIds": [
+                  "source-control-iam-user-access-to-the-aws-management-console"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will verify SQS access in eu-west-2."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm the preferred Region is recorded.",
+                "expectedResult": "eu-west-2 is the intended lab Region."
+              }
+            ],
+            "whyItMatters": "SQS is regional. SAA-C03 scenarios often depend on choosing regional resources consistently and diagnosing an authorization failure separately from a missing resource.",
+            "prerequisites": [
+              "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001"
+            ],
+            "estimatedMinutes": 10,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003",
+            "goal": "Create a harmless standard queue, identify its queue URL and ARN, and distinguish the queue URL used by API operations from the queue name.",
+            "slug": "3-create-a-standard-queue-and-record-its-queue-url",
+            "title": "3. Create a Standard Queue and Record Its Queue URL",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS Standard queue",
+            "phaseId": "phase-1-identity-access-and-sqs-foundations",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-cli-step-1",
+                "number": 1,
+                "command": "aws sqs create-queue --queue-name sqs-saa-standard-lab --region eu-west-2",
+                "warning": "Run only after the detailed lab package is approved.",
+                "commands": [
+                  {
+                    "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-cli-step-1-command-1",
+                    "text": "aws sqs create-queue --queue-name sqs-saa-standard-lab --region eu-west-2",
+                    "explanation": "Planned creation command for the standard-queue lab.",
+                    "expectedOutput": "The command returns the created queue URL."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "Planned creation command for the standard-queue lab.",
+                "instructions": [],
+                "expectedResult": "The command returns the created queue URL."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Do not place confidential data in a queue name.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will create a standard queue with a harmless fixed test name."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm queue URL coverage is included.",
+                "expectedResult": "The catalogue includes a queue URL lab."
+              }
+            ],
+            "whyItMatters": "Queue URLs are required by many SQS operations. Standard queues are the default SAA-C03 choice when maximum throughput and loose ordering are acceptable.",
+            "prerequisites": [
+              "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002"
+            ],
+            "estimatedMinutes": 20,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004",
+            "goal": "Send harmless sample text, inspect its message ID and receive count, receive it, and explicitly delete it using the receipt handle workflow.",
+            "slug": "4-send-receive-inspect-and-delete-a-standard-queue-message",
+            "title": "4. Send, Receive, Inspect, and Delete a Standard-Queue Message",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS Standard queue",
+            "phaseId": "phase-1-identity-access-and-sqs-foundations",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-cli-step-1",
+                "number": 1,
+                "command": "aws sqs send-message --queue-url <queue-url-from-lab-3> --message-body \"SQS SAA test message\" --region eu-west-2",
+                "warning": "Use only harmless sample data.",
+                "commands": [
+                  {
+                    "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-cli-step-1-command-1",
+                    "text": "aws sqs send-message --queue-url <queue-url-from-lab-3> --message-body \"SQS SAA test message\" --region eu-west-2",
+                    "explanation": "The queue URL is the output from Lab 3 and is required for this message operation.",
+                    "expectedOutput": "The command returns a message ID."
+                  }
+                ],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL is the output from Lab 3 and is required for this message operation.",
+                "instructions": [],
+                "expectedResult": "The command returns a message ID."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Receiving a message without deleting it does not complete processing.",
+                "commands": [],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will cover send, receive, message inspection, and deletion."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm message IDs and explicit deletion are represented.",
+                "expectedResult": "The catalogue includes both concepts."
+              }
+            ],
+            "whyItMatters": "This is the essential SQS lifecycle: sending is separate from consuming, and receiving alone does not permanently remove a message.",
+            "prerequisites": [
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003"
+            ],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005",
+            "goal": "Receive a message without deleting it, observe that it becomes temporarily invisible, and observe it become available again after the configured visibility timeout.",
+            "slug": "5-receive-without-deleting-and-observe-visibility-timeout",
+            "title": "5. Receive Without Deleting and Observe Visibility Timeout",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS visibility timeout",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-cli-step-1",
+                "number": 1,
+                "command": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --visibility-timeout 30 --region eu-west-2",
+                "warning": "The received message may reappear after the timeout.",
+                "commands": [
+                  {
+                    "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-cli-step-1-command-1",
+                    "text": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --visibility-timeout 30 --region eu-west-2",
+                    "explanation": "The queue URL from Lab 3 is required; the short timeout supports safe observation.",
+                    "expectedOutput": "The command can return a message and receipt handle without deleting it."
+                  }
+                ],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL from Lab 3 is required; the short timeout supports safe observation.",
+                "instructions": [],
+                "expectedResult": "The command can return a message and receipt handle without deleting it."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Do not assume that receiving a standard-queue message grants exclusive processing.",
+                "commands": [],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab demonstrates temporary invisibility and reappearance."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm visibility timeout and redelivery are covered.",
+                "expectedResult": "Both behaviors are included."
+              }
+            ],
+            "whyItMatters": "A visibility timeout protects work in progress but does not guarantee exactly-once processing for a standard queue.",
+            "prerequisites": [
+              "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004"
+            ],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-6-change-message-visibility-during-processing-006",
+            "goal": "Receive a message, extend or shorten its visibility timeout, and explain why a consumer changes visibility for work that lasts longer or shorter than expected.",
+            "slug": "6-change-message-visibility-during-processing",
+            "title": "6. Change Message Visibility During Processing",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS ChangeMessageVisibility",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-6-change-message-visibility-during-processing-006-cli-step-1",
+                "number": 1,
+                "command": "aws sqs change-message-visibility --queue-url <queue-url-from-lab-3> --receipt-handle <receipt-handle-from-receive> --visibility-timeout 60 --region eu-west-2",
+                "warning": "Receipt handles are temporary and must not be reused as durable identifiers.",
+                "commands": [
+                  {
+                    "id": "task-sqs-6-change-message-visibility-during-processing-006-task-sqs-6-change-message-visibility-during-processing-006-cli-step-1-command-1",
+                    "text": "aws sqs change-message-visibility --queue-url <queue-url-from-lab-3> --receipt-handle <receipt-handle-from-receive> --visibility-timeout 60 --region eu-west-2",
+                    "explanation": "Both placeholders come from earlier queue creation and receive operations.",
+                    "expectedOutput": "The message visibility timeout is updated when the receipt handle is current."
+                  }
+                ],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "explanation": "Both placeholders come from earlier queue creation and receive operations.",
+                "instructions": [],
+                "expectedResult": "The message visibility timeout is updated when the receipt handle is current."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ],
+            "difficulty": "Medium",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-6-change-message-visibility-during-processing-006-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "A receipt handle from the receive operation is required.",
+                "commands": [],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-6-change-message-visibility-during-processing-006-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The detailed lab will alter visibility for an in-flight message."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-6-change-message-visibility-during-processing-006-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm per-message visibility changes are represented.",
+                "expectedResult": "The catalogue includes ChangeMessageVisibility."
+              }
+            ],
+            "whyItMatters": "SAA-C03 questions test matching visibility timeout to processing duration and preventing premature retries.",
+            "prerequisites": [
+              "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005"
+            ],
+            "estimatedMinutes": 20,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-7-compare-short-polling-and-long-polling-007",
+            "goal": "Configure and test short polling and long polling, then compare empty responses, latency, and unnecessary polling cost.",
+            "slug": "7-compare-short-polling-and-long-polling",
+            "title": "7. Compare Short Polling and Long Polling",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS polling",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-7-compare-short-polling-and-long-polling-007-cli-step-1",
+                "number": 1,
+                "command": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --wait-time-seconds 20 --region eu-west-2",
+                "warning": "Use a suitable client read timeout when implementing long polling in an application.",
+                "commands": [
+                  {
+                    "id": "task-sqs-7-compare-short-polling-and-long-polling-007-task-sqs-7-compare-short-polling-and-long-polling-007-cli-step-1-command-1",
+                    "text": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --wait-time-seconds 20 --region eu-west-2",
+                    "explanation": "The queue URL from Lab 3 is required; a non-zero wait time requests long polling.",
+                    "expectedOutput": "The receive request waits for a message or ends when its wait time expires."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL from Lab 3 is required; a non-zero wait time requests long polling.",
+                "instructions": [],
+                "expectedResult": "The receive request waits for a message or ends when its wait time expires."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message",
+              "source-amazon-sqs-visibility-timeout"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-7-compare-short-polling-and-long-polling-007-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Long polling changes receive behavior; it does not change message durability.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-7-compare-short-polling-and-long-polling-007-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab compares zero-wait and non-zero receive wait times."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-7-compare-short-polling-and-long-polling-007-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm both polling models are covered.",
+                "expectedResult": "Short and long polling are both listed."
+              }
+            ],
+            "whyItMatters": "Long polling is a common SAA-C03 optimization because it reduces empty receives when messages are intermittent.",
+            "prerequisites": [
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003"
+            ],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008",
+            "goal": "Create test queues with different retention, delivery-delay, and maximum-message-size settings and predict when each setting is appropriate.",
+            "slug": "8-configure-message-retention-delivery-delay-and-maximum-message-size",
+            "title": "8. Configure Message Retention, Delivery Delay, and Maximum Message Size",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS queue attributes",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-cli-step-1",
+                "number": 1,
+                "command": "aws sqs set-queue-attributes --queue-url <queue-url-from-lab-3> --attributes MessageRetentionPeriod=345600,DelaySeconds=10,MaximumMessageSize=262144 --region eu-west-2",
+                "warning": "Review the detailed lab before changing attributes on any existing queue.",
+                "commands": [
+                  {
+                    "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-cli-step-1-command-1",
+                    "text": "aws sqs set-queue-attributes --queue-url <queue-url-from-lab-3> --attributes MessageRetentionPeriod=345600,DelaySeconds=10,MaximumMessageSize=262144 --region eu-west-2",
+                    "explanation": "The queue URL from Lab 3 is required; this planned command changes only the named test queue.",
+                    "expectedOutput": "The queue attributes are updated."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL from Lab 3 is required; this planned command changes only the named test queue.",
+                "instructions": [],
+                "expectedResult": "The queue attributes are updated."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+            ],
+            "difficulty": "Medium",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Do not use SQS messages as a repository for large or confidential payloads.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will compare queue-level timing and payload settings."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm retention, delay, and size are covered.",
+                "expectedResult": "All three queue attributes are in the catalogue."
+              }
+            ],
+            "whyItMatters": "SAA-C03 tests queue configuration choices for deferred work, recovery windows, and payload constraints.",
+            "prerequisites": [
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003"
+            ],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009",
+            "goal": "Send a delayed test message and compare per-message delay with queue-level delay behavior.",
+            "slug": "9-test-per-message-delay-and-scheduled-work-limits",
+            "title": "9. Test Per-Message Delay and Scheduled Work Limits",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS delayed messages",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-cli-step-1",
+                "number": 1,
+                "command": "aws sqs send-message --queue-url <queue-url-from-lab-3> --message-body \"Delayed SQS test message\" --delay-seconds 10 --region eu-west-2",
+                "warning": "Do not send confidential data.",
+                "commands": [
+                  {
+                    "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-cli-step-1-command-1",
+                    "text": "aws sqs send-message --queue-url <queue-url-from-lab-3> --message-body \"Delayed SQS test message\" --delay-seconds 10 --region eu-west-2",
+                    "explanation": "The queue URL from Lab 3 is required; the message body is harmless fixed test data.",
+                    "expectedOutput": "The command returns a message ID for a message not immediately available to consumers."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL from Lab 3 is required; the message body is harmless fixed test data.",
+                "instructions": [],
+                "expectedResult": "The command returns a message ID for a message not immediately available to consumers."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "A delivery delay is not a substitute for durable business workflow orchestration.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The detailed lab will send a delayed harmless message."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm message-delay coverage is included.",
+                "expectedResult": "Per-message delay is listed."
+              }
+            ],
+            "whyItMatters": "SAA-C03 scenarios may distinguish simple delayed delivery from a scheduler or workflow service when exact scheduling needs are more complex.",
+            "prerequisites": [
+              "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008"
+            ],
+            "estimatedMinutes": 15,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010",
+            "goal": "Use multiple test messages and consumers to observe why standard-queue consumers must tolerate duplicates and out-of-order delivery.",
+            "slug": "10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot",
+            "title": "10. Demonstrate At-Least-Once Delivery, Best-Effort Ordering, and Idempotent Consumers",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS Standard queue",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-cli-step-1",
+                "number": 1,
+                "command": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --max-number-of-messages 10 --region eu-west-2",
+                "warning": "A production consumer must make processing idempotent.",
+                "commands": [
+                  {
+                    "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-cli-step-1-command-1",
+                    "text": "aws sqs receive-message --queue-url <queue-url-from-lab-3> --max-number-of-messages 10 --region eu-west-2",
+                    "explanation": "The queue URL from Lab 3 is required; receiving a batch does not delete the messages.",
+                    "expectedOutput": "The command can return up to the requested number of available messages."
+                  }
+                ],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "explanation": "The queue URL from Lab 3 is required; receiving a batch does not delete the messages.",
+                "instructions": [],
+                "expectedResult": "The command can return up to the requested number of available messages."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ],
+            "difficulty": "Medium",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Never rely on a standard queue to provide strict sequencing or exactly-once processing.",
+                "commands": [],
+                "sourceIds": [
+                  "source-amazon-sqs-visibility-timeout"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will model duplicate-safe consumer design."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm duplicate processing and ordering limitations are represented.",
+                "expectedResult": "Both standard-queue characteristics are included."
+              }
+            ],
+            "whyItMatters": "At-least-once delivery and best-effort ordering are central SAA-C03 distinctions between Standard and FIFO queues.",
+            "prerequisites": [
+              "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005"
+            ],
+            "estimatedMinutes": 30,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011",
+            "goal": "Use a dedicated test queue to compare purging all queued messages with permanently deleting the queue.",
+            "slug": "11-purge-a-test-queue-and-delete-a-test-queue",
+            "title": "11. Purge a Test Queue and Delete a Test Queue",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS queue lifecycle",
+            "phaseId": "phase-2-standard-queue-delivery-behavior",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-cli-step-1",
+                "number": 1,
+                "command": "aws sqs purge-queue --queue-url <dedicated-test-queue-url> --region eu-west-2",
+                "warning": "Run only against a queue created by this follow-along.",
+                "commands": [
+                  {
+                    "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-cli-step-1-command-1",
+                    "text": "aws sqs purge-queue --queue-url <dedicated-test-queue-url> --region eu-west-2",
+                    "explanation": "The dedicated test queue URL must be recorded before this destructive operation.",
+                    "expectedOutput": "The purge request is accepted for the selected lab queue."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "The dedicated test queue URL must be recorded before this destructive operation.",
+                "instructions": [],
+                "expectedResult": "The purge request is accepted for the selected lab queue."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "Purge and deletion are destructive actions.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The detailed lab will limit destructive actions to named lab queues."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm purge and deletion coverage is included.",
+                "expectedResult": "Both lifecycle actions are listed."
+              }
+            ],
+            "whyItMatters": "SAA-C03 operational questions can test destructive lifecycle actions and the difference between clearing messages and removing a queue resource.",
+            "prerequisites": [
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003"
+            ],
+            "estimatedMinutes": 15,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012",
+            "goal": "Create a queue whose name ends in .fifo and compare its available configuration choices with a standard queue.",
+            "slug": "12-create-a-fifo-queue-and-validate-the-fifo-name-requirement",
+            "title": "12. Create a FIFO Queue and Validate the .fifo Name Requirement",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS FIFO queue",
+            "phaseId": "phase-3-fifo-queues-and-delivery-choices",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-cli-step-1",
+                "number": 1,
+                "command": "aws sqs create-queue --queue-name sqs-saa-orders.fifo --attributes FifoQueue=true --region eu-west-2",
+                "warning": "The queue type cannot be converted after creation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-cli-step-1-command-1",
+                    "text": "aws sqs create-queue --queue-name sqs-saa-orders.fifo --attributes FifoQueue=true --region eu-west-2",
+                    "explanation": "This planned command creates a FIFO queue using a harmless fixed queue name.",
+                    "expectedOutput": "The command returns the FIFO queue URL."
+                  }
+                ],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "explanation": "This planned command creates a FIFO queue using a harmless fixed queue name.",
+                "instructions": [],
+                "expectedResult": "The command returns the FIFO queue URL."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message",
+              "source-amazon-sqs-fifo-queues"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-console-step-1-catalogue-scope",
+                "title": "Catalogue scope",
+                "number": 1,
+                "warning": "A FIFO queue name must use the .fifo suffix.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Defer detailed Console instructions until the catalogue is approved.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-console-step-1-catalogue-scope-instruction-1",
+                    "text": "Defer detailed Console instructions until the catalogue is approved.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The lab will create sqs-saa-orders.fifo."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012-verification-1",
+                "mode": "either",
+                "title": "Catalogue verification",
+                "instruction": "Confirm FIFO naming is included.",
+                "expectedResult": "The .fifo requirement is explicitly listed."
+              }
+            ],
+            "whyItMatters": "The .fifo suffix and FIFO selection are frequent exam-level details for strict-order requirements.",
+            "prerequisites": [
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003"
+            ],
+            "estimatedMinutes": 20,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          }
+        ],
+        "phases": [
+          {
+            "id": "phase-1-identity-access-and-sqs-foundations",
+            "title": "Identity, access, and SQS foundations",
+            "taskIds": [
+              "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001",
+              "task-sqs-2-verify-amazon-sqs-console-access-and-select-eu-west-2-002",
+              "task-sqs-3-create-a-standard-queue-and-record-its-queue-url-003",
+              "task-sqs-4-send-receive-inspect-and-delete-a-standard-queue-message-004"
+            ],
+            "isOptional": false,
+            "description": "Establish safe access and learn the basic properties of a standard Amazon SQS queue.",
+            "phaseNumber": 1
+          },
+          {
+            "id": "phase-2-standard-queue-delivery-behavior",
+            "title": "Standard-queue delivery behavior",
+            "taskIds": [
+              "task-sqs-5-receive-without-deleting-and-observe-visibility-timeout-005",
+              "task-sqs-6-change-message-visibility-during-processing-006",
+              "task-sqs-7-compare-short-polling-and-long-polling-007",
+              "task-sqs-8-configure-message-retention-delivery-delay-and-maximum-message-size-008",
+              "task-sqs-9-test-per-message-delay-and-scheduled-work-limits-009",
+              "task-sqs-10-demonstrate-at-least-once-delivery-best-effort-ordering-and-idempot-010",
+              "task-sqs-11-purge-a-test-queue-and-delete-a-test-queue-011"
+            ],
+            "isOptional": false,
+            "description": "Practice receiving, deleting, delaying, retaining, and monitoring standard-queue messages.",
+            "phaseNumber": 2
+          },
+          {
+            "id": "phase-3-fifo-queues-and-delivery-choices",
+            "title": "FIFO queues and delivery choices",
+            "taskIds": [
+              "task-sqs-12-create-a-fifo-queue-and-validate-the-fifo-name-requirement-012"
+            ],
+            "isOptional": false,
+            "description": "Learn when strict ordering and deduplication justify using FIFO queues.",
+            "phaseNumber": 3
+          },
+          {
+            "id": "phase-4-failure-handling-and-security",
+            "title": "Failure handling and security",
+            "taskIds": [],
+            "isOptional": false,
+            "description": "Build resilient processing with retries, dead-letter queues, encryption, and authorization boundaries.",
+            "phaseNumber": 4
+          },
+          {
+            "id": "phase-5-event-driven-integrations",
+            "title": "Event-driven integrations",
+            "taskIds": [],
+            "isOptional": false,
+            "description": "Connect SQS to Lambda, SNS, S3, and EventBridge using common SAA-C03 patterns.",
+            "phaseNumber": 5
+          },
+          {
+            "id": "phase-6-workers-monitoring-and-scaling",
+            "title": "Workers, monitoring, and scaling",
+            "taskIds": [],
+            "isOptional": false,
+            "description": "Use queue backlog signals to reason about EC2 workers, CloudWatch, and Auto Scaling.",
+            "phaseNumber": 6
+          },
+          {
+            "id": "phase-7-architecture-comparison-and-saa-c03-scenarios",
+            "title": "Architecture comparison and SAA-C03 scenarios",
+            "taskIds": [],
+            "isOptional": false,
+            "description": "Apply the learned services to realistic architecture-selection scenarios.",
+            "phaseNumber": 7
+          }
+        ],
+        "schema": {
+          "profile": "canonical-follow-along",
+          "version": "1.0.0",
+          "createdWith": "author-assistant-simple-v1",
+          "sharedContractHash": null,
+          "authorPackageVersion": "1.0.0"
+        },
+        "cleanup": {
+          "steps": [
+            {
+              "id": "programme-cleanup-1",
+              "title": "Catalogue-only cleanup status",
+              "sourceIds": [
+                "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+              ],
+              "stepNumber": 1,
+              "description": "Do not perform cleanup from this catalogue. Detailed lab instructions will identify and remove only the resources created by each lab after verification.",
+              "instruction": "Do not perform cleanup from this catalogue. Detailed lab instructions will identify and remove only the resources created by each lab after verification.",
+              "resourceKeys": [],
+              "verification": "No resources have been created by this catalogue package."
+            }
+          ],
+          "ordering": "reverse_dependency",
+          "manualOnly": true,
+          "completionGate": "acknowledgement"
+        },
+        "storage": {},
+        "progress": {
+          "initialTaskId": "task-sqs-1-create-an-iam-user-for-the-sqs-labs-001",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "completionStatuses": [
+            "in_progress",
+            "completed_retained",
+            "completed_cleaned"
+          ],
+          "optionalTasksCountTowardsProgress": false
+        },
+        "warnings": {
+          "cost": "Several planned integration labs can create billable resources, including AWS Lambda invocations, Amazon EC2 instances, CloudWatch alarms, KMS keys, and data-transfer or request charges. Review pricing and complete lab-specific cleanup after each detailed lab.",
+          "region": "Use eu-west-2 for regional SQS resources unless a later approved lab explicitly demonstrates a cross-Region architecture constraint.",
+          "safety": "Use only harmless fixed test names and non-confidential sample data. Do not use the root user for routine lab work. Destructive actions must be restricted to resources created by the corresponding lab.",
+          "credentials": "Do not create or expose access keys in this programme. The catalogue does not provide credentials or IAM policies."
+        },
+        "programme": {
+          "pathId": "sqs-learning-path",
+          "category": "Messaging",
+          "subtitle": "SAA-C03 Amazon SQS hands-on lab catalogue",
+          "shortName": "SQS",
+          "difficulty": "Beginner",
+          "description": "A beginner-friendly catalogue of hands-on Amazon Simple Queue Service (Amazon SQS) labs for AWS Certified Solutions Architect – Associate (SAA-C03) preparation. This replacement preserves the programme identity while expanding its scope from a single queue test into a staged SQS learning path.",
+          "displayName": "Amazon SQS: Basic Message Queue Test",
+          "programmeId": "sqs-learning-path",
+          "regionScope": "regional",
+          "serviceName": "Amazon Simple Queue Service",
+          "serviceSlug": "sqs",
+          "defaultRegion": "eu-west-2",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "learningOutcome": "Plan and complete beginner-friendly Amazon SQS labs that progress from basic queue operations to SAA-C03 architecture patterns.",
+          "estimatedMinutes": 1260,
+          "componentNamespace": "",
+          "publicationVisibility": "published"
+        },
+        "resources": {
+          "schema": [],
+          "variables": {
+            "region": "eu-west-2"
+          },
+          "interpolationAliases": {},
+          "chargeableResourceKeys": []
+        },
+        "extensions": {
+          "registrations": []
+        },
+        "publication": {
+          "publishedAt": "2026-08-10T17:51:30.705799+00:00",
+          "publishStatus": "published",
+          "sourceRevision": 3,
+          "approvedContentHash": "6a521eb06fb8793c17746c0276e9d134fea2b9c519c1478fb272740c2ec09313"
+        },
+        "capabilities": {},
+        "presentation": {
+          "iconName": "",
+          "badgeText": "",
+          "iconLabel": "SQS",
+          "accentColor": "#0891b2"
+        }
+      }
+    },
+    "serviceName": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "learnerLevel": "Beginner",
+    "buildOutcome": "Replace every placeholder or deferred Console section with complete beginner-friendly AWS Console instructions; every task must contain short separately editable Console checkboxes with exact navigation, fields, values, actions and visible verification; preserve and improve the separate CLI commands; include complete checks and safe cleanup; produce the complete Follow Along now and do not defer any instructions or return a catalogue-only result.",
+    "updateRequest": "Replace every placeholder or deferred Console section with complete beginner-friendly AWS Console instructions; every task must contain short separately editable Console checkboxes with exact navigation, fields, values, actions and visible verification; preserve and improve the separate CLI commands; include complete checks and safe cleanup; produce the complete Follow Along now and do not defer any instructions or return a catalogue-only result.",
+    "preferredRegion": "eu-west-2"
+  },
+  "boundaries": {
+    "handoffPackagePrepared": true,
+    "stage12Prepared": false,
+    "authorDraftWritten": false,
+    "supabaseConnected": false,
+    "awsConnected": false,
+    "candidatePrepared": false,
+    "published": false
+  }
+}

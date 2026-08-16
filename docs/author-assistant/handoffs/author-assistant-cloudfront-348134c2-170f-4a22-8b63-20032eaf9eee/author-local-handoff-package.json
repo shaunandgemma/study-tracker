@@ -1,0 +1,912 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-cloudfront-348134c2-170f-4a22-8b63-20032eaf9eee",
+  "preparedAt": "2026-08-10T14:50:43.430Z",
+  "service": {
+    "officialName": "CloudFront",
+    "shortName": "CloudFront"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "6d82ba53691485d5a19e2b6a6ae541a181714acfab624416c5e0a25a3e8530ba"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "6d82ba53691485d5a19e2b6a6ae541a181714acfab624416c5e0a25a3e8530ba"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "cloudfront",
+      "serviceName": "CloudFront",
+      "shortName": "CloudFront",
+      "displayName": "CloudFront: Secure S3 Content Delivery Follow Along",
+      "subtitle": "Create, validate, invalidate, and remove a standard CloudFront distribution",
+      "description": "A short, intermediate CloudFront learner journey using an Amazon S3 origin in eu-west-2. The Console path creates a standard distribution with the recommended Amazon S3 origin settings, including origin access control (OAC). The separate CLI commands demonstrate the corresponding CloudFront and S3 operations, but the CLI distribution-creation command does not configure OAC because completing that secure CLI configuration would require an S3 bucket policy, which this follow along intentionally does not provide.",
+      "learningOutcome": "Explain the relationship between a CloudFront distribution, its S3 origin, distribution domain name, deployment state, and invalidation requests; create and verify the Console-based secure delivery path; and safely remove the lab resources.",
+      "programmeId": "cloudfront-learning-path",
+      "pathId": "cloudfront-learning-path",
+      "componentNamespace": "",
+      "category": "Content delivery and edge networking",
+      "difficulty": "Intermediate",
+      "estimatedMinutes": 45,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-get-started-with-a-cloudfront-standard-distribution",
+        "title": "Get started with a CloudFront standard distribution",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/GettingStarted.SimpleDistribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console workflow for creating an S3 bucket, uploading sample content, creating a standard distribution with OAC, and accessing the content.",
+        "taskIds": [
+          "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001",
+          "task-cloudfront-create-and-observe-the-cloudfront-distribution-002",
+          "task-cloudfront-access-the-content-and-invalidate-the-home-page-003"
+        ]
+      },
+      {
+        "id": "source-create-a-distribution",
+        "title": "Create a distribution",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-creating-console.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console distribution creation workflow and deployment-status guidance.",
+        "taskIds": [
+          "task-cloudfront-create-and-observe-the-cloudfront-distribution-002"
+        ]
+      },
+      {
+        "id": "source-create-bucket-aws-cli-command-reference",
+        "title": "create-bucket — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Regional S3 bucket creation command and LocationConstraint guidance.",
+        "taskIds": [
+          "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001"
+        ]
+      },
+      {
+        "id": "source-get-started-with-a-standard-distribution-aws-cli",
+        "title": "Get started with a standard distribution (AWS CLI)",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/get-started-cli-tutorial.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "CLI-oriented CloudFront tutorial and sample-content upload command.",
+        "taskIds": [
+          "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001"
+        ]
+      },
+      {
+        "id": "source-create-distribution-aws-cli-command-reference",
+        "title": "create-distribution — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-distribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "CloudFront distribution creation command and S3-origin configuration reference.",
+        "taskIds": [
+          "task-cloudfront-create-and-observe-the-cloudfront-distribution-002"
+        ]
+      },
+      {
+        "id": "source-invalidate-files",
+        "title": "Invalidate files",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation_Requests.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console and CLI invalidation workflow.",
+        "taskIds": [
+          "task-cloudfront-access-the-content-and-invalidate-the-home-page-003"
+        ]
+      },
+      {
+        "id": "source-create-invalidation-aws-cli-command-reference",
+        "title": "create-invalidation — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "CLI invalidation command and response details.",
+        "taskIds": [
+          "task-cloudfront-access-the-content-and-invalidate-the-home-page-003"
+        ]
+      },
+      {
+        "id": "source-delete-a-distribution",
+        "title": "Delete a distribution",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowToDeleteDistribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Required Console sequence for disabling and deleting a distribution.",
+        "taskIds": []
+      },
+      {
+        "id": "source-deleting-a-general-purpose-bucket",
+        "title": "Deleting a general purpose bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html?icmpid=docs_amazons3_console",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console steps for emptying and deleting the lab S3 bucket.",
+        "taskIds": []
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-objects.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": []
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "CLO",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-phase-1-prepare-the-origin",
+        "phaseNumber": 1,
+        "title": "Phase 1 — Prepare the origin",
+        "description": "Create a dedicated S3 origin bucket in eu-west-2 and upload the documented Hello World sample.",
+        "taskIds": [
+          "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-phase-2-deliver-through-cloudfront",
+        "phaseNumber": 2,
+        "title": "Phase 2 — Deliver through CloudFront",
+        "description": "Create a standard distribution with the recommended Amazon S3 origin settings and observe deployment.",
+        "taskIds": [
+          "task-cloudfront-create-and-observe-the-cloudfront-distribution-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-phase-3-validate-cache-operations",
+        "phaseNumber": 3,
+        "title": "Phase 3 — Validate cache operations",
+        "description": "Access the delivered page and create a narrowly scoped invalidation for the sample home page.",
+        "taskIds": [
+          "task-cloudfront-access-the-content-and-invalidate-the-home-page-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-phase-4-clean-up",
+        "phaseNumber": 4,
+        "title": "Phase 4 — Clean up",
+        "description": "After verification, manually disable and delete only the distribution and S3 bucket created for this follow along.",
+        "taskIds": [],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001",
+        "slug": "create-the-s3-origin-and-upload-sample-content",
+        "title": "Create the S3 origin and upload sample content",
+        "service": "CloudFront",
+        "feature": "Amazon S3 origin for CloudFront",
+        "goal": "Create one dedicated general purpose bucket in eu-west-2 and place the Hello World sample files in its root.",
+        "whyItMatters": "CloudFront retrieves content from an origin. This task establishes the origin that the distribution will use.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-phase-1-prepare-the-origin",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-get-started-with-a-cloudfront-standard-distribution",
+          "source-create-bucket-aws-cli-command-reference",
+          "source-get-started-with-a-standard-distribution-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-1-open-the-s3-console",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the S3 console",
+            "instruction": "Open the Amazon S3 console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-1-open-the-s3-console-instruction-1",
+                "text": "Open the Amazon S3 console.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The General purpose buckets page is available.",
+            "warning": "",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-2-create-the-bucket",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the bucket",
+            "instruction": "Choose Create bucket.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-2-create-the-bucket-instruction-1",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-2-create-the-bucket-instruction-2",
+                "text": "Enter amzn-s3-demo-bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-2-create-the-bucket-instruction-3",
+                "text": "Choose eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-2-create-the-bucket-instruction-4",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A new general purpose bucket is listed. If the fixed sample name is unavailable, stop and use a unique bucket name before continuing.",
+            "warning": "Amazon S3 general purpose bucket names are globally unique.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution",
+              "source-create-bucket-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Upload the sample files",
+            "instruction": "Download the Hello World sample.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-1",
+                "text": "Download the Hello World sample.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-2",
+                "text": "Extract the sample archive.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-3",
+                "text": "Open amzn-s3-demo-bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-4",
+                "text": "Choose Upload.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-5",
+                "text": "Add index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-6",
+                "text": "Add the css folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-console-step-3-upload-the-sample-files-instruction-7",
+                "text": "Choose Upload.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket contains index.html and the css folder.",
+            "warning": "Use only the documented sample files; do not upload confidential content.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3api create-bucket --bucket amzn-s3-demo-bucket --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2",
+            "explanation": "Creates the documented fixed-name general purpose bucket in the preferred Region. Do not continue with this command if that globally unique sample name is unavailable.",
+            "expectedResult": "The command returns a Location value for the created bucket.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This is a regional S3 operation, so --region eu-west-2 is included.",
+            "sourceIds": [
+              "source-create-bucket-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws s3 cp ~/cloudfront-demo/hello-world/ s3://amzn-s3-demo-bucket/ --recursive --region eu-west-2",
+            "explanation": "Uploads the documented extracted Hello World directory. This command requires that the sample archive has already been downloaded and extracted to ~/cloudfront-demo/hello-world/.",
+            "expectedResult": "The sample files are copied to the root of the bucket.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The local directory is a prerequisite from the documented tutorial.",
+            "sourceIds": [
+              "source-get-started-with-a-standard-distribution-aws-cli"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001-verification-1",
+            "title": "Confirm origin files",
+            "instruction": "In the S3 console, open amzn-s3-demo-bucket and confirm that index.html and the css folder are present.",
+            "expectedResult": "The sample home page and its supporting CSS files are visible.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002",
+        "slug": "create-and-observe-the-cloudfront-distribution",
+        "title": "Create and observe the CloudFront distribution",
+        "service": "CloudFront",
+        "feature": "CloudFront standard distribution with an Amazon S3 origin",
+        "goal": "Create a standard CloudFront distribution for the sample bucket and record its generated domain name and distribution ID.",
+        "whyItMatters": "The distribution is the CloudFront configuration that maps viewer requests to an origin and propagates the configuration to edge locations.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 15,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-phase-2-deliver-through-cloudfront",
+        "prerequisites": [
+          "task-cloudfront-create-the-s3-origin-and-upload-sample-content-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-get-started-with-a-cloudfront-standard-distribution",
+          "source-create-a-distribution",
+          "source-create-distribution-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Start a standard distribution",
+            "instruction": "Open the CloudFront console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution-instruction-1",
+                "text": "Open the CloudFront console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution-instruction-2",
+                "text": "Choose Create distribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution-instruction-3",
+                "text": "Enter CloudFrontFollowAlongDistribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution-instruction-4",
+                "text": "Choose Single website or app.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-1-start-a-standard-distribution-instruction-5",
+                "text": "Choose Next.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The origin-selection page opens for a standard distribution.",
+            "warning": "Do not configure a custom domain or alternate domain name in this lab.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Select the origin",
+            "instruction": "Select Amazon S3.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin-instruction-1",
+                "text": "Select Amazon S3.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin-instruction-2",
+                "text": "Choose Browse S3.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin-instruction-3",
+                "text": "Select amzn-s3-demo-bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin-instruction-4",
+                "text": "Choose Use recommended origin settings.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-2-select-the-origin-instruction-5",
+                "text": "Choose Next.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The distribution uses the selected S3 bucket and the recommended origin settings.",
+            "warning": "The documented Console flow sets up OAC and updates the S3 bucket policy automatically.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-3-create-the-distribution",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create the distribution",
+            "instruction": "Choose Next.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-3-create-the-distribution-instruction-1",
+                "text": "Choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-3-create-the-distribution-instruction-2",
+                "text": "Choose Create distribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-3-create-the-distribution-instruction-3",
+                "text": "Record the distribution ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-3-create-the-distribution-instruction-4",
+                "text": "Record the distribution domain name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The distribution appears in the distribution list and initially shows Deploying.",
+            "warning": "Wait for deployment before testing the domain name.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution",
+              "source-create-a-distribution"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-4-wait-for-deployment",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Wait for deployment",
+            "instruction": "Refresh the distribution list.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-4-wait-for-deployment-instruction-1",
+                "text": "Refresh the distribution list.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-console-step-4-wait-for-deployment-instruction-2",
+                "text": "Wait for Enabled status.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Status column shows Enabled after deployment completes.",
+            "warning": "CloudFront propagation can take several minutes.",
+            "sourceIds": [
+              "source-create-a-distribution"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws cloudfront create-distribution --origin-domain-name amzn-s3-demo-bucket.s3.eu-west-2.amazonaws.com --default-root-object index.html",
+            "explanation": "Creates a separate basic CloudFront distribution using the S3 origin domain name and index.html as the default root object.",
+            "expectedResult": "The response contains a distribution ID, domain name, ETag, and an initial in-progress status.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This CLI example does not configure OAC. Do not use it as a substitute for the secure Console path in this follow along, because secure S3 access requires an S3 bucket policy that is intentionally outside this lab.",
+            "sourceIds": [
+              "source-create-distribution-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-create-and-observe-the-cloudfront-distribution-002-verification-1",
+            "title": "Confirm deployment",
+            "instruction": "Select the Console-created distribution and confirm that its status is Enabled, then confirm that a CloudFront domain name is displayed.",
+            "expectedResult": "The distribution is deployed and has a generated cloudfront.net domain name.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003",
+        "slug": "access-the-content-and-invalidate-the-home-page",
+        "title": "Access the content and invalidate the home page",
+        "service": "CloudFront",
+        "feature": "CloudFront delivery and invalidation",
+        "goal": "Validate the distribution URL and create an invalidation for /index.html.",
+        "whyItMatters": "This shows the viewer-facing CloudFront URL and the operational mechanism for removing a cached object before its normal expiration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-phase-3-validate-cache-operations",
+        "prerequisites": [
+          "task-cloudfront-create-and-observe-the-cloudfront-distribution-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-get-started-with-a-cloudfront-standard-distribution",
+          "source-invalidate-files",
+          "source-create-invalidation-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-1-open-the-delivered-page",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the delivered page",
+            "instruction": "Copy the distribution domain name.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-1-open-the-delivered-page-instruction-1",
+                "text": "Copy the distribution domain name.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-1-open-the-delivered-page-instruction-2",
+                "text": "Append /index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-1-open-the-delivered-page-instruction-3",
+                "text": "Open the URL in a browser.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Hello World page is returned through the CloudFront domain name.",
+            "warning": "Use the CloudFront domain name that you recorded from the Console-created distribution.",
+            "sourceIds": [
+              "source-get-started-with-a-cloudfront-standard-distribution"
+            ]
+          },
+          {
+            "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create an invalidation",
+            "instruction": "Select the distribution.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation-instruction-1",
+                "text": "Select the distribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation-instruction-2",
+                "text": "Choose the Invalidations tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation-instruction-3",
+                "text": "Choose Create invalidation.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation-instruction-4",
+                "text": "Enter /index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-console-step-2-create-an-invalidation-instruction-5",
+                "text": "Choose Create invalidation.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "An invalidation request is created for /index.html.",
+            "warning": "An invalidation request cannot be cancelled after it starts.",
+            "sourceIds": [
+              "source-invalidate-files"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws cloudfront create-invalidation --distribution-id <DISTRIBUTION_ID_FROM_TASK_2> --paths /index.html",
+            "explanation": "Creates an invalidation for the sample home page. Replace <DISTRIBUTION_ID_FROM_TASK_2> with the ID recorded when the distribution was created.",
+            "expectedResult": "The response includes an Invalidation object with an ID and an initial InProgress status.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the distribution ID from the earlier task; invalidations cannot be cancelled after creation.",
+            "sourceIds": [
+              "source-create-invalidation-aws-cli-command-reference",
+              "source-invalidate-files"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-verification-1",
+            "title": "Confirm invalidation completion",
+            "instruction": "On the distribution Invalidations tab, refresh until the /index.html invalidation is no longer in progress.",
+            "expectedResult": "The invalidation is completed for the specified path.",
+            "mode": "console"
+          },
+          {
+            "id": "task-cloudfront-access-the-content-and-invalidate-the-home-page-003-verification-2",
+            "title": "Confirm continued delivery",
+            "instruction": "Reload the CloudFront /index.html URL in the browser.",
+            "expectedResult": "The Hello World page remains available through the CloudFront domain name.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "CloudFront requests, data transfer, S3 storage, and invalidation activity can incur charges. Complete the manual cleanup after verification.",
+      "safety": "Use only the documented Hello World sample. Do not upload confidential, regulated, or production content.",
+      "credentials": "Use an already authenticated AWS Console session or an already configured AWS CLI environment. This follow along does not include credentials or IAM policies.",
+      "region": "Create the S3 bucket in eu-west-2. CloudFront distributions are global, so CloudFront CLI commands do not require a regional endpoint selection in this follow along."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Disable only the Console-created distribution",
+          "instruction": "In the CloudFront console, select only the distribution created for this follow along, choose Disable, confirm the disable action, and wait until the Last modified value changes.",
+          "description": "In the CloudFront console, select only the distribution created for this follow along, choose Disable, confirm the disable action, and wait until the Last modified value changes.",
+          "verification": "The selected lab distribution shows Disabled and has an updated Last modified timestamp.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-delete-a-distribution"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Delete only the disabled lab distribution",
+          "instruction": "In the CloudFront console, select only the disabled lab distribution, choose Delete, and confirm the deletion.",
+          "description": "In the CloudFront console, select only the disabled lab distribution, choose Delete, and confirm the deletion.",
+          "verification": "The lab distribution no longer appears in the CloudFront distribution list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-delete-a-distribution"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Empty only the lab bucket",
+          "instruction": "In the S3 console, open only amzn-s3-demo-bucket, select the uploaded sample objects, choose Delete, and confirm permanent deletion.",
+          "description": "In the S3 console, open only amzn-s3-demo-bucket, select the uploaded sample objects, choose Delete, and confirm permanent deletion.",
+          "verification": "The lab bucket contains no sample objects.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation",
+            "source-deleting-a-general-purpose-bucket"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Delete only the empty lab bucket",
+          "instruction": "In the S3 console, select only amzn-s3-demo-bucket, choose Delete, enter the bucket name, and choose Delete bucket.",
+          "description": "In the S3 console, select only amzn-s3-demo-bucket, choose Delete, enter the bucket name, and choose Delete bucket.",
+          "verification": "Searching the General purpose buckets list for amzn-s3-demo-bucket returns no bucket.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-deleting-a-general-purpose-bucket"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The fixed S3 bucket name amzn-s3-demo-bucket is the official AWS CLI example name, but S3 bucket names are globally unique. If it is unavailable, a unique replacement is required; that replacement was not invented here.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The documented Console flow creates OAC and automatically updates the S3 bucket policy. This follow along intentionally does not show, generate, or modify any IAM or bucket policy.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The provided CLI create-distribution command creates a separate basic distribution and does not configure OAC. A secure CLI-only S3-origin workflow requires an S3 bucket policy, so the Console path is the complete secure implementation for this lab.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "After deleting the Console-created distribution, manually inspect the S3 bucket permissions before deleting the bucket. The documentation returned for this follow along confirms that the Console flow updates the bucket policy, but the protected sources reviewed here do not establish whether CloudFront automatically removes that policy statement during deletion.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "cloudfront-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 4,
+    "taskCount": 3,
+    "checkboxCount": 36,
+    "cliCommandCount": 4,
+    "verificationCheckCount": 4,
+    "cleanupItemCount": 4,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 10
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "fc410bc5a96941bd2ce882237e23d0775ffe4015cf83de4ba7ecdad13ca25651"
+  }
+}

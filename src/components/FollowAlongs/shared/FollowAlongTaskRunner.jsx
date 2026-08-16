@@ -3,7 +3,6 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Layers, Save, Terminal } from 
 import { FollowAlongStepCard } from '../../../features/followAlongs/runtime/FollowAlongStepCard.jsx';
 import { interpolateFollowAlongVariables, removeSavedResourceBinding } from './followAlongContract.js';
 import { FollowAlongResourceCapture, validateFollowAlongResourceInput } from './FollowAlongResourceCapture.jsx';
-import { FollowAlongRetentionModal } from './FollowAlongRetentionModal.jsx';
 
 function ExtensionSlot({ slot, registrations, context }) {
   return (registrations || []).filter(item => item.slot === slot && item.status === 'complete' && item.Component)
@@ -18,7 +17,6 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
-  const [decisionOpen, setDecisionOpen] = useState(false);
   const [error, setError] = useState('');
 
   const availableModes = useMemo(() => {
@@ -102,8 +100,26 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
     return <div className="space-y-4"><h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2"><Icon className="w-4 h-4 text-cyan-400" />{mode === 'console' ? 'Console Instructions' : 'CLI Commands'}</h3>{displayed[mode].map(step => <FollowAlongStepCard key={step.id} step={step} completedItemIds={checkedSteps} onToggleItem={id => { setCheckedSteps(value => value.includes(id) ? value.filter(item => item !== id) : [...value, id]); setDirty(true); }} onToggleMainStep={(_, checked) => toggleStep(step, checked)} />)}</div>;
   };
 
+  const handleNextTask = async () => {
+    let savedResources = resources;
+    if (dirty) {
+      const saved = await save();
+      if (!saved.success) return;
+      savedResources = saved.resources || resources;
+    }
+    setCompleting(true);
+    setError('');
+    try {
+      const completed = await onCompleteAndNavigate(task.id, 'retained', savedResources);
+      if (!completed) setError('The task completion was not saved. The task remains unchanged.');
+    } catch (caught) {
+      setError(caught?.message || 'The task completion was not saved. The task remains unchanged.');
+    } finally {
+      setCompleting(false);
+    }
+  };
+
   return (
-    <>
       <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div><div className="flex items-center gap-2"><span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Phase {config.phases.findIndex(item => item.id === task.phaseId) + 1} — Task {index + 1} of {config.tasks.length}</span>{completedTaskIds.includes(task.id) && <span className="text-[10px] text-emerald-300 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Completed</span>}</div><h2 className="text-xl font-extrabold text-white mt-1">{task.title}</h2></div>
@@ -119,10 +135,8 @@ export const FollowAlongTaskRunner = ({ config, task, completedTaskIds, preferre
         {error && <div role="alert" className="mt-4 p-3 rounded-xl border border-rose-800 bg-rose-950/40 text-xs text-rose-200"><strong>Progress was not saved.</strong> {error}</div>}
         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6 mt-6 border-t border-slate-800">
           <button type="button" disabled={index === 0 || actionBusy} onClick={() => onNavigateTask('prev')} className="px-4 py-2.5 rounded-xl bg-slate-800 disabled:opacity-40 text-slate-200 text-xs font-semibold flex justify-center gap-2"><ChevronLeft className="w-4 h-4" /> Previous Task</button>
-          <div className="flex gap-3"><button type="button" disabled={actionBusy} onClick={() => save()} className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold flex gap-2"><Save className="w-4 h-4" /> {dirty ? 'Save Unsaved Changes' : 'Save Progress'}</button><button type="button" disabled={actionBusy} onClick={async () => { if (!dirty || (await save()).success) setDecisionOpen(true); }} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-bold flex gap-2">Next Task <ChevronRight className="w-4 h-4" /></button></div>
+          <div className="flex gap-3"><button type="button" disabled={actionBusy} onClick={() => save()} className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold flex gap-2"><Save className="w-4 h-4" /> {dirty ? 'Save Unsaved Changes' : 'Save Progress'}</button><button type="button" disabled={actionBusy} onClick={handleNextTask} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-bold flex gap-2">Next Task <ChevronRight className="w-4 h-4" /></button></div>
         </div>
       </section>
-      <FollowAlongRetentionModal open={decisionOpen} isBusy={actionBusy} onCancel={() => setDecisionOpen(false)} onDecision={async decision => { setCompleting(true); setError(''); const ok = await onCompleteAndNavigate(task.id, decision); if (ok) setDecisionOpen(false); else setError('The retention decision was not saved. The task remains unchanged.'); setCompleting(false); }} />
-    </>
   );
 };

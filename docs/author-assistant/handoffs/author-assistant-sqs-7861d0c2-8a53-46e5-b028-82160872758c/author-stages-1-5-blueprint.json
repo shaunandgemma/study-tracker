@@ -1,0 +1,389 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_stages_1_to_5_blueprint",
+  "status": "human_accepted",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "responseId": "resp_023beb41cc5f389b016a7900f1324c81a08510a5789ceba610",
+  "model": "gpt-5.6-terra",
+  "generatedAt": "2026-08-09T22:36:44.857Z",
+  "service": {
+    "officialName": "Amazon Simple Queue Service",
+    "shortName": "SQS"
+  },
+  "stageBoundary": {
+    "preparedLocally": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "notPrepared": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "writtenToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "candidatePrepared": false,
+    "published": false
+  },
+  "programme": {
+    "serviceSlug": "sqs",
+    "serviceName": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "displayName": "Amazon SQS: Basic Message Queue Test",
+    "subtitle": "Create and test a standard queue with one harmless message",
+    "description": "A short beginner programme for using Amazon Simple Queue Service (SQS) to create a standard queue, send one test message, receive it, and delete the received message.",
+    "learningOutcome": "Build and test a basic message queue safely",
+    "programmeId": "sqs-learning-path",
+    "pathId": "sqs-learning-path",
+    "componentNamespace": "",
+    "category": "Messaging",
+    "difficulty": "Beginner",
+    "estimatedMinutes": 45,
+    "defaultRegion": "eu-west-2",
+    "regionScope": "regional",
+    "supportedModes": [
+      "console",
+      "cli",
+      "both"
+    ],
+    "publicationVisibility": "unpublished"
+  },
+  "phases": [
+    {
+      "id": "phase-1-prepare",
+      "phaseNumber": 1,
+      "title": "Prepare",
+      "description": "Confirm the intended scope, permissions, and safe test-data approach.",
+      "taskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ],
+      "isOptional": false
+    },
+    {
+      "id": "phase-2-create",
+      "phaseNumber": 2,
+      "title": "Create",
+      "description": "Create a basic Amazon SQS standard queue.",
+      "taskIds": [
+        "task-sqs-create-a-standard-queue-002"
+      ],
+      "isOptional": false
+    },
+    {
+      "id": "phase-3-send",
+      "phaseNumber": 3,
+      "title": "Send",
+      "description": "Place one harmless test message on the queue.",
+      "taskIds": [
+        "task-sqs-send-one-harmless-test-message-003"
+      ],
+      "isOptional": false
+    },
+    {
+      "id": "phase-4-receive-and-verify",
+      "phaseNumber": 4,
+      "title": "Receive and verify",
+      "description": "Receive the test message and confirm the queue behaviour.",
+      "taskIds": [
+        "task-sqs-receive-and-inspect-the-test-message-004"
+      ],
+      "isOptional": false
+    },
+    {
+      "id": "phase-5-complete-the-test",
+      "phaseNumber": 5,
+      "title": "Complete the test",
+      "description": "Delete the received test message and review queue lifecycle implications.",
+      "taskIds": [
+        "task-sqs-delete-the-received-test-message-005",
+        "task-sqs-review-queue-deletion-effects-006"
+      ],
+      "isOptional": false
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-sqs-confirm-safe-scope-and-required-access-001",
+      "title": "Confirm safe scope and required access",
+      "service": "Amazon Simple Queue Service",
+      "feature": "SQS permissions and safe naming",
+      "goal": "Use a non-confidential queue name and confirm that the required SQS actions are available before starting.",
+      "whyItMatters": "Queue names should not contain PII or other confidential information, and the learner needs authorization for the planned operations.",
+      "difficulty": "Easy",
+      "estimatedMinutes": 10,
+      "region": "eu-west-2",
+      "phaseId": "phase-1-prepare",
+      "prerequisites": [],
+      "isOptional": false,
+      "sourceIds": [
+        "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+        "source-actions-resources-and-condition-keys-for-amazon-sqs-service-authorizat",
+        "source-choosing-your-region-aws-management-console",
+        "source-using-policies-with-amazon-sqs"
+      ]
+    },
+    {
+      "id": "task-sqs-create-a-standard-queue-002",
+      "title": "Create a standard queue",
+      "service": "Amazon Simple Queue Service",
+      "feature": "Standard queue creation",
+      "goal": "Create one basic standard SQS queue for the test.",
+      "whyItMatters": "The queue provides the destination for the test message and keeps the exercise focused on the standard-queue workflow.",
+      "difficulty": "Easy",
+      "estimatedMinutes": 10,
+      "region": "eu-west-2",
+      "phaseId": "phase-2-create",
+      "prerequisites": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ],
+      "isOptional": false,
+      "sourceIds": [
+        "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+        "source-create-queue-aws-cli-2-35-24-command-reference"
+      ]
+    },
+    {
+      "id": "task-sqs-send-one-harmless-test-message-003",
+      "title": "Send one harmless test message",
+      "service": "Amazon Simple Queue Service",
+      "feature": "Message sending",
+      "goal": "Send a single non-confidential test message to the new queue.",
+      "whyItMatters": "A single harmless message gives the learner a controlled item to receive and handle.",
+      "difficulty": "Easy",
+      "estimatedMinutes": 5,
+      "region": "eu-west-2",
+      "phaseId": "phase-3-send",
+      "prerequisites": [
+        "task-sqs-create-a-standard-queue-002"
+      ],
+      "isOptional": false,
+      "sourceIds": [
+        "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+        "source-send-message-aws-cli-2-35-23-command-reference"
+      ]
+    },
+    {
+      "id": "task-sqs-receive-and-inspect-the-test-message-004",
+      "title": "Receive and inspect the test message",
+      "service": "Amazon Simple Queue Service",
+      "feature": "Message receiving",
+      "goal": "Poll the queue, receive the harmless test message, and inspect its details in the Console.",
+      "whyItMatters": "Receiving a message does not automatically delete it; the receipt handle is required to complete the test safely.",
+      "difficulty": "Medium",
+      "estimatedMinutes": 10,
+      "region": "eu-west-2",
+      "phaseId": "phase-4-receive-and-verify",
+      "prerequisites": [
+        "task-sqs-send-one-harmless-test-message-003"
+      ],
+      "isOptional": false,
+      "sourceIds": [
+        "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser",
+        "source-receive-message-aws-cli-2-35-19-command-reference"
+      ]
+    },
+    {
+      "id": "task-sqs-delete-the-received-test-message-005",
+      "title": "Delete the received test message",
+      "service": "Amazon Simple Queue Service",
+      "feature": "Message deletion",
+      "goal": "Select and delete the received harmless test message in the Console.",
+      "whyItMatters": "Deleting the message prevents it from being received again and completes the basic message-handling test.",
+      "difficulty": "Easy",
+      "estimatedMinutes": 5,
+      "region": "eu-west-2",
+      "phaseId": "phase-5-complete-the-test",
+      "prerequisites": [
+        "task-sqs-receive-and-inspect-the-test-message-004"
+      ],
+      "isOptional": false,
+      "sourceIds": [
+        "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser",
+        "source-delete-message-aws-cli-2-35-21-command-reference"
+      ]
+    },
+    {
+      "id": "task-sqs-review-queue-deletion-effects-006",
+      "title": "Review queue deletion effects",
+      "service": "Amazon Simple Queue Service",
+      "feature": "Queue lifecycle awareness",
+      "goal": "Understand the permanent effects and timing considerations of deleting an SQS queue after a test.",
+      "whyItMatters": "Queue deletion permanently removes its messages and has timing considerations for recreating a queue with the same name.",
+      "difficulty": "Easy",
+      "estimatedMinutes": 5,
+      "region": "eu-west-2",
+      "phaseId": "phase-5-complete-the-test",
+      "prerequisites": [
+        "task-sqs-delete-the-received-test-message-005"
+      ],
+      "isOptional": false,
+      "sourceIds": [
+        "source-deleting-an-amazon-sqs-queue-amazon-simple-queue-service",
+        "source-delete-queue-aws-cli-2-35-14-command-reference"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+      "title": "Creating an Amazon SQS standard queue and sending a message - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/creating-sqs-standard-queues.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It directly documents the Console workflow for the first two steps of a basic standard-queue exercise, which is appropriate for a beginner.",
+      "taskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001",
+        "task-sqs-create-a-standard-queue-002",
+        "task-sqs-send-one-harmless-test-message-003"
+      ]
+    },
+    {
+      "id": "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser",
+      "title": "Receiving and deleting a message in Amazon SQS - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-receive-delete-message.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It directly covers the required Console-based test and cleanup of the test message after it has been sent.",
+      "taskIds": [
+        "task-sqs-receive-and-inspect-the-test-message-004",
+        "task-sqs-delete-the-received-test-message-005"
+      ]
+    },
+    {
+      "id": "source-deleting-an-amazon-sqs-queue-amazon-simple-queue-service",
+      "title": "Deleting an Amazon SQS queue - Amazon Simple Queue Service",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "Deleting the temporary queue is a safety-oriented cleanup step for a basic hands-on exercise.",
+      "taskIds": [
+        "task-sqs-review-queue-deletion-effects-006"
+      ]
+    },
+    {
+      "id": "source-create-queue-aws-cli-2-35-24-command-reference",
+      "title": "create-queue — AWS CLI 2.35.24 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/create-queue.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It is the command-level AWS CLI reference for creating the queue and documents the command syntax and supported parameters.",
+      "taskIds": [
+        "task-sqs-create-a-standard-queue-002"
+      ]
+    },
+    {
+      "id": "source-send-message-aws-cli-2-35-23-command-reference",
+      "title": "send-message — AWS CLI 2.35.23 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/send-message.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It is the command-level AWS CLI reference for placing a test message on the queue.",
+      "taskIds": [
+        "task-sqs-send-one-harmless-test-message-003"
+      ]
+    },
+    {
+      "id": "source-receive-message-aws-cli-2-35-19-command-reference",
+      "title": "receive-message — AWS CLI 2.35.19 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/receive-message.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It documents the command and parameters needed to test receiving a message safely and obtain the receipt handle for deletion.",
+      "taskIds": [
+        "task-sqs-receive-and-inspect-the-test-message-004"
+      ]
+    },
+    {
+      "id": "source-delete-message-aws-cli-2-35-21-command-reference",
+      "title": "delete-message — AWS CLI 2.35.21 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/delete-message.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It documents the message-cleanup command and the receipt-handle requirement needed to complete the test safely.",
+      "taskIds": [
+        "task-sqs-delete-the-received-test-message-005"
+      ]
+    },
+    {
+      "id": "source-delete-queue-aws-cli-2-35-14-command-reference",
+      "title": "delete-queue — AWS CLI 2.35.14 Command Reference",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/delete-queue.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It documents the final resource-cleanup command and its destructive effects.",
+      "taskIds": [
+        "task-sqs-review-queue-deletion-effects-006"
+      ]
+    },
+    {
+      "id": "source-actions-resources-and-condition-keys-for-amazon-sqs-service-authorizat",
+      "title": "Actions, resources, and condition keys for Amazon SQS - Service Authorization Reference",
+      "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_sqs.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It is the required AWS Service Authorization Reference and maps the follow-along operations to supported IAM actions and SQS queue resources.",
+      "taskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ]
+    },
+    {
+      "id": "source-choosing-your-region-aws-management-console",
+      "title": "Choosing your Region - AWS Management Console",
+      "url": "https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/select-region.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It provides the exact Console Region-selection guidance needed for eu-west-2.",
+      "taskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ]
+    },
+    {
+      "id": "source-using-policies-with-amazon-sqs",
+      "title": "Using policies with Amazon SQS",
+      "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-using-identity-based-policies.html",
+      "publisher": "AWS",
+      "sourceType": "official_documentation",
+      "purpose": "It explains SQS Console permission requirements without requiring the Follow Along to create or recommend an IAM policy.",
+      "taskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ]
+    }
+  ],
+  "planningCheck": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "manualReviewFindings": [
+    "The sources found do not provide a follow-along-specific instruction for selecting the preferred Region, eu-west-2. The learner instructions should explicitly tell the learner to confirm eu-west-2 in the AWS Management Console or use the AWS CLI global --region eu-west-2 option, but this exact regional setup guidance was not taken from a proposed source.",
+    "A least-privilege IAM policy document should be manually reviewed before inclusion. The Service Authorization Reference confirms the relevant actions and the queue ARN resource type, but policy construction—especially the resource scope required for sqs:CreateQueue and any console-dependent permissions—should not be inferred without additional sourced authorization guidance.",
+    "The Console guide states that standard queues have at-least-once delivery and can occasionally return messages out of order. The exercise should therefore use a single harmless test message and should not claim exactly-once processing or ordered delivery.",
+    "The Console receive/delete workflow notes that console-retrieved messages remain visible for re-retrieval; the learner should explicitly delete the test message after verifying it.",
+    "The exact source pages found support standard queues. FIFO-specific requirements, including message group IDs and deduplication IDs, are outside the recommended beginner scope unless the follow-along is intentionally changed to FIFO.",
+    "A received message is not automatically deleted. Later instructions should require deletion of the test message after verification and should use the most recently received receipt handle.",
+    "Queue deletion is covered only as lifecycle awareness in this blueprint. No cleanup procedure has been prepared."
+  ],
+  "acceptedAt": "2026-08-10T08:09:44.734Z",
+  "sourceAmendments": [
+    {
+      "approvalStep": "84B",
+      "alignmentId": "step-84b-sqs-safe-scope-sources-v1",
+      "acceptedAt": "2026-08-10T09:34:53.588Z",
+      "addedSourceIds": [
+        "source-choosing-your-region-aws-management-console",
+        "source-using-policies-with-amazon-sqs"
+      ],
+      "linkedTaskIds": [
+        "task-sqs-confirm-safe-scope-and-required-access-001"
+      ]
+    }
+  ]
+}

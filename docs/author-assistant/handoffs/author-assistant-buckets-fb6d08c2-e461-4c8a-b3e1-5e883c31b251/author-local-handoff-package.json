@@ -1,0 +1,1034 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-buckets-fb6d08c2-e461-4c8a-b3e1-5e883c31b251",
+  "preparedAt": "2026-08-10T17:13:58.122Z",
+  "service": {
+    "officialName": "S3 Buckets",
+    "shortName": "Buckets"
+  },
+  "generationMode": "new_follow_along",
+  "updateTarget": null,
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "17c8bdadad9a59d61a9f03ef33e3a000061a33e46dcd356128d83b5b1e9e82bf"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "17c8bdadad9a59d61a9f03ef33e3a000061a33e46dcd356128d83b5b1e9e82bf"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "buckets",
+      "serviceName": "S3 Buckets",
+      "shortName": "Buckets",
+      "displayName": "S3 Buckets: Versioning, Public Access Protection, and Lifecycle Management",
+      "subtitle": "An SAA-C03-focused Amazon S3 general purpose bucket lab in Europe (London)",
+      "description": "Create a private Amazon S3 general purpose bucket in eu-west-2, confirm Block Public Access, enable versioning, upload two harmless versions of one test object, and apply a lifecycle rule that permanently deletes noncurrent versions after 30 days. This lab practices SAA-C03 concepts around S3 durability, version recovery, public-access controls, and lifecycle management.",
+      "learningOutcome": "Explain and configure the S3 controls commonly tested in SAA-C03 scenarios: Block Public Access, S3 Versioning, object-version inspection, and noncurrent-version lifecycle expiration.",
+      "programmeId": "buckets-learning-path",
+      "pathId": "buckets-learning-path",
+      "componentNamespace": "",
+      "category": "Storage",
+      "difficulty": "Intermediate",
+      "estimatedMinutes": 55,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-creating-a-general-purpose-bucket",
+        "title": "Creating a general purpose bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create a general purpose S3 bucket and retain the recommended default ownership and public-access settings.",
+        "taskIds": [
+          "task-buckets-create-a-private-general-purpose-bucket-001"
+        ]
+      },
+      {
+        "id": "source-getting-started-with-amazon-s3-using-the-aws-cli",
+        "title": "Getting started with Amazon S3 using the AWS CLI",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GettingStartedS3CLI.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Use supported AWS CLI examples for bucket creation, Block Public Access, versioning, uploads, and bucket deletion.",
+        "taskIds": [
+          "task-buckets-create-a-private-general-purpose-bucket-001",
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      },
+      {
+        "id": "source-enabling-versioning-on-buckets",
+        "title": "Enabling versioning on buckets",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/manage-versioning-examples.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Enable S3 Versioning from the console or AWS CLI.",
+        "taskIds": [
+          "task-buckets-enable-and-verify-s3-versioning-002"
+        ]
+      },
+      {
+        "id": "source-uploading-objects",
+        "title": "Uploading objects",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/upload-objects.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Upload a file twice with the same key to create separate object versions in a versioning-enabled bucket.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      },
+      {
+        "id": "source-setting-an-s3-lifecycle-configuration-on-a-bucket",
+        "title": "Setting an S3 Lifecycle configuration on a bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/how-to-set-lifecycle-configuration-intro.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create, verify, and understand an S3 Lifecycle rule for noncurrent object versions.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      },
+      {
+        "id": "source-emptying-a-general-purpose-bucket",
+        "title": "Emptying a general purpose bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/empty-bucket.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Manually empty all objects, object versions, and delete markers before deleting the lab bucket.",
+        "taskIds": []
+      },
+      {
+        "id": "source-deleting-a-general-purpose-bucket",
+        "title": "Deleting a general purpose bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html?icmpid=docs_amazons3_console",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Manually delete the empty bucket created by this follow along.",
+        "taskIds": []
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-buckets-create-a-private-general-purpose-bucket-001"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-2",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-versioning.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-buckets-enable-and-verify-s3-versioning-002"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-3",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/list-object-versions.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-4",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-lifecycle-configuration.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-5",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/get-bucket-lifecycle-configuration.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "BUC",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-buckets-create-a-private-general-purpose-bucket-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-create-a-private-bucket-foundation",
+        "phaseNumber": 1,
+        "title": "Create a private bucket foundation",
+        "description": "Create one general purpose bucket in the preferred Region and confirm that bucket-level public access protection is enabled.",
+        "taskIds": [
+          "task-buckets-create-a-private-general-purpose-bucket-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-protect-object-history",
+        "phaseNumber": 2,
+        "title": "Protect object history",
+        "description": "Enable S3 Versioning and verify that the bucket reports the Enabled versioning state.",
+        "taskIds": [
+          "task-buckets-enable-and-verify-s3-versioning-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-create-and-govern-test-object-versions",
+        "phaseNumber": 3,
+        "title": "Create and govern test object versions",
+        "description": "Upload two harmless versions of the same object key, inspect the versions, and create a noncurrent-version lifecycle rule.",
+        "taskIds": [
+          "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-buckets-create-a-private-general-purpose-bucket-001",
+        "slug": "create-a-private-general-purpose-bucket",
+        "title": "Create a private general purpose bucket",
+        "service": "S3 Buckets",
+        "feature": "General purpose bucket creation and S3 Block Public Access",
+        "goal": "Create exactly one lab bucket named saa-c03-s3-lab-<unique-suffix> in eu-west-2 with Bucket owner enforced and all four Block Public Access settings enabled.",
+        "whyItMatters": "SAA-C03 scenarios often require selecting an S3 design that prevents accidental public exposure while retaining the default modern object-ownership model. General purpose bucket names must be globally unique, so the unique suffix is genuinely required.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-create-a-private-bucket-foundation",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-a-general-purpose-bucket",
+          "source-getting-started-with-amazon-s3-using-the-aws-cli",
+          "source-official-aws-documentation"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-1-open-amazon-s3",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open Amazon S3",
+            "instruction": "Open the Amazon S3 console.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-1-open-amazon-s3-instruction-1",
+                "text": "Open the Amazon S3 console.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Amazon S3 console opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-2-select-the-lab-region",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Select the lab Region",
+            "instruction": "Choose the eu-west-2 Region.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-2-select-the-lab-region-instruction-1",
+                "text": "Choose the eu-west-2 Region.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The console is scoped to the Region used for this lab.",
+            "warning": "A bucket's Region cannot be changed after creation.",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-3-open-general-purpose-buckets",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Open general purpose buckets",
+            "instruction": "Choose General purpose buckets.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-3-open-general-purpose-buckets-instruction-1",
+                "text": "Choose General purpose buckets.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The General purpose buckets list appears.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-4-start-bucket-creation",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Start bucket creation",
+            "instruction": "Choose Create bucket.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-4-start-bucket-creation-instruction-1",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Create bucket page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-5-set-the-test-bucket-name",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Set the test bucket name",
+            "instruction": "Enter saa-c03-s3-lab-<unique-suffix> for Bucket name.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-5-set-the-test-bucket-name-instruction-1",
+                "text": "Enter saa-c03-s3-lab-<unique-suffix> for Bucket name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket name is accepted when its suffix makes it globally unique.",
+            "warning": "Do not put personal, customer, or confidential information in a bucket name.",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-6-keep-acls-disabled",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Keep ACLs disabled",
+            "instruction": "Keep Bucket owner enforced selected.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-6-keep-acls-disabled-instruction-1",
+                "text": "Keep Bucket owner enforced selected.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "ACLs remain disabled for the new bucket.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-7-keep-public-access-blocked",
+            "stepNumber": 7,
+            "number": 7,
+            "title": "Keep public access blocked",
+            "instruction": "Keep all four Block Public Access settings enabled.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-7-keep-public-access-blocked-instruction-1",
+                "text": "Keep all four Block Public Access settings enabled.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The new bucket is configured with all four bucket-level Block Public Access settings enabled.",
+            "warning": "Do not disable Block Public Access for this lab.",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          },
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-8-create-the-bucket",
+            "stepNumber": 8,
+            "number": 8,
+            "title": "Create the bucket",
+            "instruction": "Choose Create bucket.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-a-private-general-purpose-bucket-001-console-step-8-create-the-bucket-instruction-1",
+                "text": "Choose Create bucket.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The new general purpose bucket appears in the bucket list.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-general-purpose-bucket"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3api create-bucket --bucket saa-c03-s3-lab-<unique-suffix> --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2",
+            "explanation": "Create the same general purpose bucket. Replace <unique-suffix> with a lowercase, non-confidential value that makes the name globally unique; use that exact resulting bucket name in every later command.",
+            "expectedResult": "Amazon S3 creates the bucket in eu-west-2.",
+            "instructions": [],
+            "commands": [],
+            "warning": "For Regions other than us-east-1, the create-bucket command requires a matching LocationConstraint.",
+            "sourceIds": [
+              "source-getting-started-with-amazon-s3-using-the-aws-cli",
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-buckets-create-a-private-general-purpose-bucket-001-verification-1",
+            "title": "Confirm bucket-level public access protection",
+            "instruction": "Run `aws s3api get-public-access-block --bucket saa-c03-s3-lab-<unique-suffix> --region eu-west-2`. Source: https://docs.aws.amazon.com/cli/latest/reference/s3api/get-public-access-block.html",
+            "expectedResult": "The returned PublicAccessBlockConfiguration shows BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets as true.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-buckets-enable-and-verify-s3-versioning-002",
+        "slug": "enable-and-verify-s3-versioning",
+        "title": "Enable and verify S3 Versioning",
+        "service": "S3 Buckets",
+        "feature": "S3 Versioning",
+        "goal": "Enable versioning on the lab bucket before uploading the test object.",
+        "whyItMatters": "Versioning keeps multiple variants of the same object key and supports recovery from unintended overwrites or deletes. It is also the prerequisite for lifecycle actions that manage noncurrent object versions.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 20,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-protect-object-history",
+        "prerequisites": [
+          "task-buckets-create-a-private-general-purpose-bucket-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-enabling-versioning-on-buckets",
+          "source-official-aws-documentation-2"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-1-open-the-lab-bucket",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the lab bucket",
+            "instruction": "Choose saa-c03-s3-lab-<unique-suffix>.",
+            "instructions": [
+              {
+                "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-1-open-the-lab-bucket-instruction-1",
+                "text": "Choose saa-c03-s3-lab-<unique-suffix>.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket details page opens.",
+            "warning": "Use the exact bucket created in Task 1.",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets"
+            ]
+          },
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-2-open-bucket-properties",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Open bucket properties",
+            "instruction": "Choose Properties.",
+            "instructions": [
+              {
+                "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-2-open-bucket-properties-instruction-1",
+                "text": "Choose Properties.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket Properties tab opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets"
+            ]
+          },
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-3-edit-versioning",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Edit versioning",
+            "instruction": "Choose Edit under Bucket Versioning.",
+            "instructions": [
+              {
+                "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-3-edit-versioning-instruction-1",
+                "text": "Choose Edit under Bucket Versioning.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Bucket Versioning edit page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets"
+            ]
+          },
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-4-enable-versioning",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Enable versioning",
+            "instruction": "Choose Enable.",
+            "instructions": [
+              {
+                "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-4-enable-versioning-instruction-1",
+                "text": "Choose Enable.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Versioning is selected for the bucket.",
+            "warning": "",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets"
+            ]
+          },
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-5-save-the-versioning-change",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Save the versioning change",
+            "instruction": "Choose Save changes.",
+            "instructions": [
+              {
+                "id": "task-buckets-enable-and-verify-s3-versioning-002-console-step-5-save-the-versioning-change-instruction-1",
+                "text": "Choose Save changes.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket reports that versioning is enabled.",
+            "warning": "AWS documents that first-time versioning enablement can take time to propagate and recommends waiting 15 minutes before PUT or DELETE operations.",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets",
+              "source-official-aws-documentation-2"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3api put-bucket-versioning --bucket saa-c03-s3-lab-<unique-suffix> --versioning-configuration Status=Enabled --region eu-west-2",
+            "explanation": "Enable S3 Versioning on the bucket created in Task 1.",
+            "expectedResult": "The command sets the bucket versioning state to Enabled.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Wait 15 minutes before the Task 3 upload commands because AWS documents possible intermittent NoSuchKey errors while first-time versioning enablement propagates.",
+            "sourceIds": [
+              "source-enabling-versioning-on-buckets",
+              "source-official-aws-documentation-2"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-buckets-enable-and-verify-s3-versioning-002-verification-1",
+            "title": "Confirm the versioning state",
+            "instruction": "Run `aws s3api get-bucket-versioning --bucket saa-c03-s3-lab-<unique-suffix> --region eu-west-2`. Source: https://docs.aws.amazon.com/AmazonS3/latest/developerguide/s3_example_s3_GetBucketVersioning_section.html",
+            "expectedResult": "The response contains `Status` with the value `Enabled`.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003",
+        "slug": "create-two-object-versions-and-a-lifecycle-rule",
+        "title": "Create two object versions and a lifecycle rule",
+        "service": "S3 Buckets",
+        "feature": "Object versions and S3 Lifecycle noncurrent-version expiration",
+        "goal": "Upload two harmless revisions of lab/versioning-test.txt and configure a lifecycle rule named saa-c03-expire-noncurrent-versions that permanently deletes noncurrent versions under the lab/ prefix after 30 days.",
+        "whyItMatters": "This is a core SAA-C03 tradeoff: versioning improves recovery, but retained noncurrent versions can continue to consume storage. A lifecycle rule can control the retention period for those older versions.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 25,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-create-and-govern-test-object-versions",
+        "prerequisites": [
+          "task-buckets-enable-and-verify-s3-versioning-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-uploading-objects",
+          "source-setting-an-s3-lifecycle-configuration-on-a-bucket",
+          "source-official-aws-documentation-3",
+          "source-official-aws-documentation-4",
+          "source-getting-started-with-amazon-s3-using-the-aws-cli",
+          "source-official-aws-documentation-5"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-1-open-the-objects-tab",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the Objects tab",
+            "instruction": "Choose the Objects tab.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-1-open-the-objects-tab-instruction-1",
+                "text": "Choose the Objects tab.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The bucket Objects view opens.",
+            "warning": "Before uploading, create a harmless local text file named saa-c03-versioning-test.txt containing only `SAA-C03 sample version one`.",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-2-start-the-first-upload",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Start the first upload",
+            "instruction": "Choose Upload.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-2-start-the-first-upload-instruction-1",
+                "text": "Choose Upload.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Upload page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-3-choose-the-first-test-file",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Choose the first test file",
+            "instruction": "Choose Add file.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-3-choose-the-first-test-file-instruction-1",
+                "text": "Choose Add file.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A local file picker opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-4-upload-the-first-version",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Upload the first version",
+            "instruction": "Choose Upload.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-4-upload-the-first-version-instruction-1",
+                "text": "Choose Upload.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The upload status page reports a successful upload.",
+            "warning": "",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-5-change-the-local-sample-text",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Change the local sample text",
+            "instruction": "Replace the local file content with `SAA-C03 sample version two`.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-5-change-the-local-sample-text-instruction-1",
+                "text": "Replace the local file content with `SAA-C03 sample version two`.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The same local filename now contains harmless revised test data.",
+            "warning": "Keep the same filename so that the second upload uses the same S3 object key.",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-6-start-the-second-upload",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Start the second upload",
+            "instruction": "Choose Upload.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-6-start-the-second-upload-instruction-1",
+                "text": "Choose Upload.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Upload page opens again.",
+            "warning": "",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-7-choose-the-revised-test-file",
+            "stepNumber": 7,
+            "number": 7,
+            "title": "Choose the revised test file",
+            "instruction": "Choose Add file.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-7-choose-the-revised-test-file-instruction-1",
+                "text": "Choose Add file.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A local file picker opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-8-upload-the-second-version",
+            "stepNumber": 8,
+            "number": 8,
+            "title": "Upload the second version",
+            "instruction": "Choose Upload.",
+            "instructions": [
+              {
+                "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-console-step-8-upload-the-second-version-instruction-1",
+                "text": "Choose Upload.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The upload status page reports a successful upload.",
+            "warning": "Uploading an object with an existing key to a versioning-enabled bucket creates another object version.",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws s3 cp ./saa-c03-versioning-test.txt s3://saa-c03-s3-lab-<unique-suffix>/lab/versioning-test.txt --region eu-west-2",
+            "explanation": "Upload the first version. This command depends on a manually created local file named saa-c03-versioning-test.txt containing only `SAA-C03 sample version one`.",
+            "expectedResult": "The local file is uploaded at the lab/versioning-test.txt key.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this only after the 15-minute versioning-propagation wait described in Task 2.",
+            "sourceIds": [
+              "source-getting-started-with-amazon-s3-using-the-aws-cli",
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws s3 cp ./saa-c03-versioning-test.txt s3://saa-c03-s3-lab-<unique-suffix>/lab/versioning-test.txt --region eu-west-2",
+            "explanation": "After manually changing the same local file to contain only `SAA-C03 sample version two`, upload it to the identical S3 key to create a second object version.",
+            "expectedResult": "Amazon S3 creates a new version of lab/versioning-test.txt and retains the prior version as noncurrent.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not change the destination key between the two uploads.",
+            "sourceIds": [
+              "source-uploading-objects"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws s3api put-bucket-lifecycle-configuration --bucket saa-c03-s3-lab-<unique-suffix> --lifecycle-configuration '{\"Rules\":[{\"ID\":\"saa-c03-expire-noncurrent-versions\",\"Filter\":{\"Prefix\":\"lab/\"},\"Status\":\"Enabled\",\"NoncurrentVersionExpiration\":{\"NoncurrentDays\":30}}]}' --region eu-west-2",
+            "explanation": "Create one lifecycle rule that applies only to objects whose keys begin with lab/ and requests permanent deletion of noncurrent versions after 30 days.",
+            "expectedResult": "The lifecycle configuration is set on the bucket.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Putting a lifecycle configuration replaces the bucket's existing lifecycle configuration. Use this only on the dedicated lab bucket.",
+            "sourceIds": [
+              "source-setting-an-s3-lifecycle-configuration-on-a-bucket",
+              "source-official-aws-documentation-4"
+            ]
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws s3api get-bucket-lifecycle-configuration --bucket saa-c03-s3-lab-<unique-suffix> --region eu-west-2",
+            "explanation": "Retrieve the lifecycle configuration after creating it.",
+            "expectedResult": "The response includes the saa-c03-expire-noncurrent-versions rule with the lab/ filter and a 30-day NoncurrentVersionExpiration setting.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-setting-an-s3-lifecycle-configuration-on-a-bucket",
+              "source-official-aws-documentation-5"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-verification-1",
+            "title": "Inspect the two object versions",
+            "instruction": "Run `aws s3api list-object-versions --bucket saa-c03-s3-lab-<unique-suffix> --prefix lab/versioning-test.txt --region eu-west-2`. Source: https://docs.aws.amazon.com/cli/latest/reference/s3api/list-object-versions.html",
+            "expectedResult": "The response lists version metadata for the lab/versioning-test.txt key and identifies whether each returned version is latest.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-buckets-create-two-object-versions-and-a-lifecycle-rule-003-verification-2",
+            "title": "Confirm the lifecycle rule in the console",
+            "instruction": "Open the Management tab and inspect Lifecycle rules for saa-c03-expire-noncurrent-versions. Source: https://docs.aws.amazon.com/AmazonS3/latest/userguide/how-to-set-lifecycle-configuration-intro.html",
+            "expectedResult": "The rule is enabled, limited to the lab/ prefix, and configured to permanently delete noncurrent versions after 30 days.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Creating a bucket is not charged, but S3 storage and data transfer can incur charges. The lifecycle rule does not remove the noncurrent test version until it becomes eligible after 30 days.",
+      "safety": "Do not disable Block Public Access. Do not upload real, personal, customer, regulated, or confidential data. Deleting object versions and deleting the bucket are irreversible.",
+      "credentials": "Use an already authenticated AWS Management Console session or an already configured AWS CLI environment. Do not place access keys, secrets, MFA codes, or account identifiers in bucket names, object names, files, or commands.",
+      "region": "This follow along uses eu-west-2. The CLI create-bucket command includes LocationConstraint=eu-west-2 because the bucket is not being created in us-east-1."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Manually empty only the lab bucket",
+          "instruction": "In the Amazon S3 console, select only saa-c03-s3-lab-<unique-suffix>, choose Empty, enter that exact bucket name, and choose Empty.",
+          "description": "In the Amazon S3 console, select only saa-c03-s3-lab-<unique-suffix>, choose Empty, enter that exact bucket name, and choose Empty.",
+          "verification": "The Empty bucket status page completes, removing objects, object versions, and delete markers from only the lab bucket.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-emptying-a-general-purpose-bucket"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Manually delete only the empty lab bucket",
+          "instruction": "In the General purpose buckets list, select only saa-c03-s3-lab-<unique-suffix>, choose Delete, enter that exact bucket name, and choose Delete bucket.",
+          "description": "In the General purpose buckets list, select only saa-c03-s3-lab-<unique-suffix>, choose Delete, enter that exact bucket name, and choose Delete bucket.",
+          "verification": "Search the General purpose buckets list for saa-c03-s3-lab-<unique-suffix>; the bucket cannot be found.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-deleting-a-general-purpose-bucket"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The local text-file preparation and revision are intentionally manual so each listed CLI item remains exactly one AWS CLI command. Confirm that the same local filename is used for both uploads.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "AWS recommends waiting 15 minutes after first enabling versioning before issuing PUT or DELETE operations. If the upload commands encounter intermittent NoSuchKey errors, wait and retry them manually.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The console flow can vary slightly by AWS console release. The documented labels used here are General purpose buckets, Properties, Bucket Versioning, Management, and Create lifecycle rule.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "buckets-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 3,
+    "taskCount": 3,
+    "checkboxCount": 21,
+    "cliCommandCount": 6,
+    "verificationCheckCount": 4,
+    "cleanupItemCount": 2,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 12
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "a4b2fc7f6cd6e065e3e107bfe680f249bddf131bd6bfc51f84cbdd618a480be4"
+  }
+}

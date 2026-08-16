@@ -1,0 +1,3133 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-sqs-b0bcace7-825c-405a-8641-443cefae523c",
+  "preparedAt": "2026-08-10T19:00:28.846Z",
+  "service": {
+    "officialName": "Amazon Simple Queue Service",
+    "shortName": "SQS"
+  },
+  "generationMode": "update_existing",
+  "updateTarget": {
+    "programmeId": "sqs-learning-path",
+    "displayName": "Amazon SQS: Basic Message Queue Test",
+    "serviceName": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "serviceSlug": "sqs",
+    "sourceRevision": 5,
+    "candidateId": "release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r5-fd2a11c30c25",
+    "contentHash": "79df5d6c5d0763684d2c5a1c1c4e10e1c2f57d71c50a759315009fe3d62e0590",
+    "publishedAt": "2026-08-10T18:46:14.639154+00:00"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "3dc2b49dedb328a41c8b7d112538970ecf19e61fae7621ff5e26ec9b85fd22be"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "3dc2b49dedb328a41c8b7d112538970ecf19e61fae7621ff5e26ec9b85fd22be"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "sqs",
+      "serviceName": "Amazon Simple Queue Service",
+      "shortName": "SQS",
+      "displayName": "Amazon SQS: Basic Message Queue Test",
+      "subtitle": "sqs-learning-path · SAA-C03 beginner hands-on journey",
+      "description": "Complete replacement for the selected Study Tracker Amazon Simple Queue Service Follow Along (programme ID sqs-learning-path, published source revision 5). This beginner journey uses Europe (London), eu-west-2, and harmless Study Tracker test data to practice Amazon SQS delivery, failure handling, monitoring, security boundaries, and SAA-C03 architecture decisions.",
+      "learningOutcome": "Create and operate Standard and FIFO Amazon SQS queues; identify queue URLs, ARNs, message IDs, and receipt handles; safely test delivery, retries, visibility, dead-letter queues, redrive, monitoring, encryption and authorization boundaries; and select SQS patterns for SAA-C03 scenarios including worker queues, traffic-spike buffering, fan-out, serverless processing, strict ordering, and failed-message handling.",
+      "programmeId": "sqs-learning-path",
+      "pathId": "sqs-learning-path",
+      "componentNamespace": "",
+      "category": "Messaging",
+      "difficulty": "Beginner",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-root-user-best-practices-for-your-aws-account",
+        "title": "Root user best practices for your AWS account",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/root-user-best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Preparation guidance for using an approved non-root identity and avoiding root-user credentials for routine labs.",
+        "taskIds": [
+          "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001"
+        ]
+      },
+      {
+        "id": "source-amazon-sqs-queue-types",
+        "title": "Amazon SQS queue types",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Standard versus FIFO delivery, ordering, throughput, duplicate-delivery, and idempotency concepts.",
+        "taskIds": [
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002",
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004",
+          "task-sqs-5-create-and-test-a-fifo-queue-005"
+        ]
+      },
+      {
+        "id": "source-amazon-sqs-visibility-timeout",
+        "title": "Amazon SQS visibility timeout",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Visibility, retries, in-flight messages, consumer failures, and changing visibility.",
+        "taskIds": [
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004",
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006"
+        ]
+      },
+      {
+        "id": "source-using-dead-letter-queues-in-amazon-sqs",
+        "title": "Using dead-letter queues in Amazon SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "DLQ behavior, failed-message isolation, maxReceiveCount, and retention considerations.",
+        "taskIds": [
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006"
+        ]
+      },
+      {
+        "id": "source-configure-dead-letter-queue-redrive-in-amazon-sqs",
+        "title": "Configure dead-letter queue redrive in Amazon SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "DLQ redrive requirements and safe message-movement concepts.",
+        "taskIds": [
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006"
+        ]
+      },
+      {
+        "id": "source-available-cloudwatch-metrics-for-amazon-sqs",
+        "title": "Available CloudWatch metrics for Amazon SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-available-cloudwatch-metrics.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Queue backlog, in-flight, oldest-message, sent, received, and deleted-message metrics.",
+        "taskIds": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ]
+      },
+      {
+        "id": "source-monitoring-amazon-sqs-queues-using-cloudwatch",
+        "title": "Monitoring Amazon SQS queues using CloudWatch",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/monitoring-using-cloudwatch.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Viewing SQS metrics and creating CloudWatch alarms.",
+        "taskIds": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ]
+      },
+      {
+        "id": "source-overview-of-managing-access-in-amazon-sqs",
+        "title": "Overview of managing access in Amazon SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-overview-of-managing-access.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Identity policies, queue resource policies, service access, and cross-account access boundaries.",
+        "taskIds": [
+          "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001",
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008",
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-amazon-sqs-key-management",
+        "title": "Amazon SQS key management",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-key-management.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Server-side encryption and AWS KMS authorization considerations.",
+        "taskIds": [
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008"
+        ]
+      },
+      {
+        "id": "source-troubleshoot-an-access-denied-error-in-amazon-sqs",
+        "title": "Troubleshoot an access denied error in Amazon SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/troubleshooting-access-denied.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Permission, queue-policy, KMS, VPC endpoint, and cross-account failure diagnosis.",
+        "taskIds": [
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008"
+        ]
+      },
+      {
+        "id": "source-using-lambda-with-amazon-sqs",
+        "title": "Using Lambda with Amazon SQS",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda polling, batches, Standard and FIFO support, and partial batch failures.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-creating-and-configuring-an-amazon-sqs-event-source-mapping",
+        "title": "Creating and configuring an Amazon SQS event source mapping",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-configure.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda-to-SQS visibility-timeout and execution-role authorization boundaries.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-handling-errors-for-an-sqs-event-source-in-lambda",
+        "title": "Handling errors for an SQS event source in Lambda",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/services-sqs-errorhandling.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Lambda retries, backoff, batch failures, and FIFO failure handling.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-event-notification-types-and-destinations",
+        "title": "Event notification types and destinations",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-event-types-and-destinations.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Amazon S3 event delivery to SQS and its same-Region, queue-policy, ordering, and duplicate-event considerations.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-event-bus-targets-in-amazon-eventbridge",
+        "title": "Event bus targets in Amazon EventBridge",
+        "url": "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "EventBridge-to-SQS targets, target permissions, FIFO target settings, and encrypted-target limitations.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-amazon-sqs-amazon-sns-or-eventbridge",
+        "title": "Amazon SQS, Amazon SNS, or EventBridge?",
+        "url": "https://docs.aws.amazon.com/pdfs/decision-guides/latest/sns-or-sqs-or-eventbridge/sns-or-sqs-or-eventbridge.pdf",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "SAA-C03 service-selection comparisons for queues, pub/sub fan-out, and event routing.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-managing-large-amazon-sqs-messages-with-extended-client-library-and-am",
+        "title": "Managing large Amazon SQS messages with Extended Client Library and Amazon S3",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-managing-large-messages.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Large-message pattern using Amazon S3 references and the SQS Extended Client Libraries.",
+        "taskIds": [
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ]
+      },
+      {
+        "id": "source-amazon-sqs-cli-command-reference",
+        "title": "Amazon SQS CLI command reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Current AWS CLI command coverage for Amazon SQS operations.",
+        "taskIds": [
+          "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001",
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002",
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004",
+          "task-sqs-5-create-and-test-a-fifo-queue-005",
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006",
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007",
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008"
+        ]
+      },
+      {
+        "id": "source-create-queue-cli-command",
+        "title": "create-queue CLI command",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/create-queue.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Queue creation attributes for Standard, FIFO, retention, polling, encryption, and redrive configurations.",
+        "taskIds": [
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002",
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+          "task-sqs-5-create-and-test-a-fifo-queue-005"
+        ]
+      },
+      {
+        "id": "source-send-message-cli-command",
+        "title": "send-message CLI command",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/sqs/send-message.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Sending messages, delays, attributes, message groups, and deduplication IDs.",
+        "taskIds": [
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002",
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004",
+          "task-sqs-5-create-and-test-a-fifo-queue-005",
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006",
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/troubleshooting-messages-not-returned-ReceiveMessage.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-2",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-throughput-horizontal-scaling-and-batching.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-3",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/put-metric-alarm.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-4",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/delete-alarms.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-5",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/security_iam_service-with-iam.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "SQS",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-1-secure-preparation-and-standard-queue-fundamentals",
+        "phaseNumber": 1,
+        "title": "1. Secure preparation and Standard queue fundamentals",
+        "description": "Confirm approved non-root access in eu-west-2, then create a harmless Standard worker queue and complete the send, receive, inspect, and delete lifecycle.",
+        "taskIds": [
+          "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001",
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-2-delivery-behavior-polling-retries-and-worker-backlogs",
+        "phaseNumber": 2,
+        "title": "2. Delivery behavior, polling, retries, and worker backlogs",
+        "description": "Configure retention, message-size, delay, polling, and visibility settings; then observe multiple-consumer behavior, duplicate delivery risk, and idempotency requirements.",
+        "taskIds": [
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-3-fifo-ordering-and-failed-message-isolation",
+        "phaseNumber": 3,
+        "title": "3. FIFO ordering and failed-message isolation",
+        "description": "Create a FIFO queue for strict ordering within message groups, then configure a DLQ and safely demonstrate poison-message isolation and redrive.",
+        "taskIds": [
+          "task-sqs-5-create-and-test-a-fifo-queue-005",
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-4-monitoring-authorization-encryption-and-saa-c03-integrations",
+        "phaseNumber": 4,
+        "title": "4. Monitoring, authorization, encryption, and SAA-C03 integrations",
+        "description": "Monitor queue backlog, create a harmless alarm without actions, inspect authorization and encryption boundaries, and apply SQS integration and service-selection decisions.",
+        "taskIds": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007",
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008",
+          "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001",
+        "slug": "1-confirm-approved-amazon-sqs-access-in-eu-west-2",
+        "title": "1. Confirm approved Amazon SQS access in eu-west-2",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Non-root access, regional scope, and private CLI authentication",
+        "goal": "Confirm that an administrator-approved non-root account or role can open Amazon SQS and list queues in Europe (London), eu-west-2.",
+        "whyItMatters": "The AWS account root user has highly privileged account-wide access and must not be used for routine labs. Amazon SQS queues are regional, so the Console and CLI must consistently use eu-west-2. An administrator must authorize the learner identity for the SQS actions used later; this Follow Along does not create or propose an IAM policy.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-1-secure-preparation-and-standard-queue-fundamentals",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-root-user-best-practices-for-your-aws-account",
+          "source-amazon-sqs-cli-command-reference",
+          "source-overview-of-managing-access-in-amazon-sqs"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open Amazon SQS with an approved identity",
+            "instruction": "Sign in with an approved non-root account or role.",
+            "instructions": [
+              {
+                "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity-instruction-1",
+                "text": "Sign in with an approved non-root account or role.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity-instruction-2",
+                "text": "Open the Amazon SQS console.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity-instruction-3",
+                "text": "Choose the Region selector.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity-instruction-4",
+                "text": "Choose Europe (London).",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-console-step-1-open-amazon-sqs-with-an-approved-identity-instruction-5",
+                "text": "Choose Queues.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Amazon SQS Queues page opens in eu-west-2.",
+            "warning": "Do not use the AWS account root user. Do not enter passwords, access keys, secret keys, session tokens, or any other credentials into Study Tracker.",
+            "sourceIds": [
+              "source-root-user-best-practices-for-your-aws-account"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs list-queues --region eu-west-2",
+            "explanation": "Lists queue URLs available to the privately configured approved CLI identity in Europe (London). Configure CLI authentication privately on the learner computer through the organization-approved method; never paste credentials into Study Tracker.",
+            "expectedResult": "The command completes without an authentication or authorization error. It can return QueueUrls or no queue URLs.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If AccessDenied is returned, stop and ask the administrator to authorize the non-root identity. Do not switch to root credentials.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference",
+              "source-root-user-best-practices-for-your-aws-account"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-verification-1",
+            "title": "Verify Console access",
+            "instruction": "Confirm that the Queues page remains open with Europe (London) selected.",
+            "expectedResult": "The learner can view the regional Amazon SQS queue list.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-verification-2",
+            "title": "Verify CLI access",
+            "instruction": "Review the list-queues response.",
+            "expectedResult": "The AWS CLI completes without credential or permission failures.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001-cleanup-1",
+            "stepNumber": 1,
+            "title": "End the access check",
+            "instruction": "Do not create, edit, purge, or delete any resource during this task.",
+            "description": "Do not create, edit, purge, or delete any resource during this task.",
+            "verification": "No resource was created by this task.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-root-user-best-practices-for-your-aws-account"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002",
+        "slug": "2-create-a-standard-queue-and-complete-the-message-lifecycle",
+        "title": "2. Create a Standard queue and complete the message lifecycle",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Standard queue, queue URL, queue ARN, message ID, receipt handle, and message attributes",
+        "goal": "Create sqs-saa-study-standard, identify its queue URL and ARN, send a harmless attributed message, receive it, inspect its identifiers, and delete it.",
+        "whyItMatters": "A Standard queue decouples producers from consumers and is the normal choice for high-throughput worker queues. Standard queues provide at-least-once delivery and best-effort ordering, so consumers must tolerate duplicates and out-of-order delivery.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-1-secure-preparation-and-standard-queue-fundamentals",
+        "prerequisites": [
+          "task-sqs-1-confirm-approved-amazon-sqs-access-in-eu-west-2-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-amazon-sqs-queue-types",
+          "source-create-queue-cli-command",
+          "source-send-message-cli-command",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-1-create-the-standard-queue",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the Standard queue",
+            "instruction": "Choose Create queue.",
+            "instructions": [
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-1-create-the-standard-queue-instruction-1",
+                "text": "Choose Create queue.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-1-create-the-standard-queue-instruction-2",
+                "text": "Keep Standard selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-1-create-the-standard-queue-instruction-3",
+                "text": "Enter sqs-saa-study-standard in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-1-create-the-standard-queue-instruction-4",
+                "text": "Choose Create queue.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The sqs-saa-study-standard queue opens.",
+            "warning": "Queue type cannot be changed after creation. Use only the fixed harmless training name.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-2-record-queue-identifiers",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Record queue identifiers",
+            "instruction": "Copy the Queue URL.",
+            "instructions": [
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-2-record-queue-identifiers-instruction-1",
+                "text": "Copy the Queue URL.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-2-record-queue-identifiers-instruction-2",
+                "text": "Copy the Queue ARN.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The queue URL and queue ARN are available for later tasks.",
+            "warning": "CLI queue operations use the queue URL. A receipt handle is different from a message ID.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Send an attributed test message",
+            "instruction": "Choose Actions.",
+            "instructions": [
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-1",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-2",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-3",
+                "text": "Enter Study Tracker standard message in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-4",
+                "text": "Choose Add message attribute.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-5",
+                "text": "Enter studyType in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-6",
+                "text": "Choose String in Type.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-7",
+                "text": "Enter standard-test in Value.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-3-send-an-attributed-test-message-instruction-8",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The console confirms the send and displays a message ID.",
+            "warning": "Do not send personal, confidential, regulated, production, or credential data.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Receive and delete the test message",
+            "instruction": "Choose Poll for messages.",
+            "instructions": [
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-1",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-2",
+                "text": "Select Study Tracker standard message.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-3",
+                "text": "Inspect the message ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-4",
+                "text": "Inspect the studyType attribute.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-5",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-console-step-4-receive-and-delete-the-test-message-instruction-6",
+                "text": "Confirm the deletion.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The selected test message is deleted.",
+            "warning": "Delete only the fixed test message created in this task.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs create-queue --queue-name sqs-saa-study-standard --region eu-west-2",
+            "explanation": "Creates the Standard queue because no FIFO queue attribute is supplied.",
+            "expectedResult": "The response contains QueueUrl for sqs-saa-study-standard.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If a queue with this name already exists with different attributes, use the existing queue only if it was created by this Follow Along.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-create-queue> --attribute-names QueueArn --region eu-west-2",
+            "explanation": "Retrieves the queue ARN. Replace the placeholder with the QueueUrl returned by the preceding create-queue command.",
+            "expectedResult": "The response contains QueueArn.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The queue URL is account-specific and Region-specific.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-create-queue> --message-body \"Study Tracker standard message\" --message-attributes '{\"studyType\":{\"DataType\":\"String\",\"StringValue\":\"standard-test\"}}' --region eu-west-2",
+            "explanation": "Sends one harmless message with a String message attribute. Replace the queue URL placeholder with the value returned earlier.",
+            "expectedResult": "The response contains MessageId and message digests.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use only the fixed harmless message body and attribute value.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-create-queue> --message-system-attribute-names All --message-attribute-names All --region eu-west-2",
+            "explanation": "Receives an available message and requests system attributes and message attributes. Save the current ReceiptHandle from this response for the next command.",
+            "expectedResult": "The response includes the test message, MessageId, message attribute, and ReceiptHandle.",
+            "instructions": [],
+            "commands": [],
+            "warning": "A receipt handle changes whenever SQS receives the message again.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs delete-message --queue-url <standard-queue-url-from-create-queue> --receipt-handle <receipt-handle-from-receive-message> --region eu-west-2",
+            "explanation": "Permanently deletes the received test message. Replace the receipt-handle placeholder with the current ReceiptHandle from the prior receive response.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "DeleteMessage requires the current receipt handle, not the MessageId.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-verification-1",
+            "title": "Verify queue type",
+            "instruction": "Open the queue Details page and inspect Type.",
+            "expectedResult": "sqs-saa-study-standard is displayed as a Standard queue.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-verification-2",
+            "title": "Verify deletion",
+            "instruction": "Run receive-message again against the Standard queue.",
+            "expectedResult": "Study Tracker standard message is not returned.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002-cleanup-1",
+            "stepNumber": 1,
+            "title": "Confirm the lifecycle message is absent",
+            "instruction": "Poll sqs-saa-study-standard and confirm that Study Tracker standard message is not returned.",
+            "description": "Poll sqs-saa-study-standard and confirm that Study Tracker standard message is not returned.",
+            "verification": "The test message has been deleted while the queue remains available for later tasks.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003",
+        "slug": "3-configure-retention-message-size-delay-polling-and-visibility",
+        "title": "3. Configure retention, message size, delay, polling, and visibility",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Message retention, maximum message size, queue delay, per-message delay, short polling, long polling, and visibility timeout",
+        "goal": "Configure safe temporary settings on the Standard queue, send a delayed message, compare short and long polling, and make an unfinished message available again.",
+        "whyItMatters": "Retention determines how long work can wait. Delays can defer work, long polling reduces empty receives, and visibility timeout prevents concurrent processing while a consumer works. A message that is not deleted before visibility expires can return for retry after a consumer crash or timeout.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-2-delivery-behavior-polling-retries-and-worker-backlogs",
+        "prerequisites": [
+          "task-sqs-2-create-a-standard-queue-and-complete-the-message-lifecycle-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-amazon-sqs-visibility-timeout",
+          "source-official-aws-documentation",
+          "source-create-queue-cli-command",
+          "source-send-message-cli-command",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Configure controlled queue settings",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-2",
+                "text": "Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-3",
+                "text": "Enter 1 in Message retention period.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-4",
+                "text": "Choose Days for Message retention period.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-5",
+                "text": "Enter 1024 in Maximum message size.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-6",
+                "text": "Choose Kilobytes for Maximum message size.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-7",
+                "text": "Enter 20 in Receive message wait time.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-1-configure-controlled-queue-settings-instruction-8",
+                "text": "Choose Seconds for Receive message wait time.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The edit page shows one-day retention, a 1 MiB message limit, and 20-second long polling.",
+            "warning": "The 1 MiB setting is the SQS maximum. Production retention, polling, and visibility settings must be selected for the application workload.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-2-save-the-queue-settings",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Save the queue settings",
+            "instruction": "Choose Save.",
+            "instructions": [
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-2-save-the-queue-settings-instruction-1",
+                "text": "Choose Save.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The updated queue settings are saved.",
+            "warning": "Queue attribute updates can take time to propagate.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Send a delayed message",
+            "instruction": "Choose Actions.",
+            "instructions": [
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-1",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-2",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-3",
+                "text": "Enter Delayed Study Tracker task in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-4",
+                "text": "Enter 10 in Delivery delay.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-5",
+                "text": "Choose Seconds for Delivery delay.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-3-send-a-delayed-message-instruction-6",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The test message is accepted but remains unavailable for approximately 10 seconds.",
+            "warning": "Per-message delay is for Standard queues. FIFO queues do not support per-message delay.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-4-compare-polling-methods",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Compare polling methods",
+            "instruction": "Choose Poll for messages.",
+            "instructions": [
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-4-compare-polling-methods-instruction-1",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-4-compare-polling-methods-instruction-2",
+                "text": "Wait 10 seconds.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-4-compare-polling-methods-instruction-3",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The delayed message becomes available after its delay period.",
+            "warning": "A short poll can return no messages even when messages exist because it samples a subset of SQS servers. Long polling waits for messages across servers.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Demonstrate visibility retry",
+            "instruction": "Select Delayed Study Tracker task.",
+            "instructions": [
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-1",
+                "text": "Select Delayed Study Tracker task.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-2",
+                "text": "Choose Change visibility.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-3",
+                "text": "Enter 0 in Visibility timeout.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-4",
+                "text": "Choose Change visibility.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-5",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-6",
+                "text": "Select Delayed Study Tracker task.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-7",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-console-step-5-demonstrate-visibility-retry-instruction-8",
+                "text": "Confirm the deletion.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The unfinished message returns immediately after visibility is set to zero, then is deleted using its new receipt handle.",
+            "warning": "Visibility timeout zero intentionally ends processing protection. Only use this controlled setting for the test message.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs set-queue-attributes --queue-url <standard-queue-url-from-task-2> --attributes MessageRetentionPeriod=86400,MaximumMessageSize=1048576,ReceiveMessageWaitTimeSeconds=20,VisibilityTimeout=10 --region eu-west-2",
+            "explanation": "Sets one-day retention, the 1 MiB maximum message size, 20-second queue-level long polling, and a short 10-second visibility timeout for this controlled demonstration.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Replace the placeholder with the Standard queue URL. These settings affect the selected queue.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Delayed Study Tracker task\" --delay-seconds 10 --region eu-west-2",
+            "explanation": "Sends one harmless Standard-queue message that becomes available after 10 seconds.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Per-message delay is not supported by FIFO queues.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --wait-time-seconds 0 --region eu-west-2",
+            "explanation": "Makes one short-poll request. A no-message response is valid even if a message becomes available shortly afterward.",
+            "expectedResult": "The response can be empty or can contain the delayed message after its delay has elapsed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Short polling samples only a subset of servers.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --wait-time-seconds 20 --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Long-polls for up to 20 seconds and requests system attributes. Save the ReceiptHandle returned for Delayed Study Tracker task.",
+            "expectedResult": "The delayed message is returned after it becomes available, with a ReceiptHandle and ApproximateReceiveCount.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not delete this first receive yet.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs change-message-visibility --queue-url <standard-queue-url-from-task-2> --receipt-handle <receipt-handle-from-delayed-message-receive> --visibility-timeout 0 --region eu-west-2",
+            "explanation": "Terminates the current visibility period so the unfinished message can be received again immediately.",
+            "expectedResult": "The command completes without output and the message becomes eligible for another receive.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use only the receipt handle returned for Delayed Study Tracker task.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Receives the retry. Save the new ReceiptHandle because the earlier receipt handle is no longer current.",
+            "expectedResult": "The message returns with a new receipt handle and an increased ApproximateReceiveCount.",
+            "instructions": [],
+            "commands": [],
+            "warning": "An unfinished message returning illustrates consumer-crash and retry behavior.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws sqs delete-message --queue-url <standard-queue-url-from-task-2> --receipt-handle <new-receipt-handle-from-retry-receive> --region eu-west-2",
+            "explanation": "Deletes the retried delayed message with its current receipt handle.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the newest receipt handle only.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-verification-1",
+            "title": "Verify long polling",
+            "instruction": "Inspect Receive message wait time on the queue Details page.",
+            "expectedResult": "The queue is configured with a 20-second receive wait time.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-verification-2",
+            "title": "Verify retry behavior",
+            "instruction": "Review the second receive-message response.",
+            "expectedResult": "ApproximateReceiveCount is higher than on the first receive and the receipt handle is different.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003-cleanup-1",
+            "stepNumber": 1,
+            "title": "Restore a normal visibility timeout",
+            "instruction": "Edit sqs-saa-study-standard and set Visibility timeout to 30 seconds.",
+            "description": "Edit sqs-saa-study-standard and set Visibility timeout to 30 seconds.",
+            "verification": "The queue Details page shows a 30-second visibility timeout.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004",
+        "slug": "4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo",
+        "title": "4. Model multiple producers and consumers, duplicate delivery, and idempotency",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Worker queues, multiple consumers, at-least-once delivery, best-effort ordering, slow consumers, and traffic spikes",
+        "goal": "Create a small safe worker backlog, simulate two producer messages and an unfinished consumer receive, then identify why an idempotent consumer is required.",
+        "whyItMatters": "SQS buffers traffic spikes between producers and slower backend workers. Standard queues can deliver a message more than once and do not guarantee order, so a consumer must safely handle duplicate work using an application-level idempotency strategy such as a durable operation identifier.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-2-delivery-behavior-polling-retries-and-worker-backlogs",
+        "prerequisites": [
+          "task-sqs-3-configure-retention-message-size-delay-polling-and-visibility-003"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-amazon-sqs-queue-types",
+          "source-amazon-sqs-visibility-timeout",
+          "source-official-aws-documentation-2",
+          "source-send-message-cli-command",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create a small worker backlog",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-2",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-3",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-4",
+                "text": "Enter Producer A study work item in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-5",
+                "text": "Choose Send message.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-6",
+                "text": "Enter Producer B study work item in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-1-create-a-small-worker-backlog-instruction-7",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Two harmless work items are available to consumers.",
+            "warning": "These two messages represent independent producers. Standard queue ordering must not be assumed.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Simulate an unfinished consumer",
+            "instruction": "Choose Poll for messages.",
+            "instructions": [
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer-instruction-1",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer-instruction-2",
+                "text": "Select one returned work item.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer-instruction-3",
+                "text": "Do not choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer-instruction-4",
+                "text": "Wait 30 seconds.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-2-simulate-an-unfinished-consumer-instruction-5",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The unprocessed message becomes visible again after the visibility timeout.",
+            "warning": "This intentionally simulates a consumer crash or failed worker. Do not use this behavior on messages that contain real work.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Clear the controlled backlog",
+            "instruction": "Select Producer A study work item.",
+            "instructions": [
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-1",
+                "text": "Select Producer A study work item.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-2",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-3",
+                "text": "Confirm the deletion.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-4",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-5",
+                "text": "Select Producer B study work item.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-6",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-console-step-3-clear-the-controlled-backlog-instruction-7",
+                "text": "Confirm the deletion.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The fixed worker test messages are removed.",
+            "warning": "Poll results can vary for Standard queues. Delete only messages whose bodies match the fixed training text.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Producer A study work item\" --region eu-west-2",
+            "explanation": "Simulates one producer placing a harmless work item onto the worker queue.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The MessageId identifies the submitted message but cannot be used to delete a received message.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Producer B study work item\" --region eu-west-2",
+            "explanation": "Simulates a second producer placing an independent harmless work item on the same queue.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Standard queues offer best-effort ordering, not strict ordering.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --visibility-timeout 0 --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Simulates a consumer that receives a message but immediately makes it visible again instead of completing and deleting it.",
+            "expectedResult": "One work item is returned and remains available for another consumer.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This can result in repeat delivery. A production consumer must make processing idempotent.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --max-number-of-messages 2 --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Simulates another consumer polling for available work. Save the current receipt handles for the fixed work messages that are returned.",
+            "expectedResult": "One or two available worker test messages can be returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not infer ordering from the response. Standard queues can return messages out of order.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs purge-queue --queue-url <standard-queue-url-from-task-2> --region eu-west-2",
+            "explanation": "Removes all remaining messages from the dedicated training Standard queue after the worker-queue demonstration.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Purge permanently removes every message in the specified queue. Use only sqs-saa-study-standard.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-verification-1",
+            "title": "Verify duplicate-processing reasoning",
+            "instruction": "State why a consumer must not assume a Standard message is delivered exactly once.",
+            "expectedResult": "Standard queues provide at-least-once delivery, so a consumer must safely tolerate duplicate processing.",
+            "mode": "either"
+          },
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-verification-2",
+            "title": "Verify backlog cleanup",
+            "instruction": "Poll the Standard queue after the purge.",
+            "expectedResult": "Neither fixed producer test message is returned.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004-cleanup-1",
+            "stepNumber": 1,
+            "title": "Confirm the worker backlog is empty",
+            "instruction": "Poll sqs-saa-study-standard and confirm that neither Producer A study work item nor Producer B study work item is returned.",
+            "description": "Poll sqs-saa-study-standard and confirm that neither Producer A study work item nor Producer B study work item is returned.",
+            "verification": "The controlled backlog has been removed.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-5-create-and-test-a-fifo-queue-005",
+        "slug": "5-create-and-test-a-fifo-queue",
+        "title": "5. Create and test a FIFO queue",
+        "service": "Amazon Simple Queue Service",
+        "feature": "FIFO naming, strict ordering, MessageGroupId, MessageDeduplicationId, and content-based deduplication",
+        "goal": "Create sqs-saa-study-orders.fifo, send ordered messages in one message group, test an explicit deduplication ID, and observe group ordering.",
+        "whyItMatters": "Use FIFO when processing order matters. FIFO ordering is preserved within each MessageGroupId, while separate message groups can be processed in parallel. The .fifo suffix is mandatory, and deduplication reduces duplicate sends within the FIFO deduplication interval.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-3-fifo-ordering-and-failed-message-isolation",
+        "prerequisites": [
+          "task-sqs-4-model-multiple-producers-and-consumers-duplicate-delivery-and-idempo-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-amazon-sqs-queue-types",
+          "source-create-queue-cli-command",
+          "source-send-message-cli-command",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the FIFO queue",
+            "instruction": "Choose Create queue.",
+            "instructions": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue-instruction-1",
+                "text": "Choose Create queue.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue-instruction-2",
+                "text": "Choose FIFO.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue-instruction-3",
+                "text": "Enter sqs-saa-study-orders.fifo in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue-instruction-4",
+                "text": "Choose Enable content-based deduplication.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-create-the-fifo-queue-instruction-5",
+                "text": "Choose Create queue.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The FIFO queue Details page opens.",
+            "warning": "The .fifo suffix is mandatory. Queue type cannot be changed after creation.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Send the first ordered message",
+            "instruction": "Choose Actions.",
+            "instructions": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-1",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-2",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-3",
+                "text": "Enter Order step one in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-4",
+                "text": "Enter study-order-001 in Message group ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-5",
+                "text": "Enter order-step-one-001 in Message deduplication ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-send-the-first-ordered-message-instruction-6",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The first FIFO message is accepted.",
+            "warning": "FIFO messages require a Message group ID. Use a unique deduplication ID when content-based deduplication is not relied upon.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-the-second-ordered-message",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Send the second ordered message",
+            "instruction": "Enter Order step two in Message body.",
+            "instructions": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-the-second-ordered-message-instruction-1",
+                "text": "Enter Order step two in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-the-second-ordered-message-instruction-2",
+                "text": "Enter study-order-001 in Message group ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-the-second-ordered-message-instruction-3",
+                "text": "Enter order-step-two-001 in Message deduplication ID.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-the-second-ordered-message-instruction-4",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The second FIFO message is accepted in the same ordered group.",
+            "warning": "Messages in the same group are processed in order.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Receive ordered messages",
+            "instruction": "Choose Poll for messages.",
+            "instructions": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-1",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-2",
+                "text": "Inspect Order step one.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-3",
+                "text": "Select Order step one.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-4",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-5",
+                "text": "Confirm the deletion.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-6",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-7",
+                "text": "Inspect Order step two.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-ordered-messages-instruction-8",
+                "text": "Select Order step two.`,`Choose Delete.`,`Confirm the deletion.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Order step one is processed before Order step two for study-order-001.",
+            "warning": "A later message in a FIFO group is blocked while an earlier group message is in flight.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs create-queue --queue-name sqs-saa-study-orders.fifo --attributes FifoQueue=true,ContentBasedDeduplication=true --region eu-west-2",
+            "explanation": "Creates the FIFO training queue with content-based deduplication enabled.",
+            "expectedResult": "The response contains QueueUrl for sqs-saa-study-orders.fifo.",
+            "instructions": [],
+            "commands": [],
+            "warning": "FIFO queue names must end in .fifo.",
+            "sourceIds": [
+              "source-create-queue-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs send-message --queue-url <fifo-queue-url-from-create-queue> --message-body \"Order step one\" --message-group-id study-order-001 --message-deduplication-id order-step-one-001 --region eu-west-2",
+            "explanation": "Sends the first message in the ordered study-order-001 group. Replace the queue URL placeholder with the FIFO QueueUrl.",
+            "expectedResult": "The response contains MessageId and SequenceNumber.",
+            "instructions": [],
+            "commands": [],
+            "warning": "MessageGroupId and MessageDeduplicationId are required when explicitly supplying deduplication IDs.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs send-message --queue-url <fifo-queue-url-from-create-queue> --message-body \"Order step two\" --message-group-id study-order-001 --message-deduplication-id order-step-two-001 --region eu-west-2",
+            "explanation": "Sends the second message in the same FIFO message group.",
+            "expectedResult": "The response contains MessageId and SequenceNumber.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The shared MessageGroupId creates the strict-ordering relationship.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sqs receive-message --queue-url <fifo-queue-url-from-create-queue> --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Receives the next available FIFO message. Save its current ReceiptHandle.",
+            "expectedResult": "Order step one is returned before Order step two for study-order-001.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not process a later message in this group until the earlier message is deleted or becomes visible again.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs delete-message --queue-url <fifo-queue-url-from-create-queue> --receipt-handle <receipt-handle-from-first-fifo-receive> --region eu-west-2",
+            "explanation": "Deletes the first FIFO message, allowing the next message in the group to be delivered.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the current receipt handle from the immediately preceding receive response.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws sqs receive-message --queue-url <fifo-queue-url-from-create-queue> --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Receives the next ordered FIFO message after the first message was deleted.",
+            "expectedResult": "Order step two is returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Save its new receipt handle for deletion.",
+            "sourceIds": [
+              "source-amazon-sqs-queue-types"
+            ]
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws sqs delete-message --queue-url <fifo-queue-url-from-create-queue> --receipt-handle <receipt-handle-from-second-fifo-receive> --region eu-west-2",
+            "explanation": "Deletes the final fixed FIFO test message.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Only delete Order step two from this training queue.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-verification-1",
+            "title": "Verify FIFO identity",
+            "instruction": "Confirm that the queue name ends in .fifo and that Type is FIFO.",
+            "expectedResult": "sqs-saa-study-orders.fifo is a FIFO queue.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-verification-2",
+            "title": "Verify ordered delivery",
+            "instruction": "Review the FIFO receive-message outputs.",
+            "expectedResult": "Order step one appears before Order step two for the same MessageGroupId.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cleanup-1",
+            "stepNumber": 1,
+            "title": "Confirm FIFO test messages are absent",
+            "instruction": "Poll sqs-saa-study-orders.fifo and confirm that Order step one and Order step two are not returned.",
+            "description": "Poll sqs-saa-study-orders.fifo and confirm that Order step one and Order step two are not returned.",
+            "verification": "The FIFO queue remains empty for final programme cleanup.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006",
+        "slug": "6-configure-a-dead-letter-queue-and-redrive-a-poison-message",
+        "title": "6. Configure a dead-letter queue and redrive a poison message",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Dead-letter queue, redrive policy, maxReceiveCount, poison messages, inspection, and redrive",
+        "goal": "Create sqs-saa-study-dlq, attach it to the Standard source queue with maxReceiveCount 2, deliberately fail a harmless message, inspect the DLQ, and start redrive.",
+        "whyItMatters": "A DLQ isolates messages that repeatedly fail so normal workers can continue. For SAA-C03, use a DLQ to protect workloads from poison messages, investigate root causes, and redrive only after the failure condition is understood. Avoid attaching DLQs to a FIFO workflow if removing failed messages would break the ordering requirement.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-3-fifo-ordering-and-failed-message-isolation",
+        "prerequisites": [
+          "task-sqs-5-create-and-test-a-fifo-queue-005"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-using-dead-letter-queues-in-amazon-sqs",
+          "source-configure-dead-letter-queue-redrive-in-amazon-sqs",
+          "source-amazon-sqs-visibility-timeout",
+          "source-amazon-sqs-cli-command-reference",
+          "source-send-message-cli-command"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-1-create-the-dlq",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the DLQ",
+            "instruction": "Choose Create queue.",
+            "instructions": [
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-1-create-the-dlq-instruction-1",
+                "text": "Choose Create queue.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-1-create-the-dlq-instruction-2",
+                "text": "Keep Standard selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-1-create-the-dlq-instruction-3",
+                "text": "Enter sqs-saa-study-dlq in Name.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-1-create-the-dlq-instruction-4",
+                "text": "Choose Create queue.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Standard DLQ opens.",
+            "warning": "The source queue and DLQ must be in the same AWS account and Region.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Attach the redrive policy",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-2",
+                "text": "Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-3",
+                "text": "Expand Dead-letter queue.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-4",
+                "text": "Choose Enabled.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-5",
+                "text": "Choose sqs-saa-study-dlq.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-6",
+                "text": "Enter 2 in Maximum receives.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-2-attach-the-redrive-policy-instruction-7",
+                "text": "Choose Save.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Standard queue sends repeatedly failed messages to the DLQ after the configured receive threshold.",
+            "warning": "maxReceiveCount 2 is intentionally low for this controlled lab. Production values must allow sufficient time for transient failures.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Send and fail the poison-message test",
+            "instruction": "Choose Actions.",
+            "instructions": [
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-1",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-2",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-3",
+                "text": "Enter Poison Study Tracker task in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-4",
+                "text": "Choose Send message.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-5",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-6",
+                "text": "Wait 30 seconds.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-7",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-3-send-and-fail-the-poison-message-test-instruction-8",
+                "text": "Wait 30 seconds.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The message is repeatedly received without deletion and becomes eligible for DLQ movement.",
+            "warning": "Do not delete Poison Study Tracker task from the source queue during this controlled failure test.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Inspect and redrive the failed message",
+            "instruction": "Choose sqs-saa-study-dlq.",
+            "instructions": [
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-1",
+                "text": "Choose sqs-saa-study-dlq.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-2",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-3",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-4",
+                "text": "Choose Poll for messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-5",
+                "text": "Inspect Poison Study Tracker task.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-console-step-4-inspect-and-redrive-the-failed-message-instruction-6",
+                "text": "Choose Start DLQ redrive.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The failed message is visible in the DLQ and an asynchronous redrive task begins.",
+            "warning": "Redrive should occur only after the underlying consumer failure has been understood and corrected.",
+            "sourceIds": [
+              "source-configure-dead-letter-queue-redrive-in-amazon-sqs"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs create-queue --queue-name sqs-saa-study-dlq --attributes MessageRetentionPeriod=172800 --region eu-west-2",
+            "explanation": "Creates a Standard DLQ with two-day retention. Replace no part of the harmless fixed queue name.",
+            "expectedResult": "The response contains the DLQ QueueUrl.",
+            "instructions": [],
+            "commands": [],
+            "warning": "DLQ retention should generally be longer than source-queue retention where operationally appropriate.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs get-queue-attributes --queue-url <dlq-queue-url-from-create-queue> --attribute-names QueueArn --region eu-west-2",
+            "explanation": "Retrieves the DLQ ARN required for the source queue redrive policy.",
+            "expectedResult": "The response contains QueueArn.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Replace the queue URL placeholder with the DLQ URL returned by create-queue.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs set-queue-attributes --queue-url <standard-queue-url-from-task-2> --attributes RedrivePolicy='{\"deadLetterTargetArn\":\"<dlq-arn-from-get-queue-attributes>\",\"maxReceiveCount\":\"2\"}' --region eu-west-2",
+            "explanation": "Associates the Standard source queue with the DLQ. Replace the ARN placeholder with the DLQ QueueArn from the preceding response.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This changes only sqs-saa-study-standard when the correct queue URL is supplied.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Poison Study Tracker task\" --region eu-west-2",
+            "explanation": "Sends one harmless message that the lab deliberately leaves unprocessed.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not delete this message before it reaches the DLQ.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --visibility-timeout 0 --region eu-west-2",
+            "explanation": "Performs the first simulated failed receive and immediately makes the message visible again.",
+            "expectedResult": "Poison Study Tracker task is returned and can be received again.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This task intentionally simulates a failed consumer.",
+            "sourceIds": [
+              "source-amazon-sqs-visibility-timeout"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --visibility-timeout 0 --region eu-west-2",
+            "explanation": "Performs the second simulated failed receive without deleting the message.",
+            "expectedResult": "The same poison message is returned again or is moved according to redrive timing.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The redrive policy uses approximate receive behavior; movement can take a short time.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --visibility-timeout 0 --region eu-west-2",
+            "explanation": "Makes another failed receive attempt so the message exceeds maxReceiveCount and becomes eligible for DLQ movement.",
+            "expectedResult": "The source queue eventually no longer returns the poison message.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not use this pattern to handle real failures. Diagnose and fix the consumer before redriving.",
+            "sourceIds": [
+              "source-using-dead-letter-queues-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cli-step-8",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws sqs receive-message --queue-url <dlq-queue-url-from-create-queue> --message-system-attribute-names All --region eu-west-2",
+            "explanation": "Checks the DLQ for the failed message. Repeat only this command later if movement is still propagating.",
+            "expectedResult": "Poison Study Tracker task is returned from the DLQ.",
+            "instructions": [],
+            "commands": [],
+            "warning": "DLQ movement is asynchronous and can take time.",
+            "sourceIds": [
+              "source-configure-dead-letter-queue-redrive-in-amazon-sqs"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-verification-1",
+            "title": "Verify the redrive policy",
+            "instruction": "Inspect sqs-saa-study-standard Details.",
+            "expectedResult": "The redrive policy identifies sqs-saa-study-dlq with Maximum receives set to 2.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-verification-2",
+            "title": "Verify failed-message isolation",
+            "instruction": "Receive from sqs-saa-study-dlq.",
+            "expectedResult": "Poison Study Tracker task is available in the DLQ after the failed receives.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006-cleanup-1",
+            "stepNumber": 1,
+            "title": "Remove the redriven poison-message test",
+            "instruction": "After redrive finishes, receive Poison Study Tracker task from sqs-saa-study-standard and delete it using its current receipt handle.",
+            "description": "After redrive finishes, receive Poison Study Tracker task from sqs-saa-study-standard and delete it using its current receipt handle.",
+            "verification": "Poison Study Tracker task is not returned from either the source queue or DLQ.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-configure-dead-letter-queue-redrive-in-amazon-sqs",
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007",
+        "slug": "7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm",
+        "title": "7. Monitor queue backlog and create a harmless CloudWatch alarm",
+        "service": "Amazon Simple Queue Service",
+        "feature": "CloudWatch SQS metrics, backlog monitoring, worker capacity, and SQS-driven Auto Scaling signals",
+        "goal": "Create a small safe backlog, inspect key SQS metrics, and create a CloudWatch alarm with no actions for visible-message backlog.",
+        "whyItMatters": "ApproximateNumberOfMessagesVisible measures backlog, ApproximateNumberOfMessagesNotVisible measures in-flight work, and ApproximateAgeOfOldestMessage can reveal slow consumers. These signals support worker-capacity decisions and SQS-driven Auto Scaling designs. NumberOfMessagesSent, NumberOfMessagesReceived, and NumberOfMessagesDeleted are CloudWatch metrics, not SQS queue attributes.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-4-monitoring-authorization-encryption-and-saa-c03-integrations",
+        "prerequisites": [
+          "task-sqs-6-configure-a-dead-letter-queue-and-redrive-a-poison-message-006"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-available-cloudwatch-metrics-for-amazon-sqs",
+          "source-monitoring-amazon-sqs-queues-using-cloudwatch",
+          "source-official-aws-documentation-3",
+          "source-official-aws-documentation-4",
+          "source-send-message-cli-command",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create a small measurable backlog",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-2",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-3",
+                "text": "Choose Send and receive messages.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-4",
+                "text": "Enter Backlog test message one in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-5",
+                "text": "Choose Send message.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-6",
+                "text": "Enter Backlog test message two in Message body.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-1-create-a-small-measurable-backlog-instruction-7",
+                "text": "Choose Send message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Two harmless messages are available for metric observation.",
+            "warning": "Do not create a backlog in any queue that was not created by this Follow Along.",
+            "sourceIds": [
+              "source-available-cloudwatch-metrics-for-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Inspect queue metrics",
+            "instruction": "Choose Monitoring.",
+            "instructions": [
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-1",
+                "text": "Choose Monitoring.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-2",
+                "text": "Inspect Messages available.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-3",
+                "text": "Inspect Messages in flight.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-4",
+                "text": "Inspect Age of oldest message.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-5",
+                "text": "Inspect Messages sent.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-6",
+                "text": "Inspect Messages received.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-2-inspect-queue-metrics-instruction-7",
+                "text": "Inspect Messages deleted.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The monitoring view exposes backlog and message-operation metrics.",
+            "warning": "SQS metrics can be approximate and can be delayed after a queue becomes active.",
+            "sourceIds": [
+              "source-monitoring-amazon-sqs-queues-using-cloudwatch"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create a no-action backlog alarm",
+            "instruction": "Open the CloudWatch console.",
+            "instructions": [
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-1",
+                "text": "Open the CloudWatch console.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-2",
+                "text": "Choose Alarms.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-3",
+                "text": "Choose Create alarm.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-4",
+                "text": "Choose Select metric.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-5",
+                "text": "Choose SQS.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-6",
+                "text": "Choose Queue Metrics.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-7",
+                "text": "Select sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-console-step-3-create-a-no-action-backlog-alarm-instruction-8",
+                "text": "Select ApproximateNumberOfMessagesVisible.`,`Choose Select metric.`,`Enter 1 in Threshold value.`,`Choose Greater/Equal.`,`Remove every notification action.`,`Enter sqs-saa-study-visible-backlog in Alarm name.`,`Choose Create alarm.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A metric alarm is created without notification or Auto Scaling actions.",
+            "warning": "This lab alarm intentionally has no actions. Production alarms require an approved notification and escalation design.",
+            "sourceIds": [
+              "source-monitoring-amazon-sqs-queues-using-cloudwatch"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Backlog test message one\" --region eu-west-2",
+            "explanation": "Adds the first harmless backlog message.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use only the dedicated Standard training queue.",
+            "sourceIds": [
+              "source-send-message-cli-command"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Backlog test message two\" --region eu-west-2",
+            "explanation": "Adds the second harmless backlog message.",
+            "expectedResult": "The response contains a MessageId.",
+            "instructions": [],
+            "commands": [],
+            "warning": "CloudWatch data can take time to appear.",
+            "sourceIds": [
+              "source-monitoring-amazon-sqs-queues-using-cloudwatch"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-task-2> --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible ApproximateNumberOfMessagesDelayed --region eu-west-2",
+            "explanation": "Retrieves approximate queue-state attributes for visible, in-flight, and delayed messages.",
+            "expectedResult": "The response includes the requested approximate attributes when values are present.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Message-operation totals are CloudWatch metrics rather than SQS queue attributes.",
+            "sourceIds": [
+              "source-available-cloudwatch-metrics-for-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws cloudwatch put-metric-alarm --alarm-name sqs-saa-study-visible-backlog --alarm-description \"Study Tracker training alarm with no actions\" --namespace AWS/SQS --metric-name ApproximateNumberOfMessagesVisible --dimensions Name=QueueName,Value=sqs-saa-study-standard --statistic Average --period 60 --evaluation-periods 1 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --treat-missing-data notBreaching --region eu-west-2",
+            "explanation": "Creates or updates a one-minute visible-backlog alarm with no alarm actions. It is a safe observation-only alarm for the training queue.",
+            "expectedResult": "The command completes without output and the new alarm initially enters INSUFFICIENT_DATA or evaluates after metric data arrives.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not add notification, Lambda, or Auto Scaling actions in this lab.",
+            "sourceIds": [
+              "source-official-aws-documentation-3"
+            ]
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws sqs purge-queue --queue-url <standard-queue-url-from-task-2> --region eu-west-2",
+            "explanation": "Removes the two fixed backlog test messages from the dedicated Standard training queue.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Purge deletes every message in the named queue permanently.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-verification-1",
+            "title": "Verify backlog metrics",
+            "instruction": "Inspect the SQS Monitoring page after sending the test messages.",
+            "expectedResult": "Messages available and age-of-oldest-message information becomes available after metric propagation.",
+            "mode": "console"
+          },
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-verification-2",
+            "title": "Verify the alarm",
+            "instruction": "Open the CloudWatch alarm named sqs-saa-study-visible-backlog.",
+            "expectedResult": "The alarm monitors AWS/SQS ApproximateNumberOfMessagesVisible for sqs-saa-study-standard and has no actions.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007-cleanup-1",
+            "stepNumber": 1,
+            "title": "Delete the training alarm",
+            "instruction": "In CloudWatch Alarms, select sqs-saa-study-visible-backlog and choose Delete.",
+            "description": "In CloudWatch Alarms, select sqs-saa-study-visible-backlog and choose Delete.",
+            "verification": "The alarm no longer appears in the CloudWatch alarm list.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008",
+        "slug": "8-inspect-authorization-queue-policy-encryption-and-cross-account-boun",
+        "title": "8. Inspect authorization, queue-policy, encryption, and cross-account boundaries",
+        "service": "Amazon Simple Queue Service",
+        "feature": "SendMessage and ReceiveMessage authorization, queue policies, service access, permission failures, SSE, AWS KMS, and cross-account access",
+        "goal": "Inspect the training queue’s effective configuration without adding a broad policy or changing encryption, and identify the administrator authorization boundary for producers, consumers, AWS services, and cross-account principals.",
+        "whyItMatters": "A caller needs allowed SQS actions such as SendMessage or ReceiveMessage. A queue resource policy can grant access to a service or a cross-account principal, while explicit denies, SCPs, VPC endpoint policies, or KMS key permissions can still prevent access. Encrypted queues add KMS authorization requirements for producers and consumers.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-4-monitoring-authorization-encryption-and-saa-c03-integrations",
+        "prerequisites": [
+          "task-sqs-7-monitor-queue-backlog-and-create-a-harmless-cloudwatch-alarm-007"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-overview-of-managing-access-in-amazon-sqs",
+          "source-official-aws-documentation-5",
+          "source-amazon-sqs-key-management",
+          "source-troubleshoot-an-access-denied-error-in-amazon-sqs",
+          "source-amazon-sqs-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Inspect encryption configuration",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration-instruction-2",
+                "text": "Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration-instruction-3",
+                "text": "Expand Encryption.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration-instruction-4",
+                "text": "Inspect the server-side encryption setting.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-1-inspect-encryption-configuration-instruction-5",
+                "text": "Choose Cancel.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can identify whether the training queue uses server-side encryption and which key option is configured.",
+            "warning": "Do not enable or change encryption in this Follow Along. An encrypted integration can require additional AWS KMS permissions.",
+            "sourceIds": [
+              "source-amazon-sqs-key-management"
+            ]
+          },
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Inspect access-policy configuration",
+            "instruction": "Choose sqs-saa-study-standard.",
+            "instructions": [
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration-instruction-1",
+                "text": "Choose sqs-saa-study-standard.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration-instruction-2",
+                "text": "Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration-instruction-3",
+                "text": "Expand Access policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration-instruction-4",
+                "text": "Inspect the access-policy field.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-2-inspect-access-policy-configuration-instruction-5",
+                "text": "Choose Cancel.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can locate the queue resource-policy configuration without changing it.",
+            "warning": "Do not create a public, broad, or cross-account policy. An administrator must review all production queue policies.",
+            "sourceIds": [
+              "source-overview-of-managing-access-in-amazon-sqs"
+            ]
+          },
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Review denied-access causes",
+            "instruction": "Open the AccessDenied troubleshooting documentation.",
+            "instructions": [
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes-instruction-1",
+                "text": "Open the AccessDenied troubleshooting documentation.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes-instruction-2",
+                "text": "Identify IAM policy checks.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes-instruction-3",
+                "text": "Identify queue-policy checks.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes-instruction-4",
+                "text": "Identify KMS permission checks.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-console-step-3-review-denied-access-causes-instruction-5",
+                "text": "Identify cross-account checks.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can distinguish identity permissions, queue resource policies, KMS permissions, and organization or endpoint controls.",
+            "warning": "Do not troubleshoot by using root credentials or by granting broad permissions.",
+            "sourceIds": [
+              "source-troubleshoot-an-access-denied-error-in-amazon-sqs"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-task-2> --attribute-names QueueArn Policy KmsMasterKeyId SqsManagedSseEnabled RedrivePolicy --region eu-west-2",
+            "explanation": "Retrieves the queue ARN and any configured access policy, encryption attributes, and redrive policy for inspection.",
+            "expectedResult": "The response shows the requested attributes when configured.",
+            "instructions": [],
+            "commands": [],
+            "warning": "An absent Policy or KmsMasterKeyId value is valid. Do not modify returned policy data.",
+            "sourceIds": [
+              "source-amazon-sqs-cli-command-reference",
+              "source-amazon-sqs-key-management"
+            ]
+          },
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-task-2> --attribute-names All --region eu-west-2",
+            "explanation": "Retrieves the available queue configuration for an approved review of delivery, encryption, redrive, and policy-related attributes.",
+            "expectedResult": "The response contains the queue’s available attributes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "An AccessDenied response indicates an authorization boundary. Stop and ask the administrator for review rather than changing credentials or policies.",
+            "sourceIds": [
+              "source-troubleshoot-an-access-denied-error-in-amazon-sqs"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-verification-1",
+            "title": "Verify authorization reasoning",
+            "instruction": "State the required boundary for a cross-account producer.",
+            "expectedResult": "The cross-account principal needs its own allowed access and the queue resource policy must explicitly allow that principal; explicit denies can still block the request.",
+            "mode": "either"
+          },
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-verification-2",
+            "title": "Verify encryption reasoning",
+            "instruction": "State what extra consideration applies when a customer managed KMS key encrypts an SQS queue.",
+            "expectedResult": "SQS permissions alone may be insufficient; producers and consumers can also require applicable AWS KMS key permissions.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008-cleanup-1",
+            "stepNumber": 1,
+            "title": "Leave security configuration unchanged",
+            "instruction": "Confirm that no queue policy, encryption setting, KMS key, IAM identity, or cross-account grant was created or modified in this task.",
+            "description": "Confirm that no queue policy, encryption setting, KMS key, IAM identity, or cross-account grant was created or modified in this task.",
+            "verification": "Only read-only inspection occurred.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-troubleshoot-an-access-denied-error-in-amazon-sqs"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009",
+        "slug": "9-apply-saa-c03-integration-and-service-selection-decisions",
+        "title": "9. Apply SAA-C03 integration and service-selection decisions",
+        "service": "Amazon Simple Queue Service",
+        "feature": "Lambda, SNS, S3, EventBridge, EC2 workers, Auto Scaling, large messages, and direct invocation comparisons",
+        "goal": "Use the completed queue labs and official AWS documentation to choose an SQS architecture for common SAA-C03 scenarios without creating dependent services, roles, policies, buckets, functions, topics, instances, or Auto Scaling groups.",
+        "whyItMatters": "SQS is a durable pull-based buffer for decoupled consumers. It is often used with Lambda event source mappings, EC2 workers, and Auto Scaling based on queue backlog. SNS provides fan-out, EventBridge provides rule-based routing, S3 can publish events to an SQS Standard queue, and large payloads require an S3-reference pattern rather than placing the payload directly in SQS.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-4-monitoring-authorization-encryption-and-saa-c03-integrations",
+        "prerequisites": [
+          "task-sqs-8-inspect-authorization-queue-policy-encryption-and-cross-account-boun-008"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-using-lambda-with-amazon-sqs",
+          "source-creating-and-configuring-an-amazon-sqs-event-source-mapping",
+          "source-handling-errors-for-an-sqs-event-source-in-lambda",
+          "source-event-notification-types-and-destinations",
+          "source-event-bus-targets-in-amazon-eventbridge",
+          "source-amazon-sqs-amazon-sns-or-eventbridge",
+          "source-managing-large-amazon-sqs-messages-with-extended-client-library-and-am",
+          "source-overview-of-managing-access-in-amazon-sqs"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-1-review-the-lambda-event-source-boundary",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Review the Lambda event-source boundary",
+            "instruction": "Open the Lambda SQS event-source documentation.",
+            "instructions": [
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-1-review-the-lambda-event-source-boundary-instruction-1",
+                "text": "Open the Lambda SQS event-source documentation.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-1-review-the-lambda-event-source-boundary-instruction-2",
+                "text": "Identify the batch-processing behavior.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-1-review-the-lambda-event-source-boundary-instruction-3",
+                "text": "Identify the partial-batch failure guidance.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-1-review-the-lambda-event-source-boundary-instruction-4",
+                "text": "Identify the visibility-timeout guidance.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can explain that Lambda polls SQS in batches and that the queue visibility timeout must accommodate Lambda processing and retries.",
+            "warning": "Creating a Lambda integration requires an administrator-approved Lambda execution role with the necessary permissions. Do not create a function, role, or event source mapping in this Follow Along.",
+            "sourceIds": [
+              "source-using-lambda-with-amazon-sqs",
+              "source-creating-and-configuring-an-amazon-sqs-event-source-mapping",
+              "source-handling-errors-for-an-sqs-event-source-in-lambda"
+            ]
+          },
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Review service-to-queue integration boundaries",
+            "instruction": "Open the Amazon S3 event destination documentation.",
+            "instructions": [
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries-instruction-1",
+                "text": "Open the Amazon S3 event destination documentation.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries-instruction-2",
+                "text": "Identify the S3-to-SQS permission requirement.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries-instruction-3",
+                "text": "Open the EventBridge target documentation.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries-instruction-4",
+                "text": "Identify the EventBridge-to-SQS permission requirement.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-2-review-service-to-queue-integration-boundaries-instruction-5",
+                "text": "Identify the FIFO target message-group requirement.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can identify the service authorization boundary before configuring S3 or EventBridge delivery to SQS.",
+            "warning": "S3 event notifications require a queue policy and use a Standard SQS queue. EventBridge targets require authorization and have encryption constraints. Do not create these integrations in this Follow Along.",
+            "sourceIds": [
+              "source-event-notification-types-and-destinations",
+              "source-event-bus-targets-in-amazon-eventbridge"
+            ]
+          },
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Review SAA-C03 service choices",
+            "instruction": "Open the AWS decision guide.",
+            "instructions": [
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices-instruction-1",
+                "text": "Open the AWS decision guide.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices-instruction-2",
+                "text": "Find the Amazon SQS comparison.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices-instruction-3",
+                "text": "Find the Amazon SNS comparison.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices-instruction-4",
+                "text": "Find the EventBridge comparison.",
+                "detail": ""
+              },
+              {
+                "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-console-step-3-review-saa-c03-service-choices-instruction-5",
+                "text": "Review the large-message pattern.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The learner can differentiate durable worker buffering, SNS fan-out, EventBridge routing, and S3-backed large-message references.",
+            "warning": "Do not use SQS to carry payloads larger than its configured maximum. Use an Amazon S3 reference pattern for large payloads.",
+            "sourceIds": [
+              "source-amazon-sqs-amazon-sns-or-eventbridge",
+              "source-managing-large-amazon-sqs-messages-with-extended-client-library-and-am"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-task-2> --attribute-names VisibilityTimeout ReceiveMessageWaitTimeSeconds RedrivePolicy QueueArn --region eu-west-2",
+            "explanation": "Retrieves queue settings used to reason about Lambda retries, worker polling, DLQ behavior, and service integrations.",
+            "expectedResult": "The response contains the requested configuration attributes when set.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This inspection does not create an integration.",
+            "sourceIds": [
+              "source-creating-and-configuring-an-amazon-sqs-event-source-mapping"
+            ]
+          },
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sqs get-queue-attributes --queue-url <fifo-queue-url-from-task-5> --attribute-names FifoQueue ContentBasedDeduplication QueueArn --region eu-west-2",
+            "explanation": "Retrieves FIFO-specific settings used to reason about strict-ordering requirements and compatible integration designs.",
+            "expectedResult": "The response identifies the queue as FIFO and shows content-based deduplication configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Amazon S3 event notifications cannot directly target an SQS FIFO queue.",
+            "sourceIds": [
+              "source-event-notification-types-and-destinations"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-verification-1",
+            "title": "Verify architecture choices",
+            "instruction": "State the preferred service or pattern for each case: asynchronous worker backlog, a slow backend during a traffic spike, one message delivered to several independent subscribers, rule-based routing from many event sources, strict ordering, and a payload larger than the SQS message limit.",
+            "expectedResult": "Use SQS Standard for asynchronous worker buffering and spikes; SNS-to-SQS for fan-out; EventBridge for rule-based routing; FIFO SQS for strict ordering within groups; and an Amazon S3 reference pattern for large payloads.",
+            "mode": "either"
+          },
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-verification-2",
+            "title": "Verify worker scaling reasoning",
+            "instruction": "State the SQS metrics that indicate a growing worker backlog and the operational response.",
+            "expectedResult": "Increasing ApproximateNumberOfMessagesVisible and ApproximateAgeOfOldestMessage indicate backlog or slow consumers; increase or optimize approved worker capacity, such as EC2 worker fleet or Lambda processing capacity, after reviewing failures and throughput.",
+            "mode": "either"
+          },
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-verification-3",
+            "title": "Verify direct-invocation reasoning",
+            "instruction": "Compare direct Lambda invocation with SQS-triggered Lambda processing.",
+            "expectedResult": "Direct invocation does not provide the same durable queue buffer. SQS decouples producers, buffers spikes, supports retries and DLQs, and Lambda polls queue messages in batches.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-sqs-9-apply-saa-c03-integration-and-service-selection-decisions-009-cleanup-1",
+            "stepNumber": 1,
+            "title": "Leave integration resources uncreated",
+            "instruction": "Confirm that no Lambda function, event source mapping, SNS topic, subscription, S3 bucket notification, EventBridge rule, EC2 instance, Auto Scaling group, KMS key, queue policy, IAM policy, or cross-account grant was created by this task.",
+            "description": "Confirm that no Lambda function, event source mapping, SNS topic, subscription, S3 bucket notification, EventBridge rule, EC2 instance, Auto Scaling group, KMS key, queue policy, IAM policy, or cross-account grant was created by this task.",
+            "verification": "The only remaining resources created by this Follow Along are the named SQS queues and, if not already removed, the named CloudWatch alarm.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-overview-of-managing-access-in-amazon-sqs"
+            ]
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Amazon SQS requests, CloudWatch alarms, AWS KMS usage, and any dependent integrations can incur charges. This Follow Along creates only three small SQS queues, small test messages, and one no-action CloudWatch alarm. Delete the named resources during final cleanup.",
+      "safety": "Use only the fixed sqs-saa-study-standard, sqs-saa-study-dlq, and sqs-saa-study-orders.fifo queues and the fixed harmless test messages. Never send confidential, personal, regulated, production, or credential data. Never purge, edit, or delete a queue that was not created by this Follow Along.",
+      "credentials": "Do not create, request, expose, download, paste, store, or share passwords, access keys, secret keys, session tokens, or other credentials. Configure the AWS CLI privately on the learner computer through the organization-approved authentication method. Use an existing administrator-authorized non-root account or role.",
+      "region": "Perform every regional operation in Europe (London), eu-west-2. Queue URLs, ARNs, access policies, S3 notifications, EventBridge targets, Lambda event source mappings, CloudWatch alarms, and KMS keys are Region-specific."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Delete the CloudWatch training alarm",
+          "instruction": "In eu-west-2 CloudWatch Alarms, delete sqs-saa-study-visible-backlog if it still exists.",
+          "description": "In eu-west-2 CloudWatch Alarms, delete sqs-saa-study-visible-backlog if it still exists.",
+          "verification": "The named alarm no longer appears in the CloudWatch alarm list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-4"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Delete the Standard source queue",
+          "instruction": "In eu-west-2 Amazon SQS, select sqs-saa-study-standard, choose Delete, enter delete when prompted, and confirm.",
+          "description": "In eu-west-2 Amazon SQS, select sqs-saa-study-standard, choose Delete, enter delete when prompted, and confirm.",
+          "verification": "sqs-saa-study-standard no longer appears on the Queues page.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-amazon-sqs-cli-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Delete the dead-letter queue",
+          "instruction": "In eu-west-2 Amazon SQS, select sqs-saa-study-dlq, choose Delete, enter delete when prompted, and confirm.",
+          "description": "In eu-west-2 Amazon SQS, select sqs-saa-study-dlq, choose Delete, enter delete when prompted, and confirm.",
+          "verification": "sqs-saa-study-dlq no longer appears on the Queues page.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-amazon-sqs-cli-command-reference"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Delete the FIFO queue",
+          "instruction": "In eu-west-2 Amazon SQS, select sqs-saa-study-orders.fifo, choose Delete, enter delete when prompted, and confirm.",
+          "description": "In eu-west-2 Amazon SQS, select sqs-saa-study-orders.fifo, choose Delete, enter delete when prompted, and confirm.",
+          "verification": "sqs-saa-study-orders.fifo no longer appears on the Queues page.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-amazon-sqs-cli-command-reference"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The requested Lambda, SNS-to-SQS, S3-to-SQS, EventBridge-to-SQS, EC2 worker, and SQS-driven Auto Scaling creation labs require dependent resources plus administrator-approved roles, resource policies, and sometimes KMS key-policy changes. This replacement intentionally does not create or propose IAM or queue policies, does not expose credentials, and does not create those dependent resources. Task 9 provides immediately usable configuration-boundary and architecture checks instead.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "An administrator should separately approve the least-privilege permissions and resource-policy conditions for any production producer, consumer, Lambda event source mapping, SNS subscription, S3 event notification, EventBridge target, EC2 worker role, Auto Scaling action, cross-account principal, VPC endpoint, or encrypted SQS queue.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "SQS operational metrics are published to CloudWatch and can be delayed after a queue becomes active. Treat approximate queue metrics as operational indicators and combine them with consumer throughput, error, and application-level idempotency evidence before changing worker capacity.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "DLQs are useful for Standard queues and failure isolation, but a DLQ can affect strict-order workflows. Review failed-order architecture requirements before attaching a DLQ to a FIFO queue.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "sqs-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 4,
+    "taskCount": 9,
+    "checkboxCount": 169,
+    "cliCommandCount": 42,
+    "verificationCheckCount": 19,
+    "cleanupItemCount": 13,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 25
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "822cc1b260cfd17605aa6adfd5186ca6a6eef3cef2857a9dec6ed11939cc10e9"
+  }
+}

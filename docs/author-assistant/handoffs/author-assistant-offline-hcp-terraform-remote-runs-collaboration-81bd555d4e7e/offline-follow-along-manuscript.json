@@ -1,0 +1,2852 @@
+{
+  "artifactType": "offline-follow-along-manuscript",
+  "artifactVersion": "1.0",
+  "status": {
+    "state": "offline_unvalidated",
+    "localStudyTrackerValidationPerformed": false,
+    "imported": false,
+    "approved": false,
+    "published": false,
+    "handoffPackageCreated": false,
+    "acceptanceAuditCreated": false,
+    "sha256FingerprintCreated": false,
+    "note": "Offline authoring content only. Intended for later local Codex conversion and Study Tracker validation."
+  },
+  "programme": {
+    "id": "hcp-terraform-remote-runs-collaboration-learning-path",
+    "name": "HCP Terraform Remote Runs and Collaboration Follow Along",
+    "learnerLevel": "Beginner",
+    "examWorkspace": "HashiCorp Terraform Associate 004",
+    "requiredOutcome": "Create an HCP Terraform organisation, project and VCS-connected workspace; configure variables and sensitive values; run remote plans and applies; examine remote state and state locking; diagnose and fix a failed run; and safely destroy only the resources created by the lab.",
+    "regions": {
+      "hcpTerraform": "global control-plane resources",
+      "aws": "eu-west-2"
+    },
+    "trainingResourcePrefix": "fa-hcp-terraform",
+    "estimatedLearnerFlow": "Complete tasks in sequence. Choose either Console/browser creation or CLI creation when a task explicitly provides mutually exclusive alternatives; do not create the same AWS object twice.",
+    "completionDefinition": [
+      "A VCS-connected HCP Terraform workspace is created in a dedicated project and organization.",
+      "HCP authenticates to AWS with OIDC dynamic credentials instead of static AWS keys.",
+      "One deliberate remote plan fails because of input validation and is diagnosed correctly.",
+      "A corrected remote plan is reviewed and applied to create exactly one SSM parameter in eu-west-2.",
+      "A later Git commit automatically triggers a second remote run.",
+      "HCP remote state and state history are examined without exposing the fake sensitive value.",
+      "Automatic state locking is explained separately from a demonstrated manual HCP workspace lock.",
+      "The Terraform-managed parameter is destroyed before HCP workspace/state deletion.",
+      "All lab-only HCP, VCS, AWS IAM and local resources are removed in ordered cleanup."
+    ]
+  },
+  "authoringBasis": {
+    "uploadedStandard": "The authoring-standard content available to this chat is the uploaded AI_Follow_Along_Steps.txt attachment; the manuscript applies its beginner, source-linking, verification and reverse-dependency cleanup rules.",
+    "rulesApplied": [
+      "Beginner instructions assume no existing infrastructure.",
+      "Important clicks, fields, values and commands are explained.",
+      "Browser/Console and Terraform/AWS CLI routes are both populated where relevant.",
+      "Expected results and verification checks are present for every task.",
+      "Only HashiCorp Developer and AWS Documentation URLs are used as technical sources.",
+      "Terraform/shell/config snippets are represented as language text; only valid IAM JSON uses language json.",
+      "Cleanup is manual, reverse-dependency ordered and cloud resources are removed before credentials/state/local files."
+    ]
+  },
+  "boundaries": {
+    "doNotClaim": [
+      "Study Tracker local validation",
+      "handoff acceptance",
+      "SHA-256 fingerprint",
+      "import",
+      "approval",
+      "publication"
+    ],
+    "destructiveSafety": "Never broaden a delete command or force-delete an HCP workspace to get past a failed cleanup check."
+  },
+  "warnings": {
+    "cost": {
+      "title": "Cost warning",
+      "text": "This lab intentionally creates only one small AWS Systems Manager Parameter Store String parameter plus IAM resources, but service pricing and HCP Terraform plan limits can change. Review the current AWS/HCP account information before starting and complete the destroy/cleanup tasks when finished.",
+      "beforeTasks": [
+        "task-12-fix-apply"
+      ]
+    },
+    "safety": {
+      "title": "Deletion safety",
+      "text": "Delete only resources with the exact fa-hcp-terraform names or the exact /fa-hcp-terraform/ path created by this lab. Never force-delete the HCP workspace while it still manages AWS infrastructure.",
+      "beforeTasks": [
+        "task-16-destroy",
+        "task-17-hcp-vcs-cleanup",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    "credentials": {
+      "title": "Credential warning",
+      "text": "Never create root access keys and never put AWS access keys in HCP Terraform. The local IAM-user key is temporary and used only by the named CLI profile; HCP remote runs use OIDC dynamic credentials. sensitive_demo must remain the fake value training-secret-not-real because sensitive Terraform values can still be stored in state.",
+      "beforeTasks": [
+        "task-02-aws-bootstrap",
+        "task-03-cli-profile",
+        "task-10-workspace-variables"
+      ]
+    },
+    "region": {
+      "title": "Region warning",
+      "text": "HCP organization/project/workspace objects in this lab are treated as HCP Terraform global control-plane resources. The only Terraform-managed AWS service resource is created and verified in eu-west-2. Parameter Store parameters are regional.",
+      "beforeTasks": [
+        "task-12-fix-apply",
+        "task-16-destroy"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "id": "phase-01-preparation",
+      "sequence": 1,
+      "title": "Preparation and AWS safety",
+      "goal": "Verify tools and create a temporary least-privilege training identity without using root for normal work."
+    },
+    {
+      "id": "phase-02-configuration-vcs",
+      "sequence": 2,
+      "title": "Terraform configuration and VCS",
+      "goal": "Build a small Terraform configuration locally, initialize it, and put it in a GitHub repository."
+    },
+    {
+      "id": "phase-03-hcp-foundation",
+      "sequence": 3,
+      "title": "HCP Terraform organization, project and workspace",
+      "goal": "Create the collaboration boundary and connect it to the GitHub repository."
+    },
+    {
+      "id": "phase-04-dynamic-credentials",
+      "sequence": 4,
+      "title": "AWS OIDC dynamic credentials",
+      "goal": "Allow only the lab HCP workspace to obtain short-lived AWS credentials for the remote run."
+    },
+    {
+      "id": "phase-05-remote-runs",
+      "sequence": 5,
+      "title": "Remote plans, applies and failure recovery",
+      "goal": "Create one deliberate failed run, fix it, apply successfully, and trigger another run from VCS."
+    },
+    {
+      "id": "phase-06-state-locking",
+      "sequence": 6,
+      "title": "Remote state and locking",
+      "goal": "Inspect HCP-managed state, understand sensitive state, and distinguish state locking from a manual workspace lock."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Ordered cleanup",
+      "goal": "Destroy managed infrastructure first, then remove HCP, VCS, AWS identity and local training resources in reverse-dependency order."
+    }
+  ],
+  "resourceInventory": [
+    {
+      "id": "res-aws-user",
+      "platform": "AWS IAM",
+      "type": "IAM user",
+      "name": "fa-hcp-terraform-admin",
+      "createdByTaskId": "task-02-aws-bootstrap",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Delete only this exact lab user."
+    },
+    {
+      "id": "res-aws-bootstrap-policy",
+      "platform": "AWS IAM",
+      "type": "customer-managed policy",
+      "name": "fa-hcp-terraform-admin-policy",
+      "createdByTaskId": "task-02-aws-bootstrap",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Delete only after it is detached from the lab IAM user."
+    },
+    {
+      "id": "res-aws-cli-key",
+      "platform": "AWS IAM",
+      "type": "IAM user access key",
+      "name": "temporary access key belonging to fa-hcp-terraform-admin",
+      "createdByTaskId": "task-03-cli-profile",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Remove only keys owned by fa-hcp-terraform-admin."
+    },
+    {
+      "id": "res-local-profile",
+      "platform": "Local workstation",
+      "type": "AWS CLI named profile",
+      "name": "fa-hcp-terraform-admin",
+      "createdByTaskId": "task-03-cli-profile",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Remove only this named profile section."
+    },
+    {
+      "id": "res-local-repo",
+      "platform": "Local workstation",
+      "type": "folder/repository",
+      "name": "$HOME\\terraform-labs\\fa-hcp-terraform-vcs-lab",
+      "createdByTaskId": "task-04-local-terraform",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Delete only after all cloud/HCP cleanup is verified."
+    },
+    {
+      "id": "res-github-repo",
+      "platform": "GitHub",
+      "type": "VCS repository",
+      "name": "fa-hcp-terraform-vcs-lab",
+      "createdByTaskId": "task-05-github-repo",
+      "cleanupTaskId": "task-17-hcp-vcs-cleanup",
+      "ownershipCheck": "Delete only this lab repository."
+    },
+    {
+      "id": "res-hcp-org",
+      "platform": "HCP Terraform",
+      "type": "organization",
+      "nameRule": "fa-hcp-terraform-org- plus the current AWS 12-digit account ID",
+      "createdByTaskId": "task-06-hcp-org-project",
+      "cleanupTaskId": "task-17-hcp-vcs-cleanup",
+      "ownershipCheck": "Delete only the dedicated lab organization after the project/workspace are empty."
+    },
+    {
+      "id": "res-hcp-project",
+      "platform": "HCP Terraform",
+      "type": "project",
+      "name": "fa-hcp-terraform-project",
+      "createdByTaskId": "task-06-hcp-org-project",
+      "cleanupTaskId": "task-17-hcp-vcs-cleanup",
+      "ownershipCheck": "Delete only after the lab workspace is removed."
+    },
+    {
+      "id": "res-hcp-workspace",
+      "platform": "HCP Terraform",
+      "type": "workspace",
+      "name": "fa-hcp-terraform-remote-runs",
+      "createdByTaskId": "task-07-vcs-workspace",
+      "cleanupTaskId": "task-17-hcp-vcs-cleanup",
+      "ownershipCheck": "Destroy managed infrastructure before deleting the workspace."
+    },
+    {
+      "id": "res-aws-oidc",
+      "platform": "AWS IAM",
+      "type": "OIDC provider",
+      "name": "app.terraform.io / audience aws.workload.identity",
+      "createdByTaskId": "task-08-oidc-provider",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Delete only the provider created for this lab and only after HCP no longer needs it."
+    },
+    {
+      "id": "res-aws-role",
+      "platform": "AWS IAM",
+      "type": "OIDC run role",
+      "name": "fa-hcp-terraform-run-role",
+      "createdByTaskId": "task-09-run-role",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Delete its inline policy first, then the role."
+    },
+    {
+      "id": "res-aws-role-policy",
+      "platform": "AWS IAM",
+      "type": "inline role policy",
+      "name": "fa-hcp-terraform-run-policy",
+      "createdByTaskId": "task-09-run-role",
+      "cleanupTaskId": "task-18-aws-local-cleanup",
+      "ownershipCheck": "Inline policy belongs only to fa-hcp-terraform-run-role."
+    },
+    {
+      "id": "res-ssm-parameter",
+      "platform": "AWS Systems Manager",
+      "type": "Parameter Store String parameter",
+      "name": "/fa-hcp-terraform/training-message",
+      "region": "eu-west-2",
+      "createdByTaskId": "task-12-fix-apply",
+      "cleanupTaskId": "task-16-destroy",
+      "ownershipCheck": "Must be destroyed through HCP Terraform before workspace deletion."
+    }
+  ],
+  "sources": [
+    {
+      "id": "src-hc-signup",
+      "publisher": "HashiCorp",
+      "title": "Sign up for HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-sign-up",
+      "purpose": "HCP Terraform account sign-in and tutorial-specific organization guidance.",
+      "usedByTaskIds": [
+        "task-01-prerequisites",
+        "task-06-hcp-org-project"
+      ]
+    },
+    {
+      "id": "src-tf-install",
+      "publisher": "HashiCorp",
+      "title": "Install Terraform",
+      "url": "https://developer.hashicorp.com/terraform/install",
+      "purpose": "Install the Terraform CLI when it is not already available.",
+      "usedByTaskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-hc-orgs",
+      "publisher": "HashiCorp",
+      "title": "Organizations overview",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/users-teams-organizations/organizations",
+      "purpose": "Create and manage an HCP Terraform organization.",
+      "usedByTaskIds": [
+        "task-06-hcp-org-project"
+      ]
+    },
+    {
+      "id": "src-hc-org-settings",
+      "publisher": "HashiCorp",
+      "title": "Organization settings reference",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/users-teams-organizations/organizations/settings",
+      "purpose": "Delete the lab organization after its workspaces and projects are removed.",
+      "usedByTaskIds": [
+        "task-17-hcp-vcs-cleanup"
+      ]
+    },
+    {
+      "id": "src-hc-projects",
+      "publisher": "HashiCorp",
+      "title": "Manage projects in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/projects/manage",
+      "purpose": "Create the lab project and delete it after it is empty.",
+      "usedByTaskIds": [
+        "task-06-hcp-org-project",
+        "task-17-hcp-vcs-cleanup"
+      ]
+    },
+    {
+      "id": "src-hc-vcs-github-app",
+      "publisher": "HashiCorp",
+      "title": "Set up the GitHub.com (GitHub App) VCS provider",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/vcs/github-app",
+      "purpose": "Authorize HCP Terraform to read the lab GitHub repository and later deauthorize it if it was installed only for this lab.",
+      "usedByTaskIds": [
+        "task-05-github-repo",
+        "task-07-vcs-workspace",
+        "task-17-hcp-vcs-cleanup"
+      ]
+    },
+    {
+      "id": "src-hc-vcs-tutorial",
+      "publisher": "HashiCorp",
+      "title": "Trigger HCP Terraform runs from VCS changes",
+      "url": "https://developer.hashicorp.com/terraform/tutorials/cloud-get-started/cloud-create-vcs-workspace",
+      "purpose": "Create a repository for a VCS-driven workflow and understand commit-triggered remote runs.",
+      "usedByTaskIds": [
+        "task-05-github-repo"
+      ]
+    },
+    {
+      "id": "src-hc-workspace-create",
+      "publisher": "HashiCorp",
+      "title": "Create workspaces in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/create",
+      "purpose": "Create the VCS-connected workspace and understand the required initial manual run.",
+      "usedByTaskIds": [
+        "task-07-vcs-workspace",
+        "task-11-failed-run",
+        "task-13-vcs-triggered-run"
+      ]
+    },
+    {
+      "id": "src-hc-vcs-runs",
+      "publisher": "HashiCorp",
+      "title": "UI and VCS-driven run workflow",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/run/ui",
+      "purpose": "Run plans and applies in the HCP UI and trigger later runs from VCS commits.",
+      "usedByTaskIds": [
+        "task-07-vcs-workspace",
+        "task-11-failed-run",
+        "task-12-fix-apply",
+        "task-13-vcs-triggered-run"
+      ]
+    },
+    {
+      "id": "src-hc-run-manage",
+      "publisher": "HashiCorp",
+      "title": "Manage and view runs in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/run/manage",
+      "purpose": "Review runs, confirm applies, retry runs, and demonstrate a manual workspace lock.",
+      "usedByTaskIds": [
+        "task-11-failed-run",
+        "task-12-fix-apply",
+        "task-15-locking"
+      ]
+    },
+    {
+      "id": "src-hc-variables",
+      "publisher": "HashiCorp",
+      "title": "Manage variables and variable sets in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/variables/managing-variables",
+      "purpose": "Create Terraform and environment variables and mark the training sensitive value as sensitive.",
+      "usedByTaskIds": [
+        "task-10-workspace-variables",
+        "task-12-fix-apply"
+      ]
+    },
+    {
+      "id": "src-hc-aws-dynamic",
+      "publisher": "HashiCorp",
+      "title": "Use dynamic credentials with the AWS provider",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/dynamic-provider-credentials/aws-configuration",
+      "purpose": "Configure HCP Terraform to obtain short-lived AWS credentials with OIDC.",
+      "usedByTaskIds": [
+        "task-08-oidc-provider",
+        "task-09-run-role",
+        "task-10-workspace-variables"
+      ]
+    },
+    {
+      "id": "src-hc-state",
+      "publisher": "HashiCorp",
+      "title": "Manage workspace state in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/state",
+      "purpose": "Examine HCP-managed remote state and state version history.",
+      "usedByTaskIds": [
+        "task-14-remote-state",
+        "task-15-locking",
+        "task-16-destroy"
+      ]
+    },
+    {
+      "id": "src-hc-workspace-delete",
+      "publisher": "HashiCorp",
+      "title": "Destroy infrastructure resources and delete workspaces in HCP Terraform",
+      "url": "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/deletion",
+      "purpose": "Queue a destroy plan before safely deleting the workspace.",
+      "usedByTaskIds": [
+        "task-16-destroy",
+        "task-17-hcp-vcs-cleanup"
+      ]
+    },
+    {
+      "id": "src-tf-sensitive",
+      "publisher": "HashiCorp",
+      "title": "Manage sensitive data in your configuration",
+      "url": "https://developer.hashicorp.com/terraform/language/manage-sensitive-data",
+      "purpose": "Explain sensitive redaction and the fact that sensitive values can still be stored in state.",
+      "usedByTaskIds": [
+        "task-04-local-terraform",
+        "task-10-workspace-variables",
+        "task-12-fix-apply",
+        "task-14-remote-state"
+      ]
+    },
+    {
+      "id": "src-tf-state-lock",
+      "publisher": "HashiCorp",
+      "title": "State Locking",
+      "url": "https://developer.hashicorp.com/terraform/language/state/locking",
+      "purpose": "Explain automatic state locking for operations that can write state.",
+      "usedByTaskIds": [
+        "task-14-remote-state",
+        "task-15-locking"
+      ]
+    },
+    {
+      "id": "src-tf-lockfile",
+      "publisher": "HashiCorp",
+      "title": "Dependency Lock File (.terraform.lock.hcl)",
+      "url": "https://developer.hashicorp.com/terraform/language/files/dependency-lock",
+      "purpose": "Explain why .terraform.lock.hcl should be committed to version control.",
+      "usedByTaskIds": [
+        "task-04-local-terraform",
+        "task-05-github-repo",
+        "task-13-vcs-triggered-run"
+      ]
+    },
+    {
+      "id": "src-tf-init",
+      "publisher": "HashiCorp",
+      "title": "terraform init command reference",
+      "url": "https://developer.hashicorp.com/terraform/cli/commands/init",
+      "purpose": "Initialize the local Terraform working directory and install provider dependencies.",
+      "usedByTaskIds": [
+        "task-04-local-terraform"
+      ]
+    },
+    {
+      "id": "src-aws-root",
+      "publisher": "AWS",
+      "title": "AWS account root user",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html",
+      "purpose": "Use root only for bootstrap and final removal of the temporary IAM training identity; never create root access keys.",
+      "usedByTaskIds": [
+        "task-02-aws-bootstrap",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-root-best-practices",
+      "publisher": "AWS",
+      "title": "Best practices for protecting your AWS account root user",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/root-user-best-practices.html",
+      "purpose": "Keep root credentials out of normal daily lab work.",
+      "usedByTaskIds": [
+        "task-02-aws-bootstrap",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-users",
+      "publisher": "AWS",
+      "title": "Create an IAM user",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html",
+      "purpose": "Create the dedicated temporary IAM training user.",
+      "usedByTaskIds": [
+        "task-02-aws-bootstrap",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-policy",
+      "publisher": "AWS",
+      "title": "Create IAM policies",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html",
+      "purpose": "Create the restricted bootstrap policy and the run-role permissions policy.",
+      "usedByTaskIds": [
+        "task-02-aws-bootstrap",
+        "task-09-run-role"
+      ]
+    },
+    {
+      "id": "src-aws-access-keys",
+      "publisher": "AWS",
+      "title": "Manage access keys for IAM users",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html",
+      "purpose": "Create and later remove the IAM user's temporary local CLI access key.",
+      "usedByTaskIds": [
+        "task-03-cli-profile",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-cli-install",
+      "publisher": "AWS",
+      "title": "Install or update to the latest version of the AWS CLI",
+      "url": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html",
+      "purpose": "Install the AWS CLI if required.",
+      "usedByTaskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-aws-cli-config",
+      "publisher": "AWS",
+      "title": "aws configure",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/configure/",
+      "purpose": "Create a dedicated named AWS CLI profile.",
+      "usedByTaskIds": [
+        "task-03-cli-profile"
+      ]
+    },
+    {
+      "id": "src-aws-sts-identity",
+      "publisher": "AWS",
+      "title": "get-caller-identity",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/sts/get-caller-identity.html",
+      "purpose": "Verify the AWS identity and capture the AWS account ID.",
+      "usedByTaskIds": [
+        "task-03-cli-profile"
+      ]
+    },
+    {
+      "id": "src-aws-hcp-oidc",
+      "publisher": "AWS",
+      "title": "Create a role for OpenID Connect federation",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html",
+      "purpose": "Create the HCP Terraform OIDC trust and restrict it to the lab organization, project and workspace.",
+      "usedByTaskIds": [
+        "task-08-oidc-provider",
+        "task-09-run-role",
+        "task-18-aws-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-aws-oidc-cli",
+      "publisher": "AWS",
+      "title": "create-open-id-connect-provider",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/iam/create-open-id-connect-provider.html",
+      "purpose": "CLI route for creating the app.terraform.io OIDC identity provider.",
+      "usedByTaskIds": [
+        "task-08-oidc-provider"
+      ]
+    },
+    {
+      "id": "src-aws-ssm",
+      "publisher": "AWS",
+      "title": "AWS Systems Manager Parameter Store",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html",
+      "purpose": "Verify the single AWS resource managed by Terraform.",
+      "usedByTaskIds": [
+        "task-11-failed-run",
+        "task-12-fix-apply",
+        "task-13-vcs-triggered-run"
+      ]
+    },
+    {
+      "id": "src-aws-ssm-create",
+      "publisher": "AWS",
+      "title": "Creating a Parameter Store parameter using the console",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-create-console.html",
+      "purpose": "Understand Parameter Store region behavior and verify the Terraform-created parameter.",
+      "usedByTaskIds": [
+        "task-12-fix-apply"
+      ]
+    },
+    {
+      "id": "src-aws-ssm-delete",
+      "publisher": "AWS",
+      "title": "Deleting parameters from Parameter Store",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/deleting-parameters.html",
+      "purpose": "Verify that the destroy run removed the training parameter.",
+      "usedByTaskIds": [
+        "task-16-destroy"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-preparation",
+      "title": "Verify accounts and local tools",
+      "feature": "Prerequisites",
+      "goal": "Confirm that the learner can reach AWS, HCP Terraform and GitHub, and that Terraform, AWS CLI and Git are available before any resource is created.",
+      "whyItMatters": "Remote runs are easier to troubleshoot when local tooling and account access are proven first.",
+      "difficulty": "Easy",
+      "prerequisites": [],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-signup",
+        "src-tf-install",
+        "src-aws-cli-install"
+      ],
+      "examRelevance": "Know the difference between the local Terraform CLI and HCP Terraform remote execution.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Use a trusted browser and confirm you can sign in to the AWS account that will be used only for training. Do not create anything yet."
+        },
+        {
+          "step": 2,
+          "instruction": "Open https://app.terraform.io and sign in with an HCP account. If you do not yet have an HCP account, follow the HashiCorp sign-up flow. Do not create the organization yet; its name will be derived from the AWS account ID later."
+        },
+        {
+          "step": 3,
+          "instruction": "Confirm you have a GitHub.com account that can create a private repository and authorize the Terraform Cloud by HashiCorp GitHub App. The HashiCorp VCS tutorial lists a GitHub account as a prerequisite."
+        },
+        {
+          "step": 4,
+          "instruction": "Open Windows PowerShell. Run the commands in the CLI block one at a time."
+        },
+        {
+          "step": 5,
+          "instruction": "If terraform is missing, install it from the HashiCorp Terraform install page and then reopen PowerShell."
+        },
+        {
+          "step": 6,
+          "instruction": "If aws is missing, install AWS CLI v2 from the AWS installation guide and then reopen PowerShell."
+        },
+        {
+          "step": 7,
+          "instruction": "If git is missing, install Git using the normal approved method for your workstation before continuing. This manuscript intentionally does not cite non-HashiCorp/non-AWS installation material."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task01",
+          "title": "Tool version checks",
+          "language": "text",
+          "content": "terraform version\naws --version\ngit --version"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "Terraform prints a version and does not report command-not-found.",
+        "AWS CLI prints its version.",
+        "Git prints its version.",
+        "The learner can sign in to AWS, HCP Terraform and GitHub."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "check": "All three version commands run successfully."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "check": "No AWS or HCP resource has been created yet."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "terraform is not recognized",
+          "fix": "Install Terraform from the official HashiCorp install page, reopen PowerShell, and rerun terraform version."
+        },
+        {
+          "symptom": "aws is not recognized",
+          "fix": "Install AWS CLI v2 from the official AWS installation guide, reopen PowerShell, and rerun aws --version."
+        },
+        {
+          "symptom": "HCP Terraform sign-in fails",
+          "fix": "Complete or recover the HCP account sign-in before continuing; do not bypass the account requirement."
+        }
+      ]
+    },
+    {
+      "id": "task-02-aws-bootstrap",
+      "phaseId": "phase-01-preparation",
+      "title": "Create the temporary AWS training IAM user",
+      "feature": "AWS account safety and least privilege",
+      "goal": "Use the AWS root user only to create a dedicated temporary IAM user and its restricted bootstrap policy, then sign out of root.",
+      "whyItMatters": "The HCP lab must not use root credentials or broad permanent administrator credentials for normal work.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-aws-root",
+        "src-aws-root-best-practices",
+        "src-aws-users",
+        "src-aws-policy"
+      ],
+      "examRelevance": "Least privilege and avoiding root credentials are core AWS operational practices.",
+      "warnings": [
+        "The account-ID wildcard appears only inside fixed lab resource ARNs because an offline manuscript cannot know the learner's account number; the allowed actions remain tightly named."
+      ],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Sign in to the AWS Management Console as the AWS account root user only for this bootstrap task. Do not create a root access key."
+        },
+        {
+          "step": 2,
+          "instruction": "Open IAM. In the left navigation, choose Policies, then Create policy."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose the JSON editor and replace the editor contents with the supplied Temporary bootstrap IAM policy block exactly."
+        },
+        {
+          "step": 4,
+          "instruction": "Choose Next. Set Policy name to fa-hcp-terraform-admin-policy. Add the description Temporary training policy for the HCP Terraform remote runs Follow Along. Review the actions and choose Create policy."
+        },
+        {
+          "step": 5,
+          "instruction": "In IAM, choose Users, then Create user."
+        },
+        {
+          "step": 6,
+          "instruction": "Set User name to fa-hcp-terraform-admin."
+        },
+        {
+          "step": 7,
+          "instruction": "Enable AWS Management Console access for the user. Use a temporary password that meets the account password policy and require the user to create a new password at next sign-in if that option is offered."
+        },
+        {
+          "step": 8,
+          "instruction": "On the permissions step, attach the customer-managed policy fa-hcp-terraform-admin-policy that you just created. Do not attach AdministratorAccess or IAMFullAccess."
+        },
+        {
+          "step": 9,
+          "instruction": "Create the user and record the IAM user sign-in URL or the AWS account ID shown by AWS. Do not record the temporary password in the repository."
+        },
+        {
+          "step": 10,
+          "instruction": "Sign out of the root user immediately."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task02",
+          "title": "Root CLI safety rule",
+          "language": "text",
+          "content": "# No root CLI commands are used in this Follow Along.\n# Do not create or configure root access keys."
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "code-bootstrap-policy",
+          "title": "Temporary bootstrap IAM policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageOwnTemporaryAccessKeysAndPassword\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:ChangePassword\",\n        \"iam:CreateAccessKey\",\n        \"iam:ListAccessKeys\",\n        \"iam:DeleteAccessKey\",\n        \"iam:GetUser\",\n        \"iam:ListAttachedUserPolicies\",\n        \"iam:ListUserPolicies\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:user/fa-hcp-terraform-admin\"\n    },\n    {\n      \"Sid\": \"ReadPasswordPolicy\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:GetAccountPasswordPolicy\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyHcpTerraformOidcProvider\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateOpenIDConnectProvider\",\n        \"iam:GetOpenIDConnectProvider\",\n        \"iam:DeleteOpenIDConnectProvider\",\n        \"iam:TagOpenIDConnectProvider\",\n        \"iam:UntagOpenIDConnectProvider\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ListOnlyRequiredIamCollections\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:ListOpenIDConnectProviders\",\n        \"iam:ListRoles\",\n        \"iam:GetAccountSummary\",\n        \"iam:ListUsers\",\n        \"iam:ListPolicies\",\n        \"iam:ListAttachedRolePolicies\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyNamedHcpRunRole\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateRole\",\n        \"iam:GetRole\",\n        \"iam:DeleteRole\",\n        \"iam:UpdateAssumeRolePolicy\",\n        \"iam:TagRole\",\n        \"iam:UntagRole\",\n        \"iam:ListRoleTags\",\n        \"iam:PutRolePolicy\",\n        \"iam:GetRolePolicy\",\n        \"iam:DeleteRolePolicy\",\n        \"iam:ListRolePolicies\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:role/fa-hcp-terraform-run-role\"\n    },\n    {\n      \"Sid\": \"ReadOnlyLabParameterForVerification\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:GetParameter\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-hcp-terraform/*\"\n    },\n    {\n      \"Sid\": \"DescribeParameterMetadata\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:DescribeParameters\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"VerifyCallerIdentity\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"sts:GetCallerIdentity\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+          "note": "The account-number position is wildcarded only because this offline manuscript cannot know the learner's account ID. Actions and named IAM/SSM resources remain restricted to the lab names."
+        }
+      ],
+      "expectedResults": [
+        "IAM contains user fa-hcp-terraform-admin.",
+        "The user has only the lab customer-managed policy attached.",
+        "The root user is signed out and has no access key created for this lab."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-aws-bootstrap-verify-01",
+          "check": "IAM user fa-hcp-terraform-admin exists."
+        },
+        {
+          "id": "task-02-aws-bootstrap-verify-02",
+          "check": "Customer-managed policy fa-hcp-terraform-admin-policy is attached to that user."
+        },
+        {
+          "id": "task-02-aws-bootstrap-verify-03",
+          "check": "AdministratorAccess and IAMFullAccess are not attached."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "The JSON policy editor reports an error",
+          "fix": "Check that only the supplied JSON object is present and that no Markdown fence markers were pasted into the editor."
+        },
+        {
+          "symptom": "The IAM user cannot be given console access",
+          "fix": "Review the current AWS IAM user creation flow and ensure you are creating an IAM user, not an Identity Center user."
+        },
+        {
+          "symptom": "You are tempted to continue as root",
+          "fix": "Stop, sign out root, and use fa-hcp-terraform-admin for the remaining AWS setup."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-profile",
+      "phaseId": "phase-01-preparation",
+      "title": "Sign in as the IAM user and create the named AWS CLI profile",
+      "feature": "AWS CLI identity",
+      "goal": "Change the IAM user's password, create one temporary access key for local CLI verification, configure the fa-hcp-terraform-admin profile, and record the account-derived HCP organization name.",
+      "whyItMatters": "A named profile keeps training commands separate from other AWS identities and makes identity checks explicit.",
+      "difficulty": "Easy",
+      "prerequisites": [
+        "task-02-aws-bootstrap"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-aws-access-keys",
+        "src-aws-cli-config",
+        "src-aws-sts-identity"
+      ],
+      "examRelevance": "A named AWS CLI profile and sts get-caller-identity provide a reliable identity check before infrastructure operations.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Use the IAM user sign-in URL from Task 2 and sign in as fa-hcp-terraform-admin. Change the temporary password if AWS prompts you."
+        },
+        {
+          "step": 2,
+          "instruction": "Open IAM, choose Users, choose fa-hcp-terraform-admin, then Security credentials."
+        },
+        {
+          "step": 3,
+          "instruction": "In Access keys, choose Create access key. Select the CLI use case if AWS asks. Read the warning and continue because this is a temporary training key for the local named profile only; HCP Terraform will not use it."
+        },
+        {
+          "step": 4,
+          "instruction": "Create the access key. Keep the access key ID and secret access key only long enough to enter them into aws configure. Never paste them into HCP Terraform, Git, the manuscript, screenshots, or lab-values.txt."
+        },
+        {
+          "step": 5,
+          "instruction": "After the profile has been configured and verified, close any page that still displays the secret access key."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task03-config",
+          "title": "Configure and verify the named profile",
+          "language": "text",
+          "content": "aws configure --profile fa-hcp-terraform-admin\n# When prompted:\n# AWS Access Key ID: enter the temporary IAM-user access key ID\n# AWS Secret Access Key: enter the matching secret access key\n# Default region name: eu-west-2\n# Default output format: json\n\naws sts get-caller-identity --profile fa-hcp-terraform-admin\n\n$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$HcpOrg = \"fa-hcp-terraform-org-$AwsAccountId\"\n$RunRoleArn = \"arn:aws:iam::${AwsAccountId}:role/fa-hcp-terraform-run-role\"\n\nWrite-Output \"AWS account ID: $AwsAccountId\"\nWrite-Output \"HCP organization name: $HcpOrg\"\nWrite-Output \"Future HCP run role ARN: $RunRoleArn\""
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "get-caller-identity returns the ARN of fa-hcp-terraform-admin and the correct 12-digit AWS account ID.",
+        "The HCP organization name is fa-hcp-terraform-org- followed by that account ID.",
+        "The future run-role ARN ends with role/fa-hcp-terraform-run-role."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-profile-verify-01",
+          "check": "The caller ARN contains user/fa-hcp-terraform-admin."
+        },
+        {
+          "id": "task-03-cli-profile-verify-02",
+          "check": "The AWS Region stored in the profile is eu-west-2."
+        },
+        {
+          "id": "task-03-cli-profile-verify-03",
+          "check": "No access key or secret key has been copied into the Git repository or HCP Terraform."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "AccessDenied when creating the access key",
+          "fix": "Confirm fa-hcp-terraform-admin-policy is attached to fa-hcp-terraform-admin and the user name matches exactly."
+        },
+        {
+          "symptom": "get-caller-identity shows a different identity",
+          "fix": "Stop. Do not continue until the command uses --profile fa-hcp-terraform-admin and the returned ARN is the training user."
+        },
+        {
+          "symptom": "AWS CLI prompts are confusing",
+          "fix": "Run aws configure --profile fa-hcp-terraform-admin again; it safely overwrites that profile's stored values."
+        }
+      ]
+    },
+    {
+      "id": "task-04-local-terraform",
+      "phaseId": "phase-02-configuration-vcs",
+      "title": "Create and validate the Terraform configuration locally",
+      "feature": "Terraform configuration lifecycle",
+      "goal": "Create the complete root module, initialize the provider, format the files, validate the configuration, and create the dependency lock file without applying anything locally.",
+      "whyItMatters": "HCP will perform the real plan and apply; local init/validate catches syntax and dependency problems before VCS.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-03-cli-profile"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-tf-init",
+        "src-tf-lockfile",
+        "src-tf-sensitive"
+      ],
+      "examRelevance": "terraform init prepares dependencies; terraform validate checks configuration syntax/consistency; .terraform.lock.hcl belongs in VCS.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Open File Explorer and go to your user profile folder. Create a folder named terraform-labs if it does not exist, then inside it create fa-hcp-terraform-vcs-lab. The PowerShell route below can create both folders automatically instead."
+        },
+        {
+          "step": 2,
+          "instruction": "Open the folder in a text editor. Create files named versions.tf, providers.tf, variables.tf, main.tf, outputs.tf, .gitignore and README.md."
+        },
+        {
+          "step": 3,
+          "instruction": "Copy each supplied file block into the file with the matching filename. Save every file as plain UTF-8 text."
+        },
+        {
+          "step": 4,
+          "instruction": "Notice that providers.tf contains only the AWS Region. It contains no access key, secret key or HCP token."
+        },
+        {
+          "step": 5,
+          "instruction": "Notice that variables.tf marks sensitive_demo as sensitive. The value will be provided in HCP Terraform later, not committed to Git."
+        },
+        {
+          "step": 6,
+          "instruction": "Do not create terraform.tfvars or any *.tfstate file."
+        },
+        {
+          "step": 7,
+          "instruction": "Run the PowerShell commands below from the lab folder. Do not run terraform apply locally."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task04-setup",
+          "title": "Create the local folder and validate Terraform",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nNew-Item -ItemType Directory -Path $LabRoot -Force | Out-Null\nSet-Location $LabRoot\n\nterraform fmt\nterraform init\nterraform validate\n\nGet-ChildItem -Force"
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "code-versions-tf",
+          "title": "Terraform and provider requirements",
+          "language": "text",
+          "content": "terraform {\n  required_version = \">= 1.10.0, < 2.0.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.0\"\n    }\n  }\n}",
+          "filename": "versions.tf"
+        },
+        {
+          "id": "code-providers-tf",
+          "title": "AWS provider",
+          "language": "text",
+          "content": "provider \"aws\" {\n  region = \"eu-west-2\"\n}",
+          "filename": "providers.tf"
+        },
+        {
+          "id": "code-variables-tf",
+          "title": "Input variables and deliberate validation rule",
+          "language": "text",
+          "content": "variable \"environment\" {\n  description = \"Lab environment name. This Follow Along only permits the value training.\"\n  type        = string\n\n  validation {\n    condition     = var.environment == \"training\"\n    error_message = \"For this Follow Along, environment must be exactly \\\"training\\\".\"\n  }\n}\n\nvariable \"training_message\" {\n  description = \"Harmless text stored in the temporary SSM Parameter Store parameter.\"\n  type        = string\n}\n\nvariable \"sensitive_demo\" {\n  description = \"Harmless training-only value used to demonstrate sensitive variable handling. Never use a real secret here.\"\n  type        = string\n  sensitive   = true\n}",
+          "filename": "variables.tf"
+        },
+        {
+          "id": "code-main-tf-initial",
+          "title": "Initial AWS resource",
+          "language": "text",
+          "content": "resource \"aws_ssm_parameter\" \"training_message\" {\n  name        = \"/fa-hcp-terraform/training-message\"\n  description = \"Temporary parameter created by the HCP Terraform remote runs Follow Along\"\n  type        = \"String\"\n  value       = \"${var.training_message} | environment=${var.environment}\"\n\n  tags = {\n    TrainingPrefix = \"fa-hcp-terraform\"\n    Purpose        = \"HCP Terraform remote runs Follow Along\"\n    ManagedBy      = \"Terraform\"\n  }\n}",
+          "filename": "main.tf"
+        },
+        {
+          "id": "code-outputs-tf",
+          "title": "Outputs including a sensitive demonstration output",
+          "language": "text",
+          "content": "output \"parameter_name\" {\n  description = \"Name of the temporary SSM parameter managed by Terraform.\"\n  value       = aws_ssm_parameter.training_message.name\n}\n\noutput \"parameter_arn\" {\n  description = \"ARN of the temporary SSM parameter managed by Terraform.\"\n  value       = aws_ssm_parameter.training_message.arn\n}\n\noutput \"sensitive_demo\" {\n  description = \"Harmless training value; marked sensitive so normal Terraform and HCP output redacts it.\"\n  value       = var.sensitive_demo\n  sensitive   = true\n}",
+          "filename": "outputs.tf"
+        },
+        {
+          "id": "code-gitignore",
+          "title": "Files that must not be committed",
+          "language": "text",
+          "content": ".terraform/\n*.tfstate\n*.tfstate.*\ncrash.log\ncrash.*.log\n*.tfvars\n*.tfvars.json\nlab-values.txt\nhcp-trust-policy.json\nhcp-run-policy.json",
+          "filename": ".gitignore"
+        },
+        {
+          "id": "code-readme",
+          "title": "Lab README",
+          "language": "text",
+          "content": "# fa-hcp-terraform-vcs-lab\n\nBeginner training repository for HCP Terraform remote runs and collaboration.\n\nSafety rules:\n- AWS Region: eu-west-2.\n- Training prefix: fa-hcp-terraform.\n- HCP Terraform authenticates to AWS with OIDC dynamic credentials.\n- Do not commit AWS access keys, HCP tokens, tfvars files, state files, or real secrets.\n- The value used for `sensitive_demo` is fake training text only.\n- Destroy the Terraform-managed AWS resource before deleting the HCP Terraform workspace.",
+          "filename": "README.md"
+        }
+      ],
+      "expectedResults": [
+        "terraform init installs a compatible hashicorp/aws 6.x provider and creates .terraform.lock.hcl.",
+        "terraform validate reports Success! The configuration is valid.",
+        "No AWS parameter is created because no apply has been run.",
+        ".terraform.lock.hcl exists and .terraform is local-only."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-local-terraform-verify-01",
+          "check": "versions.tf, providers.tf, variables.tf, main.tf, outputs.tf, .gitignore and README.md exist."
+        },
+        {
+          "id": "task-04-local-terraform-verify-02",
+          "check": ".terraform.lock.hcl exists after terraform init."
+        },
+        {
+          "id": "task-04-local-terraform-verify-03",
+          "check": "terraform validate succeeds."
+        },
+        {
+          "id": "task-04-local-terraform-verify-04",
+          "check": "There is no local *.tfstate file."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "terraform init cannot download the provider",
+          "fix": "Check internet/proxy access to the Terraform Registry and rerun terraform init after connectivity is fixed."
+        },
+        {
+          "symptom": "terraform validate reports an undeclared variable or syntax error",
+          "fix": "Compare the affected file exactly with the supplied code block, save it, run terraform fmt, then rerun terraform validate."
+        },
+        {
+          "symptom": ".terraform.lock.hcl is missing",
+          "fix": "Rerun terraform init from the same folder that contains versions.tf."
+        }
+      ]
+    },
+    {
+      "id": "task-05-github-repo",
+      "phaseId": "phase-02-configuration-vcs",
+      "title": "Create the GitHub repository and push the initial configuration",
+      "feature": "Version control",
+      "goal": "Create a private GitHub repository named fa-hcp-terraform-vcs-lab and push the validated Terraform configuration to its main branch.",
+      "whyItMatters": "HCP Terraform's primary collaboration workflow associates remote runs with VCS commits.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-04-local-terraform"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-vcs-tutorial",
+        "src-hc-vcs-github-app",
+        "src-tf-lockfile"
+      ],
+      "examRelevance": "VCS-driven HCP Terraform runs are linked to commits, which supports reviewable and repeatable infrastructure changes.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Sign in to GitHub.com in the browser."
+        },
+        {
+          "step": 2,
+          "instruction": "Create a new repository in your own account named fa-hcp-terraform-vcs-lab."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose Private unless you intentionally want this training repository public."
+        },
+        {
+          "step": 4,
+          "instruction": "Create it as an empty repository: do not add a README, .gitignore or license in the GitHub creation screen because those files already exist locally."
+        },
+        {
+          "step": 5,
+          "instruction": "After GitHub creates the repository, copy the HTTPS repository URL shown for the repository. Do not copy any token or credential."
+        },
+        {
+          "step": 6,
+          "instruction": "Return to PowerShell and run the Git commands below. When prompted by Read-Host, paste only the HTTPS repository URL."
+        },
+        {
+          "step": 7,
+          "instruction": "If Git opens a browser authentication window, complete your normal GitHub authentication."
+        },
+        {
+          "step": 8,
+          "instruction": "Refresh the GitHub repository page and confirm the Terraform files and .terraform.lock.hcl are visible while .terraform, tfstate and lab-values.txt are absent."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task05-git",
+          "title": "Initialize Git and push main",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\n\ngit init\ngit branch -M main\ngit add .\ngit status\ngit commit -m \"Initial HCP Terraform remote runs lab\"\n\n$RepoUrl = Read-Host \"Paste the HTTPS URL shown by GitHub for fa-hcp-terraform-vcs-lab\"\ngit remote add origin $RepoUrl\ngit push -u origin main\n\ngit status\ngit remote -v\ngit log -1 --oneline"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "GitHub main contains the Terraform files, README.md, .gitignore and .terraform.lock.hcl.",
+        "git status reports a clean working tree.",
+        "No access key, tfvars file, state file, hcp-trust-policy.json or hcp-run-policy.json is committed."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-github-repo-verify-01",
+          "check": "The repository name is exactly fa-hcp-terraform-vcs-lab."
+        },
+        {
+          "id": "task-05-github-repo-verify-02",
+          "check": "The default branch is main."
+        },
+        {
+          "id": "task-05-github-repo-verify-03",
+          "check": ".terraform.lock.hcl is committed."
+        },
+        {
+          "id": "task-05-github-repo-verify-04",
+          "check": ".terraform and *.tfstate are not tracked."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "git commit says identity is unknown",
+          "fix": "Configure your normal Git author name/email using your organization's approved Git setup, then rerun the commit. Do not put AWS credentials in Git configuration."
+        },
+        {
+          "symptom": "git remote add origin says origin already exists",
+          "fix": "Run git remote -v. If the existing origin is wrong, run git remote set-url origin $RepoUrl and then push again."
+        },
+        {
+          "symptom": "GitHub rejects the push",
+          "fix": "Complete the GitHub authentication prompt and confirm the pasted repository URL belongs to fa-hcp-terraform-vcs-lab."
+        }
+      ]
+    },
+    {
+      "id": "task-06-hcp-org-project",
+      "phaseId": "phase-03-hcp-foundation",
+      "title": "Create the HCP Terraform organization and project",
+      "feature": "HCP collaboration boundaries",
+      "goal": "Create a uniquely named HCP Terraform organization and a dedicated project for the lab.",
+      "whyItMatters": "Organizations provide the top-level collaboration boundary; projects group related workspaces and their permissions/settings.",
+      "difficulty": "Easy",
+      "prerequisites": [
+        "task-05-github-repo"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-signup",
+        "src-hc-orgs",
+        "src-hc-projects"
+      ],
+      "examRelevance": "HCP Terraform organizations and projects scope collaboration and access around workspaces.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "In PowerShell, rerun the short command block below so the exact organization name is visible. Copy only the value printed after HCP organization name."
+        },
+        {
+          "step": 2,
+          "instruction": "Open https://app.terraform.io and sign in."
+        },
+        {
+          "step": 3,
+          "instruction": "Create a new HCP Terraform organization. For Organization name, enter fa-hcp-terraform-org- followed immediately by the 12-digit AWS account ID printed by PowerShell. This makes the name unique using a value created earlier in the Follow Along."
+        },
+        {
+          "step": 4,
+          "instruction": "Use a valid contact email for your own HCP account and finish creating the organization."
+        },
+        {
+          "step": 5,
+          "instruction": "Inside the new organization, choose Projects."
+        },
+        {
+          "step": 6,
+          "instruction": "Choose New project."
+        },
+        {
+          "step": 7,
+          "instruction": "Set Name to fa-hcp-terraform-project."
+        },
+        {
+          "step": 8,
+          "instruction": "Set Description to Beginner HCP Terraform remote runs and collaboration training project."
+        },
+        {
+          "step": 9,
+          "instruction": "Create the project."
+        },
+        {
+          "step": 10,
+          "instruction": "Keep this organization and project dedicated to this Follow Along so cleanup can remove them without affecting unrelated work."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task06-values",
+          "title": "Recreate the exact organization name from AWS identity",
+          "language": "text",
+          "content": "$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$HcpOrg = \"fa-hcp-terraform-org-$AwsAccountId\"\nWrite-Output \"HCP organization name: $HcpOrg\""
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The HCP Terraform organization name begins fa-hcp-terraform-org- and ends with the learner's 12-digit AWS account ID.",
+        "The organization contains project fa-hcp-terraform-project.",
+        "No workspace exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-hcp-org-project-verify-01",
+          "check": "The browser is inside the newly created lab organization, not another organization."
+        },
+        {
+          "id": "task-06-hcp-org-project-verify-02",
+          "check": "fa-hcp-terraform-project appears in the Projects view."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Organization name is already taken",
+          "fix": "Recheck that you appended your own 12-digit AWS account ID exactly. If it is still unavailable, stop and choose a unique suffix that contains only non-secret account-neutral text, then record the final name for the OIDC trust."
+        },
+        {
+          "symptom": "You created the project in the wrong organization",
+          "fix": "Delete the empty project from the wrong organization and recreate it inside the lab organization before continuing."
+        }
+      ]
+    },
+    {
+      "id": "task-07-vcs-workspace",
+      "phaseId": "phase-03-hcp-foundation",
+      "title": "Create the VCS-connected HCP Terraform workspace",
+      "feature": "VCS workflow and remote execution",
+      "goal": "Create fa-hcp-terraform-remote-runs in the lab project and connect it to the GitHub main branch.",
+      "whyItMatters": "The workspace becomes the shared run, variable and state boundary for this configuration.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-06-hcp-org-project"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-workspace-create",
+        "src-hc-vcs-github-app",
+        "src-hc-vcs-runs"
+      ],
+      "examRelevance": "A VCS-driven workspace ties configuration versions to commits and runs Terraform remotely.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Inside the lab HCP organization, choose Workspaces."
+        },
+        {
+          "step": 2,
+          "instruction": "Choose New, then Workspace."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose project fa-hcp-terraform-project."
+        },
+        {
+          "step": 4,
+          "instruction": "Choose Version Control Workflow."
+        },
+        {
+          "step": 5,
+          "instruction": "Choose GitHub.com using the GitHub App flow. If this is the first connection, authorize Terraform Cloud by HashiCorp for your GitHub account."
+        },
+        {
+          "step": 6,
+          "instruction": "When GitHub asks which repositories the app may access, grant access to fa-hcp-terraform-vcs-lab. Avoid granting access to every repository when the narrower repository choice is available."
+        },
+        {
+          "step": 7,
+          "instruction": "Back in HCP Terraform, choose the GitHub account/organization and select repository fa-hcp-terraform-vcs-lab."
+        },
+        {
+          "step": 8,
+          "instruction": "Set Workspace name to fa-hcp-terraform-remote-runs."
+        },
+        {
+          "step": 9,
+          "instruction": "Leave the Terraform working directory empty so the repository root is used."
+        },
+        {
+          "step": 10,
+          "instruction": "Use branch main."
+        },
+        {
+          "step": 11,
+          "instruction": "Leave Auto Apply disabled so every successful plan requires a human Confirm & Apply action."
+        },
+        {
+          "step": 12,
+          "instruction": "Choose an HCP Terraform version that satisfies the configuration constraint >= 1.10.0 and < 2.0.0."
+        },
+        {
+          "step": 13,
+          "instruction": "Create the workspace."
+        },
+        {
+          "step": 14,
+          "instruction": "If HCP offers to scan and set Terraform variables immediately, go to the workspace overview instead. Variables will be configured deliberately after AWS OIDC is ready."
+        },
+        {
+          "step": 15,
+          "instruction": "Do not manually start the first run yet."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task07-vcs-check",
+          "title": "Confirm the repository commit that HCP should see",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\ngit branch --show-current\ngit log -1 --oneline\ngit status"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "HCP Terraform shows workspace fa-hcp-terraform-remote-runs inside fa-hcp-terraform-project.",
+        "The workspace shows a VCS connection to fa-hcp-terraform-vcs-lab on main.",
+        "No run has been started yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-vcs-workspace-verify-01",
+          "check": "Workspace project is fa-hcp-terraform-project."
+        },
+        {
+          "id": "task-07-vcs-workspace-verify-02",
+          "check": "VCS repository is fa-hcp-terraform-vcs-lab."
+        },
+        {
+          "id": "task-07-vcs-workspace-verify-03",
+          "check": "Auto Apply is disabled."
+        },
+        {
+          "id": "task-07-vcs-workspace-verify-04",
+          "check": "The workspace has no successful apply yet."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "The repository does not appear in HCP",
+          "fix": "Reopen the GitHub App connection and grant the app access to fa-hcp-terraform-vcs-lab, then return to workspace creation."
+        },
+        {
+          "symptom": "The wrong project was selected",
+          "fix": "Before any run, use workspace Settings > General to move/recreate the workspace in fa-hcp-terraform-project."
+        },
+        {
+          "symptom": "HCP immediately reports missing variables",
+          "fix": "That is expected because the Terraform variables do not have defaults; do not run yet. Continue to OIDC and variable setup."
+        }
+      ]
+    },
+    {
+      "id": "task-08-oidc-provider",
+      "phaseId": "phase-04-dynamic-credentials",
+      "title": "Create the AWS OIDC identity provider for HCP Terraform",
+      "feature": "Federated authentication",
+      "goal": "Add app.terraform.io as an AWS IAM OIDC provider with audience aws.workload.identity.",
+      "whyItMatters": "OIDC lets HCP Terraform exchange its workload identity for short-lived AWS credentials instead of storing AWS access keys in HCP.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-07-vcs-workspace"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-aws-dynamic",
+        "src-aws-hcp-oidc",
+        "src-aws-oidc-cli"
+      ],
+      "examRelevance": "Federation and short-lived credentials reduce long-lived secret handling and are a common cloud authentication pattern.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Sign in to AWS as fa-hcp-terraform-admin, not root."
+        },
+        {
+          "step": 2,
+          "instruction": "Open IAM, choose Identity providers, then Add provider."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose OpenID Connect."
+        },
+        {
+          "step": 4,
+          "instruction": "Set Provider URL to https://app.terraform.io."
+        },
+        {
+          "step": 5,
+          "instruction": "Set Audience to aws.workload.identity."
+        },
+        {
+          "step": 6,
+          "instruction": "Create the provider."
+        },
+        {
+          "step": 7,
+          "instruction": "Open the new provider and verify its provider URL is app.terraform.io and its audience/client ID includes aws.workload.identity."
+        },
+        {
+          "step": 8,
+          "instruction": "Choose either the Console creation route above or the CLI creation command below. Do not create the same provider twice; the second attempt would report that it already exists."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task08-create",
+          "title": "CLI creation alternative and verification",
+          "language": "text",
+          "content": "# Run the create command only if you did NOT create the provider in the AWS Console.\naws iam create-open-id-connect-provider `\n  --url https://app.terraform.io `\n  --client-id-list aws.workload.identity `\n  --profile fa-hcp-terraform-admin\n\n$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$OidcArn = \"arn:aws:iam::${AwsAccountId}:oidc-provider/app.terraform.io\"\n\naws iam get-open-id-connect-provider `\n  --open-id-connect-provider-arn $OidcArn `\n  --profile fa-hcp-terraform-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "IAM contains exactly one OIDC provider for app.terraform.io.",
+        "The provider client ID/audience includes aws.workload.identity.",
+        "No AWS secret was entered in HCP Terraform."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-oidc-provider-verify-01",
+          "check": "get-open-id-connect-provider returns Url app.terraform.io."
+        },
+        {
+          "id": "task-08-oidc-provider-verify-02",
+          "check": "ClientIDList contains aws.workload.identity."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "EntityAlreadyExists or provider URL already exists",
+          "fix": "Do not create a duplicate. Verify the existing provider has the correct URL and audience; because this lab assumes no pre-existing infrastructure, investigate why it exists before continuing."
+        },
+        {
+          "symptom": "AccessDenied creating the provider",
+          "fix": "Confirm fa-hcp-terraform-admin-policy is still attached and you are using the fa-hcp-terraform-admin identity."
+        },
+        {
+          "symptom": "The audience is wrong",
+          "fix": "Delete the lab OIDC provider and recreate it with aws.workload.identity before creating the role."
+        }
+      ]
+    },
+    {
+      "id": "task-09-run-role",
+      "phaseId": "phase-04-dynamic-credentials",
+      "title": "Create the HCP Terraform AWS run role",
+      "feature": "OIDC trust and least privilege",
+      "goal": "Create fa-hcp-terraform-run-role with trust restricted to the exact lab organization, project, workspace and any run phase, then grant only the SSM Parameter permissions required by the configuration.",
+      "whyItMatters": "A correct trust policy answers who may assume the role; the permissions policy answers what the role may do after it is assumed.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-08-oidc-provider"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-aws-dynamic",
+        "src-aws-hcp-oidc",
+        "src-aws-policy"
+      ],
+      "examRelevance": "Trust policies and permissions policies solve different IAM problems; least-privilege OIDC trust is safer than static cloud keys.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "In AWS IAM, choose Roles, then Create role."
+        },
+        {
+          "step": 2,
+          "instruction": "Choose Web identity as the trusted entity type."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose identity provider app.terraform.io."
+        },
+        {
+          "step": 4,
+          "instruction": "For Audience, choose aws.workload.identity."
+        },
+        {
+          "step": 5,
+          "instruction": "For Organization, enter the exact HCP organization name created in Task 6."
+        },
+        {
+          "step": 6,
+          "instruction": "For Project, enter fa-hcp-terraform-project."
+        },
+        {
+          "step": 7,
+          "instruction": "For Workspace, enter fa-hcp-terraform-remote-runs."
+        },
+        {
+          "step": 8,
+          "instruction": "For Run Phase, enter * so the same role can be used for both plan and apply phases in this training workspace."
+        },
+        {
+          "step": 9,
+          "instruction": "Continue to permissions. Do not attach AdministratorAccess or a broad AWS managed policy."
+        },
+        {
+          "step": 10,
+          "instruction": "Set Role name to fa-hcp-terraform-run-role and create the role."
+        },
+        {
+          "step": 11,
+          "instruction": "Open the role, choose Add permissions, then Create inline policy."
+        },
+        {
+          "step": 12,
+          "instruction": "Choose JSON and paste the supplied HCP Terraform run-role inline permissions policy."
+        },
+        {
+          "step": 13,
+          "instruction": "Name the inline policy fa-hcp-terraform-run-policy and create it."
+        },
+        {
+          "step": 14,
+          "instruction": "Open the Trust relationships tab and confirm the trusted principal is the app.terraform.io OIDC provider and the conditions include audience aws.workload.identity plus the exact organization, project and workspace scope."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task09-verify",
+          "title": "Verify the role and its inline policy",
+          "language": "text",
+          "content": "aws iam get-role `\n  --role-name fa-hcp-terraform-run-role `\n  --profile fa-hcp-terraform-admin\n\naws iam list-role-policies `\n  --role-name fa-hcp-terraform-run-role `\n  --profile fa-hcp-terraform-admin\n\naws iam get-role-policy `\n  --role-name fa-hcp-terraform-run-role `\n  --policy-name fa-hcp-terraform-run-policy `\n  --profile fa-hcp-terraform-admin"
+        },
+        {
+          "id": "cli-task09-create-alt",
+          "title": "Optional CLI alternative for role creation - use instead of the Console route, not as well as it",
+          "language": "text",
+          "content": "$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$HcpOrg = \"fa-hcp-terraform-org-$AwsAccountId\"\n\n$TrustPolicy = @\"\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Federated\": \"arn:aws:iam::${AwsAccountId}:oidc-provider/app.terraform.io\"\n      },\n      \"Action\": \"sts:AssumeRoleWithWebIdentity\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"app.terraform.io:aud\": \"aws.workload.identity\"\n        },\n        \"StringLike\": {\n          \"app.terraform.io:sub\": \"organization:${HcpOrg}:project:fa-hcp-terraform-project:workspace:fa-hcp-terraform-remote-runs:run_phase:*\"\n        }\n      }\n    }\n  ]\n}\n\"@\n\n$TrustPolicy | Set-Content -Encoding utf8 .\\hcp-trust-policy.json\n\naws iam create-role `\n  --role-name fa-hcp-terraform-run-role `\n  --assume-role-policy-document file://hcp-trust-policy.json `\n  --profile fa-hcp-terraform-admin\n\n$RunPolicy = @'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageOnlyTrainingParameter\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-hcp-terraform/*\"\n    },\n    {\n      \"Sid\": \"DescribeParametersForProviderRefresh\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:DescribeParameters\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}\n'@\n\n$RunPolicy | Set-Content -Encoding utf8 .\\hcp-run-policy.json\n\naws iam put-role-policy `\n  --role-name fa-hcp-terraform-run-role `\n  --policy-name fa-hcp-terraform-run-policy `\n  --policy-document file://hcp-run-policy.json `\n  --profile fa-hcp-terraform-admin\n\nRemove-Item .\\hcp-trust-policy.json, .\\hcp-run-policy.json -Force"
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "code-run-policy",
+          "title": "HCP Terraform run-role inline permissions policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ManageOnlyTrainingParameter\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-hcp-terraform/*\"\n    },\n    {\n      \"Sid\": \"DescribeParametersForProviderRefresh\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:DescribeParameters\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "Role fa-hcp-terraform-run-role exists.",
+        "The trust is limited to app.terraform.io with audience aws.workload.identity and the exact lab organization/project/workspace.",
+        "Inline policy fa-hcp-terraform-run-policy allows only the required Parameter Store path in eu-west-2 plus parameter metadata reads."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-run-role-verify-01",
+          "check": "Role trust contains app.terraform.io:aud = aws.workload.identity."
+        },
+        {
+          "id": "task-09-run-role-verify-02",
+          "check": "Role trust contains the exact HCP organization, project and workspace names."
+        },
+        {
+          "id": "task-09-run-role-verify-03",
+          "check": "The role has no AdministratorAccess policy attached."
+        },
+        {
+          "id": "task-09-run-role-verify-04",
+          "check": "Inline policy name is fa-hcp-terraform-run-policy."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "AWS rejects the role because app.terraform.io:sub is missing",
+          "fix": "Recreate or edit the trust so it includes the HCP organization/project/workspace subject condition. AWS requires this control for HCP Terraform OIDC roles."
+        },
+        {
+          "symptom": "HCP later receives AccessDenied for SSM",
+          "fix": "Return to this inline policy and compare every SSM action and the /fa-hcp-terraform/* resource path exactly."
+        },
+        {
+          "symptom": "The CLI alternative reports EntityAlreadyExists",
+          "fix": "You already created the role in the Console. Do not run both creation routes; use the verification commands only."
+        }
+      ]
+    },
+    {
+      "id": "task-10-workspace-variables",
+      "phaseId": "phase-04-dynamic-credentials",
+      "title": "Configure HCP Terraform variables and the deliberate failure value",
+      "feature": "Workspace variables and dynamic credentials",
+      "goal": "Add the required AWS dynamic credential environment variables and the three Terraform variables, deliberately setting environment to broken for the first run.",
+      "whyItMatters": "This shows the difference between environment variables used by the execution environment and Terraform input variables consumed by the configuration.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-09-run-role"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-variables",
+        "src-hc-aws-dynamic",
+        "src-tf-sensitive"
+      ],
+      "examRelevance": "Workspace variables are injected at run time; sensitive flags redact UI/log display but do not automatically remove values from state.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "In HCP Terraform, open workspace fa-hcp-terraform-remote-runs and choose Variables."
+        },
+        {
+          "step": 2,
+          "instruction": "Under Workspace Variables, choose Add variable. Category: Environment variable. Key: TFC_AWS_PROVIDER_AUTH. Value: true. Sensitive: off. Save."
+        },
+        {
+          "step": 3,
+          "instruction": "Add another Environment variable. Key: TFC_AWS_RUN_ROLE_ARN. Build the exact role ARN with the PowerShell command below and paste its printed value. Sensitive: off because an ARN is an identifier, not a secret. Save."
+        },
+        {
+          "step": 4,
+          "instruction": "Add another Environment variable. Key: AWS_REGION. Value: eu-west-2. Sensitive: off. Save."
+        },
+        {
+          "step": 5,
+          "instruction": "Add a Terraform variable. Key: environment. Value: broken. HCL: off. Sensitive: off. Save. This wrong value is intentional and will create the required failed run."
+        },
+        {
+          "step": 6,
+          "instruction": "Add a Terraform variable. Key: training_message. Value: Created by HCP Terraform remote run. HCL: off. Sensitive: off. Save."
+        },
+        {
+          "step": 7,
+          "instruction": "Add a Terraform variable. Key: sensitive_demo. Value: training-secret-not-real. HCL: off. Sensitive: ON. Save."
+        },
+        {
+          "step": 8,
+          "instruction": "After saving sensitive_demo, confirm HCP no longer shows its value. Do not try to recover it from state. The value is deliberately fake because a Terraform value marked sensitive can still be stored in state."
+        },
+        {
+          "step": 9,
+          "instruction": "Do not create AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY variables in HCP Terraform."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task10-rolearn",
+          "title": "Print the exact role ARN to paste into HCP Terraform",
+          "language": "text",
+          "content": "$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$RunRoleArn = \"arn:aws:iam::${AwsAccountId}:role/fa-hcp-terraform-run-role\"\nWrite-Output $RunRoleArn"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "HCP Variables shows three environment variables and three Terraform variables.",
+        "sensitive_demo is write-only/redacted in the HCP UI.",
+        "environment is deliberately broken for the next task.",
+        "No static AWS credential variable exists in HCP."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-workspace-variables-verify-01",
+          "check": "TFC_AWS_PROVIDER_AUTH equals true."
+        },
+        {
+          "id": "task-10-workspace-variables-verify-02",
+          "check": "TFC_AWS_RUN_ROLE_ARN ends with role/fa-hcp-terraform-run-role."
+        },
+        {
+          "id": "task-10-workspace-variables-verify-03",
+          "check": "AWS_REGION equals eu-west-2."
+        },
+        {
+          "id": "task-10-workspace-variables-verify-04",
+          "check": "environment equals broken."
+        },
+        {
+          "id": "task-10-workspace-variables-verify-05",
+          "check": "sensitive_demo is marked Sensitive."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "HCP asks whether a Terraform value is HCL",
+          "fix": "Leave HCL off for all three values because each value is a plain string."
+        },
+        {
+          "symptom": "You accidentally used a real password/token for sensitive_demo",
+          "fix": "Immediately replace it with training-secret-not-real. This lab must never put a real secret into Terraform state."
+        },
+        {
+          "symptom": "TFC_AWS_RUN_ROLE_ARN contains the wrong account ID",
+          "fix": "Rerun get-caller-identity with the named profile and rebuild the ARN before starting a run."
+        }
+      ]
+    },
+    {
+      "id": "task-11-failed-run",
+      "phaseId": "phase-05-remote-runs",
+      "title": "Start the first remote run and diagnose the deliberate failure",
+      "feature": "Remote plan troubleshooting",
+      "goal": "Manually start the VCS workspace's first run, observe the validation failure caused by environment=broken, and prove that no AWS resource was created.",
+      "whyItMatters": "A new VCS workspace must have a manually queued first run before later VCS webhooks can trigger runs; controlled failures teach how to read run output safely.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-10-workspace-variables"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-workspace-create",
+        "src-hc-vcs-runs",
+        "src-hc-run-manage",
+        "src-aws-ssm"
+      ],
+      "examRelevance": "Terraform variable validation can fail a plan before changes are applied; run history preserves the failure for troubleshooting.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Open the HCP workspace Overview/Runs page."
+        },
+        {
+          "step": 2,
+          "instruction": "Choose + New run."
+        },
+        {
+          "step": 3,
+          "instruction": "Choose a normal Plan and apply/standard run mode. Leave debugging mode off."
+        },
+        {
+          "step": 4,
+          "instruction": "Enter the message Initial run - expected validation failure."
+        },
+        {
+          "step": 5,
+          "instruction": "Start the run."
+        },
+        {
+          "step": 6,
+          "instruction": "Open the run details while the plan executes."
+        },
+        {
+          "step": 7,
+          "instruction": "Confirm the run is tied to the VCS configuration from fa-hcp-terraform-vcs-lab."
+        },
+        {
+          "step": 8,
+          "instruction": "Read the plan error. It should point to the environment variable validation rule and include: For this Follow Along, environment must be exactly \"training\"."
+        },
+        {
+          "step": 9,
+          "instruction": "Do not change the Terraform code. The intended fix is the workspace variable value."
+        },
+        {
+          "step": 10,
+          "instruction": "In AWS Systems Manager in eu-west-2, open Parameter Store and confirm /fa-hcp-terraform/training-message is absent."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task11-verify-absent",
+          "title": "Prove the failed plan created nothing",
+          "language": "text",
+          "content": "aws ssm get-parameter `\n  --name /fa-hcp-terraform/training-message `\n  --region eu-west-2 `\n  --profile fa-hcp-terraform-admin",
+          "note": "This command is expected to fail with ParameterNotFound because the plan failed before an apply created the resource."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The HCP run ends in an errored/failed plan state.",
+        "The failure message clearly identifies the environment validation rule.",
+        "There is no Confirm & Apply for a failed plan.",
+        "The SSM parameter does not exist."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-failed-run-verify-01",
+          "check": "The failed run appears in HCP run history."
+        },
+        {
+          "id": "task-11-failed-run-verify-02",
+          "check": "The failure is caused by environment=broken rather than AWS authentication."
+        },
+        {
+          "id": "task-11-failed-run-verify-03",
+          "check": "AWS Parameter Store has no /fa-hcp-terraform/training-message parameter."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "The run fails with an AWS credential or AssumeRoleWithWebIdentity error instead of the validation message",
+          "fix": "Do not proceed to the planned failure exercise. Recheck TFC_AWS_PROVIDER_AUTH, TFC_AWS_RUN_ROLE_ARN, the OIDC provider audience, and the role trust organization/project/workspace fields."
+        },
+        {
+          "symptom": "The run succeeds unexpectedly",
+          "fix": "Open Variables and confirm environment is exactly broken. If it was already training, change it to broken and start another manual run so the required failure is observed."
+        },
+        {
+          "symptom": "The parameter already exists",
+          "fix": "Stop. This lab assumes no pre-existing resource at /fa-hcp-terraform/training-message. Identify and remove only your own conflicting training parameter before continuing."
+        }
+      ]
+    },
+    {
+      "id": "task-12-fix-apply",
+      "phaseId": "phase-05-remote-runs",
+      "title": "Fix the variable, review the plan and apply remotely",
+      "feature": "Remote plan and apply",
+      "goal": "Correct environment to training, queue a new run, review the one-resource plan, confirm the apply, and verify the AWS parameter.",
+      "whyItMatters": "Terraform's plan/apply split lets a human review intended changes before HCP Terraform mutates AWS.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-11-failed-run"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-variables",
+        "src-hc-vcs-runs",
+        "src-hc-run-manage",
+        "src-aws-ssm",
+        "src-aws-ssm-create",
+        "src-tf-sensitive"
+      ],
+      "examRelevance": "Remote runs preserve plan review, apply confirmation, logs, state and collaboration history in one workspace.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Open workspace Variables."
+        },
+        {
+          "step": 2,
+          "instruction": "Edit the Terraform variable environment. Change its value from broken to training and save."
+        },
+        {
+          "step": 3,
+          "instruction": "Return to the workspace and choose + New run."
+        },
+        {
+          "step": 4,
+          "instruction": "Start a normal Plan and apply run with message Fix environment and create training parameter."
+        },
+        {
+          "step": 5,
+          "instruction": "Wait for the plan to finish."
+        },
+        {
+          "step": 6,
+          "instruction": "Review the plan carefully. It should propose one aws_ssm_parameter.training_message resource to add and no unrelated resources."
+        },
+        {
+          "step": 7,
+          "instruction": "Check the planned name is /fa-hcp-terraform/training-message and the AWS provider Region is eu-west-2."
+        },
+        {
+          "step": 8,
+          "instruction": "Confirm that the sensitive_demo output is redacted rather than printed in normal output."
+        },
+        {
+          "step": 9,
+          "instruction": "Choose Confirm & Apply, add a short confirmation comment if the UI requests one, then confirm the plan."
+        },
+        {
+          "step": 10,
+          "instruction": "Wait until the apply finishes successfully."
+        },
+        {
+          "step": 11,
+          "instruction": "Open AWS Systems Manager in eu-west-2, choose Parameter Store, then choose /fa-hcp-terraform/training-message."
+        },
+        {
+          "step": 12,
+          "instruction": "Verify Type is String, the value ends with environment=training, and tags include TrainingPrefix=fa-hcp-terraform, Purpose=HCP Terraform remote runs Follow Along, and ManagedBy=Terraform."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task12-verify",
+          "title": "Verify the Terraform-created parameter from AWS CLI",
+          "language": "text",
+          "content": "aws ssm get-parameter `\n  --name /fa-hcp-terraform/training-message `\n  --region eu-west-2 `\n  --profile fa-hcp-terraform-admin\n\naws ssm list-tags-for-resource `\n  --resource-type Parameter `\n  --resource-id /fa-hcp-terraform/training-message `\n  --region eu-west-2 `\n  --profile fa-hcp-terraform-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "Plan summary is 1 to add, 0 to change, 0 to destroy.",
+        "Apply succeeds and creates exactly one managed AWS resource.",
+        "The AWS parameter value is Created by HCP Terraform remote run | environment=training.",
+        "The sensitive output remains redacted in ordinary run output."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-fix-apply-verify-01",
+          "check": "HCP run status is Applied/Finished successfully."
+        },
+        {
+          "id": "task-12-fix-apply-verify-02",
+          "check": "AWS CLI get-parameter returns /fa-hcp-terraform/training-message."
+        },
+        {
+          "id": "task-12-fix-apply-verify-03",
+          "check": "The parameter is in eu-west-2."
+        },
+        {
+          "id": "task-12-fix-apply-verify-04",
+          "check": "Tags match the training prefix and Terraform ownership."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Plan shows resources other than the single SSM parameter",
+          "fix": "Do not apply. Compare the VCS configuration with the supplied files and discard the run until the plan contains only the intended resource."
+        },
+        {
+          "symptom": "AssumeRoleWithWebIdentity is denied",
+          "fix": "Check the exact HCP org/project/workspace names in the role trust and confirm audience aws.workload.identity."
+        },
+        {
+          "symptom": "PutParameter is AccessDenied",
+          "fix": "Check fa-hcp-terraform-run-policy is inline on the run role and its resource path is arn:aws:ssm:eu-west-2:*:parameter/fa-hcp-terraform/*."
+        }
+      ]
+    },
+    {
+      "id": "task-13-vcs-triggered-run",
+      "phaseId": "phase-05-remote-runs",
+      "title": "Trigger a remote run from a VCS commit",
+      "feature": "Collaboration through VCS",
+      "goal": "Add one harmless tag in main.tf, commit and push it, observe HCP Terraform automatically queue the remote plan, then apply and verify the change.",
+      "whyItMatters": "After the initial manual run, HCP Terraform's VCS webhook turns reviewed commits on the tracked branch into remote Terraform runs.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-12-fix-apply"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-vcs-runs",
+        "src-hc-workspace-create",
+        "src-tf-lockfile",
+        "src-aws-ssm"
+      ],
+      "examRelevance": "VCS-driven workflows connect infrastructure changes to commits and enable shared review before apply.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Open the local main.tf file."
+        },
+        {
+          "step": 2,
+          "instruction": "Replace its contents with the supplied Updated main.tf block, which adds only Collaboration = \"vcs-remote-run\" to the tags map."
+        },
+        {
+          "step": 3,
+          "instruction": "Save the file."
+        },
+        {
+          "step": 4,
+          "instruction": "Run terraform fmt and terraform validate locally."
+        },
+        {
+          "step": 5,
+          "instruction": "Review git diff and confirm the only intended infrastructure change is the new Collaboration tag."
+        },
+        {
+          "step": 6,
+          "instruction": "Commit and push the change to main using the CLI block."
+        },
+        {
+          "step": 7,
+          "instruction": "Do not click + New run in HCP. Open the workspace Runs page and wait for the VCS webhook to queue a new run automatically."
+        },
+        {
+          "step": 8,
+          "instruction": "Open the new run and confirm it references the new Git commit."
+        },
+        {
+          "step": 9,
+          "instruction": "Review the plan. It should show the existing parameter changing in place with one tag added; it must not propose a replacement or unrelated resource."
+        },
+        {
+          "step": 10,
+          "instruction": "Choose Confirm & Apply."
+        },
+        {
+          "step": 11,
+          "instruction": "After the apply finishes, verify the Collaboration tag in AWS."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task13-vcs",
+          "title": "Commit the collaboration change",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\n\nterraform fmt\nterraform validate\ngit diff\n\ngit add main.tf\ngit commit -m \"Add collaboration tag for VCS remote run\"\ngit push\n\ngit log -1 --oneline"
+        },
+        {
+          "id": "cli-task13-verify-tag",
+          "title": "Verify the applied tag in AWS",
+          "language": "text",
+          "content": "aws ssm list-tags-for-resource `\n  --resource-type Parameter `\n  --resource-id /fa-hcp-terraform/training-message `\n  --region eu-west-2 `\n  --profile fa-hcp-terraform-admin"
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "code-main-tf-collab",
+          "title": "Updated main.tf for the VCS-triggered collaboration run",
+          "language": "text",
+          "content": "resource \"aws_ssm_parameter\" \"training_message\" {\n  name        = \"/fa-hcp-terraform/training-message\"\n  description = \"Temporary parameter created by the HCP Terraform remote runs Follow Along\"\n  type        = \"String\"\n  value       = \"${var.training_message} | environment=${var.environment}\"\n\n  tags = {\n    TrainingPrefix = \"fa-hcp-terraform\"\n    Purpose        = \"HCP Terraform remote runs Follow Along\"\n    ManagedBy      = \"Terraform\"\n    Collaboration  = \"vcs-remote-run\"\n  }\n}",
+          "filename": "main.tf"
+        }
+      ],
+      "expectedResults": [
+        "HCP automatically queues the run after the push to main.",
+        "The plan is an in-place change, normally 0 to add, 1 to change, 0 to destroy.",
+        "The run identifies the VCS commit that caused it.",
+        "AWS shows Collaboration=vcs-remote-run on the parameter."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-vcs-triggered-run-verify-01",
+          "check": "No manual + New run was required after the Git push."
+        },
+        {
+          "id": "task-13-vcs-triggered-run-verify-02",
+          "check": "The HCP run is linked to the latest commit."
+        },
+        {
+          "id": "task-13-vcs-triggered-run-verify-03",
+          "check": "The parameter remains the same named object and now has the Collaboration tag."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "No run appears after the push",
+          "fix": "Confirm Task 11 manually started at least one run, the workspace tracks main, and the latest commit is actually on main. Then review the workspace VCS connection."
+        },
+        {
+          "symptom": "Plan wants to recreate the parameter",
+          "fix": "Discard the run and compare main.tf with the supplied updated block; only a tag should have changed."
+        },
+        {
+          "symptom": "Git says there is nothing to commit",
+          "fix": "Run git diff and confirm the Collaboration line was saved in main.tf before trying again."
+        }
+      ]
+    },
+    {
+      "id": "task-14-remote-state",
+      "phaseId": "phase-06-state-locking",
+      "title": "Examine HCP Terraform remote state safely",
+      "feature": "Remote state",
+      "goal": "Use the States view to inspect state version metadata and prove the configuration has no local state file or explicit backend block.",
+      "whyItMatters": "State is Terraform's mapping between configuration addresses and real remote objects; HCP Terraform stores workspace state automatically for remote runs.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-13-vcs-triggered-run"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-state",
+        "src-tf-sensitive",
+        "src-tf-state-lock"
+      ],
+      "examRelevance": "Remote state enables collaboration, but state access must be controlled because sensitive values can be stored there.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Open the HCP workspace and choose States."
+        },
+        {
+          "step": 2,
+          "instruction": "Open the latest state version entry."
+        },
+        {
+          "step": 3,
+          "instruction": "Confirm it is associated with the most recent successful run and, where shown, the VCS commit used by that run."
+        },
+        {
+          "step": 4,
+          "instruction": "Review the state version's summary/diff information and confirm the workspace manages the aws_ssm_parameter.training_message resource."
+        },
+        {
+          "step": 5,
+          "instruction": "Do not open or download the raw state file for this exercise. The fake sensitive_demo value is deliberately marked sensitive, but HashiCorp documents that sensitive values can still exist in state. Treat state as sensitive data."
+        },
+        {
+          "step": 6,
+          "instruction": "Return to the repository and confirm there is no backend block in any .tf file. Remote HCP runs automatically use the workspace state, so this VCS-driven configuration does not need an explicit backend configuration."
+        },
+        {
+          "step": 7,
+          "instruction": "Use the local PowerShell checks below to prove no local tfstate file has been created or tracked."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task14-state-check",
+          "title": "Check that state is not local or tracked by Git",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\n\nGet-ChildItem -Force -Filter \"*.tfstate*\"\ngit ls-files | Select-String -Pattern \"tfstate\"\nSelect-String -Path *.tf -Pattern 'backend\\s+\"'",
+          "note": "All three checks should return no matching state file/backend output for this lab."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "HCP States contains historical state versions from successful applies.",
+        "The latest state is linked to the latest run and VCS commit where applicable.",
+        "No local *.tfstate file exists.",
+        "No state file is committed to Git.",
+        "No explicit backend block is required for the HCP remote-run workspace."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-remote-state-verify-01",
+          "check": "The latest HCP state reflects one managed SSM parameter."
+        },
+        {
+          "id": "task-14-remote-state-verify-02",
+          "check": "The local folder has no *.tfstate file."
+        },
+        {
+          "id": "task-14-remote-state-verify-03",
+          "check": "The Git repository has no tracked state file."
+        },
+        {
+          "id": "task-14-remote-state-verify-04",
+          "check": "The learner can explain that sensitive redaction does not equal removal from state."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "States is empty",
+          "fix": "Confirm Task 12 and Task 13 applied successfully. Failed plans do not create an applied state version containing the AWS resource."
+        },
+        {
+          "symptom": "A local tfstate file exists",
+          "fix": "Stop and identify how it was created. Do not commit it. This lab never runs terraform apply locally."
+        },
+        {
+          "symptom": "You opened raw state and saw the fake sensitive value",
+          "fix": "Close the raw state view. The training value is intentionally harmless, and this demonstrates why real secrets must not be put into ordinary state-backed sensitive variables."
+        }
+      ]
+    },
+    {
+      "id": "task-15-locking",
+      "phaseId": "phase-06-state-locking",
+      "title": "Understand state locking and demonstrate a manual workspace lock",
+      "feature": "State locking and collaboration control",
+      "goal": "Explain automatic Terraform state locking, then manually lock the HCP workspace, queue a standard run, observe it remain pending, and unlock the workspace.",
+      "whyItMatters": "State locking protects state from concurrent writers. HCP's manual workspace lock is a separate operator control that can intentionally pause standard runs.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-14-remote-state"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-tf-state-lock",
+        "src-hc-run-manage",
+        "src-hc-state"
+      ],
+      "examRelevance": "Terraform state locking prevents concurrent state writers; operators should avoid disabling locks because that can risk state corruption.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Before clicking anything, read the distinction: Terraform automatically locks state for operations that can write it when the backend supports locking. You normally do not configure or manually hold this lock during an HCP remote run."
+        },
+        {
+          "step": 2,
+          "instruction": "Also read the separate HCP control: a manual workspace lock prevents applies and many kinds of plans from proceeding. It is not the same thing as the transient Terraform state lock."
+        },
+        {
+          "step": 3,
+          "instruction": "Open workspace fa-hcp-terraform-remote-runs."
+        },
+        {
+          "step": 4,
+          "instruction": "Open Actions and choose Lock workspace. If your UI uses Settings > Locking instead, use that page."
+        },
+        {
+          "step": 5,
+          "instruction": "Confirm the workspace header shows that the workspace is locked."
+        },
+        {
+          "step": 6,
+          "instruction": "While it is locked, choose + New run and queue a normal Plan and apply run with message Locking demonstration - no configuration change."
+        },
+        {
+          "step": 7,
+          "instruction": "Open the run list and confirm the standard run remains Pending while the manual workspace lock is held."
+        },
+        {
+          "step": 8,
+          "instruction": "Do not use force-unlock and do not disable state locking with -lock=false."
+        },
+        {
+          "step": 9,
+          "instruction": "Return to Actions and choose Unlock workspace."
+        },
+        {
+          "step": 10,
+          "instruction": "Watch the pending run continue. Because the configuration and variables did not change, it should normally finish with no infrastructure changes."
+        },
+        {
+          "step": 11,
+          "instruction": "If HCP asks you to discard a no-op run, discard it safely; do not create an artificial change just to make the run apply."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task15-explain",
+          "title": "Local checks while HCP holds the collaboration lock",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\ngit status\ngit log -1 --oneline\n\n# Do NOT run:\n# terraform force-unlock\n# terraform apply -lock=false"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The workspace visibly shows Locked.",
+        "A standard run queued while locked remains Pending.",
+        "After Unlock workspace, the pending run is allowed to continue.",
+        "The learner can state that automatic state locking and a manual workspace lock are related collaboration safeguards but are not the same mechanism."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-locking-verify-01",
+          "check": "The manual workspace lock is visible in HCP."
+        },
+        {
+          "id": "task-15-locking-verify-02",
+          "check": "The queued standard run is observed in Pending before unlock."
+        },
+        {
+          "id": "task-15-locking-verify-03",
+          "check": "The parameter remains present and unchanged after the no-op run."
+        },
+        {
+          "id": "task-15-locking-verify-04",
+          "check": "No force-unlock or -lock=false option was used."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "The run does not stay Pending",
+          "fix": "Confirm you queued a normal Plan and apply run, not a plan-only/speculative run; HashiCorp documents that some plan-only operations are allowed while a workspace is locked."
+        },
+        {
+          "symptom": "Workspace cannot be locked",
+          "fix": "Wait for any active run to finish first, then try the Actions > Lock workspace control again."
+        },
+        {
+          "symptom": "A run remains stuck after normal unlock",
+          "fix": "Review run status and use normal cancel/retry controls first. Do not use force unlock unless you are resolving your own failed lock and understand the lock ID."
+        }
+      ]
+    },
+    {
+      "id": "task-16-destroy",
+      "phaseId": "phase-07-cleanup",
+      "title": "Destroy the Terraform-managed AWS resource from HCP Terraform",
+      "feature": "Safe destroy",
+      "goal": "Queue and apply an HCP Terraform destroy plan before deleting the workspace, then verify the SSM parameter is gone.",
+      "whyItMatters": "Deleting a workspace does not automatically destroy its infrastructure; the resource must be destroyed while the workspace still owns its state.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-15-locking"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-workspace-delete",
+        "src-aws-ssm-delete",
+        "src-hc-state"
+      ],
+      "examRelevance": "Always destroy managed infrastructure before deleting the state/workspace that Terraform needs to track it.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Confirm the workspace is unlocked and there are no runs currently planning, awaiting confirmation or applying."
+        },
+        {
+          "step": 2,
+          "instruction": "Open workspace Settings, then Destruction and Deletion."
+        },
+        {
+          "step": 3,
+          "instruction": "If Allow destroy plans is disabled, enable it for this lab workspace."
+        },
+        {
+          "step": 4,
+          "instruction": "Choose Queue destroy plan."
+        },
+        {
+          "step": 5,
+          "instruction": "When HCP asks for confirmation, type the exact workspace name fa-hcp-terraform-remote-runs."
+        },
+        {
+          "step": 6,
+          "instruction": "Queue the destroy plan."
+        },
+        {
+          "step": 7,
+          "instruction": "Review the plan. It must propose exactly the Terraform-managed SSM parameter for destruction and no unrelated AWS resources."
+        },
+        {
+          "step": 8,
+          "instruction": "Choose Confirm & Apply and confirm the destroy."
+        },
+        {
+          "step": 9,
+          "instruction": "Wait for the run to finish successfully."
+        },
+        {
+          "step": 10,
+          "instruction": "Open AWS Systems Manager in eu-west-2, choose Parameter Store, and verify /fa-hcp-terraform/training-message is absent."
+        },
+        {
+          "step": 11,
+          "instruction": "Open HCP States and verify the latest state no longer contains the managed aws_ssm_parameter resource. Historical state versions may remain until the workspace itself is deleted."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task16-verify-destroy",
+          "title": "Verify the AWS resource is gone",
+          "language": "text",
+          "content": "aws ssm get-parameter `\n  --name /fa-hcp-terraform/training-message `\n  --region eu-west-2 `\n  --profile fa-hcp-terraform-admin",
+          "note": "ParameterNotFound is the expected result after the destroy succeeds."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "Destroy plan is 0 to add, 0 to change, 1 to destroy.",
+        "Destroy apply succeeds.",
+        "AWS returns ParameterNotFound for /fa-hcp-terraform/training-message.",
+        "The current HCP state manages zero lab AWS resources."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-destroy-verify-01",
+          "check": "The HCP destroy run finished successfully."
+        },
+        {
+          "id": "task-16-destroy-verify-02",
+          "check": "The AWS parameter is absent in eu-west-2."
+        },
+        {
+          "id": "task-16-destroy-verify-03",
+          "check": "The workspace is no longer managing the SSM parameter."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Destroy plan shows more than one resource",
+          "fix": "Do not confirm it. Return to States and configuration and identify why additional resources are managed before continuing."
+        },
+        {
+          "symptom": "Destroy is blocked",
+          "fix": "Open Settings > Destruction and Deletion and enable Allow destroy plans for this lab workspace."
+        },
+        {
+          "symptom": "DeleteParameter is AccessDenied during apply",
+          "fix": "Restore the required ssm:DeleteParameter permission to fa-hcp-terraform-run-policy, retry the destroy, and only continue after the resource is gone."
+        }
+      ]
+    },
+    {
+      "id": "task-17-hcp-vcs-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete the HCP Terraform and VCS training resources",
+      "feature": "HCP/VCS cleanup",
+      "goal": "After AWS infrastructure is gone, delete the empty workspace, empty project, lab organization, and lab GitHub repository; revoke the HCP GitHub App only if it was installed solely for this lab.",
+      "whyItMatters": "Removing state before infrastructure would orphan resources, so HCP/VCS cleanup deliberately follows the successful destroy.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-16-destroy"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-hc-workspace-delete",
+        "src-hc-projects",
+        "src-hc-org-settings",
+        "src-hc-vcs-github-app"
+      ],
+      "examRelevance": "State/workspace deletion is not infrastructure destruction; safe cleanup follows dependency order.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "In HCP Terraform, open fa-hcp-terraform-remote-runs Settings > Destruction and Deletion."
+        },
+        {
+          "step": 2,
+          "instruction": "Use Delete from HCP Terraform/Delete workspace. Confirm only after you have already verified that the workspace manages no infrastructure."
+        },
+        {
+          "step": 3,
+          "instruction": "Return to Projects, open fa-hcp-terraform-project, choose Settings, then Delete. A project can be deleted only when it contains no workspaces or Stacks."
+        },
+        {
+          "step": 4,
+          "instruction": "Open the lab organization's Settings and choose Delete this organization. Confirm only the organization whose name begins fa-hcp-terraform-org- and was created in Task 6."
+        },
+        {
+          "step": 5,
+          "instruction": "In GitHub, delete only repository fa-hcp-terraform-vcs-lab using the repository's deletion control. The exact GitHub button wording is intentionally not asserted here because the source restriction for this Follow Along permits only HashiCorp and AWS documentation."
+        },
+        {
+          "step": 6,
+          "instruction": "If Terraform Cloud by HashiCorp was authorized to GitHub for the first time solely for this lab and you have no other HCP Terraform repository that needs it, follow HashiCorp's GitHub App deauthorizing guidance. If you already used the app elsewhere, leave the shared authorization in place."
+        },
+        {
+          "step": 7,
+          "instruction": "Do not delete the local folder yet. Keep it until AWS OIDC and IAM cleanup is complete so you still have the lab record while cleanup is being verified."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task17-local-record",
+          "title": "Keep the local record until AWS cleanup finishes",
+          "language": "text",
+          "content": "$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nSet-Location $LabRoot\ngit log --oneline --max-count 5\ngit status"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The HCP workspace is deleted only after its infrastructure was destroyed.",
+        "fa-hcp-terraform-project is deleted after it becomes empty.",
+        "The lab HCP organization is removed.",
+        "The GitHub lab repository is removed.",
+        "Any pre-existing shared GitHub App authorization is preserved."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-hcp-vcs-cleanup-verify-01",
+          "check": "fa-hcp-terraform-remote-runs no longer exists."
+        },
+        {
+          "id": "task-17-hcp-vcs-cleanup-verify-02",
+          "check": "fa-hcp-terraform-project no longer exists."
+        },
+        {
+          "id": "task-17-hcp-vcs-cleanup-verify-03",
+          "check": "The lab organization no longer exists."
+        },
+        {
+          "id": "task-17-hcp-vcs-cleanup-verify-04",
+          "check": "Only the lab repository was selected for VCS deletion."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "HCP refuses to delete the workspace because it manages resources",
+          "fix": "Stop. Return to Task 16 and verify the destroy run and current state; do not force-delete a workspace that still owns infrastructure."
+        },
+        {
+          "symptom": "HCP refuses to delete the project",
+          "fix": "Check for remaining workspaces/Stacks in fa-hcp-terraform-project and remove only lab-created items after their infrastructure is safely destroyed."
+        },
+        {
+          "symptom": "You are unsure whether to revoke the GitHub App",
+          "fix": "Leave it authorized. Revocation is optional and only safe when you know no other HCP Terraform workspace depends on it."
+        }
+      ]
+    },
+    {
+      "id": "task-18-aws-local-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Remove AWS federation, temporary IAM identity and local files",
+      "feature": "Final credential and local cleanup",
+      "goal": "Delete the run role and OIDC provider, then use root only for final removal of the temporary IAM user/policy, remove the local CLI profile, and finally delete the local lab folder.",
+      "whyItMatters": "Credentials and state/local evidence are removed last so they remain available until cloud cleanup has been verified.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-17-hcp-vcs-cleanup"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-aws-hcp-oidc",
+        "src-aws-access-keys",
+        "src-aws-users",
+        "src-aws-root",
+        "src-aws-root-best-practices"
+      ],
+      "examRelevance": "Clean teardown reverses dependencies: managed resources first, then control plane and credentials, then local files.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "step": 1,
+          "instruction": "Remain signed in to AWS as fa-hcp-terraform-admin for the federation cleanup."
+        },
+        {
+          "step": 2,
+          "instruction": "Open IAM > Roles > fa-hcp-terraform-run-role. Delete inline policy fa-hcp-terraform-run-policy, then delete the role."
+        },
+        {
+          "step": 3,
+          "instruction": "Open IAM > Identity providers. Select only app.terraform.io and delete that provider. Because this Follow Along assumed no pre-existing provider, it should be the one created in Task 8; if you discover it is shared, do not delete it until you have proved no other workload uses it."
+        },
+        {
+          "step": 4,
+          "instruction": "Verify the role and OIDC provider are gone before touching the training user's credentials."
+        },
+        {
+          "step": 5,
+          "instruction": "Sign out of fa-hcp-terraform-admin."
+        },
+        {
+          "step": 6,
+          "instruction": "Sign in as the AWS root user only for final IAM identity removal. Do not create a root access key."
+        },
+        {
+          "step": 7,
+          "instruction": "Open IAM > Users > fa-hcp-terraform-admin. Remove its temporary access key, console login profile and attached fa-hcp-terraform-admin-policy as required by the IAM delete-user flow, then delete the user."
+        },
+        {
+          "step": 8,
+          "instruction": "Open IAM > Policies, select customer-managed policy fa-hcp-terraform-admin-policy, and delete it after it is no longer attached."
+        },
+        {
+          "step": 9,
+          "instruction": "Confirm the training user, policy, run role and app.terraform.io OIDC provider are absent, then sign out root."
+        },
+        {
+          "step": 10,
+          "instruction": "Open the local AWS shared credentials file and remove only the [fa-hcp-terraform-admin] profile section. Open the AWS config file and remove only the [profile fa-hcp-terraform-admin] section."
+        },
+        {
+          "step": 11,
+          "instruction": "Change PowerShell to your home directory, then delete the local fa-hcp-terraform-vcs-lab folder only after every cloud/HCP/VCS verification above is complete."
+        },
+        {
+          "step": 12,
+          "instruction": "Finish by reading and accepting the programme cleanup acknowledgement."
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "cli-task18-federation-delete",
+          "title": "Delete AWS federation resources before deleting the IAM user",
+          "language": "text",
+          "content": "$AwsAccountId = aws sts get-caller-identity --profile fa-hcp-terraform-admin --query Account --output text\n$OidcArn = \"arn:aws:iam::${AwsAccountId}:oidc-provider/app.terraform.io\"\n\naws iam delete-role-policy `\n  --role-name fa-hcp-terraform-run-role `\n  --policy-name fa-hcp-terraform-run-policy `\n  --profile fa-hcp-terraform-admin\n\naws iam delete-role `\n  --role-name fa-hcp-terraform-run-role `\n  --profile fa-hcp-terraform-admin\n\naws iam delete-open-id-connect-provider `\n  --open-id-connect-provider-arn $OidcArn `\n  --profile fa-hcp-terraform-admin\n\naws iam list-roles `\n  --query \"Roles[?RoleName=='fa-hcp-terraform-run-role'].RoleName\" `\n  --output text `\n  --profile fa-hcp-terraform-admin\n\naws iam list-open-id-connect-providers `\n  --query \"OpenIDConnectProviderList[?contains(Arn, 'app.terraform.io')].Arn\" `\n  --output text `\n  --profile fa-hcp-terraform-admin"
+        },
+        {
+          "id": "cli-task18-profile-local",
+          "title": "Remove only the named local profile and lab folder after cloud cleanup",
+          "language": "text",
+          "content": "notepad \"$HOME\\.aws\\credentials\"\n# Remove only the [fa-hcp-terraform-admin] section, save, and close.\n\nnotepad \"$HOME\\.aws\\config\"\n# Remove only the [profile fa-hcp-terraform-admin] section, save, and close.\n\nSet-Location $HOME\n$LabRoot = Join-Path $HOME \"terraform-labs\\fa-hcp-terraform-vcs-lab\"\nRemove-Item -Recurse -Force $LabRoot"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "fa-hcp-terraform-run-role is absent.",
+        "The lab app.terraform.io OIDC provider is absent.",
+        "fa-hcp-terraform-admin and fa-hcp-terraform-admin-policy are absent.",
+        "The fa-hcp-terraform-admin AWS CLI profile is removed.",
+        "The local lab folder is removed only after all cloud resources and credentials are gone."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-aws-local-cleanup-verify-01",
+          "check": "AWS IAM role fa-hcp-terraform-run-role does not exist."
+        },
+        {
+          "id": "task-18-aws-local-cleanup-verify-02",
+          "check": "AWS IAM OIDC provider app.terraform.io created for this lab does not exist."
+        },
+        {
+          "id": "task-18-aws-local-cleanup-verify-03",
+          "check": "IAM user fa-hcp-terraform-admin does not exist."
+        },
+        {
+          "id": "task-18-aws-local-cleanup-verify-04",
+          "check": "Customer-managed policy fa-hcp-terraform-admin-policy does not exist."
+        },
+        {
+          "id": "task-18-aws-local-cleanup-verify-05",
+          "check": "The named local AWS CLI profile and local lab folder are removed."
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "delete-role reports DeleteConflict",
+          "fix": "List the role's inline policies, delete fa-hcp-terraform-run-policy, then retry delete-role."
+        },
+        {
+          "symptom": "Deleting the IAM user is blocked",
+          "fix": "In the root IAM console, remove the user's access keys, login profile and attached policy first, then retry Delete user."
+        },
+        {
+          "symptom": "The local profile still works after you thought credentials were removed",
+          "fix": "Stop and check whether another credential source/environment variable is being used. Do not delete unrelated profiles; remove only the lab profile after confirming the training IAM user is gone."
+        }
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "problem": "HCP first VCS commit does not start a run",
+      "cause": "A brand-new VCS workspace with no prior runs does not accept VCS webhook-triggered runs.",
+      "resolution": "Use + New run once for the initial run. Later commits to main should trigger runs automatically.",
+      "sourceIds": [
+        "src-hc-workspace-create",
+        "src-hc-vcs-runs"
+      ]
+    },
+    {
+      "problem": "Remote run reports No valid credential sources or AssumeRoleWithWebIdentity denied",
+      "cause": "Dynamic credential environment variables, OIDC audience, role ARN or trust conditions do not match.",
+      "resolution": "Check TFC_AWS_PROVIDER_AUTH=true, the exact TFC_AWS_RUN_ROLE_ARN, app.terraform.io, aws.workload.identity, and exact organization/project/workspace subject conditions.",
+      "sourceIds": [
+        "src-hc-aws-dynamic",
+        "src-aws-hcp-oidc"
+      ]
+    },
+    {
+      "problem": "Remote run reports AccessDenied for ssm:PutParameter, tagging or deletion",
+      "cause": "The inline policy is missing an action or its eu-west-2 /fa-hcp-terraform/* ARN does not match.",
+      "resolution": "Compare fa-hcp-terraform-run-policy with the supplied JSON and retry only after the policy is corrected.",
+      "sourceIds": [
+        "src-aws-policy",
+        "src-aws-ssm"
+      ]
+    },
+    {
+      "problem": "The deliberate first run fails for AWS authentication instead of variable validation",
+      "cause": "OIDC must be fixed before the planned learning failure can be observed cleanly.",
+      "resolution": "Repair dynamic credentials first, then keep environment=broken and start a new run to observe the intended validation error.",
+      "sourceIds": [
+        "src-hc-aws-dynamic",
+        "src-hc-variables"
+      ]
+    },
+    {
+      "problem": "A VCS-triggered run does not appear after the second commit",
+      "cause": "The workspace may track another branch, the first run was never manually queued, or the VCS app lost repository access.",
+      "resolution": "Confirm main is the tracked branch, Task 11 occurred, and the GitHub App still has access to fa-hcp-terraform-vcs-lab.",
+      "sourceIds": [
+        "src-hc-vcs-runs",
+        "src-hc-vcs-github-app"
+      ]
+    },
+    {
+      "problem": "Run remains Pending",
+      "cause": "The workspace may be manually locked or another run may hold the workspace.",
+      "resolution": "Check the workspace header and Actions/Settings > Locking. Unlock only your deliberate lab lock after confirming no active apply should remain protected.",
+      "sourceIds": [
+        "src-hc-run-manage"
+      ]
+    },
+    {
+      "problem": "Sensitive value appears redacted in UI but you assume it is absent from state",
+      "cause": "Sensitive redaction hides normal display; it does not automatically omit the value from plan/state.",
+      "resolution": "Treat state as sensitive and use only the fake training value in this lab. Do not open raw state just to prove the point.",
+      "sourceIds": [
+        "src-tf-sensitive",
+        "src-hc-state"
+      ]
+    },
+    {
+      "problem": "HCP refuses safe workspace deletion",
+      "cause": "The workspace still manages infrastructure or is locked.",
+      "resolution": "Return to the destroy task, ensure the current state manages zero lab resources, unlock normally, then use safe deletion.",
+      "sourceIds": [
+        "src-hc-workspace-delete",
+        "src-hc-run-manage"
+      ]
+    },
+    {
+      "problem": "Terraform state exists locally",
+      "cause": "A local apply or another local state-writing command may have been run.",
+      "resolution": "Do not commit the file. Stop and reconcile ownership before cleanup. The intended lab flow never runs terraform apply locally.",
+      "sourceIds": [
+        "src-hc-state",
+        "src-tf-sensitive"
+      ]
+    },
+    {
+      "problem": "Cleanup command targets an unexpected name",
+      "cause": "A value was typed differently earlier or another environment is selected.",
+      "resolution": "Stop rather than broadening a delete command. Return to the resource inventory and delete only the exact lab-owned resource.",
+      "sourceIds": [
+        "src-hc-workspace-delete",
+        "src-aws-root-best-practices"
+      ]
+    }
+  ],
+  "cleanup": {
+    "completionGate": "acknowledgement",
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "steps": [
+      {
+        "sequence": 1,
+        "id": "cleanup-01",
+        "resource": "/fa-hcp-terraform/training-message",
+        "action": "Queue and apply the HCP Terraform destroy plan while the workspace still owns its state.",
+        "verification": "AWS get-parameter returns ParameterNotFound and HCP current state manages zero lab resources.",
+        "taskId": "task-16-destroy"
+      },
+      {
+        "sequence": 2,
+        "id": "cleanup-02",
+        "resource": "fa-hcp-terraform-remote-runs",
+        "action": "Safe-delete the empty HCP workspace after destroy.",
+        "verification": "Workspace no longer appears in HCP Terraform.",
+        "taskId": "task-17-hcp-vcs-cleanup"
+      },
+      {
+        "sequence": 3,
+        "id": "cleanup-03",
+        "resource": "fa-hcp-terraform-project",
+        "action": "Delete the project after it contains no workspace/Stack.",
+        "verification": "Project no longer appears.",
+        "taskId": "task-17-hcp-vcs-cleanup"
+      },
+      {
+        "sequence": 4,
+        "id": "cleanup-04",
+        "resource": "lab HCP organization",
+        "action": "Delete the exact dedicated HCP organization created in Task 6.",
+        "verification": "Lab organization no longer exists.",
+        "taskId": "task-17-hcp-vcs-cleanup"
+      },
+      {
+        "sequence": 5,
+        "id": "cleanup-05",
+        "resource": "fa-hcp-terraform-vcs-lab",
+        "action": "Delete the lab GitHub repository; deauthorize the HCP GitHub App only when it was installed solely for this lab.",
+        "verification": "Lab repository is gone; any unrelated shared app authorization remains intact.",
+        "taskId": "task-17-hcp-vcs-cleanup"
+      },
+      {
+        "sequence": 6,
+        "id": "cleanup-06",
+        "resource": "fa-hcp-terraform-run-policy then fa-hcp-terraform-run-role",
+        "action": "Delete the inline policy then the role.",
+        "verification": "IAM role query returns no fa-hcp-terraform-run-role.",
+        "taskId": "task-18-aws-local-cleanup"
+      },
+      {
+        "sequence": 7,
+        "id": "cleanup-07",
+        "resource": "app.terraform.io OIDC provider created by the lab",
+        "action": "Delete the OIDC provider after HCP resources are gone.",
+        "verification": "IAM OIDC listing no longer contains the lab provider.",
+        "taskId": "task-18-aws-local-cleanup"
+      },
+      {
+        "sequence": 8,
+        "id": "cleanup-08",
+        "resource": "fa-hcp-terraform-admin access key/user and fa-hcp-terraform-admin-policy",
+        "action": "Use root only for final training identity cleanup, then sign out root.",
+        "verification": "IAM user and policy are absent.",
+        "taskId": "task-18-aws-local-cleanup"
+      },
+      {
+        "sequence": 9,
+        "id": "cleanup-09",
+        "resource": "local AWS profile fa-hcp-terraform-admin",
+        "action": "Remove only the matching sections from AWS credentials/config files.",
+        "verification": "The named profile sections are absent.",
+        "taskId": "task-18-aws-local-cleanup"
+      },
+      {
+        "sequence": 10,
+        "id": "cleanup-10",
+        "resource": "local fa-hcp-terraform-vcs-lab folder",
+        "action": "Delete the local training folder last.",
+        "verification": "Local folder is absent.",
+        "taskId": "task-18-aws-local-cleanup"
+      }
+    ],
+    "programmeCleanupAcknowledgement": "I verified that /fa-hcp-terraform/training-message is absent in eu-west-2; the HCP workspace, project and dedicated organization created by this lab are removed; the lab GitHub repository is removed; the HCP AWS run role and lab OIDC provider are removed; the temporary IAM training user/policy/access key and named CLI profile are removed; and only after those checks did I remove the local lab folder."
+  },
+  "conversionNotesForLocalCodex": [
+    "Convert this offline manuscript into the current Study Tracker handoff schema without changing the learning sequence or safety boundaries.",
+    "Preserve task IDs or map them deterministically to stable unique IDs.",
+    "Preserve sourceIds and source usedByTaskIds bidirectionally.",
+    "Do not create acceptance, fingerprint, import, candidate, approval or publication artifacts until the local controlled workflow explicitly reaches those later stages.",
+    "Run local validators only during the local conversion workflow; this offline artifact does not claim validator success."
+  ],
+  "contentMetrics": {
+    "phaseCount": 7,
+    "taskCount": 18,
+    "verificationCheckCount": 63,
+    "cleanupStepCount": 10,
+    "sourceCount": 31,
+    "codeBlockCount": 31
+  }
+}

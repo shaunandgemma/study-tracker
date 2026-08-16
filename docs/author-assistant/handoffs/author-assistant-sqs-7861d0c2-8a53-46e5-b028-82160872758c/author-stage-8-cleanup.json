@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_stage_8_local_manual_cleanup",
+  "status": "human_accepted",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "responseId": "resp_0ff00cf37d214246016a79ac9f8c5881a39f56ae19946b4404",
+  "model": "gpt-5.6-terra",
+  "generatedAt": "2026-08-10T10:49:08.736Z",
+  "basedOnStage7Fingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "34bb5ae9f036bd3906eddca93c540b674c65f5a8e7d638268e15806243d557fc"
+  },
+  "stageBoundary": {
+    "preparedLocally": [
+      8
+    ],
+    "notPrepared": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "writtenToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "candidatePrepared": false,
+    "published": false
+  },
+  "approvedCleanupTarget": {
+    "taskId": "task-sqs-review-queue-deletion-effects-006",
+    "targetType": "Amazon SQS queue",
+    "targetName": "sqs-beginner-test"
+  },
+  "taskCleanup": {
+    "taskId": "task-sqs-review-queue-deletion-effects-006",
+    "steps": [
+      {
+        "id": "task-sqs-review-queue-deletion-effects-006-cleanup-1-open-the-target-queue",
+        "stepNumber": 1,
+        "title": "Open the target queue",
+        "instruction": "In the Amazon SQS console, choose Queues and select sqs-beginner-test only.",
+        "description": "In the Amazon SQS console, choose Queues and select sqs-beginner-test only.",
+        "verification": "Confirm sqs-beginner-test is the selected queue; do not select messages, other queues, or other AWS resources.",
+        "resourceKeys": []
+      },
+      {
+        "id": "task-sqs-review-queue-deletion-effects-006-cleanup-2-delete-the-approved-queue",
+        "stepNumber": 2,
+        "title": "Delete the approved queue",
+        "instruction": "With sqs-beginner-test selected, choose Delete, enter delete in the confirmation dialog, then choose Delete.",
+        "description": "With sqs-beginner-test selected, choose Delete, enter delete in the confirmation dialog, then choose Delete.",
+        "verification": "Confirm the deletion action was submitted for sqs-beginner-test only.",
+        "resourceKeys": []
+      },
+      {
+        "id": "task-sqs-review-queue-deletion-effects-006-cleanup-3-refresh-and-verify-removal",
+        "stepNumber": 3,
+        "title": "Refresh and verify removal",
+        "instruction": "Return to the Queues list and refresh it after deleting sqs-beginner-test.",
+        "description": "Return to the Queues list and refresh it after deleting sqs-beginner-test.",
+        "verification": "Visibly confirm that sqs-beginner-test is no longer listed.",
+        "resourceKeys": []
+      }
+    ]
+  },
+  "programmeCleanup": {
+    "steps": [
+      {
+        "id": "programme-cleanup-1-manual-cleanup-acknowledgement",
+        "stepNumber": 1,
+        "title": "Manual cleanup acknowledgement",
+        "instruction": "Record that the Stage 8 manual Console cleanup check is complete for sqs-beginner-test.",
+        "description": "Record that the Stage 8 manual Console cleanup check is complete for sqs-beginner-test.",
+        "verification": "Confirmed sqs-beginner-test is no longer listed after refresh and no other resources were selected for deletion.",
+        "resourceKeys": []
+      }
+    ],
+    "completionGate": "acknowledgement",
+    "manualOnly": true,
+    "ordering": "reverse_dependency"
+  },
+  "evidence": {
+    "cleanupSteps": [
+      {
+        "scope": "task",
+        "taskId": "task-sqs-review-queue-deletion-effects-006",
+        "cleanupStepId": "task-sqs-review-queue-deletion-effects-006-cleanup-1-open-the-target-queue",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+        ]
+      },
+      {
+        "scope": "task",
+        "taskId": "task-sqs-review-queue-deletion-effects-006",
+        "cleanupStepId": "task-sqs-review-queue-deletion-effects-006-cleanup-2-delete-the-approved-queue",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+        ]
+      },
+      {
+        "scope": "task",
+        "taskId": "task-sqs-review-queue-deletion-effects-006",
+        "cleanupStepId": "task-sqs-review-queue-deletion-effects-006-cleanup-3-refresh-and-verify-removal",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+        ]
+      },
+      {
+        "scope": "programme",
+        "taskId": null,
+        "cleanupStepId": "programme-cleanup-1-manual-cleanup-acknowledgement",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+        ]
+      }
+    ],
+    "protectedSourceUrls": [
+      "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/step-delete-queue.html"
+    ]
+  },
+  "futureCliBoundary": {
+    "prepared": false,
+    "guidancePreservedFromStage7": {
+      "task-sqs-receive-and-inspect-the-test-message-004": "A future CLI path must retain the ReceiptHandle returned by receive-message for the later delete-message command.",
+      "task-sqs-delete-the-received-test-message-005": "A future CLI path must use the most recently returned ReceiptHandle with delete-message.",
+      "task-sqs-review-queue-deletion-effects-006": "A future CLI cleanup path may use delete-queue only in Stage 8.",
+      "task-sqs-confirm-safe-scope-and-required-access-001": "A future CLI path may use --region eu-west-2 and must still rely on access already granted by the learner's administrator."
+    }
+  },
+  "manualReviewFindings": [
+    "An exact least-privilege policy must not be inferred. The learner must use an account or role already authorized for the required SQS Console actions.",
+    "Standard queues use at-least-once delivery and can occasionally return messages out of order; use one harmless test message and do not claim exactly-once or ordered delivery.",
+    "A Console-retrieved message is not deleted automatically and must be selected and deleted after verification.",
+    "FIFO-only requirements remain outside this standard-queue Follow Along.",
+    "Receipt-handle capture is preserved only for a future CLI path and is not required by the Console instructions.",
+    "Stage 6 provides queue lifecycle awareness only; actual manual queue deletion belongs to Stage 8 cleanup.",
+    "The accepted sources identify SQS permissions and actions but do not support an exact Console-only inspection that proves the signed-in identity has every required permission before performing the tasks.",
+    "The accepted Console receive/delete documentation does not support capturing a receipt handle in the Console; no transient receipt-handle resource was captured.",
+    "Cleanup remains manual-only and is limited to deletion of sqs-beginner-test.",
+    "No messages, other queues, IAM resources, or other AWS resources are included."
+  ],
+  "acceptedAt": "2026-08-10T10:56:53.160Z",
+  "acceptanceFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "ccf109a674d6b5c05f1f16935b80b5b3bd89f2920accfa4e46565bc4251e1bc1"
+  }
+}

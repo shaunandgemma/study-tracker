@@ -207,6 +207,15 @@ test('Follow Along display components', async (t) => {
     }
   });
 
+  await t.test('7A. Next Task advances without a resource-retention popup', () => {
+    const sharedRunner = readFileSync('src/components/FollowAlongs/shared/FollowAlongTaskRunner.jsx', 'utf8');
+    const vpcRunner = readFileSync('src/components/VpcLearningPath/VpcTaskRunner.jsx', 'utf8');
+    assert.doesNotMatch(sharedRunner, /FollowAlongRetentionModal|Resource Retention Decision|decisionOpen/);
+    assert.doesNotMatch(vpcRunner, /Resource Retention Decision|showDecisionModal|handleSelectDecision/);
+    assert.match(sharedRunner, /onCompleteAndNavigate\(task\.id, 'retained', savedResources\)/);
+    assert.match(vpcRunner, /onCompleteTask\(taskId, 'retained'\)/);
+  });
+
   await t.test('8. shared progress display accepts the published programme summary shape', () => {
     const s3Html = renderToStaticMarkup(createElement(FollowAlongProgressSummary, {
       summary: { status: 'Not Started', completed: 0, total: 34, percentage: 0, loading: false },

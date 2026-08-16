@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_stage_11_local_structured_review",
+  "status": "human_accepted",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "reviewedAt": "2026-08-10T11:48:13.052Z",
+  "basedOnStage10Fingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "26e9f3bdbb01a4ac5111d5222a8d31675c92d6797bc8e1fb299e03099dd7fdf1"
+  },
+  "stageBoundary": {
+    "preparedLocally": [
+      11
+    ],
+    "notPrepared": [
+      12
+    ],
+    "writtenToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "candidatePrepared": false,
+    "published": false
+  },
+  "reviewState": {
+    "learnerPreviewStatus": "reviewed",
+    "reviewStatus": "ready_for_approval",
+    "approvalDecision": "pending",
+    "publicationVisibility": "unpublished",
+    "publishStatus": "not_published"
+  },
+  "validations": {
+    "planning": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "content": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "structuredReview": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "section": "review",
+          "message": "Open advisory findings remain for the approver to consider."
+        }
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "finding-1-approver-should-confirm-that-the-learner-uses-an-account-or-",
+      "findingNumber": 1,
+      "section": "warnings",
+      "priority": "advisory",
+      "message": "Approver should confirm that the learner uses an account or role already authorized by an administrator for the required SQS Console actions. No IAM policy is created or recommended.",
+      "status": "open",
+      "consolidatedFrom": [
+        "An exact least-privilege policy must not be inferred. The learner must use an account or role already authorized for the required SQS Console actions.",
+        "The accepted sources identify SQS permissions and actions but do not support an exact Console-only inspection that proves the signed-in identity has every required permission before performing the tasks."
+      ]
+    }
+  ],
+  "resolvedByAcceptedContent": [
+    {
+      "resolutionNumber": 1,
+      "message": "Standard queues use at-least-once delivery and can occasionally return messages out of order; use one harmless test message and do not claim exactly-once or ordered delivery.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 2,
+      "message": "A Console-retrieved message is not deleted automatically and must be selected and deleted after verification.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 3,
+      "message": "FIFO-only requirements remain outside this standard-queue Follow Along.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 4,
+      "message": "Receipt-handle capture is preserved only for a future CLI path and is not required by the Console instructions.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 5,
+      "message": "Stage 6 provides queue lifecycle awareness only; actual manual queue deletion belongs to Stage 8 cleanup.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 6,
+      "message": "The accepted Console receive/delete documentation does not support capturing a receipt handle in the Console; no transient receipt-handle resource was captured.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 7,
+      "message": "Cleanup remains manual-only and is limited to deletion of sqs-beginner-test.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    },
+    {
+      "resolutionNumber": 8,
+      "message": "No messages, other queues, IAM resources, or other AWS resources are included.",
+      "status": "resolved_by_accepted_stages_6_to_10"
+    }
+  ],
+  "summary": {
+    "sourceFindingCount": 10,
+    "consolidatedAdvisoryCount": 1,
+    "openBlockingFindingCount": 0,
+    "openAdvisoryFindingCount": 1,
+    "resolvedFindingCount": 8,
+    "planningErrorCount": 0,
+    "contentErrorCount": 0,
+    "reviewErrorCount": 0
+  },
+  "safetyBoundary": {
+    "approvalPerformed": false,
+    "releaseCandidatePrepared": false,
+    "published": false,
+    "authorDraftWritten": false,
+    "awsConnected": false,
+    "supabaseConnected": false
+  },
+  "acceptedStagesOneToTenChanged": false,
+  "acceptedAt": "2026-08-10T11:55:49.751Z",
+  "acceptanceFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "9f42da766fdf4e542996d787676c42f60135e78b75e0e1b10ef286ffcfc29dbb"
+  }
+}

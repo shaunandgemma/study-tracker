@@ -1,0 +1,917 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-sns-ae2bd59c-1d20-4719-b2b8-5c1d5b2aac82",
+  "preparedAt": "2026-08-10T14:25:29.938Z",
+  "service": {
+    "officialName": "SNS",
+    "shortName": "SNS"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "7128ba3e7a3675c23c4de1e9213e77a997c4f16c5bd4467f1491cbdfa90d4523"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "7128ba3e7a3675c23c4de1e9213e77a997c4f16c5bd4467f1491cbdfa90d4523"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "sns",
+      "serviceName": "SNS",
+      "shortName": "SNS",
+      "displayName": "Amazon SNS: Create, Subscribe, and Publish",
+      "subtitle": "A beginner lab for learning the basic Amazon Simple Notification Service lifecycle",
+      "description": "Create a standard Amazon SNS topic, add an email subscription, publish a test notification, and manually remove the lab resources.",
+      "learningOutcome": "Understand how an Amazon SNS topic, subscription, subscription confirmation, and published message fit together in a simple notification workflow.",
+      "programmeId": "sns-learning-path",
+      "pathId": "sns-learning-path",
+      "componentNamespace": "",
+      "category": "Application integration and messaging",
+      "difficulty": "Beginner",
+      "estimatedMinutes": 25,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-creating-an-amazon-sns-topic",
+        "title": "Creating an Amazon SNS topic",
+        "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console and AWS CLI instructions for creating an SNS topic.",
+        "taskIds": [
+          "task-sns-create-a-standard-sns-topic-001"
+        ]
+      },
+      {
+        "id": "source-creating-a-subscription-to-an-amazon-sns-topic",
+        "title": "Creating a subscription to an Amazon SNS topic",
+        "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-create-subscribe-endpoint-to-topic.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console instructions for creating an email subscription and confirmation behavior.",
+        "taskIds": [
+          "task-sns-create-an-email-subscription-002"
+        ]
+      },
+      {
+        "id": "source-publishing-an-amazon-sns-message",
+        "title": "Publishing an Amazon SNS message",
+        "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-publishing.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Console instructions for publishing a message to a topic.",
+        "taskIds": [
+          "task-sns-publish-a-harmless-test-notification-003"
+        ]
+      },
+      {
+        "id": "source-accessing-amazon-sns-in-the-aws-cli",
+        "title": "Accessing Amazon SNS in the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-services-sns.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "AWS CLI examples for creating topics, subscribing endpoints, publishing, deleting, and checking SNS resources.",
+        "taskIds": [
+          "task-sns-create-a-standard-sns-topic-001",
+          "task-sns-create-an-email-subscription-002",
+          "task-sns-publish-a-harmless-test-notification-003"
+        ]
+      },
+      {
+        "id": "source-get-topic-attributes-aws-cli-command-reference",
+        "title": "get-topic-attributes — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/sns/get-topic-attributes.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "AWS CLI verification of topic properties and subscription counts.",
+        "taskIds": [
+          "task-sns-create-a-standard-sns-topic-001",
+          "task-sns-create-an-email-subscription-002"
+        ]
+      },
+      {
+        "id": "source-deleting-an-amazon-sns-topic-and-subscription",
+        "title": "Deleting an Amazon SNS topic and subscription",
+        "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-delete-subscription-topic.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Manual Console cleanup instructions and deletion cautions.",
+        "taskIds": []
+      },
+      {
+        "id": "source-list-topics-aws-cli-command-reference",
+        "title": "list-topics — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/sns/list-topics.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "AWS CLI cleanup verification.",
+        "taskIds": []
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "SNS",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-sns-create-a-standard-sns-topic-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-create-the-notification-channel",
+        "phaseNumber": 1,
+        "title": "Create the notification channel",
+        "description": "Create one standard SNS topic in Europe (London).",
+        "taskIds": [
+          "task-sns-create-a-standard-sns-topic-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-add-an-endpoint-and-publish-a-test-message",
+        "phaseNumber": 2,
+        "title": "Add an endpoint and publish a test message",
+        "description": "Create an email subscription and send a harmless sample notification.",
+        "taskIds": [
+          "task-sns-create-an-email-subscription-002",
+          "task-sns-publish-a-harmless-test-notification-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-verify-and-remove-the-lab-resources",
+        "phaseNumber": 3,
+        "title": "Verify and remove the lab resources",
+        "description": "Confirm the topic behavior, then manually delete only the topic created for this lab.",
+        "taskIds": [],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-sns-create-a-standard-sns-topic-001",
+        "slug": "create-a-standard-sns-topic",
+        "title": "Create a standard SNS topic",
+        "service": "SNS",
+        "feature": "Amazon SNS standard topic",
+        "goal": "Create the message-distribution channel named sns-beginner-lab-topic in eu-west-2.",
+        "whyItMatters": "An SNS topic is the logical access point that groups endpoints and receives messages for distribution.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 7,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-create-the-notification-channel",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-an-amazon-sns-topic",
+          "source-accessing-amazon-sns-in-the-aws-cli",
+          "source-get-topic-attributes-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-1-open-the-sns-console",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the SNS console",
+            "instruction": "Open Amazon SNS in Europe (London) (eu-west-2).",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-1-open-the-sns-console-instruction-1",
+                "text": "Open Amazon SNS in Europe (London) (eu-west-2).",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Amazon SNS console is open for the intended regional lab.",
+            "warning": "Do not place personal, confidential, or sensitive information in a topic name.",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-2-open-topics",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Open topics",
+            "instruction": "Choose Topics.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-2-open-topics-instruction-1",
+                "text": "Choose Topics.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Topics page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-3-start-topic-creation",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Start topic creation",
+            "instruction": "Choose Create topic.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-3-start-topic-creation-instruction-1",
+                "text": "Choose Create topic.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Create topic page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-4-select-the-topic-type",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Select the topic type",
+            "instruction": "Choose Standard.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-4-select-the-topic-type-instruction-1",
+                "text": "Choose Standard.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Standard is selected as the topic type.",
+            "warning": "Do not select FIFO for this introductory lab.",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-5-name-the-topic",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Name the topic",
+            "instruction": "Enter sns-beginner-lab-topic in Name.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-5-name-the-topic-instruction-1",
+                "text": "Enter sns-beginner-lab-topic in Name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The topic name is populated with the fixed lab name.",
+            "warning": "Topic type and name cannot be changed after creation.",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-6-create-the-topic",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Create the topic",
+            "instruction": "Choose Create topic.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-6-create-the-topic-instruction-1",
+                "text": "Choose Create topic.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The topic Details page displays the topic name and ARN.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-console-step-7-record-the-topic-arn",
+            "stepNumber": 7,
+            "number": 7,
+            "title": "Record the topic ARN",
+            "instruction": "Copy the topic ARN.",
+            "instructions": [
+              {
+                "id": "task-sns-create-a-standard-sns-topic-001-console-step-7-record-the-topic-arn-instruction-1",
+                "text": "Copy the topic ARN.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "You have the ARN needed by later CLI commands.",
+            "warning": "Use this ARN only as an earlier-command output dependency in later steps.",
+            "sourceIds": [
+              "source-creating-an-amazon-sns-topic"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sns create-topic --name sns-beginner-lab-topic --region eu-west-2",
+            "explanation": "Creates the fixed-name standard SNS topic. Save the TopicArn returned by this command because later commands require it.",
+            "expectedResult": "The output contains TopicArn for sns-beginner-lab-topic in eu-west-2.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this as a standalone command. Do not include sensitive information in the topic name.",
+            "sourceIds": [
+              "source-accessing-amazon-sns-in-the-aws-cli",
+              "source-creating-an-amazon-sns-topic"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sns-create-a-standard-sns-topic-001-verification-1",
+            "title": "Confirm that the topic exists",
+            "instruction": "In the Console, open the topic Details page and confirm that sns-beginner-lab-topic has an ARN; or use the CLI command below.",
+            "expectedResult": "The topic properties are returned for the topic ARN from this task.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-sns-create-an-email-subscription-002",
+        "slug": "create-an-email-subscription",
+        "title": "Create an email subscription",
+        "service": "SNS",
+        "feature": "Amazon SNS email subscription",
+        "goal": "Attach the harmless fixed sample endpoint sns-lab@example.com to the lab topic.",
+        "whyItMatters": "Subscriptions connect SNS topics to endpoints that can receive messages. Email subscriptions require confirmation before they can receive published notifications.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 8,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-add-an-endpoint-and-publish-a-test-message",
+        "prerequisites": [
+          "task-sns-create-a-standard-sns-topic-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-a-subscription-to-an-amazon-sns-topic",
+          "source-accessing-amazon-sns-in-the-aws-cli",
+          "source-get-topic-attributes-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-1-open-subscriptions",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open subscriptions",
+            "instruction": "Choose Subscriptions.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-1-open-subscriptions-instruction-1",
+                "text": "Choose Subscriptions.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Subscriptions page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-2-start-subscription-creation",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Start subscription creation",
+            "instruction": "Choose Create subscription.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-2-start-subscription-creation-instruction-1",
+                "text": "Choose Create subscription.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Create subscription page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-3-select-the-lab-topic",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Select the lab topic",
+            "instruction": "Choose the sns-beginner-lab-topic ARN for Topic ARN.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-3-select-the-lab-topic-instruction-1",
+                "text": "Choose the sns-beginner-lab-topic ARN for Topic ARN.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The lab topic ARN is selected.",
+            "warning": "Select only the topic created in Task 1.",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-4-select-the-protocol",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Select the protocol",
+            "instruction": "Choose Email for Protocol.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-4-select-the-protocol-instruction-1",
+                "text": "Choose Email for Protocol.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Email is selected as the endpoint type.",
+            "warning": "",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-5-enter-the-sample-endpoint",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Enter the sample endpoint",
+            "instruction": "Enter sns-lab@example.com in Endpoint.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-5-enter-the-sample-endpoint-instruction-1",
+                "text": "Enter sns-lab@example.com in Endpoint.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The fixed non-confidential sample endpoint is populated.",
+            "warning": "This sample address is not expected to be monitored, so do not expect a confirmation or delivered notification.",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          },
+          {
+            "id": "task-sns-create-an-email-subscription-002-console-step-6-create-the-subscription",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Create the subscription",
+            "instruction": "Choose Create subscription.",
+            "instructions": [
+              {
+                "id": "task-sns-create-an-email-subscription-002-console-step-6-create-the-subscription-instruction-1",
+                "text": "Choose Create subscription.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The subscription Details page opens.",
+            "warning": "Email subscriptions require confirmation before they can receive messages.",
+            "sourceIds": [
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sns-create-an-email-subscription-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sns subscribe --topic-arn \"<TopicArn from Task 1>\" --protocol email --notification-endpoint sns-lab@example.com --region eu-west-2",
+            "explanation": "Creates an email subscription for the topic ARN returned by Task 1. Replace only the TopicArn placeholder with that earlier command output.",
+            "expectedResult": "The output returns SubscriptionArn with the value pending confirmation.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The sample endpoint is intentionally non-confidential and is not expected to confirm the subscription.",
+            "sourceIds": [
+              "source-accessing-amazon-sns-in-the-aws-cli",
+              "source-creating-a-subscription-to-an-amazon-sns-topic"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sns-create-an-email-subscription-002-verification-1",
+            "title": "Confirm the pending subscription state",
+            "instruction": "Run the standalone CLI verification command below using the TopicArn from Task 1.",
+            "expectedResult": "The returned topic attributes show the subscription state counts; the sample email subscription remains unconfirmed unless its recipient confirms it.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-sns-publish-a-harmless-test-notification-003",
+        "slug": "publish-a-harmless-test-notification",
+        "title": "Publish a harmless test notification",
+        "service": "SNS",
+        "feature": "Amazon SNS message publishing",
+        "goal": "Publish the message SNS beginner lab test message to the standard topic.",
+        "whyItMatters": "Publishing sends a message to the topic, and Amazon SNS attempts delivery to each subscribed endpoint.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 6,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-add-an-endpoint-and-publish-a-test-message",
+        "prerequisites": [
+          "task-sns-create-a-standard-sns-topic-001",
+          "task-sns-create-an-email-subscription-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-publishing-an-amazon-sns-message",
+          "source-accessing-amazon-sns-in-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-1-open-topics",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open topics",
+            "instruction": "Choose Topics.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-1-open-topics-instruction-1",
+                "text": "Choose Topics.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Topics page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-2-select-the-lab-topic",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Select the lab topic",
+            "instruction": "Select sns-beginner-lab-topic.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-2-select-the-lab-topic-instruction-1",
+                "text": "Select sns-beginner-lab-topic.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The lab topic is selected.",
+            "warning": "Select only the topic created in Task 1.",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-3-open-message-publishing",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Open message publishing",
+            "instruction": "Choose Publish message.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-3-open-message-publishing-instruction-1",
+                "text": "Choose Publish message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Publish message to topic page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-4-set-the-subject",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Set the subject",
+            "instruction": "Enter SNS beginner lab in Subject.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-4-set-the-subject-instruction-1",
+                "text": "Enter SNS beginner lab in Subject.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The optional subject is populated.",
+            "warning": "",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-5-choose-a-shared-payload",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Choose a shared payload",
+            "instruction": "Choose Identical payload for all delivery protocols.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-5-choose-a-shared-payload-instruction-1",
+                "text": "Choose Identical payload for all delivery protocols.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The message editor accepts one payload for all protocols.",
+            "warning": "",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-6-enter-the-message",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Enter the message",
+            "instruction": "Enter SNS beginner lab test message.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-6-enter-the-message-instruction-1",
+                "text": "Enter SNS beginner lab test message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The harmless sample message is populated.",
+            "warning": "Do not enter confidential information in a notification message.",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          },
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-console-step-7-publish-the-message",
+            "stepNumber": 7,
+            "number": 7,
+            "title": "Publish the message",
+            "instruction": "Choose Publish message.",
+            "instructions": [
+              {
+                "id": "task-sns-publish-a-harmless-test-notification-003-console-step-7-publish-the-message-instruction-1",
+                "text": "Choose Publish message.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The message is published and the topic Details page opens.",
+            "warning": "The sample email subscription is pending confirmation, so delivery to it is not expected.",
+            "sourceIds": [
+              "source-publishing-an-amazon-sns-message"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws sns publish --topic-arn \"<TopicArn from Task 1>\" --message \"SNS beginner lab test message\" --region eu-west-2",
+            "explanation": "Publishes the harmless fixed test message to the TopicArn returned by Task 1. Replace only the TopicArn placeholder with that earlier command output.",
+            "expectedResult": "The output contains a MessageId, showing that Amazon SNS accepted the publish request.",
+            "instructions": [],
+            "commands": [],
+            "warning": "A MessageId confirms publication acceptance; the pending sample email subscription cannot receive the message until confirmed.",
+            "sourceIds": [
+              "source-accessing-amazon-sns-in-the-aws-cli",
+              "source-publishing-an-amazon-sns-message"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-sns-publish-a-harmless-test-notification-003-verification-1",
+            "title": "Confirm that SNS accepted the message",
+            "instruction": "Confirm that the publish action returned a MessageId in the CLI, or that the Console returned to the topic Details page after publishing.",
+            "expectedResult": "SNS accepted the test message for the lab topic.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "This lab creates one SNS topic, one email subscription request, and one published message. Review applicable Amazon SNS pricing for the account before running the lab.",
+      "safety": "Use only the fixed harmless topic name and sample message. Do not place personal, confidential, or sensitive information in topic names or notification messages.",
+      "credentials": "Do not paste, display, or share credentials. The Console and AWS CLI must already be authorized to perform the documented SNS actions.",
+      "region": "Use Europe (London), eu-west-2, throughout. Every regional AWS CLI command in this follow along includes --region eu-west-2."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Console cleanup — delete only the lab topic",
+          "instruction": "In Amazon SNS for eu-west-2, select only sns-beginner-lab-topic, choose Delete, enter delete me, and choose Delete.",
+          "description": "In Amazon SNS for eu-west-2, select only sns-beginner-lab-topic, choose Delete, enter delete me, and choose Delete.",
+          "verification": "The topic no longer appears on the Topics page. Its associated sample subscription is deleted asynchronously with the topic.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-deleting-an-amazon-sns-topic-and-subscription"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "CLI cleanup — delete only the lab topic",
+          "instruction": "aws sns delete-topic --topic-arn \"<TopicArn from Task 1>\" --region eu-west-2",
+          "description": "aws sns delete-topic --topic-arn \"<TopicArn from Task 1>\" --region eu-west-2",
+          "verification": "The command produces no output. Use this as an alternative to the Console cleanup route, not in addition to it.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-accessing-amazon-sns-in-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "CLI cleanup verification",
+          "instruction": "aws sns list-topics --region eu-west-2",
+          "description": "aws sns list-topics --region eu-west-2",
+          "verification": "The returned topic ARN list does not include sns-beginner-lab-topic.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-list-topics-aws-cli-command-reference",
+            "source-accessing-amazon-sns-in-the-aws-cli"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The supplied fixed endpoint sns-lab@example.com is deliberately non-confidential, but it is not expected to be monitored. Therefore, this follow along demonstrates the pending-confirmation behavior rather than successful email delivery.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Official documentation states that email subscriptions require confirmation before receiving messages. A learner-owned inbox would be needed to demonstrate actual delivery, but no additional endpoint placeholder was introduced because this follow along limits placeholders to outputs from earlier commands.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The protected SNS documentation returned describes Console navigation but does not explicitly document the AWS Management Console region-selector label. The Console instructions therefore identify the required Region by its AWS name and code: Europe (London), eu-west-2.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "sns-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 3,
+    "taskCount": 3,
+    "checkboxCount": 20,
+    "cliCommandCount": 3,
+    "verificationCheckCount": 3,
+    "cleanupItemCount": 3,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 7
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "b468732f90b2ba72e827c507909eee80e9a66cb4027b82de17c6adb1fead620b"
+  }
+}

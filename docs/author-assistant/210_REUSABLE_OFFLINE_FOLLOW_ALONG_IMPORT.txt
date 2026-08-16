@@ -1,0 +1,48 @@
+210. REUSABLE OFFLINE FOLLOW ALONG IMPORT
+
+1. Purpose
+
+The local command converts the two deliverables created from the Study Tracker Offline Follow Along Authoring Standard into the existing controlled Author handoff format.
+
+2. Command
+
+npm run author-assistant:import-offline -- "C:\full\path\offline-follow-along-manuscript.json"
+
+The matching offline-follow-along-preview.md must be in the same folder.
+
+For automated local verification only, --no-accept skips the acceptance question and --accept records the exact displayed fingerprint. Normal learner use should omit both flags and answer the visible question.
+
+3. What the command does
+
+1. Reads the downloaded UTF-8 JSON manuscript.
+2. Confirms the readable Markdown preview exists.
+3. Validates programme, phases, task links, prerequisites, official sources, both learner routes, editable blocks, verification, resources, cleanup and safety boundaries.
+4. Rejects credential-like content and broad destructive filesystem commands.
+5. Converts the portable records without using AI.
+6. Runs the current Author planning, content and review checks.
+7. Creates a deterministic local session and genuine Step 90 handoff fingerprint.
+8. Shows the fingerprint and asks for exact human acceptance.
+9. Creates the Step 90A audit only after the user answers yes.
+
+4. Saved files
+
+The command prints the exact folder. By default it is under:
+
+E:\code\study-tracker\docs\author-assistant\handoffs\author-assistant-offline-<service>-<manuscript fingerprint prefix>
+
+The folder contains:
+
+- author-local-handoff-package.json
+- author-local-handoff-acceptance-90a.json after acceptance
+- complete-follow-along-preview.txt
+- session.json
+- the unchanged offline-follow-along-manuscript.json
+- the unchanged offline-follow-along-preview.md
+
+5. Safety boundary
+
+The command does not use an OpenAI API key, make an AI request, connect to Author, Supabase or AWS, bind an identity, import a draft, create a release candidate, approve or publish. The final package and audit must still be selected manually on the signed-in local Author page.
+
+6. Duplicate protection
+
+The session folder is derived from the manuscript fingerprint. Rerunning the exact manuscript preserves and reuses the existing package. A duplicate handoff is not created.

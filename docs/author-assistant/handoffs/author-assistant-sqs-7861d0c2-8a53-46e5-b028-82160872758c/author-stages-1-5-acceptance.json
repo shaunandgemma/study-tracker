@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_stages_1_to_5_human_acceptance",
+  "status": "accepted",
+  "sessionId": "author-assistant-sqs-7861d0c2-8a53-46e5-b028-82160872758c",
+  "acceptedAt": "2026-08-10T08:09:44.734Z",
+  "decision": "accept_local_stages_1_to_5_blueprint",
+  "reviewConsolidation": {
+    "originalFindingCount": 11,
+    "acceptedFindingCount": 7,
+    "removedDuplicateCount": 4,
+    "groups": [
+      {
+        "keptIndex": 0,
+        "removedIndexes": [
+          5
+        ],
+        "keptFinding": "The sources found do not provide a follow-along-specific instruction for selecting the preferred Region, eu-west-2. The learner instructions should explicitly tell the learner to confirm eu-west-2 in the AWS Management Console or use the AWS CLI global --region eu-west-2 option, but this exact regional setup guidance was not taken from a proposed source.",
+        "removedFindings": [
+          "The accepted sources do not provide a follow-along-specific procedure for selecting eu-west-2. Regional setup guidance should be manually sourced before later checkbox instructions specify how to select the Region."
+        ]
+      },
+      {
+        "keptIndex": 1,
+        "removedIndexes": [
+          6
+        ],
+        "keptFinding": "A least-privilege IAM policy document should be manually reviewed before inclusion. The Service Authorization Reference confirms the relevant actions and the queue ARN resource type, but policy construction—especially the resource scope required for sqs:CreateQueue and any console-dependent permissions—should not be inferred without additional sourced authorization guidance.",
+        "removedFindings": [
+          "A least-privilege IAM policy requires manual review before inclusion. The Service Authorization Reference identifies relevant actions and queue resources, but it does not by itself establish a complete policy, including any console-dependent permissions or the resource scope for sqs:CreateQueue."
+        ]
+      },
+      {
+        "keptIndex": 2,
+        "removedIndexes": [
+          7
+        ],
+        "keptFinding": "The Console guide states that standard queues have at-least-once delivery and can occasionally return messages out of order. The exercise should therefore use a single harmless test message and should not claim exactly-once processing or ordered delivery.",
+        "removedFindings": [
+          "Standard queues provide at-least-once delivery and can return messages out of order. Later instructions should use only one harmless test message and must not claim ordered or exactly-once processing."
+        ]
+      },
+      {
+        "keptIndex": 4,
+        "removedIndexes": [
+          9
+        ],
+        "keptFinding": "The exact source pages found support standard queues. FIFO-specific requirements, including message group IDs and deduplication IDs, are outside the recommended beginner scope unless the follow-along is intentionally changed to FIFO.",
+        "removedFindings": [
+          "The supported sources cover standard queues only. FIFO queue requirements, including message group IDs and deduplication IDs, remain outside this beginner programme's scope."
+        ]
+      }
+    ]
+  },
+  "stageBoundary": {
+    "preparedLocally": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "notPrepared": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "writtenToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "candidatePrepared": false,
+    "published": false
+  }
+}

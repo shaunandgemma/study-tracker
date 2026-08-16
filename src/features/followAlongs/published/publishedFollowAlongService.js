@@ -197,6 +197,9 @@ export function buildPublishedProgrammeCard(row) {
   const assignedTask = tasks.find(task => task.examId || task.examCode);
   const inferredExamId = programme.programmeId === 'cloudformation-terraform-learning-path'
     ? 'aws-saa-c03'
+    : clean(programme.category).toLowerCase().includes('terraform')
+      || clean(programme.programmeId).startsWith('hcp-terraform-')
+      ? 'terraform-associate-004'
     : '';
   const examId = clean(programme.examId || programme.examCode)
     || clean(assignedTask?.examId || assignedTask?.examCode)

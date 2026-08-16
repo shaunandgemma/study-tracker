@@ -1,0 +1,2508 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-cloudfront-753b8bc6-1716-43ec-90e5-b857b75295bb",
+  "preparedAt": "2026-08-11T21:54:34.148Z",
+  "service": {
+    "officialName": "CloudFront",
+    "shortName": "CloudFront"
+  },
+  "generationMode": "update_existing",
+  "updateTarget": {
+    "programmeId": "cloudfront-learning-path",
+    "displayName": "CloudFront: Secure S3 Content Delivery Follow Along",
+    "serviceName": "CloudFront",
+    "shortName": "CloudFront",
+    "serviceSlug": "cloudfront",
+    "sourceRevision": 2,
+    "candidateId": "release-author-draft-import-fc410bc5a96941bd2ce882237e23d0775ffe4015cf83de4ba7ecdad13ca25651-r2-2b169f84b97f",
+    "contentHash": "cfa2383ee3d49dd565e45407d74ce1b4b3d8eb4fc23c08c02e2ed651676c9561",
+    "publishedAt": "2026-08-10T15:54:54.25925+00:00"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "eda385a0a050e744e61361f6cc57f954e403f24deb8ef054615534e12f6f0f37"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "eda385a0a050e744e61361f6cc57f954e403f24deb8ef054615534e12f6f0f37"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "cloudfront",
+      "serviceName": "CloudFront",
+      "shortName": "CloudFront",
+      "displayName": "CloudFront: Secure S3 Content Delivery Follow Along",
+      "subtitle": "Secure, customize, observe, and remove CloudFront delivery from a private Amazon S3 origin",
+      "description": "An intermediate CloudFront lab using a private Amazon S3 origin in eu-west-2. You create two dedicated buckets, deliver protected content through CloudFront using origin access control (OAC), apply cache and security-header behavior, add a CloudFront Function, enable standard logging, test invalidation and metrics, and remove every lab resource.",
+      "learningOutcome": "Build and operate a secure CloudFront distribution that serves content from a private S3 bucket; explain OAC, cache keys, managed cache policies, response headers policies, CloudFront Functions, logging, metrics, invalidations, and safe reverse-dependency cleanup.",
+      "programmeId": "cloudfront-learning-path",
+      "pathId": "cloudfront-learning-path",
+      "componentNamespace": "",
+      "category": "Content delivery and edge networking",
+      "difficulty": "Intermediate",
+      "estimatedMinutes": 155,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-getting-started-with-cloudfront-standard-distributions",
+        "title": "Getting started with CloudFront standard distributions",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/functions-tutorial.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront console navigation and basic standard distribution delivery concepts.",
+        "taskIds": []
+      },
+      {
+        "id": "source-restricting-access-to-an-amazon-s3-origin",
+        "title": "Restricting access to an Amazon S3 origin",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports OAC and private S3 origin configuration.",
+        "taskIds": [
+          "task-cloudfront-create-an-oac-protected-distribution-002",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-understanding-cache-policies",
+        "title": "Understanding cache policies",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports cache-key and managed cache-policy decisions.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003"
+        ]
+      },
+      {
+        "id": "source-using-managed-cache-policies",
+        "title": "Using managed cache policies",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports use of the CachingOptimized managed cache policy.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003"
+        ]
+      },
+      {
+        "id": "source-creating-response-headers-policies",
+        "title": "Creating response headers policies",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/creating-response-headers-policies.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports custom security response headers policies.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-modifying-response-headers",
+        "title": "Modifying response headers",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/modifying-response-headers.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports associating a response headers policy with a cache behavior.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-standard-logging",
+        "title": "Standard logging",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront standard logging configuration and log review.",
+        "taskIds": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001",
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-cloudfront-monitoring-using-cloudwatch",
+        "title": "CloudFront monitoring using CloudWatch",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/monitoring-using-cloudwatch.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront monitoring concepts.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004"
+        ]
+      },
+      {
+        "id": "source-viewing-cloudfront-metrics",
+        "title": "Viewing CloudFront metrics",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/viewing-cloudfront-metrics.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports viewing CloudFront operational metrics.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004"
+        ]
+      },
+      {
+        "id": "source-creating-a-cloudfront-distribution-with-the-aws-cli",
+        "title": "Creating a CloudFront distribution with the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-distribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront distribution creation with the AWS CLI.",
+        "taskIds": [
+          "task-cloudfront-create-an-oac-protected-distribution-002"
+        ]
+      },
+      {
+        "id": "source-updating-a-cloudfront-distribution-with-the-aws-cli",
+        "title": "Updating a CloudFront distribution with the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/update-distribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports distribution updates after configuration changes.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003",
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-creating-a-response-headers-policy-with-the-aws-cli",
+        "title": "Creating a response headers policy with the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-response-headers-policy.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CLI response headers policy creation.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003"
+        ]
+      },
+      {
+        "id": "source-publishing-a-cloudfront-function",
+        "title": "Publishing a CloudFront Function",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/publish-function.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront Function publication.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-creating-a-cloudfront-function",
+        "title": "Creating a CloudFront Function",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/create-function.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront Function creation.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-associating-a-cloudfront-function",
+        "title": "Associating a CloudFront Function",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/associate-function.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports CloudFront Function association with a cache behavior.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-creating-s3-buckets",
+        "title": "Creating S3 buckets",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports general purpose bucket creation.",
+        "taskIds": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001"
+        ]
+      },
+      {
+        "id": "source-blocking-public-access-to-s3-buckets-with-the-aws-cli",
+        "title": "Blocking public access to S3 buckets with the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/put-public-access-block.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports public-access-block configuration.",
+        "taskIds": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-getting-started-with-the-aws-cli-for-amazon-s3",
+        "title": "Getting started with the AWS CLI for Amazon S3",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/GettingStartedS3CLI.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports Amazon S3 object upload commands.",
+        "taskIds": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001"
+        ]
+      },
+      {
+        "id": "source-deleting-objects-from-a-bucket",
+        "title": "Deleting objects from a bucket",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-objects.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports removal of lab objects.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistValuesCacheBehavior.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003",
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-2",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-response-headers-policies.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-3",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowToDeleteDistribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-4",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudfront/delete-distribution.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-5",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/delete-bucket.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "CLO",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-cloudfront-create-the-private-content-and-log-buckets-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-private-origins",
+        "phaseNumber": 1,
+        "title": "Prepare private origins",
+        "description": "Create the private content and log-destination buckets, enforce public access blocking, and upload harmless sample content.",
+        "taskIds": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-create-secure-cloudfront-delivery",
+        "phaseNumber": 2,
+        "title": "Create secure CloudFront delivery",
+        "description": "Create the OAC-backed CloudFront distribution, apply the generated bucket policy, and verify the protected delivery path.",
+        "taskIds": [
+          "task-cloudfront-create-an-oac-protected-distribution-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-control-caching-and-browser-security-behavior",
+        "phaseNumber": 3,
+        "title": "Control caching and browser security behavior",
+        "description": "Use a managed cache policy, create a custom response headers policy, update the default cache behavior, and invalidate changed content.",
+        "taskIds": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-customize-edge-requests-and-observe-delivery",
+        "phaseNumber": 4,
+        "title": "Customize edge requests and observe delivery",
+        "description": "Create and publish a viewer-request CloudFront Function, attach it to the default behavior, enable standard logging, and inspect metrics.",
+        "taskIds": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-validate-and-remove-the-lab",
+        "phaseNumber": 5,
+        "title": "Validate and remove the lab",
+        "description": "Perform final functional checks and manually remove only the resources created by this Follow Along.",
+        "taskIds": [
+          "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-cloudfront-create-the-private-content-and-log-buckets-001",
+        "slug": "create-the-private-content-and-log-buckets",
+        "title": "Create the private content and log buckets",
+        "service": "CloudFront",
+        "feature": "Amazon S3 origins and logging destinations",
+        "goal": "Create dedicated content and log buckets in eu-west-2, keep both buckets non-public, prepare the log bucket for CloudFront standard logging, and upload index.html plus assets/site.css to the content bucket.",
+        "whyItMatters": "CloudFront should retrieve origin objects through an origin access control (OAC), not through public S3 permissions. Separating content from access logs makes access control, retention, and final cleanup clearer.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 30,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-private-origins",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-s3-buckets",
+          "source-blocking-public-access-to-s3-buckets-with-the-aws-cli",
+          "source-getting-started-with-the-aws-cli-for-amazon-s3",
+          "source-standard-logging"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Record training values and create the local website files",
+            "instruction": "☐ In the AWS Management Console navigation bar, choose your account name.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-1",
+                "text": "☐ In the AWS Management Console navigation bar, choose your account name.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-2",
+                "text": "☐ Copy the 12-digit Account ID and record it as <ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-3",
+                "text": "☐ On your computer, create an empty folder named cloudfront-secure-content-lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-4",
+                "text": "☐ In that folder, create a file named index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-5",
+                "text": "☐ Create a subfolder named assets.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-6",
+                "text": "☐ In assets, create a file named site.css.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-7",
+                "text": "☐ Copy the exact contents from the two file blocks into their matching files and save both files.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-instruction-8",
+                "text": "☐ Use cf-secure-content-lab-<ACCOUNT_ID> as the content-bucket name and cf-secure-logs-lab-<ACCOUNT_ID> as the log-bucket name. <ACCOUNT_ID> means the 12-digit value you recorded, not the literal placeholder.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-json-1",
+                "title": "Save as cloudfront-secure-content-lab/index.html",
+                "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>CloudFront secure content lab</title>\n  <link rel=\"stylesheet\" href=\"/assets/site.css\">\n</head>\n<body>\n  <h1>CloudFront secure content lab</h1>\n  <p>Delivered from a private Amazon S3 origin through CloudFront.</p>\n</body>\n</html>",
+                "language": "text",
+                "sourceIds": [
+                  "source-getting-started-with-the-aws-cli-for-amazon-s3"
+                ]
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-1-record-training-values-and-create-the-local-website-files-json-2",
+                "title": "Save as cloudfront-secure-content-lab/assets/site.css",
+                "content": "body { font-family: sans-serif; margin: 3rem; color: #0f172a; }\nh1 { color: #0891b2; }",
+                "language": "text",
+                "sourceIds": [
+                  "source-getting-started-with-the-aws-cli-for-amazon-s3"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The local cloudfront-secure-content-lab folder contains index.html and assets/site.css.",
+            "warning": "Do not put secrets, access keys, or confidential content in either training file.",
+            "sourceIds": [
+              "source-getting-started-with-the-aws-cli-for-amazon-s3"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create and inspect the private content bucket",
+            "instruction": "☐ Open the Amazon S3 console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-1",
+                "text": "☐ Open the Amazon S3 console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-2",
+                "text": "☐ Choose General purpose buckets.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-3",
+                "text": "☐ Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-4",
+                "text": "☐ In Bucket name, enter cf-secure-content-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-5",
+                "text": "☐ In AWS Region, choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-6",
+                "text": "☐ Leave Block all public access selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-7",
+                "text": "☐ Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-8",
+                "text": "☐ In General purpose buckets, open cf-secure-content-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-9",
+                "text": "☐ Choose the Permissions tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-2-create-and-inspect-the-private-content-bucket-instruction-10",
+                "text": "☐ In Block public access (Bucket settings), confirm that Block all public access is On.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The content bucket exists in eu-west-2 and its bucket-level public-access block is enabled.",
+            "warning": "Do not select an S3 website hosting endpoint or disable public access blocking for this origin bucket.",
+            "sourceIds": [
+              "source-creating-s3-buckets",
+              "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create and inspect the private log bucket",
+            "instruction": "☐ Return to General purpose buckets and choose Create bucket.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-1",
+                "text": "☐ Return to General purpose buckets and choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-2",
+                "text": "☐ In Bucket name, enter cf-secure-logs-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-3",
+                "text": "☐ In AWS Region, choose Europe (London) eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-4",
+                "text": "☐ Leave Block all public access selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-5",
+                "text": "☐ Under Object Ownership, choose the setting required by the Standard logging page if the console reports that ACLs must be enabled for the selected logging mode; otherwise retain the secure default shown by the console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-6",
+                "text": "☐ Choose Create bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-7",
+                "text": "☐ Open cf-secure-logs-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-8",
+                "text": "☐ Choose the Permissions tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-3-create-and-inspect-the-private-log-bucket-instruction-9",
+                "text": "☐ In Block public access (Bucket settings), confirm that Block all public access is On.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The dedicated log bucket exists in eu-west-2, is not publicly readable, and is ready for the CloudFront standard-logging workflow.",
+            "warning": "CloudFront logging requirements differ by logging mode and account configuration. Follow any visible S3 ownership or ACL requirement presented by the CloudFront logging workflow; do not make the bucket public.",
+            "sourceIds": [
+              "source-creating-s3-buckets",
+              "source-standard-logging"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Upload the supplied website files",
+            "instruction": "☐ Open cf-secure-content-lab-<ACCOUNT_ID>.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-1",
+                "text": "☐ Open cf-secure-content-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-2",
+                "text": "☐ Choose the Objects tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-3",
+                "text": "☐ Choose Upload.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-4",
+                "text": "☐ Choose Add files and select cloudfront-secure-content-lab/index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-5",
+                "text": "☐ Choose Add folder and select cloudfront-secure-content-lab/assets.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-6",
+                "text": "☐ Choose Upload.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-7",
+                "text": "☐ After upload completes, confirm that index.html and the assets/ prefix appear in the Objects list.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-console-step-4-upload-the-supplied-website-files-instruction-8",
+                "text": "☐ Open assets/ and confirm that site.css appears.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The content bucket contains exactly the training objects index.html and assets/site.css.",
+            "warning": "Do not apply a public object ACL or public bucket policy.",
+            "sourceIds": [
+              "source-getting-started-with-the-aws-cli-for-amazon-s3"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "mkdir -p cloudfront-secure-content-lab/assets\ncat > cloudfront-secure-content-lab/index.html <<'EOF'\n<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>CloudFront secure content lab</title>\n  <link rel=\"stylesheet\" href=\"/assets/site.css\">\n</head>\n<body>\n  <h1>CloudFront secure content lab</h1>\n  <p>Delivered from a private Amazon S3 origin through CloudFront.</p>\n</body>\n</html>\nEOF\ncat > cloudfront-secure-content-lab/assets/site.css <<'EOF'\nbody { font-family: sans-serif; margin: 3rem; color: #0f172a; }\nh1 { color: #0891b2; }\nEOF",
+            "explanation": "Run this in a local terminal. It creates the exact two non-sensitive files required by this CLI route. Replace <LAB_PROFILE> in later commands with the name of your already configured, authorized AWS CLI profile; it is not an AWS resource created by this task.",
+            "expectedResult": "The local folder contains index.html and assets/site.css.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use an authorized non-root profile. Do not store credentials in these files.",
+            "sourceIds": [
+              "source-getting-started-with-the-aws-cli-for-amazon-s3"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws s3api create-bucket --bucket cf-secure-content-lab-<ACCOUNT_ID> --create-bucket-configuration LocationConstraint=eu-west-2 --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Replace <ACCOUNT_ID> with the 12-digit account ID and <LAB_PROFILE> with your local CLI profile name. Record the bucket name exactly; later tasks use it as the S3 origin.",
+            "expectedResult": "The response includes a Location for cf-secure-content-lab-<ACCOUNT_ID>.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Bucket names are globally unique. Stop and choose a different account-specific training name only if S3 reports that the name is unavailable.",
+            "sourceIds": [
+              "source-creating-s3-buckets"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws s3api put-public-access-block --bucket cf-secure-content-lab-<ACCOUNT_ID> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "This applies all four bucket-level public-access-block controls to the content bucket.",
+            "expectedResult": "The command succeeds without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "OAC, created later, supplies the required CloudFront-to-S3 read path; public access is not required.",
+            "sourceIds": [
+              "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws s3api create-bucket --bucket cf-secure-logs-lab-<ACCOUNT_ID> --create-bucket-configuration LocationConstraint=eu-west-2 --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Create the separate log destination. Before enabling CloudFront logging in task 4, check the current logging workflow for any required bucket ownership or ACL setting.",
+            "expectedResult": "The response includes a Location for cf-secure-logs-lab-<ACCOUNT_ID>.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Keep logs separate from origin objects because logs can contain request metadata.",
+            "sourceIds": [
+              "source-creating-s3-buckets",
+              "source-standard-logging"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws s3api put-public-access-block --bucket cf-secure-logs-lab-<ACCOUNT_ID> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "This applies all four public-access-block controls to the log bucket.",
+            "expectedResult": "The command succeeds without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Public-access block does not itself configure CloudFront log delivery.",
+            "sourceIds": [
+              "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws s3 cp cloudfront-secure-content-lab/index.html s3://cf-secure-content-lab-<ACCOUNT_ID>/index.html --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Upload the local file created in the first CLI step to the exact default-root-object key.",
+            "expectedResult": "The CLI reports an upload to s3://cf-secure-content-lab-<ACCOUNT_ID>/index.html.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this from the directory containing cloudfront-secure-content-lab.",
+            "sourceIds": [
+              "source-getting-started-with-the-aws-cli-for-amazon-s3"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-cli-step-7",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws s3 cp cloudfront-secure-content-lab/assets/site.css s3://cf-secure-content-lab-<ACCOUNT_ID>/assets/site.css --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Upload the stylesheet with the assets/site.css key referenced by index.html.",
+            "expectedResult": "The CLI reports an upload to s3://cf-secure-content-lab-<ACCOUNT_ID>/assets/site.css.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not use --acl public-read.",
+            "sourceIds": [
+              "source-getting-started-with-the-aws-cli-for-amazon-s3"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-verification-1",
+            "title": "Verify the exact private-origin objects",
+            "instruction": "In the S3 console, open cf-secure-content-lab-<ACCOUNT_ID>, then open Objects and assets/.",
+            "expectedResult": "index.html and assets/site.css are present.",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-create-the-private-content-and-log-buckets-001-verification-2",
+            "title": "Verify both public-access-block resources",
+            "instruction": "Run get-public-access-block for each named bucket, or inspect each bucket's Permissions tab.",
+            "expectedResult": "Each bucket shows BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets enabled.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-create-an-oac-protected-distribution-002",
+        "slug": "create-an-oac-protected-distribution",
+        "title": "Create an OAC-protected distribution",
+        "service": "CloudFront",
+        "feature": "CloudFront private S3 origin",
+        "goal": "Create cf-secure-content-lab-oac, create a CloudFront distribution whose default root object is index.html, then add the exact distribution-scoped S3 bucket policy that permits CloudFront reads.",
+        "whyItMatters": "OAC signs CloudFront requests to the S3 origin. The S3 bucket remains private because the bucket policy permits only the CloudFront service principal and only the ARN of this distribution.",
+        "difficulty": "Hard",
+        "estimatedMinutes": 35,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-create-secure-cloudfront-delivery",
+        "prerequisites": [
+          "task-cloudfront-create-the-private-content-and-log-buckets-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-restricting-access-to-an-amazon-s3-origin",
+          "source-creating-a-cloudfront-distribution-with-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the distribution and OAC from the S3 origin workflow",
+            "instruction": "☐ Open the CloudFront console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-1",
+                "text": "☐ Open the CloudFront console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-2",
+                "text": "☐ Choose Distributions.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-3",
+                "text": "☐ Choose Create distribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-4",
+                "text": "☐ Select the website or application distribution option shown by the console, then choose Next.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-5",
+                "text": "☐ In Origin, choose Amazon S3.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-6",
+                "text": "☐ Choose Browse S3 and select cf-secure-content-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-7",
+                "text": "☐ Choose Use recommended origin settings.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-8",
+                "text": "☐ Confirm that Origin access control is enabled or that an OAC named cf-secure-content-lab-oac is offered; create it if the console asks for an OAC name.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-9",
+                "text": "☐ In Default root object, enter index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-10",
+                "text": "☐ Keep the viewer protocol policy shown by the recommended secure configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-11",
+                "text": "☐ Choose Create distribution.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-1-create-the-distribution-and-oac-from-the-s3-origin-workflow-instruction-12",
+                "text": "☐ Open the created distribution and record its Distribution ID as [DISTRIBUTION_ID], domain name as [DISTRIBUTION_DOMAIN_NAME], and ARN as [DISTRIBUTION_ARN].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "A distribution is created with the private S3 bucket as its origin and an OAC-backed origin configuration.",
+            "warning": "Do not select an S3 website endpoint. Website endpoints cannot use OAC.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Install and inspect the exact origin bucket policy",
+            "instruction": "☐ Open the S3 console and open cf-secure-content-lab-<ACCOUNT_ID>.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-1",
+                "text": "☐ Open the S3 console and open cf-secure-content-lab-<ACCOUNT_ID>.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-2",
+                "text": "☐ Choose Permissions.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-3",
+                "text": "☐ Under Bucket policy, choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-4",
+                "text": "☐ Replace <ACCOUNT_ID> and [DISTRIBUTION_ID] in the supplied policy. <ACCOUNT_ID> is the 12-digit account ID from task 1; [DISTRIBUTION_ID] is the value recorded in the preceding step.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-5",
+                "text": "☐ Replace the entire policy editor content with the supplied policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-6",
+                "text": "☐ Choose Save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-instruction-7",
+                "text": "☐ Confirm that the Bucket policy section displays the saved policy.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-2-install-and-inspect-the-exact-origin-bucket-policy-json-1",
+                "title": "CloudFrontReadOnlyOAC policy for cf-secure-content-lab-<ACCOUNT_ID>",
+                "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"CloudFrontReadOnlyOAC\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"cloudfront.amazonaws.com\"\n      },\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::cf-secure-content-lab-<ACCOUNT_ID>/*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"AWS:SourceArn\": \"arn:aws:cloudfront::<ACCOUNT_ID>:distribution/[DISTRIBUTION_ID]\"\n        }\n      }\n    }\n  ]\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-restricting-access-to-an-amazon-s3-origin"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The content bucket has the CloudFrontReadOnlyOAC policy and no public-read statement.",
+            "warning": "Do not use Principal \"*\" and do not change the condition to another distribution ARN.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-3-wait-for-deployment-and-test-the-protected-path",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Wait for deployment and test the protected path",
+            "instruction": "☐ Return to CloudFront and open [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-3-wait-for-deployment-and-test-the-protected-path-instruction-1",
+                "text": "☐ Return to CloudFront and open [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-3-wait-for-deployment-and-test-the-protected-path-instruction-2",
+                "text": "☐ Wait until the Last modified/deployment state is complete and the distribution is enabled.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-3-wait-for-deployment-and-test-the-protected-path-instruction-3",
+                "text": "☐ Open https://[DISTRIBUTION_DOMAIN_NAME]/index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-create-an-oac-protected-distribution-002-console-step-3-wait-for-deployment-and-test-the-protected-path-instruction-4",
+                "text": "☐ In a private browser window, try the direct S3 object URL for index.html.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "CloudFront serves the page while direct unauthenticated S3 access is denied.",
+            "warning": "Distribution deployment is asynchronous and can take several minutes.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "cat > oac-config.json <<'EOF'\n{\n  \"Name\": \"cf-secure-content-lab-oac\",\n  \"Description\": \"OAC for cf-secure-content-lab private S3 origin\",\n  \"SigningProtocol\": \"sigv4\",\n  \"SigningBehavior\": \"always\",\n  \"OriginAccessControlOriginType\": \"s3\"\n}\nEOF\naws cloudfront create-origin-access-control --origin-access-control-config file://oac-config.json --profile <LAB_PROFILE>",
+            "explanation": "Save the complete OAC document as oac-config.json in the current terminal directory, then run the command. Record OriginAccessControl.Id as [OAC_ID] and the returned ETag as [OAC_ETAG]. CloudFront commands are global, so no --region is used.",
+            "expectedResult": "The response contains an OAC named cf-secure-content-lab-oac in the created configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the same <LAB_PROFILE> as task 1. Do not substitute an origin access identity for this OAC lab.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "cat > distribution-config.json <<'EOF'\n{\n  \"CallerReference\": \"cf-secure-content-lab-<UNIQUE_VALUE>\",\n  \"Comment\": \"CloudFront secure S3 content training distribution\",\n  \"Enabled\": true,\n  \"DefaultRootObject\": \"index.html\",\n  \"Origins\": {\n    \"Quantity\": 1,\n    \"Items\": [\n      {\n        \"Id\": \"content-s3-origin\",\n        \"DomainName\": \"cf-secure-content-lab-<ACCOUNT_ID>.s3.eu-west-2.amazonaws.com\",\n        \"OriginAccessControlId\": \"[OAC_ID]\",\n        \"S3OriginConfig\": {\"OriginAccessIdentity\": \"\"}\n      }\n    ]\n  },\n  \"DefaultCacheBehavior\": {\n    \"TargetOriginId\": \"content-s3-origin\",\n    \"ViewerProtocolPolicy\": \"redirect-to-https\",\n    \"AllowedMethods\": {\"Quantity\": 2, \"Items\": [\"GET\", \"HEAD\"], \"CachedMethods\": {\"Quantity\": 2, \"Items\": [\"GET\", \"HEAD\"]}},\n    \"Compress\": true,\n    \"TrustedSigners\": {\"Enabled\": false, \"Quantity\": 0},\n    \"TrustedKeyGroups\": {\"Enabled\": false, \"Quantity\": 0},\n    \"ForwardedValues\": {\"QueryString\": false, \"Cookies\": {\"Forward\": \"none\"}, \"Headers\": {\"Quantity\": 0}, \"QueryStringCacheKeys\": {\"Quantity\": 0}},\n    \"MinTTL\": 0\n  },\n  \"CacheBehaviors\": {\"Quantity\": 0},\n  \"CustomErrorResponses\": {\"Quantity\": 0},\n  \"Restrictions\": {\"GeoRestriction\": {\"RestrictionType\": \"none\", \"Quantity\": 0}},\n  \"ViewerCertificate\": {\"CloudFrontDefaultCertificate\": true},\n  \"HttpVersion\": \"http2\",\n  \"IsIPV6Enabled\": true\n}\nEOF",
+            "explanation": "Create distribution-config.json in the current directory. Replace <ACCOUNT_ID>, [OAC_ID], and <UNIQUE_VALUE> before continuing. <UNIQUE_VALUE> must be a value not reused by another distribution creation, for example your current UTC timestamp. Do not change it after the create call.",
+            "expectedResult": "A complete distribution configuration file exists locally.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This file deliberately uses the regional S3 REST endpoint, not an S3 website endpoint.",
+            "sourceIds": [
+              "source-creating-a-cloudfront-distribution-with-the-aws-cli",
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws cloudfront create-distribution --distribution-config file://distribution-config.json --profile <LAB_PROFILE>",
+            "explanation": "Create the global CloudFront distribution. Record Distribution.Id as [DISTRIBUTION_ID], Distribution.DomainName as [DISTRIBUTION_DOMAIN_NAME], Distribution.ARN as [DISTRIBUTION_ARN], and ETag as [DISTRIBUTION_ETAG].",
+            "expectedResult": "The response shows Status InProgress and includes the four recorded values.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The origin is not readable until the next step adds the distribution-specific S3 policy.",
+            "sourceIds": [
+              "source-creating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "cat > content-bucket-policy.json <<'EOF'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"CloudFrontReadOnlyOAC\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\"Service\": \"cloudfront.amazonaws.com\"},\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::cf-secure-content-lab-<ACCOUNT_ID>/*\",\n      \"Condition\": {\"StringEquals\": {\"AWS:SourceArn\": \"[DISTRIBUTION_ARN]\"}}\n    }\n  ]\n}\nEOF\naws s3api put-bucket-policy --bucket cf-secure-content-lab-<ACCOUNT_ID> --policy file://content-bucket-policy.json --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Save the policy, replace <ACCOUNT_ID> and [DISTRIBUTION_ARN] with the recorded values from the preceding command, then apply it. This creates the inventory resource named CloudFrontReadOnlyOAC policy on cf-secure-content-lab-<ACCOUNT_ID>.",
+            "expectedResult": "The command completes without output and the bucket policy exists.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This grants read access only to the exact distribution ARN; it is not a public bucket policy.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-verification-1",
+            "title": "Verify OAC and policy scope",
+            "instruction": "Inspect the CloudFront origin configuration and the content bucket policy.",
+            "expectedResult": "The origin has an OAC and the policy principal is cloudfront.amazonaws.com with AWS:SourceArn equal to [DISTRIBUTION_ARN].",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-create-an-oac-protected-distribution-002-verification-2",
+            "title": "Verify delivery without public S3 access",
+            "instruction": "After deployment completes, request https://[DISTRIBUTION_DOMAIN_NAME]/index.html and then request the direct S3 object URL anonymously.",
+            "expectedResult": "CloudFront returns the page and direct S3 access is denied.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-apply-cache-and-response-header-controls-003",
+        "slug": "apply-cache-and-response-header-controls",
+        "title": "Apply cache and response-header controls",
+        "service": "CloudFront",
+        "feature": "CloudFront cache behaviors, invalidations, and response headers policies",
+        "goal": "Use the CachingOptimized managed cache policy, add cf-secure-content-lab-security-headers to the default cache behavior, and create the narrow /index.html invalidation.",
+        "whyItMatters": "The cache policy controls cache-key and TTL behavior. A response headers policy applies browser-facing security headers consistently at CloudFront. An invalidation is an explicit request to remove a cached path before normal expiry.",
+        "difficulty": "Hard",
+        "estimatedMinutes": 25,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-control-caching-and-browser-security-behavior",
+        "prerequisites": [
+          "task-cloudfront-create-an-oac-protected-distribution-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-using-managed-cache-policies",
+          "source-understanding-cache-policies",
+          "source-creating-response-headers-policies",
+          "source-modifying-response-headers",
+          "source-official-aws-documentation",
+          "source-creating-a-response-headers-policy-with-the-aws-cli",
+          "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the response headers policy",
+            "instruction": "☐ Open the CloudFront console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-1",
+                "text": "☐ Open the CloudFront console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-2",
+                "text": "☐ Choose Policies.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-3",
+                "text": "☐ Choose Response headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-4",
+                "text": "☐ Choose Create response headers policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-5",
+                "text": "☐ In Name, enter cf-secure-content-lab-security-headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-6",
+                "text": "☐ Expand Security headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-7",
+                "text": "☐ Enable X-Content-Type-Options and leave Override origin selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-8",
+                "text": "☐ Enable Strict-Transport-Security.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-9",
+                "text": "☐ In Maximum age, enter 31536000.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-10",
+                "text": "☐ Leave Include subdomains and Preload disabled for this minimal training policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-1-create-the-response-headers-policy-instruction-11",
+                "text": "☐ Choose Create.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The Response headers policies list contains cf-secure-content-lab-security-headers.",
+            "warning": "This small policy is not a complete production browser-security policy.",
+            "sourceIds": [
+              "source-creating-response-headers-policies"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Associate the managed cache and custom headers policies",
+            "instruction": "☐ Choose Distributions and open [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-1",
+                "text": "☐ Choose Distributions and open [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-2",
+                "text": "☐ Choose the Behaviors tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-3",
+                "text": "☐ Select Default (*), then choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-4",
+                "text": "☐ In Cache policy, choose Managed-CachingOptimized.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-5",
+                "text": "☐ In Response headers policy, choose cf-secure-content-lab-security-headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-6",
+                "text": "☐ Choose Save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-2-associate-the-managed-cache-and-custom-headers-policies-instruction-7",
+                "text": "☐ Wait for the distribution deployment to complete.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The Default behavior has Managed-CachingOptimized and cf-secure-content-lab-security-headers associated.",
+            "warning": "Do not add request headers, cookies, or query strings to a cache key unless the origin content truly varies by them.",
+            "sourceIds": [
+              "source-using-managed-cache-policies",
+              "source-modifying-response-headers"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create and record the narrow invalidation",
+            "instruction": "☐ Open the Invalidations tab for [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-1",
+                "text": "☐ Open the Invalidations tab for [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-2",
+                "text": "☐ Choose Create invalidation.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-3",
+                "text": "☐ In Object paths, enter exactly /index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-4",
+                "text": "☐ Choose Create invalidation.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-5",
+                "text": "☐ Record the resulting invalidation identifier as [INVALIDATION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-apply-cache-and-response-header-controls-003-console-step-3-create-and-record-the-narrow-invalidation-instruction-6",
+                "text": "☐ Refresh until [INVALIDATION_ID] shows Status Completed.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The exact home-page invalidation [INVALIDATION_ID] for /index.html is Completed.",
+            "warning": "Invalidations cannot be cancelled after creation.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "cat > security-headers-policy.json <<'EOF'\n{\n  \"Name\": \"cf-secure-content-lab-security-headers\",\n  \"Comment\": \"Training security headers policy\",\n  \"SecurityHeadersConfig\": {\n    \"ContentTypeOptions\": {\"Override\": true},\n    \"StrictTransportSecurity\": {\n      \"AccessControlMaxAgeSec\": 31536000,\n      \"IncludeSubdomains\": false,\n      \"Preload\": false,\n      \"Override\": true\n    }\n  }\n}\nEOF\naws cloudfront create-response-headers-policy --response-headers-policy-config file://security-headers-policy.json --profile <LAB_PROFILE>",
+            "explanation": "Save the complete policy document as security-headers-policy.json, then create it. Record ResponseHeadersPolicy.Id as [RESPONSE_HEADERS_POLICY_ID] and ETag as [RESPONSE_HEADERS_POLICY_ETAG].",
+            "expectedResult": "The response identifies cf-secure-content-lab-security-headers and its policy ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "CloudFront is global, so no --region is used.",
+            "sourceIds": [
+              "source-creating-a-response-headers-policy-with-the-aws-cli",
+              "source-creating-response-headers-policies"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > current-distribution-config-response.json",
+            "explanation": "This obtains the current ETag and complete deployed configuration. Record the top-level ETag as [DISTRIBUTION_ETAG]. Use the DistributionConfig object, not the whole response, in the update file.",
+            "expectedResult": "current-distribution-config-response.json contains ETag and DistributionConfig.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Never update a distribution using a stale ETag or a partial configuration.",
+            "sourceIds": [
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "cat > updated-distribution-config.json <<'EOF'\n{\n  \"CallerReference\": \"cf-secure-content-lab-<UNIQUE_VALUE>\",\n  \"Comment\": \"CloudFront secure S3 content training distribution\",\n  \"Enabled\": true,\n  \"DefaultRootObject\": \"index.html\",\n  \"Origins\": {\"Quantity\": 1, \"Items\": [{\"Id\": \"content-s3-origin\", \"DomainName\": \"cf-secure-content-lab-<ACCOUNT_ID>.s3.eu-west-2.amazonaws.com\", \"OriginAccessControlId\": \"[OAC_ID]\", \"S3OriginConfig\": {\"OriginAccessIdentity\": \"\"}}]},\n  \"DefaultCacheBehavior\": {\n    \"TargetOriginId\": \"content-s3-origin\",\n    \"ViewerProtocolPolicy\": \"redirect-to-https\",\n    \"AllowedMethods\": {\"Quantity\": 2, \"Items\": [\"GET\", \"HEAD\"], \"CachedMethods\": {\"Quantity\": 2, \"Items\": [\"GET\", \"HEAD\"]}},\n    \"Compress\": true,\n    \"TrustedSigners\": {\"Enabled\": false, \"Quantity\": 0},\n    \"TrustedKeyGroups\": {\"Enabled\": false, \"Quantity\": 0},\n    \"CachePolicyId\": \"658327ea-f89d-4fab-a63d-7e88639e58f6\",\n    \"ResponseHeadersPolicyId\": \"[RESPONSE_HEADERS_POLICY_ID]\"\n  },\n  \"CacheBehaviors\": {\"Quantity\": 0},\n  \"CustomErrorResponses\": {\"Quantity\": 0},\n  \"Restrictions\": {\"GeoRestriction\": {\"RestrictionType\": \"none\", \"Quantity\": 0}},\n  \"ViewerCertificate\": {\"CloudFrontDefaultCertificate\": true},\n  \"HttpVersion\": \"http2\",\n  \"IsIPV6Enabled\": true\n}\nEOF",
+            "explanation": "Save this full configuration file and replace <UNIQUE_VALUE>, <ACCOUNT_ID>, [OAC_ID], and [RESPONSE_HEADERS_POLICY_ID]. <UNIQUE_VALUE>, <ACCOUNT_ID>, and [OAC_ID] are the values used in task 2. The CachingOptimized managed policy ID is fixed in this training configuration. The legacy ForwardedValues and MinTTL fields are intentionally absent because CachePolicyId controls the cache key.",
+            "expectedResult": "A complete update document preserving the origin and OAC while adding cache and response-header policies exists locally.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If your current distribution has additional fields not created by this Follow Along, edit the downloaded DistributionConfig instead and preserve those fields.",
+            "sourceIds": [
+              "source-using-managed-cache-policies",
+              "source-understanding-cache-policies",
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://updated-distribution-config.json --profile <LAB_PROFILE>",
+            "explanation": "Apply the complete updated configuration. Record the response ETag because later distribution changes require a newer current ETag.",
+            "expectedResult": "The response shows an InProgress distribution update.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not remove OriginAccessControlId while editing the configuration.",
+            "sourceIds": [
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli",
+              "source-modifying-response-headers"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws cloudfront create-invalidation --distribution-id [DISTRIBUTION_ID] --paths /index.html --profile <LAB_PROFILE>",
+            "explanation": "Create the exact invalidation path and record Invalidation.Id as [INVALIDATION_ID].",
+            "expectedResult": "The response returns [INVALIDATION_ID] with Status InProgress.",
+            "instructions": [],
+            "commands": [],
+            "warning": "CloudFront is global, so no --region is used.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws cloudfront wait invalidation-completed --distribution-id [DISTRIBUTION_ID] --id [INVALIDATION_ID] --profile <LAB_PROFILE>",
+            "explanation": "Wait for the invalidation created in the preceding step.",
+            "expectedResult": "The command returns successfully when [INVALIDATION_ID] for /index.html is completed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not create a wildcard invalidation for this small targeted content change.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-verification-1",
+            "title": "Verify response headers",
+            "instruction": "Request https://[DISTRIBUTION_DOMAIN_NAME]/index.html and inspect its response headers in browser developer tools or with an HTTP client.",
+            "expectedResult": "The response includes x-content-type-options and strict-transport-security.",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-apply-cache-and-response-header-controls-003-verification-2",
+            "title": "Verify the exact invalidation resource",
+            "instruction": "Inspect the distribution Invalidations tab or query [INVALIDATION_ID].",
+            "expectedResult": "[INVALIDATION_ID] identifies the /index.html invalidation and has Status Completed.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004",
+        "slug": "add-an-edge-redirect-and-delivery-observability",
+        "title": "Add an edge redirect and delivery observability",
+        "service": "CloudFront",
+        "feature": "CloudFront Functions, standard logs, and CloudWatch metrics",
+        "goal": "Create and publish cf-secure-content-lab-index-redirect, associate its LIVE version with the Default behavior viewer-request event, configure standard logging to cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/, and inspect CloudFront delivery metrics.",
+        "whyItMatters": "CloudFront Functions can make lightweight viewer-request decisions at edge locations. Standard logs provide request-level records, while CloudWatch metrics provide distribution-level traffic and error signals.",
+        "difficulty": "Hard",
+        "estimatedMinutes": 30,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-customize-edge-requests-and-observe-delivery",
+        "prerequisites": [
+          "task-cloudfront-apply-cache-and-response-header-controls-003"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-a-cloudfront-function",
+          "source-publishing-a-cloudfront-function",
+          "source-associating-a-cloudfront-function",
+          "source-standard-logging",
+          "source-cloudfront-monitoring-using-cloudwatch",
+          "source-viewing-cloudfront-metrics",
+          "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and publish the redirect function",
+            "instruction": "☐ Open the CloudFront console.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-1",
+                "text": "☐ Open the CloudFront console.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-2",
+                "text": "☐ Choose Functions.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-3",
+                "text": "☐ Choose Create function.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-4",
+                "text": "☐ In Function name, enter cf-secure-content-lab-index-redirect.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-5",
+                "text": "☐ Choose Create function.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-6",
+                "text": "☐ Replace the editor contents with the supplied function code.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-7",
+                "text": "☐ Choose Save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-8",
+                "text": "☐ Choose Publish function.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-instruction-9",
+                "text": "☐ Confirm that the function page identifies the LIVE stage.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-1-create-and-publish-the-redirect-function-json-1",
+                "title": "Function code for cf-secure-content-lab-index-redirect",
+                "content": "function handler(event) {\n  var request = event.request;\n  if (request.uri === '/') {\n    return {\n      statusCode: 302,\n      statusDescription: 'Found',\n      headers: {\n        location: { value: '/index.html' }\n      }\n    };\n  }\n  return request;\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-creating-a-cloudfront-function",
+                  "source-publishing-a-cloudfront-function"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The exact resource LIVE stage of cf-secure-content-lab-index-redirect exists.",
+            "warning": "The function redirects only /. All other URI values are returned unchanged.",
+            "sourceIds": [
+              "source-publishing-a-cloudfront-function"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Associate the published LIVE function",
+            "instruction": "☐ Choose Distributions and open [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-1",
+                "text": "☐ Choose Distributions and open [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-2",
+                "text": "☐ Choose Behaviors.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-3",
+                "text": "☐ Select Default (*), then choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-4",
+                "text": "☐ Expand Function associations.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-5",
+                "text": "☐ In Event type, choose Viewer request.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-6",
+                "text": "☐ In Function ARN or name, choose cf-secure-content-lab-index-redirect.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-7",
+                "text": "☐ Choose Save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-2-associate-the-published-live-function-instruction-8",
+                "text": "☐ Wait for deployment to complete.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The exact Default behavior viewer-request association invokes the published LIVE function.",
+            "warning": "Do not associate a DEVELOPMENT-stage function.",
+            "sourceIds": [
+              "source-associating-a-cloudfront-function"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Enable and inspect standard logging",
+            "instruction": "☐ Open the General tab for [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-1",
+                "text": "☐ Open the General tab for [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-2",
+                "text": "☐ Choose Edit.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-3",
+                "text": "☐ Enable Standard logging.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-4",
+                "text": "☐ Select cf-secure-logs-lab-<ACCOUNT_ID> as the destination bucket.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-5",
+                "text": "☐ In Log prefix, enter cloudfront/.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-6",
+                "text": "☐ If the console reports a bucket ownership or ACL prerequisite, return to the log bucket and apply exactly the setting required by the message before retrying.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-7",
+                "text": "☐ Choose Save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-3-enable-and-inspect-standard-logging-instruction-8",
+                "text": "☐ Wait for deployment to complete.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The exact standard logging destination is cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/.",
+            "warning": "Logs are asynchronous and may contain request metadata. Keep the log bucket private.",
+            "sourceIds": [
+              "source-standard-logging"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Inspect CloudFront metrics",
+            "instruction": "☐ Open [DISTRIBUTION_ID].",
+            "instructions": [
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics-instruction-1",
+                "text": "☐ Open [DISTRIBUTION_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics-instruction-2",
+                "text": "☐ Choose Monitoring.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics-instruction-3",
+                "text": "☐ Inspect Requests, Bytes downloaded, 4xx error rate, and 5xx error rate.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics-instruction-4",
+                "text": "☐ Generate several requests to https://[DISTRIBUTION_DOMAIN_NAME]/ and https://[DISTRIBUTION_DOMAIN_NAME]/index.html.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-console-step-4-inspect-cloudfront-metrics-instruction-5",
+                "text": "☐ Refresh Monitoring after metrics have had time to populate.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "You can inspect aggregate request, transfer, and error metrics for the distribution.",
+            "warning": "A new low-traffic lab can show sparse or zero values.",
+            "sourceIds": [
+              "source-cloudfront-monitoring-using-cloudwatch",
+              "source-viewing-cloudfront-metrics"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "cat > index-redirect.js <<'EOF'\nfunction handler(event) {\n  var request = event.request;\n  if (request.uri === '/') {\n    return {\n      statusCode: 302,\n      statusDescription: 'Found',\n      headers: { location: { value: '/index.html' } }\n    };\n  }\n  return request;\n}\nEOF\naws cloudfront create-function --name cf-secure-content-lab-index-redirect --function-config Comment=\"Redirect root requests to index.html\",Runtime=cloudfront-js-2.0 --function-code fileb://index-redirect.js --profile <LAB_PROFILE>",
+            "explanation": "Save the complete function file and create the DEVELOPMENT-stage function. Record the returned ETag as [FUNCTION_ETAG].",
+            "expectedResult": "The response identifies cf-secure-content-lab-index-redirect in DEVELOPMENT.",
+            "instructions": [],
+            "commands": [],
+            "warning": "CloudFront is global, so no --region is supplied.",
+            "sourceIds": [
+              "source-creating-a-cloudfront-function"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws cloudfront publish-function --name cf-secure-content-lab-index-redirect --if-match [FUNCTION_ETAG] --profile <LAB_PROFILE>",
+            "explanation": "Publish the exact saved code. Record the returned FunctionSummary.FunctionMetadata.FunctionARN as [LIVE_FUNCTION_ARN] and record the returned ETag as [LIVE_FUNCTION_ETAG].",
+            "expectedResult": "The response identifies the LIVE stage of cf-secure-content-lab-index-redirect.",
+            "instructions": [],
+            "commands": [],
+            "warning": "A stale function ETag causes publication to fail.",
+            "sourceIds": [
+              "source-publishing-a-cloudfront-function"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > function-current-config.json",
+            "explanation": "Record the returned top-level ETag as [FUNCTION_ASSOCIATION_ETAG]. Use the current DistributionConfig as the basis for the next update so the OAC, cache policy, and response headers policy remain intact.",
+            "expectedResult": "function-current-config.json contains the current ETag and complete configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not reuse the ETag from task 3 after a deployment update.",
+            "sourceIds": [
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "Create function-association-distribution-config.json by copying the current DistributionConfig and adding this exact object under DefaultCacheBehavior:\n\"FunctionAssociations\": {\"Quantity\": 1, \"Items\": [{\"FunctionARN\": \"[LIVE_FUNCTION_ARN]\", \"EventType\": \"viewer-request\"}]}\nThen run:\naws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [FUNCTION_ASSOCIATION_ETAG] --distribution-config file://function-association-distribution-config.json --profile <LAB_PROFILE>",
+            "explanation": "The supplied object is the complete new FunctionAssociations value. [LIVE_FUNCTION_ARN] comes from publish-function. Preserve every other field from function-current-config.json, including the OAC origin, CachePolicyId, and ResponseHeadersPolicyId. Record the update response ETag as [LOGGING_ETAG] after the update is accepted.",
+            "expectedResult": "The distribution update begins and the Default behavior gains the viewer-request association.",
+            "instructions": [],
+            "commands": [],
+            "warning": "A distribution configuration is account-specific; preserve the full current configuration rather than creating a partial document.",
+            "sourceIds": [
+              "source-associating-a-cloudfront-function",
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "After the preceding update is deployed, run:\naws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > logging-current-config.json\nCopy its DistributionConfig to logging-distribution-config.json and set its Logging object exactly to:\n\"Logging\": {\"Enabled\": true, \"IncludeCookies\": false, \"Bucket\": \"cf-secure-logs-lab-<ACCOUNT_ID>.s3.amazonaws.com\", \"Prefix\": \"cloudfront/\"}\nThen record its current ETag as [LOGGING_ETAG] and run:\naws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [LOGGING_ETAG] --distribution-config file://logging-distribution-config.json --profile <LAB_PROFILE>",
+            "explanation": "This separately creates the exact distribution logging association: Standard logging destination cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/. Preserve the existing FunctionAssociations and all other configuration values when adding Logging.",
+            "expectedResult": "The update begins with standard logging enabled for the specified bucket and prefix.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If CloudFront rejects the bucket, resolve the ownership or ACL prerequisite using the Standard logging documentation; do not make the bucket public.",
+            "sourceIds": [
+              "source-standard-logging",
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-verification-1",
+            "title": "Verify the viewer-request redirect",
+            "instruction": "Request https://[DISTRIBUTION_DOMAIN_NAME]/ and inspect the redirect location.",
+            "expectedResult": "The response redirects to /index.html, which returns the sample page.",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-verification-2",
+            "title": "Verify the exact logging association",
+            "instruction": "Inspect General logging settings or the deployed distribution configuration.",
+            "expectedResult": "Standard logging destination is cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/.",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004-verification-3",
+            "title": "Verify logging and metrics",
+            "instruction": "After requests and a delay, inspect the log-bucket cloudfront/ prefix and the CloudFront Monitoring tab.",
+            "expectedResult": "Log objects begin appearing and delivery metrics show activity when populated.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005",
+        "slug": "perform-final-solution-checks-and-reverse-dependency-cleanup",
+        "title": "Perform final solution checks and reverse-dependency cleanup",
+        "service": "CloudFront",
+        "feature": "CloudFront operational validation and cleanup",
+        "goal": "Validate the secure private-origin baseline, then remove every created CloudFront and S3 resource in reverse dependency order, including the exact associations, invalidation history target, policy, public-access-block configurations, and bucket objects.",
+        "whyItMatters": "A final review catches accidental public access before deletion. Reverse-dependency cleanup avoids resource-in-use errors and prevents continued charges for CloudFront requests, S3 storage, and retained access logs.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 35,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-validate-and-remove-the-lab",
+        "prerequisites": [
+          "task-cloudfront-add-an-edge-redirect-and-delivery-observability-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-restricting-access-to-an-amazon-s3-origin",
+          "source-official-aws-documentation-2",
+          "source-standard-logging",
+          "source-official-aws-documentation-3",
+          "source-official-aws-documentation-4",
+          "source-deleting-objects-from-a-bucket",
+          "source-official-aws-documentation-5",
+          "source-updating-a-cloudfront-distribution-with-the-aws-cli",
+          "source-associating-a-cloudfront-function",
+          "source-modifying-response-headers",
+          "source-official-aws-documentation",
+          "source-publishing-a-cloudfront-function",
+          "source-creating-a-cloudfront-function",
+          "source-creating-response-headers-policies",
+          "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Validate the deployed security baseline",
+            "instruction": "☐ Open cf-secure-content-lab-<ACCOUNT_ID> in Amazon S3 and choose Permissions.",
+            "instructions": [
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-1",
+                "text": "☐ Open cf-secure-content-lab-<ACCOUNT_ID> in Amazon S3 and choose Permissions.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-2",
+                "text": "☐ Confirm Block all public access is enabled.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-3",
+                "text": "☐ Open Bucket policy and confirm the policy statement Sid is CloudFrontReadOnlyOAC.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-4",
+                "text": "☐ Confirm its AWS:SourceArn is [DISTRIBUTION_ARN].",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-5",
+                "text": "☐ Open [DISTRIBUTION_ID] in CloudFront, then open Behaviors.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-6",
+                "text": "☐ Open Default (*).",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-7",
+                "text": "☐ Confirm Cache policy is Managed-CachingOptimized.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-8",
+                "text": "☐ Confirm Response headers policy is cf-secure-content-lab-security-headers.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-9",
+                "text": "☐ Confirm Function associations contains Viewer request and cf-secure-content-lab-index-redirect.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-10",
+                "text": "☐ Open General and confirm Standard logging destination is cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/.",
+                "detail": ""
+              },
+              {
+                "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-console-step-1-validate-the-deployed-security-baseline-instruction-11",
+                "text": "☐ Request both https://[DISTRIBUTION_DOMAIN_NAME]/ and https://[DISTRIBUTION_DOMAIN_NAME]/index.html.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The root redirects to index.html, CloudFront serves the page with configured headers, the S3 origin remains private, and the exact logging association is present.",
+            "warning": "Complete the cleanup steps immediately after validation unless the environment is intentionally retained.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin",
+              "source-official-aws-documentation-2",
+              "source-standard-logging"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > cleanup-current-config.json",
+            "explanation": "Before every distribution update, obtain a fresh current ETag and complete DistributionConfig. The top-level ETag is the value for --if-match; the DistributionConfig object is the file content to edit.",
+            "expectedResult": "cleanup-current-config.json contains the current ETag and deployed configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "CloudFront is global. Never use an old ETag after a distribution update.",
+            "sourceIds": [
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "Create cleanup-without-associations.json by copying the DistributionConfig from cleanup-current-config.json and making all of these changes in the same document:\n1. Set Logging to {\"Enabled\":false,\"IncludeCookies\":false,\"Bucket\":\"\",\"Prefix\":\"\"}.\n2. Set DefaultCacheBehavior.FunctionAssociations to {\"Quantity\":0}.\n3. Remove DefaultCacheBehavior.ResponseHeadersPolicyId.\nThen run:\naws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [CURRENT_ETAG] --distribution-config file://cleanup-without-associations.json --profile <LAB_PROFILE>",
+            "explanation": "This removes exactly three dependent resources in one required distribution update: Standard logging destination cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/, Default behavior viewer-request association for cf-secure-content-lab-index-redirect, and Default behavior response headers policy association. [CURRENT_ETAG] is the ETag from the preceding get-distribution-config output.",
+            "expectedResult": "The distribution enters InProgress with logging and both policy/function associations removed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Preserve the origin, OAC, cache policy, and all unrelated configuration fields.",
+            "sourceIds": [
+              "source-standard-logging",
+              "source-associating-a-cloudfront-function",
+              "source-modifying-response-headers",
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws cloudfront get-invalidation --distribution-id [DISTRIBUTION_ID] --id [INVALIDATION_ID] --profile <LAB_PROFILE>",
+            "explanation": "Inspect the exact historical invalidation resource [INVALIDATION_ID] for /index.html. CloudFront invalidations have no separate delete operation; its history is removed when the distribution is deleted.",
+            "expectedResult": "The response identifies [INVALIDATION_ID], its /index.html path, and Completed status.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not create another invalidation during cleanup.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws s3api delete-bucket-policy --bucket cf-secure-content-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2",
+            "explanation": "Remove exactly the CloudFrontReadOnlyOAC policy on cf-secure-content-lab-<ACCOUNT_ID> before disabling and deleting its dependent distribution.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This intentionally makes CloudFront unable to read the private origin during deletion. Do not remove any unrelated bucket policy.",
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > disable-current-config.json\nCreate disable-distribution-config.json by copying its DistributionConfig and changing only \"Enabled\" to false.\naws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISABLE_ETAG] --distribution-config file://disable-distribution-config.json --profile <LAB_PROFILE>",
+            "explanation": "[DISABLE_ETAG] is the fresh top-level ETag in disable-current-config.json. This disables the distribution only after its logging, function, headers association, and origin bucket policy have been removed.",
+            "expectedResult": "The distribution update begins with Enabled set to false.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Wait until the distribution is fully deployed and disabled before attempting deletion.",
+            "sourceIds": [
+              "source-official-aws-documentation-3",
+              "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws cloudfront get-distribution-config --id [DISTRIBUTION_ID] --profile <LAB_PROFILE> --output json > delete-current-config.json\naws cloudfront delete-distribution --id [DISTRIBUTION_ID] --if-match [DELETE_ETAG] --profile <LAB_PROFILE>",
+            "explanation": "After the disabled deployment completes, use the fresh ETag in delete-current-config.json as [DELETE_ETAG]. This deletes [DISTRIBUTION_ID], including its invalidation history.",
+            "expectedResult": "The delete command succeeds and the distribution no longer appears after deletion completes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not delete another distribution.",
+            "sourceIds": [
+              "source-official-aws-documentation-3",
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-verification-1",
+            "title": "Verify associations and origin policy are removed before deletion",
+            "instruction": "Before disabling the distribution, inspect its configuration and the content bucket Permissions tab.",
+            "expectedResult": "No standard logging destination, viewer-request function association, or response headers policy association remains; CloudFrontReadOnlyOAC policy is absent.",
+            "mode": "either"
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-verification-2",
+            "title": "Verify distribution deletion",
+            "instruction": "Search the CloudFront Distributions list for [DISTRIBUTION_ID].",
+            "expectedResult": "The distribution is absent; [INVALIDATION_ID] history is consequently removed with it.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-1",
+            "stepNumber": 1,
+            "title": "Delete the LIVE function and its remaining function resource",
+            "instruction": "Console: Open CloudFront Functions, select cf-secure-content-lab-index-redirect, and choose Delete function after the Default behavior viewer-request association has been removed. CLI: run get-function for the LIVE stage to obtain its current ETag, then run aws cloudfront delete-function --name cf-secure-content-lab-index-redirect --if-match [LIVE_FUNCTION_ETAG] --profile <LAB_PROFILE>.",
+            "description": "Console: Open CloudFront Functions, select cf-secure-content-lab-index-redirect, and choose Delete function after the Default behavior viewer-request association has been removed. CLI: run get-function for the LIVE stage to obtain its current ETag, then run aws cloudfront delete-function --name cf-secure-content-lab-index-redirect --if-match [LIVE_FUNCTION_ETAG] --profile <LAB_PROFILE>.",
+            "verification": "The LIVE stage of cf-secure-content-lab-index-redirect and the function itself no longer appear in CloudFront Functions.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-publishing-a-cloudfront-function",
+              "source-creating-a-cloudfront-function"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-2",
+            "stepNumber": 2,
+            "title": "Delete the custom response headers policy",
+            "instruction": "Console: Open CloudFront Policies, choose Response headers, select cf-secure-content-lab-security-headers, and choose Delete. CLI: obtain the policy ETag, then run aws cloudfront delete-response-headers-policy --id [RESPONSE_HEADERS_POLICY_ID] --if-match [RESPONSE_HEADERS_POLICY_ETAG] --profile <LAB_PROFILE>.",
+            "description": "Console: Open CloudFront Policies, choose Response headers, select cf-secure-content-lab-security-headers, and choose Delete. CLI: obtain the policy ETag, then run aws cloudfront delete-response-headers-policy --id [RESPONSE_HEADERS_POLICY_ID] --if-match [RESPONSE_HEADERS_POLICY_ETAG] --profile <LAB_PROFILE>.",
+            "verification": "cf-secure-content-lab-security-headers no longer appears in Response headers policies.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-creating-response-headers-policies"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-3",
+            "stepNumber": 3,
+            "title": "Delete the now-unused OAC",
+            "instruction": "Console: Open CloudFront Origin access controls, select cf-secure-content-lab-oac, and choose Delete. CLI: obtain its current ETag, then run aws cloudfront delete-origin-access-control --id [OAC_ID] --if-match [OAC_ETAG] --profile <LAB_PROFILE>.",
+            "description": "Console: Open CloudFront Origin access controls, select cf-secure-content-lab-oac, and choose Delete. CLI: obtain its current ETag, then run aws cloudfront delete-origin-access-control --id [OAC_ID] --if-match [OAC_ETAG] --profile <LAB_PROFILE>.",
+            "verification": "cf-secure-content-lab-oac no longer appears in Origin access controls.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-restricting-access-to-an-amazon-s3-origin"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-4",
+            "stepNumber": 4,
+            "title": "Delete the exact content objects and content public-access block",
+            "instruction": "Console: Open cf-secure-content-lab-<ACCOUNT_ID> Objects, select index.html and assets/site.css, choose Delete, and confirm. Then open Permissions, Block public access, choose Edit, clear Block all public access, and save. CLI: run aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/index.html --profile <LAB_PROFILE> --region eu-west-2; run aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/assets/site.css --profile <LAB_PROFILE> --region eu-west-2; then run aws s3api delete-public-access-block --bucket cf-secure-content-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "description": "Console: Open cf-secure-content-lab-<ACCOUNT_ID> Objects, select index.html and assets/site.css, choose Delete, and confirm. Then open Permissions, Block public access, choose Edit, clear Block all public access, and save. CLI: run aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/index.html --profile <LAB_PROFILE> --region eu-west-2; run aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/assets/site.css --profile <LAB_PROFILE> --region eu-west-2; then run aws s3api delete-public-access-block --bucket cf-secure-content-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "verification": "index.html and assets/site.css are absent, and the exact resource Public access block for cf-secure-content-lab-<ACCOUNT_ID> is absent.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-deleting-objects-from-a-bucket",
+              "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-5",
+            "stepNumber": 5,
+            "title": "Delete the empty content bucket",
+            "instruction": "Console: In General purpose buckets, select cf-secure-content-lab-<ACCOUNT_ID>, choose Delete, enter its exact name, and choose Delete bucket. CLI: run aws s3api delete-bucket --bucket cf-secure-content-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "description": "Console: In General purpose buckets, select cf-secure-content-lab-<ACCOUNT_ID>, choose Delete, enter its exact name, and choose Delete bucket. CLI: run aws s3api delete-bucket --bucket cf-secure-content-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "verification": "cf-secure-content-lab-<ACCOUNT_ID> no longer appears in General purpose buckets.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          },
+          {
+            "id": "task-cloudfront-perform-final-solution-checks-and-reverse-dependency-cleanup-005-cleanup-6",
+            "stepNumber": 6,
+            "title": "Empty the exact log destination, remove its public-access block, and delete it",
+            "instruction": "Wait until no additional CloudFront log delivery is expected. Console: open cf-secure-logs-lab-<ACCOUNT_ID>, choose Empty, confirm, then open Permissions and remove Block all public access. Delete the bucket from General purpose buckets. CLI: run aws s3 rm s3://cf-secure-logs-lab-<ACCOUNT_ID>/ --recursive --profile <LAB_PROFILE> --region eu-west-2; run aws s3api delete-public-access-block --bucket cf-secure-logs-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2; then run aws s3api delete-bucket --bucket cf-secure-logs-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "description": "Wait until no additional CloudFront log delivery is expected. Console: open cf-secure-logs-lab-<ACCOUNT_ID>, choose Empty, confirm, then open Permissions and remove Block all public access. Delete the bucket from General purpose buckets. CLI: run aws s3 rm s3://cf-secure-logs-lab-<ACCOUNT_ID>/ --recursive --profile <LAB_PROFILE> --region eu-west-2; run aws s3api delete-public-access-block --bucket cf-secure-logs-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2; then run aws s3api delete-bucket --bucket cf-secure-logs-lab-<ACCOUNT_ID> --profile <LAB_PROFILE> --region eu-west-2.",
+            "verification": "The exact resource Public access block for cf-secure-logs-lab-<ACCOUNT_ID> and the cf-secure-logs-lab-<ACCOUNT_ID> bucket are absent.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-deleting-objects-from-a-bucket",
+              "source-blocking-public-access-to-s3-buckets-with-the-aws-cli",
+              "source-official-aws-documentation-5"
+            ]
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "CloudFront requests, data transfer, invalidations beyond any applicable free allowance, S3 storage, S3 requests, and log storage can incur charges. Standard logs can grow quickly. Complete the final cleanup promptly.",
+      "safety": "Keep both S3 buckets private. Do not use an S3 website endpoint, public bucket policy, public ACL, or public-read object permission for the content origin. The distribution domain is the intended viewer entry point.",
+      "credentials": "Use an existing authorized AWS Console session or AWS CLI profile. Never place access keys, secret access keys, session tokens, passwords, or private keys in function code, bucket objects, policy files, screenshots, or logs.",
+      "region": "Create both Amazon S3 buckets in Europe (London), eu-west-2. Include --region eu-west-2 for S3 CLI operations. CloudFront distributions, Functions, OACs, policies, invalidations, and CloudFront CLI commands are global and intentionally omit --region."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Remove CloudFront standard logging configuration",
+          "instruction": "Console:\n- Open [DISTRIBUTION_ID] General tab.\n- Choose Edit.\n- Disable Standard logging.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-logging.json",
+          "description": "Console:\n- Open [DISTRIBUTION_ID] General tab.\n- Choose Edit.\n- Disable Standard logging.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-logging.json",
+          "verification": "The distribution General tab no longer lists cf-secure-logs-lab-<ACCOUNT_ID> as a standard logging destination.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-standard-logging",
+            "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Remove the viewer-request function association",
+          "instruction": "Console:\n- Open [DISTRIBUTION_ID] Behaviors tab.\n- Edit the Default (*) behavior.\n- Remove cf-secure-content-lab-index-redirect from Function associations.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-function-association.json",
+          "description": "Console:\n- Open [DISTRIBUTION_ID] Behaviors tab.\n- Edit the Default (*) behavior.\n- Remove cf-secure-content-lab-index-redirect from Function associations.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-function-association.json",
+          "verification": "The Default (*) behavior has no viewer-request association for cf-secure-content-lab-index-redirect.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-associating-a-cloudfront-function",
+            "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Remove the response headers policy association",
+          "instruction": "Console:\n- Open [DISTRIBUTION_ID] Behaviors tab.\n- Edit the Default (*) behavior.\n- Set Response headers policy to No response headers policy.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-response-headers-policy.json",
+          "description": "Console:\n- Open [DISTRIBUTION_ID] Behaviors tab.\n- Edit the Default (*) behavior.\n- Set Response headers policy to No response headers policy.\n- Choose Save changes.\nCLI:\n- aws cloudfront update-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG] --distribution-config file://distribution-config-without-response-headers-policy.json",
+          "verification": "The Default (*) behavior no longer names cf-secure-content-lab-security-headers.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-modifying-response-headers",
+            "source-updating-a-cloudfront-distribution-with-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Confirm the completed invalidation is retained only as history",
+          "instruction": "Console:\n- Open [DISTRIBUTION_ID] Invalidations tab.\nCLI:\n- aws cloudfront get-invalidation --distribution-id [DISTRIBUTION_ID] --id [INVALIDATION_ID]",
+          "description": "Console:\n- Open [DISTRIBUTION_ID] Invalidations tab.\nCLI:\n- aws cloudfront get-invalidation --distribution-id [DISTRIBUTION_ID] --id [INVALIDATION_ID]",
+          "verification": "[INVALIDATION_ID] is Completed; CloudFront invalidation history is removed with the distribution.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation"
+          ]
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Disable and delete the lab distribution",
+          "instruction": "Console:\n- Open [DISTRIBUTION_ID] General tab.\n- Choose Edit.\n- Disable the distribution.\n- Choose Save changes.\n- Wait for Status to become Disabled.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws cloudfront delete-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG]",
+          "description": "Console:\n- Open [DISTRIBUTION_ID] General tab.\n- Choose Edit.\n- Disable the distribution.\n- Choose Save changes.\n- Wait for Status to become Disabled.\n- Choose Delete.\n- Confirm deletion.\nCLI:\n- aws cloudfront delete-distribution --id [DISTRIBUTION_ID] --if-match [DISTRIBUTION_ETAG]",
+          "verification": "[DISTRIBUTION_ID] no longer appears in the CloudFront Distributions list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-3",
+            "source-official-aws-documentation-4"
+          ]
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Remove the published CloudFront Function stage",
+          "instruction": "Console:\n- Open CloudFront Functions.\n- Open cf-secure-content-lab-index-redirect.\n- Choose Delete function.\nCLI:\n- aws cloudfront delete-function --name cf-secure-content-lab-index-redirect --if-match [FUNCTION_ETAG]",
+          "description": "Console:\n- Open CloudFront Functions.\n- Open cf-secure-content-lab-index-redirect.\n- Choose Delete function.\nCLI:\n- aws cloudfront delete-function --name cf-secure-content-lab-index-redirect --if-match [FUNCTION_ETAG]",
+          "verification": "The CloudFront Functions list no longer shows a LIVE stage for cf-secure-content-lab-index-redirect.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-publishing-a-cloudfront-function"
+          ]
+        },
+        {
+          "id": "programme-cleanup-7",
+          "stepNumber": 7,
+          "title": "Delete the CloudFront Function",
+          "instruction": "Console:\n- Refresh CloudFront Functions list.\nCLI:\n- aws cloudfront list-functions",
+          "description": "Console:\n- Refresh CloudFront Functions list.\nCLI:\n- aws cloudfront list-functions",
+          "verification": "cf-secure-content-lab-index-redirect no longer appears in the CloudFront Functions list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-creating-a-cloudfront-function"
+          ]
+        },
+        {
+          "id": "programme-cleanup-8",
+          "stepNumber": 8,
+          "title": "Delete the custom response headers policy",
+          "instruction": "Console:\n- Open CloudFront Policies Response headers.\n- Select cf-secure-content-lab-security-headers.\n- Choose Delete.\nCLI:\n- aws cloudfront delete-response-headers-policy --id [RESPONSE_HEADERS_POLICY_ID] --if-match [RESPONSE_HEADERS_POLICY_ETAG]",
+          "description": "Console:\n- Open CloudFront Policies Response headers.\n- Select cf-secure-content-lab-security-headers.\n- Choose Delete.\nCLI:\n- aws cloudfront delete-response-headers-policy --id [RESPONSE_HEADERS_POLICY_ID] --if-match [RESPONSE_HEADERS_POLICY_ETAG]",
+          "verification": "cf-secure-content-lab-security-headers no longer appears in the Response headers policies list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-creating-response-headers-policies"
+          ]
+        },
+        {
+          "id": "programme-cleanup-9",
+          "stepNumber": 9,
+          "title": "Remove the distribution-specific S3 origin policy",
+          "instruction": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Permissions tab.\n- Open Bucket policy.\n- Choose Delete.\n- Choose Save changes.\nCLI:\n- aws s3api delete-bucket-policy --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "description": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Permissions tab.\n- Open Bucket policy.\n- Choose Delete.\n- Choose Save changes.\nCLI:\n- aws s3api delete-bucket-policy --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "verification": "The content bucket Permissions tab shows no bucket policy.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-restricting-access-to-an-amazon-s3-origin"
+          ]
+        },
+        {
+          "id": "programme-cleanup-10",
+          "stepNumber": 10,
+          "title": "Delete the unused OAC",
+          "instruction": "Console:\n- Open CloudFront Origin access controls.\n- Select cf-secure-content-lab-oac.\n- Choose Delete.\nCLI:\n- aws cloudfront delete-origin-access-control --id [OAC_ID] --if-match [OAC_ETAG]",
+          "description": "Console:\n- Open CloudFront Origin access controls.\n- Select cf-secure-content-lab-oac.\n- Choose Delete.\nCLI:\n- aws cloudfront delete-origin-access-control --id [OAC_ID] --if-match [OAC_ETAG]",
+          "verification": "cf-secure-content-lab-oac no longer appears in Origin access controls.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-restricting-access-to-an-amazon-s3-origin"
+          ]
+        },
+        {
+          "id": "programme-cleanup-11",
+          "stepNumber": 11,
+          "title": "Delete only the content-bucket training objects",
+          "instruction": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Objects tab.\n- Select index.html and assets/.\n- Choose Delete.\n- Confirm permanent deletion.\nCLI:\n- aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/ --recursive --region eu-west-2",
+          "description": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Objects tab.\n- Select index.html and assets/.\n- Choose Delete.\n- Confirm permanent deletion.\nCLI:\n- aws s3 rm s3://cf-secure-content-lab-<ACCOUNT_ID>/ --recursive --region eu-west-2",
+          "verification": "The content bucket Objects tab is empty.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-deleting-objects-from-a-bucket"
+          ]
+        },
+        {
+          "id": "programme-cleanup-12",
+          "stepNumber": 12,
+          "title": "Remove the content bucket public-access-block configuration",
+          "instruction": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Permissions tab.\n- Open Block public access.\n- Choose Edit.\n- Clear Block all public access.\n- Choose Save changes.\nCLI:\n- aws s3api delete-public-access-block --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "description": "Console:\n- Open cf-secure-content-lab-<ACCOUNT_ID> Permissions tab.\n- Open Block public access.\n- Choose Edit.\n- Clear Block all public access.\n- Choose Save changes.\nCLI:\n- aws s3api delete-public-access-block --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "verification": "The content bucket Permissions tab no longer displays a bucket-level public-access-block configuration.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-13",
+          "stepNumber": 13,
+          "title": "Delete the empty content bucket",
+          "instruction": "Console:\n- Select cf-secure-content-lab-<ACCOUNT_ID> in General purpose buckets.\n- Choose Delete.\n- Enter cf-secure-content-lab-<ACCOUNT_ID>.\n- Choose Delete bucket.\nCLI:\n- aws s3api delete-bucket --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "description": "Console:\n- Select cf-secure-content-lab-<ACCOUNT_ID> in General purpose buckets.\n- Choose Delete.\n- Enter cf-secure-content-lab-<ACCOUNT_ID>.\n- Choose Delete bucket.\nCLI:\n- aws s3api delete-bucket --bucket cf-secure-content-lab-<ACCOUNT_ID> --region eu-west-2",
+          "verification": "Searching General purpose buckets for cf-secure-content-lab-<ACCOUNT_ID> returns no result.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-5"
+          ]
+        },
+        {
+          "id": "programme-cleanup-14",
+          "stepNumber": 14,
+          "title": "Remove the log bucket public-access-block configuration",
+          "instruction": "Console:\n- Open cf-secure-logs-lab-<ACCOUNT_ID> Permissions tab.\n- Open Block public access.\n- Choose Edit.\n- Clear Block all public access.\n- Choose Save changes.\nCLI:\n- aws s3api delete-public-access-block --bucket cf-secure-logs-lab-<ACCOUNT_ID> --region eu-west-2",
+          "description": "Console:\n- Open cf-secure-logs-lab-<ACCOUNT_ID> Permissions tab.\n- Open Block public access.\n- Choose Edit.\n- Clear Block all public access.\n- Choose Save changes.\nCLI:\n- aws s3api delete-public-access-block --bucket cf-secure-logs-lab-<ACCOUNT_ID> --region eu-west-2",
+          "verification": "The log bucket Permissions tab no longer displays a bucket-level public-access-block configuration.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-blocking-public-access-to-s3-buckets-with-the-aws-cli"
+          ]
+        },
+        {
+          "id": "programme-cleanup-15",
+          "stepNumber": 15,
+          "title": "Empty and delete the log bucket",
+          "instruction": "Console:\n- Open cf-secure-logs-lab-<ACCOUNT_ID> Objects tab.\n- Choose Empty.\n- Confirm permanent deletion.\n- Select cf-secure-logs-lab-<ACCOUNT_ID> in General purpose buckets.\n- Choose Delete.\n- Enter cf-secure-logs-lab-<ACCOUNT_ID>.\n- Choose Delete bucket.\nCLI:\n- aws s3 rb s3://cf-secure-logs-lab-<ACCOUNT_ID> --force --region eu-west-2",
+          "description": "Console:\n- Open cf-secure-logs-lab-<ACCOUNT_ID> Objects tab.\n- Choose Empty.\n- Confirm permanent deletion.\n- Select cf-secure-logs-lab-<ACCOUNT_ID> in General purpose buckets.\n- Choose Delete.\n- Enter cf-secure-logs-lab-<ACCOUNT_ID>.\n- Choose Delete bucket.\nCLI:\n- aws s3 rb s3://cf-secure-logs-lab-<ACCOUNT_ID> --force --region eu-west-2",
+          "verification": "Searching General purpose buckets for cf-secure-logs-lab-<ACCOUNT_ID> returns no result.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-deleting-objects-from-a-bucket",
+            "source-official-aws-documentation-5"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The protected source set includes CloudFront distribution creation and update references but does not include the AWS CLI reference pages for create-origin-access-control, delete-origin-access-control, delete-function, delete-response-headers-policy, get-distribution-config, get-function, or get-invalidation. Their CLI commands are included for a complete operational flow but should be reviewed against the current AWS CLI reference before publication.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "CloudFront update-distribution requires the full current distribution configuration and current ETag. The CLI routes explicitly obtain these values, but the complete JSON cannot be safely fixed because generated origin IDs, OAC IDs, policy IDs, log settings, and distribution-specific values differ for every learner.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "CloudFront standard-log bucket requirements can vary by logging mode and account configuration. Before publication, verify the current console logging workflow and any required S3 ownership or ACL settings against the current Standard logging documentation.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 2 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-5",
+          "findingNumber": 5,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 3 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-6",
+          "findingNumber": 6,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 4 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-7",
+          "findingNumber": 7,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Task 5 does not tell a beginner how to navigate to the relevant AWS Console area.",
+          "status": "open"
+        },
+        {
+          "id": "finding-8",
+          "findingNumber": 8,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource contentBucketPublicAccessBlock does not name its exact target Public access block for cf-secure-content-lab-<ACCOUNT_ID>.",
+          "status": "open"
+        },
+        {
+          "id": "finding-9",
+          "findingNumber": 9,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource contentObjects does not name its exact target index.html and assets/site.css in cf-secure-content-lab-<ACCOUNT_ID>.",
+          "status": "open"
+        },
+        {
+          "id": "finding-10",
+          "findingNumber": 10,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource logBucketPublicAccessBlock does not name its exact target Public access block for cf-secure-logs-lab-<ACCOUNT_ID>.",
+          "status": "open"
+        },
+        {
+          "id": "finding-11",
+          "findingNumber": 11,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource originBucketPolicy does not name its exact target CloudFrontReadOnlyOAC policy on cf-secure-content-lab-<ACCOUNT_ID>.",
+          "status": "open"
+        },
+        {
+          "id": "finding-12",
+          "findingNumber": 12,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource responseHeadersAssociation does not name its exact target Default behavior response headers policy association.",
+          "status": "open"
+        },
+        {
+          "id": "finding-13",
+          "findingNumber": 13,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource homePageInvalidation does not name its exact target [INVALIDATION_ID] for /index.html.",
+          "status": "open"
+        },
+        {
+          "id": "finding-14",
+          "findingNumber": 14,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource redirectFunctionPublication does not name its exact target LIVE stage of cf-secure-content-lab-index-redirect.",
+          "status": "open"
+        },
+        {
+          "id": "finding-15",
+          "findingNumber": 15,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource functionAssociation does not name its exact target Default behavior viewer-request association.",
+          "status": "open"
+        },
+        {
+          "id": "finding-16",
+          "findingNumber": 16,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Cleanup for resource distributionLoggingAssociation does not name its exact target Standard logging destination cf-secure-logs-lab-<ACCOUNT_ID>/cloudfront/.",
+          "status": "open"
+        },
+        {
+          "id": "finding-17",
+          "findingNumber": 17,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Manual beginner-quality correction required: Resource originBucketPolicy must be removed before dependency distribution.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "cloudfront-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 5,
+    "taskCount": 5,
+    "checkboxCount": 123,
+    "cliCommandCount": 28,
+    "verificationCheckCount": 11,
+    "cleanupItemCount": 21,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 24
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "d3dd9e1f37ef41de1a79e3f770c021c1f7129091c6da03c9cdb8eedac8cb80d5"
+  }
+}

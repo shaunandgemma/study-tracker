@@ -1,0 +1,743 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-placement-groups-fa7ba494-d157-4d7b-b165-cac807141c01",
+  "preparedAt": "2026-08-10T16:11:03.150Z",
+  "service": {
+    "officialName": "Placement Groups",
+    "shortName": "Placement Groups"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "3cf95b0fe4627e4b7ef1f5020c49a92a9360fba9a09762ffcc26667dffb17f85"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "3cf95b0fe4627e4b7ef1f5020c49a92a9360fba9a09762ffcc26667dffb17f85"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "placement-groups",
+      "serviceName": "Placement Groups",
+      "shortName": "Placement Groups",
+      "displayName": "Placement Groups: Create, Verify, and Remove a Cluster Placement Group",
+      "subtitle": "A short EC2 placement-group lab in Europe (London)",
+      "description": "Use the Amazon EC2 console or AWS CLI to confirm access, create one harmless cluster placement group named pg-lab-cluster in eu-west-2, inspect it, and manually remove it. No instances, VPC resources, credentials, tags, or IAM policies are created.",
+      "learningOutcome": "The learner can identify the required Amazon EC2 placement-group permissions, navigate to Placement Groups in the EC2 console, create a cluster placement group in eu-west-2, verify its reported state and strategy, and remove only the placement group created by this lab.",
+      "programmeId": "placement-groups-learning-path",
+      "pathId": "placement-groups-learning-path",
+      "componentNamespace": "",
+      "category": "Amazon EC2 networking and placement",
+      "difficulty": "Intermediate",
+      "estimatedMinutes": 30,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-actions-resources-and-condition-keys-for-amazon-ec2-service-authorizat",
+        "title": "Actions, resources, and condition keys for Amazon EC2 - Service Authorization Reference",
+        "url": "https://docs.aws.amazon.com/service-authorization/latest/reference/list_ec2.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Identify the Amazon EC2 actions for creating, describing, and deleting placement groups.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001"
+        ]
+      },
+      {
+        "id": "source-placement-groups-for-your-amazon-ec2-instances-amazon-elastic-compute-",
+        "title": "Placement groups for your Amazon EC2 instances - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Understand placement-group strategies, rules, and pricing.",
+        "taskIds": [
+          "task-placement-groups-create-the-test-cluster-placement-group-002"
+        ]
+      },
+      {
+        "id": "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute",
+        "title": "Create a placement group for your EC2 instances - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-placement-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide supported console navigation and creation steps.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001",
+          "task-placement-groups-create-the-test-cluster-placement-group-002",
+          "task-placement-groups-verify-the-test-group-003"
+        ]
+      },
+      {
+        "id": "source-create-placement-group-aws-cli-command-reference",
+        "title": "create-placement-group — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/ec2/create-placement-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide the create command, supported strategies, output fields, regional option, and dry-run behavior.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001",
+          "task-placement-groups-create-the-test-cluster-placement-group-002",
+          "task-placement-groups-verify-the-test-group-003"
+        ]
+      },
+      {
+        "id": "source-describe-placement-groups-aws-cli-command-reference",
+        "title": "describe-placement-groups — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-placement-groups.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide the describe command and placement-group fields used for verification.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001",
+          "task-placement-groups-verify-the-test-group-003"
+        ]
+      },
+      {
+        "id": "source-delete-a-placement-group-amazon-elastic-compute-cloud",
+        "title": "Delete a placement group - Amazon Elastic Compute Cloud",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/delete-placement-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide supported console and CLI cleanup steps.",
+        "taskIds": []
+      },
+      {
+        "id": "source-delete-placement-group-aws-cli-command-reference",
+        "title": "delete-placement-group — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/en_us/cli/latest/reference/ec2/delete-placement-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide the delete command, dry-run behavior, and prerequisite that the group contain no instances.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "PLA",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-placement-groups-confirm-required-access-and-open-placement-groups-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-phase-1-access-and-strategy-readiness",
+        "phaseNumber": 1,
+        "title": "Phase 1: Access and strategy readiness",
+        "description": "Confirm access to the EC2 Placement Groups page and check the required EC2 actions without creating a resource.",
+        "taskIds": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-phase-2-create-one-test-placement-group",
+        "phaseNumber": 2,
+        "title": "Phase 2: Create one test placement group",
+        "description": "Create a cluster placement group named pg-lab-cluster in eu-west-2. The lab does not launch or modify instances.",
+        "taskIds": [
+          "task-placement-groups-create-the-test-cluster-placement-group-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-phase-3-verify-and-clean-up",
+        "phaseNumber": 3,
+        "title": "Phase 3: Verify and clean up",
+        "description": "Confirm the group name, strategy, and state, then manually delete only the group created for this lab.",
+        "taskIds": [
+          "task-placement-groups-verify-the-test-group-003"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001",
+        "slug": "confirm-required-access-and-open-placement-groups",
+        "title": "Confirm required access and open Placement Groups",
+        "service": "Placement Groups",
+        "feature": "Amazon EC2 placement-group access",
+        "goal": "Confirm that the learner can view placement groups and can request the exact EC2 actions needed for this lab.",
+        "whyItMatters": "The placement-group list requires describe access; creating and deleting the test group require separate write actions. A dry run checks an action without creating the placement group.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-phase-1-access-and-strategy-readiness",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-actions-resources-and-condition-keys-for-amazon-ec2-service-authorizat",
+          "source-create-placement-group-aws-cli-command-reference",
+          "source-describe-placement-groups-aws-cli-command-reference",
+          "source-delete-placement-group-aws-cli-command-reference",
+          "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-1-set-the-lab-region",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Set the lab Region",
+            "instruction": "☐ Select Europe (London) in the Region selector.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-1-set-the-lab-region-instruction-1",
+                "text": "☐ Select Europe (London) in the Region selector.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The console Region is eu-west-2.",
+            "warning": "Placement groups are created per Region, so keep the console set to eu-west-2 throughout this lab.",
+            "sourceIds": [
+              "source-actions-resources-and-condition-keys-for-amazon-ec2-service-authorizat"
+            ]
+          },
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-2-open-the-placement-group-list",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Open the placement-group list",
+            "instruction": "☐ Open the Amazon EC2 console.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-2-open-the-placement-group-list-instruction-1",
+                "text": "☐ Open the Amazon EC2 console.",
+                "detail": ""
+              },
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-2-open-the-placement-group-list-instruction-2",
+                "text": "☐ Choose Placement Groups in the navigation pane.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Placement Groups page opens in eu-west-2.",
+            "warning": "If the page shows an authorization error, do not continue with resource creation.",
+            "sourceIds": [
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute",
+              "source-actions-resources-and-condition-keys-for-amazon-ec2-service-authorizat"
+            ]
+          },
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-3-request-access-if-required",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Request access if required",
+            "instruction": "☐ Request ec2:DescribePlacementGroups access from the lab administrator.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-3-request-access-if-required-instruction-1",
+                "text": "☐ Request ec2:DescribePlacementGroups access from the lab administrator.",
+                "detail": ""
+              },
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-3-request-access-if-required-instruction-2",
+                "text": "☐ Request ec2:CreatePlacementGroup access from the lab administrator.",
+                "detail": ""
+              },
+              {
+                "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-console-step-3-request-access-if-required-instruction-3",
+                "text": "☐ Request ec2:DeletePlacementGroup access from the lab administrator.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The administrator can assess the three named EC2 actions for the learner identity and the eu-west-2 Region.",
+            "warning": "This lab intentionally does not create or recommend an IAM policy.",
+            "sourceIds": [
+              "source-actions-resources-and-condition-keys-for-amazon-ec2-service-authorizat"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 describe-placement-groups --group-names pg-lab-cluster --dry-run --region eu-west-2",
+            "explanation": "Run this permission-only check for the describe operation. It does not create, modify, or delete a placement group.",
+            "expectedResult": "DryRunOperation indicates permission for the describe request; UnauthorizedOperation indicates that describe access is missing.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This command requires an already configured AWS CLI environment but does not require you to enter credentials in this lab.",
+            "sourceIds": [
+              "source-describe-placement-groups-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws ec2 create-placement-group --group-name pg-lab-cluster --strategy cluster --dry-run --region eu-west-2",
+            "explanation": "Run this permission-only check for the create operation using the same fixed name and strategy planned for the lab.",
+            "expectedResult": "DryRunOperation indicates permission for the create request; UnauthorizedOperation indicates that create access is missing.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Dry run does not create pg-lab-cluster.",
+            "sourceIds": [
+              "source-create-placement-group-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws ec2 delete-placement-group --group-name pg-lab-cluster --dry-run --region eu-west-2",
+            "explanation": "Run this permission-only check for the delete operation that will be used during cleanup.",
+            "expectedResult": "DryRunOperation indicates permission for the delete request; UnauthorizedOperation indicates that delete access is missing.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Dry run does not delete pg-lab-cluster.",
+            "sourceIds": [
+              "source-delete-placement-group-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-placement-groups-confirm-required-access-and-open-placement-groups-001-verification-1",
+            "title": "Access readiness",
+            "instruction": "Confirm that the Placement Groups page opens and that each applicable CLI dry run returns DryRunOperation.",
+            "expectedResult": "The learner can list placement groups and has validated the three EC2 actions required by this lab.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-placement-groups-create-the-test-cluster-placement-group-002",
+        "slug": "create-the-test-cluster-placement-group",
+        "title": "Create the test cluster placement group",
+        "service": "Placement Groups",
+        "feature": "Cluster placement strategy",
+        "goal": "Create one empty cluster placement group named pg-lab-cluster in eu-west-2.",
+        "whyItMatters": "A cluster placement group logically groups instances within one Availability Zone for workloads that benefit from low latency and high network throughput. This lab creates only the group and does not launch instances.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-phase-2-create-one-test-placement-group",
+        "prerequisites": [
+          "task-placement-groups-confirm-required-access-and-open-placement-groups-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-placement-groups-for-your-amazon-ec2-instances-amazon-elastic-compute-",
+          "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute",
+          "source-create-placement-group-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-1-start-group-creation",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Start group creation",
+            "instruction": "☐ Choose Create placement group.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-1-start-group-creation-instruction-1",
+                "text": "☐ Choose Create placement group.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Create placement group page opens.",
+            "warning": "Do not create a group if pg-lab-cluster already exists in eu-west-2.",
+            "sourceIds": [
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute"
+            ]
+          },
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-2-enter-the-fixed-test-name",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Enter the fixed test name",
+            "instruction": "☐ Enter pg-lab-cluster for Name.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-2-enter-the-fixed-test-name-instruction-1",
+                "text": "☐ Enter pg-lab-cluster for Name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Name field contains pg-lab-cluster.",
+            "warning": "A placement-group name must be unique within the account and Region.",
+            "sourceIds": [
+              "source-create-placement-group-aws-cli-command-reference",
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute"
+            ]
+          },
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-3-choose-the-strategy",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Choose the strategy",
+            "instruction": "☐ Choose Cluster for Placement strategy.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-3-choose-the-strategy-instruction-1",
+                "text": "☐ Choose Cluster for Placement strategy.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The placement strategy is Cluster.",
+            "warning": "Do not select a parent precision time placement group for this lab.",
+            "sourceIds": [
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute",
+              "source-placement-groups-for-your-amazon-ec2-instances-amazon-elastic-compute-"
+            ]
+          },
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-4-create-the-group",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Create the group",
+            "instruction": "☐ Choose Create group.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-create-the-test-cluster-placement-group-002-console-step-4-create-the-group-instruction-1",
+                "text": "☐ Choose Create group.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The EC2 console creates pg-lab-cluster.",
+            "warning": "Do not launch instances as part of this lab.",
+            "sourceIds": [
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 create-placement-group --group-name pg-lab-cluster --strategy cluster --region eu-west-2",
+            "explanation": "Create the single empty cluster placement group used by this lab.",
+            "expectedResult": "The response includes placement-group information including GroupName, State, and Strategy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this command only once. If the fixed name already exists, stop and use the console list to determine whether it is a pre-existing resource rather than deleting it.",
+            "sourceIds": [
+              "source-create-placement-group-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-placement-groups-create-the-test-cluster-placement-group-002-verification-1",
+            "title": "Creation result",
+            "instruction": "Confirm that pg-lab-cluster appears in the Placement Groups list and has the Cluster strategy.",
+            "expectedResult": "One empty placement group named pg-lab-cluster is present in eu-west-2.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-placement-groups-verify-the-test-group-003",
+        "slug": "verify-the-test-group",
+        "title": "Verify the test group",
+        "service": "Placement Groups",
+        "feature": "Placement-group inspection",
+        "goal": "Inspect the placement group's name, strategy, and state before cleanup.",
+        "whyItMatters": "The describe operation returns the placement-group state and strategy, allowing the learner to confirm that the intended resource was created before deleting it.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 5,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-phase-3-verify-and-clean-up",
+        "prerequisites": [
+          "task-placement-groups-create-the-test-cluster-placement-group-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute",
+          "source-describe-placement-groups-aws-cli-command-reference",
+          "source-create-placement-group-aws-cli-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-placement-groups-verify-the-test-group-003-console-step-1-select-the-lab-group",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Select the lab group",
+            "instruction": "☐ Select pg-lab-cluster in the Placement Groups table.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-verify-the-test-group-003-console-step-1-select-the-lab-group-instruction-1",
+                "text": "☐ Select pg-lab-cluster in the Placement Groups table.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The selected row identifies pg-lab-cluster.",
+            "warning": "Select only the group named pg-lab-cluster created by this lab.",
+            "sourceIds": [
+              "source-create-a-placement-group-for-your-ec2-instances-amazon-elastic-compute"
+            ]
+          },
+          {
+            "id": "task-placement-groups-verify-the-test-group-003-console-step-2-inspect-the-group-details",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Inspect the group details",
+            "instruction": "☐ Confirm the Placement strategy is Cluster.",
+            "instructions": [
+              {
+                "id": "task-placement-groups-verify-the-test-group-003-console-step-2-inspect-the-group-details-instruction-1",
+                "text": "☐ Confirm the Placement strategy is Cluster.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The group shows the Cluster placement strategy.",
+            "warning": "A placement group can have a state such as pending or available.",
+            "sourceIds": [
+              "source-create-placement-group-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-placement-groups-verify-the-test-group-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 describe-placement-groups --group-names pg-lab-cluster --region eu-west-2",
+            "explanation": "Describe only the placement group created by this lab.",
+            "expectedResult": "The response contains pg-lab-cluster and reports its GroupName, State, and Strategy fields.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use the group name only for a placement group owned by the current account.",
+            "sourceIds": [
+              "source-describe-placement-groups-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-placement-groups-verify-the-test-group-003-verification-1",
+            "title": "Placement-group configuration",
+            "instruction": "Confirm that the returned GroupName is pg-lab-cluster and the Strategy is cluster.",
+            "expectedResult": "The test resource is the intended cluster placement group in eu-west-2.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "AWS documentation states that there is no charge for creating a placement group. This lab deliberately does not launch instances or create other resources.",
+      "safety": "Do not use an existing placement group with the same name. Do not attach, move, launch, stop, start, or terminate any EC2 instance for this lab. Delete only pg-lab-cluster after verification.",
+      "credentials": "Do not paste access keys, secret keys, session tokens, or other credentials into the console, commands, or notes. The CLI commands assume the AWS CLI is already installed and configured outside this lab.",
+      "region": "Use eu-west-2 (Europe (London)) for every console action and include --region eu-west-2 in every AWS CLI command shown."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Console cleanup of the lab resource",
+          "instruction": "☐ Open the Amazon EC2 console in eu-west-2.\n☐ Choose Placement Groups in the navigation pane.\n☐ Select pg-lab-cluster.\n☐ Choose Actions, Delete.\n☐ Enter Delete when prompted.\n☐ Choose Delete.",
+          "description": "☐ Open the Amazon EC2 console in eu-west-2.\n☐ Choose Placement Groups in the navigation pane.\n☐ Select pg-lab-cluster.\n☐ Choose Actions, Delete.\n☐ Enter Delete when prompted.\n☐ Choose Delete.",
+          "verification": "pg-lab-cluster no longer appears in the Placement Groups table. Delete only this lab-created group; the group must contain no instances before deletion.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-delete-a-placement-group-amazon-elastic-compute-cloud"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "AWS CLI cleanup of the lab resource",
+          "instruction": "Manually run exactly this one command if you used the CLI path: `aws ec2 delete-placement-group --group-name pg-lab-cluster --region eu-west-2`",
+          "description": "Manually run exactly this one command if you used the CLI path: `aws ec2 delete-placement-group --group-name pg-lab-cluster --region eu-west-2`",
+          "verification": "The delete command has no output when it succeeds. Delete only pg-lab-cluster, and confirm that no instances were added to it.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-delete-placement-group-aws-cli-command-reference",
+            "source-delete-a-placement-group-amazon-elastic-compute-cloud"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "No IAM policy is included because this follow along identifies required EC2 actions but does not prescribe permissions policy content. An administrator must evaluate authorization boundaries and any applicable organization controls.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The dry-run checks validate authorization responses for the named API operations but do not prove that all account-level controls, quotas, or service-control policies will permit actual creation.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The fixed name pg-lab-cluster must be unused in the learner account's eu-west-2 Region. If it already exists, do not delete it unless the learner can independently verify that they created it for this exact lab.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "AWS documentation says a placement group must contain no instances before deletion. This lab creates no instances, but the learner must still confirm that none were added before cleanup.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "placement-groups-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 3,
+    "taskCount": 3,
+    "checkboxCount": 12,
+    "cliCommandCount": 5,
+    "verificationCheckCount": 3,
+    "cleanupItemCount": 2,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 7
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "d729ffc036250171a5cf5a6638c4c509135a79009c9e38bb0c9746a3ad73c5f1"
+  }
+}

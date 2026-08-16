@@ -123,7 +123,7 @@ export const FollowAlongProgramme = ({ config, persistence, extensions = [], onB
               config={config} task={activeTask} completedTaskIds={progress.completedTaskIds} preferredMode={progress.preferredMode} resources={resources} stepProgress={progress.taskStepProgress} extensions={extensions} isBusy={transitioning}
               onDirtyStateChange={state => { runnerSave.current = state; }} onNavigateTask={navigateRelative}
               onSaveProgress={({ taskId, checkedSteps, resources: nextResources, preferredMode }) => persist({ taskStepProgress: { ...progress.taskStepProgress, [taskId]: checkedSteps }, preferredMode }, nextResources)}
-              onCompleteAndNavigate={(taskId, decision) => transition(async () => { const index = config.tasks.findIndex(task => task.id === taskId); const nextTaskId = config.tasks[index + 1]?.id || taskId; const result = await persist(buildCompletionTransition(progress, taskId, decision, nextTaskId), resources); return result.success; })}
+              onCompleteAndNavigate={(taskId, decision, savedResources = resources) => transition(async () => { const index = config.tasks.findIndex(task => task.id === taskId); const nextTaskId = config.tasks[index + 1]?.id || taskId; const result = await persist(buildCompletionTransition(progress, taskId, decision, nextTaskId), savedResources); return result.success; })}
             />
           )}
         </div>

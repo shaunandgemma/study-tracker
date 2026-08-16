@@ -471,7 +471,15 @@ export function buildAuthorDraftContent(inputs, proposal) {
   const sources = proposal.sources.map(source => {
     const id = `source-${uniqueSlug(source.title, sourceIds, 'aws-doc')}`;
     sourceIdByUrl.set(normalizedUrl(source.url), id);
-    return { id, title: clean(source.title), url: normalizedUrl(source.url), publisher: 'AWS', sourceType: 'official_documentation', purpose: clean(source.purpose), taskIds: [] };
+    return {
+      id,
+      title: clean(source.title),
+      url: normalizedUrl(source.url),
+      publisher: clean(source.publisher) || 'AWS',
+      sourceType: clean(source.sourceType) || 'official_documentation',
+      purpose: clean(source.purpose),
+      taskIds: []
+    };
   });
   const taskIds = new Set();
   const tasks = proposal.tasks.map((task, taskIndex) => {
@@ -509,14 +517,17 @@ export function buildAuthorDraftContent(inputs, proposal) {
           instructions: step.instructions.map((text, itemIndex) => ({ id: `${stepId}-instruction-${itemIndex + 1}`, text: clean(text), detail: '' })),
           jsonBlocks: (step.jsonBlocks || []).map((block, blockIndex) => {
             let content = clean(block.content);
-            let language = 'text';
+            let language = clean(block.language).toLowerCase() || 'text';
             try {
               const parsed = JSON.parse(content);
               if (parsed && typeof parsed === 'object') {
                 language = 'json';
                 content = JSON.stringify(parsed, null, 2);
               }
-            } catch { /* Preserve useful JSON-shaped reference content for Author review. */ }
+            } catch {
+              if (language === 'json') language = 'text';
+              /* Preserve useful JSON-shaped reference content for Author review. */
+            }
             return { id: `${stepId}-json-${blockIndex + 1}`, title: clean(block.title), content, language, sourceIds: sourceIdsFor(block.sourceUrls) };
           }),
           commands: [],
@@ -572,13 +583,18 @@ function packageFingerprintContent(handoffPackage) {
 }
 
 function countContent(content) {
+  const officialAwsSourceCount = content.sources.filter(source => source.publisher === 'AWS').length;
+  const officialTerraformSourceCount = content.sources.filter(source => source.publisher === 'HashiCorp').length;
   return {
     phaseCount: content.phases.length, taskCount: content.tasks.length,
     checkboxCount: content.tasks.flatMap(task => task.consoleSteps).flatMap(step => step.instructions).length,
     cliCommandCount: content.tasks.flatMap(task => task.cliSteps).length,
     verificationCheckCount: content.tasks.flatMap(task => task.verification).length,
     cleanupItemCount: content.tasks.flatMap(task => task.cleanup).length + content.cleanup.steps.length,
-    learnerResourceValueCount: content.resources.schema.length, officialAwsSourceCount: content.sources.length
+    learnerResourceValueCount: content.resources.schema.length,
+    officialSourceCount: content.sources.length,
+    officialAwsSourceCount,
+    officialTerraformSourceCount
   };
 }
 
@@ -626,6 +642,11 @@ export function formatSimplePreview(handoffPackage) {
       lines.push(`   - ${task.title}`, `     Console: ${task.consoleSteps.length} step(s); CLI: ${task.cliSteps.length} command(s); Checks: ${task.verification.length}`);
     });
   });
+  const openFindings = (content.review?.findings || []).filter(finding => finding.status === 'open');
+  if (openFindings.length) {
+    lines.push('', `MANUAL REVIEW FINDINGS (${openFindings.length})`);
+    openFindings.forEach((finding, index) => lines.push(`${index + 1}. ${finding.message}`));
+  }
   lines.push('', 'SAFETY', 'Nothing was written to Author, Supabase or AWS.', 'No AWS command was executed.', 'No candidate was created and nothing was approved or published.', '', `SHA-256: ${handoffPackage.handoffFingerprint.value}`, '');
   return lines.join('\n');
 }

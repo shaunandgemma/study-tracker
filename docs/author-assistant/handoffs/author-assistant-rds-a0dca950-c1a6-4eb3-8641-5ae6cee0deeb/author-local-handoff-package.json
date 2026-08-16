@@ -1,0 +1,3251 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-rds-a0dca950-c1a6-4eb3-8641-5ae6cee0deeb",
+  "preparedAt": "2026-08-10T20:29:12.326Z",
+  "service": {
+    "officialName": "Relational Database Service",
+    "shortName": "RDS"
+  },
+  "generationMode": "update_existing",
+  "updateTarget": {
+    "programmeId": "rds-learning-path",
+    "displayName": "RDS, EC2, and Application Load Balancer Follow Along",
+    "serviceName": "Relational Database Service",
+    "shortName": "RDS",
+    "serviceSlug": "rds",
+    "sourceRevision": 2,
+    "candidateId": "release-author-draft-import-17d1f4bacad38534d9f181ec53e30f175120ea1ba780c53f75d3264a28bf7559-r2-93998ee5941b",
+    "contentHash": "334cc840a150bc1c6ab9a70b0619e58923ae4d5447da2a9c4e41f0002169355e",
+    "publishedAt": "2026-08-10T19:40:02.239119+00:00"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "6ff2590bf76f22506779a4975c54b36a496c05eb50bb937842fa46936f0212fb"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "6ff2590bf76f22506779a4975c54b36a496c05eb50bb937842fa46936f0212fb"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "rds",
+      "serviceName": "Relational Database Service",
+      "shortName": "RDS",
+      "displayName": "RDS, EC2, and Application Load Balancer Follow Along",
+      "subtitle": "Build a beginner three-tier SAA-C03 practice architecture in Europe (London): internet → Application Load Balancer → EC2 → private RDS for MySQL.",
+      "description": "Use an existing VPC in eu-west-2 with subnets in at least two Availability Zones. Build separate security groups for an internet-facing Application Load Balancer, protected EC2 web servers, and a private Amazon RDS for MySQL DB instance. Validate routing, database access, monitoring, scaling, controlled failures, and SAA-C03 design choices.",
+      "learningOutcome": "Build, validate, monitor, troubleshoot, and clean up an internet-facing Application Load Balancer that forwards HTTP traffic to EC2 web targets while a private RDS for MySQL DB instance permits port 3306 traffic only from the EC2 security group. Recognize SAA-C03 scenarios involving ALB, security-group references, private databases, Multi-AZ, read replicas, Auto Scaling, RDS Proxy, Aurora, and NLB.",
+      "programmeId": "rds-learning-path",
+      "pathId": "rds-learning-path",
+      "componentNamespace": "",
+      "category": "Networking and databases",
+      "difficulty": "Beginner",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "regional",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-root-user-best-practices-for-your-aws-account",
+        "title": "Root user best practices for your AWS account",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/root-user-best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Non-root access and root credential safety.",
+        "taskIds": [
+          "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001"
+        ]
+      },
+      {
+        "id": "source-create-an-iam-user-in-your-aws-account",
+        "title": "Create an IAM user in your AWS account",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html?icmpid=docs_iam_console",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Dedicated IAM learning user creation.",
+        "taskIds": [
+          "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001"
+        ]
+      },
+      {
+        "id": "source-authenticating-using-iam-user-credentials-for-the-aws-cli",
+        "title": "Authenticating using IAM user credentials for the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-authentication-user.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "AWS CLI profile configuration.",
+        "taskIds": [
+          "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001"
+        ]
+      },
+      {
+        "id": "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input",
+        "title": "Run commands when you launch an EC2 instance with user data input",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "EC2 bootstrap user data.",
+        "taskIds": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008"
+        ]
+      },
+      {
+        "id": "source-create-an-application-load-balancer",
+        "title": "Create an Application Load Balancer",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "ALB, listeners, subnet, and security-group configuration.",
+        "taskIds": [
+          "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002",
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003",
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007"
+        ]
+      },
+      {
+        "id": "source-health-checks-for-application-load-balancer-target-groups",
+        "title": "Health checks for Application Load Balancer target groups",
+        "url": "https://docs.aws.amazon.com/en_en/elasticloadbalancing/latest/application/target-group-health-checks.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Target-health validation and troubleshooting.",
+        "taskIds": [
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007",
+          "task-rds-practice-controlled-alb-and-rds-failure-recovery-009"
+        ]
+      },
+      {
+        "id": "source-creating-an-amazon-rds-db-instance",
+        "title": "Creating an Amazon RDS DB instance",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Private DB subnet groups, networking, and RDS DB creation.",
+        "taskIds": [
+          "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002",
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006",
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007",
+          "task-rds-practice-controlled-alb-and-rds-failure-recovery-009",
+          "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010"
+        ]
+      },
+      {
+        "id": "source-create-db-instance-aws-cli-command-reference",
+        "title": "create-db-instance — AWS CLI Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/rds/create-db-instance.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "RDS CLI creation options including Multi-AZ and private accessibility.",
+        "taskIds": [
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006"
+        ]
+      },
+      {
+        "id": "source-step-2-verify-or-add-instance-permissions-for-session-manager",
+        "title": "Step 2: Verify or add instance permissions for Session Manager",
+        "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-instance-profile.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Optional Session Manager instance permissions.",
+        "taskIds": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007"
+        ]
+      },
+      {
+        "id": "source-infrastructure-security-in-amazon-vpc",
+        "title": "Infrastructure security in Amazon VPC",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/infrastructure-security.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Security-group and network ACL comparison.",
+        "taskIds": [
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003",
+          "task-rds-practice-controlled-alb-and-rds-failure-recovery-009"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-2",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-register-targets.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-3",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-target-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-4",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+          "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-5",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006",
+          "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-6",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MySQL.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007"
+        ]
+      },
+      {
+        "id": "source-official-aws-documentation-7",
+        "title": "Official AWS documentation",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the generated Follow Along content that cites this official AWS documentation page.",
+        "taskIds": [
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008",
+          "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "RDS",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-secure-access-and-inspect-the-existing-vpc",
+        "phaseNumber": 1,
+        "title": "Prepare secure access and inspect the existing VPC",
+        "description": "Use a non-root identity, configure AWS CLI access for eu-west-2, and identify suitable public and private subnet placement across at least two Availability Zones.",
+        "taskIds": [
+          "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001",
+          "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-create-the-least-privilege-network-access-chain",
+        "phaseNumber": 2,
+        "title": "Create the least-privilege network access chain",
+        "description": "Create the three required security groups and use security-group references to restrict each tier to traffic from the preceding tier.",
+        "taskIds": [
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-deploy-managed-access-web-targets-and-the-load-balancer",
+        "phaseNumber": 3,
+        "title": "Deploy managed access, web targets, and the load balancer",
+        "description": "Optionally prepare Session Manager access, launch a web server, create an ALB target group, and configure an internet-facing Application Load Balancer.",
+        "taskIds": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-4-create-and-validate-the-private-rds-for-mysql-database",
+        "phaseNumber": 4,
+        "title": "Create and validate the private RDS for MySQL database",
+        "description": "Create a DB subnet group and a private MySQL DB instance, then test the EC2-to-RDS connection path without exposing the database publicly.",
+        "taskIds": [
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006",
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-5-scale-monitor-troubleshoot-and-connect-decisions-to-saa-c03",
+        "phaseNumber": 5,
+        "title": "Scale, monitor, troubleshoot, and connect decisions to SAA-C03",
+        "description": "Add resilient web capacity, practice controlled recovery, inspect monitoring and backups, and compare architecture alternatives.",
+        "taskIds": [
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008",
+          "task-rds-practice-controlled-alb-and-rds-failure-recovery-009",
+          "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001",
+        "slug": "use-a-non-root-iam-identity-and-configure-aws-cli-access",
+        "title": "Use a non-root IAM identity and configure AWS CLI access",
+        "service": "Relational Database Service",
+        "feature": "IAM and AWS CLI",
+        "goal": "Create or use a dedicated non-root learning identity, configure a named CLI profile, set Europe (London) as the default Region, and prove the active account identity.",
+        "whyItMatters": "AWS recommends using the root user only for tasks that require it and recommends federation and temporary credentials for human users where possible. For SAA-C03, phrases such as “least privilege,” “avoid root,” “temporary credentials,” and “centralized workforce access” should make you consider IAM Identity Center, IAM roles, and narrowly scoped permissions. For this isolated lab account, use a dedicated learning identity and remove it when the programme is complete.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-secure-access-and-inspect-the-existing-vpc",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-root-user-best-practices-for-your-aws-account",
+          "source-create-an-iam-user-in-your-aws-account",
+          "source-authenticating-using-iam-user-credentials-for-the-aws-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the dedicated learning user",
+            "instruction": "☐ Sign in with an account administrator identity.",
+            "instructions": [
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-1",
+                "text": "☐ Sign in with an account administrator identity.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-2",
+                "text": "☐ Open IAM.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-3",
+                "text": "☐ Choose Users.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-4",
+                "text": "☐ Choose Create user.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-5",
+                "text": "☐ Enter fa-rds-alb-ec2-lab-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-6",
+                "text": "☐ Enable console access if required.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-7",
+                "text": "☐ Create access keys only if IAM Identity Center is unavailable.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-8",
+                "text": "☐ Attach only administrator-approved lab permissions.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-9",
+                "text": "☐ Sign out of the root user.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-10",
+                "text": "☐ Sign in as fa-rds-alb-ec2-lab-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-instruction-11",
+                "text": "☐ Select Europe (London).",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-console-step-1-create-the-dedicated-learning-user-json-1",
+                "title": "Least-privilege IAM requirement for passing the Session Manager role",
+                "content": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"iam:PassRole\",\"iam:GetRole\",\"iam:GetInstanceProfile\"],\"Resource\":\"arn:aws:iam::[ACCOUNT_ID]:role/fa-rds-alb-ec2-ssm-role\",\"Condition\":{\"StringEquals\":{\"iam:PassedToService\":\"ec2.amazonaws.com\"}}}]}",
+                "language": "json",
+                "sourceIds": [
+                  "source-create-an-iam-user-in-your-aws-account"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A non-root learning identity is signed in to the AWS Management Console in eu-west-2.",
+            "warning": "Do not create root access keys. Prefer IAM Identity Center where it is available. If an IAM user is required for this training account, keep its permissions limited to the lab services and delete the user or its credentials after the programme.",
+            "sourceIds": [
+              "source-root-user-best-practices-for-your-aws-account",
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws configure --profile fa-rds-alb-ec2-lab",
+            "explanation": "Interactively configure the dedicated learning profile using credentials created for that non-root identity. Enter eu-west-2 when prompted for the default Region.",
+            "expectedResult": "The local AWS CLI has a profile named fa-rds-alb-ec2-lab.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not paste credentials into shell history, source code, user data, screenshots, or notes.",
+            "sourceIds": [
+              "source-authenticating-using-iam-user-credentials-for-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws sts get-caller-identity --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Confirm the account ID and ARN used by the CLI profile.",
+            "expectedResult": "The result contains Account, Arn, and UserId for a non-root principal.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Resolve AccessDenied errors through the account administrator instead of using the root user.",
+            "sourceIds": [
+              "source-authenticating-using-iam-user-credentials-for-the-aws-cli"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-verification-1",
+            "title": "Confirm non-root access",
+            "instruction": "Confirm that the Console identity and the ARN returned by get-caller-identity are not the AWS account root user.",
+            "expectedResult": "A dedicated non-root learning identity can use the Console and CLI in eu-west-2.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-verification-2",
+            "title": "Confirm permissions are intentional",
+            "instruction": "Record any denied service action and request that exact action from the administrator rather than requesting unrestricted access.",
+            "expectedResult": "Permission changes remain reviewable and least privilege is preserved where practical.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-cleanup-1",
+            "stepNumber": 1,
+            "title": "Remove the local lab CLI profile",
+            "instruction": "Manually remove only the fa-rds-alb-ec2-lab profile when this Follow Along is complete.",
+            "description": "Manually remove only the fa-rds-alb-ec2-lab profile when this Follow Along is complete.",
+            "verification": "The named lab profile no longer appears in the local AWS CLI configuration.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-authenticating-using-iam-user-credentials-for-the-aws-cli"
+            ]
+          },
+          {
+            "id": "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001-cleanup-2",
+            "stepNumber": 2,
+            "title": "Remove dedicated credentials when approved",
+            "instruction": "Manually delete only credentials created specifically for fa-rds-alb-ec2-lab-user when the training account administrator confirms they are no longer required.",
+            "description": "Manually delete only credentials created specifically for fa-rds-alb-ec2-lab-user when the training account administrator confirms they are no longer required.",
+            "verification": "The dedicated lab credentials can no longer authenticate.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002",
+        "slug": "inspect-the-vpc-and-select-public-and-private-subnets",
+        "title": "Inspect the VPC and select public and private subnets",
+        "service": "Relational Database Service",
+        "feature": "Amazon VPC",
+        "goal": "Record one existing VPC and identify ALB, EC2, and RDS subnets in at least two Availability Zones.",
+        "whyItMatters": "An Application Load Balancer requires at least two enabled Availability Zones. An RDS DB subnet group must cover at least two Availability Zones, supporting Multi-AZ deployment. SAA-C03 questions that mention “high availability across AZs,” “internet-facing load balancer,” or “private database” require you to inspect subnet routing and tier placement before creating resources.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-secure-access-and-inspect-the-existing-vpc",
+        "prerequisites": [
+          "task-rds-use-a-non-root-iam-identity-and-configure-aws-cli-access-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-an-application-load-balancer",
+          "source-creating-an-amazon-rds-db-instance"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-1-record-the-selected-vpc",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Record the selected VPC",
+            "instruction": "☐ Open the VPC console.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-1-record-the-selected-vpc-instruction-1",
+                "text": "☐ Open the VPC console.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-1-record-the-selected-vpc-instruction-2",
+                "text": "☐ Open Your VPCs.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-1-record-the-selected-vpc-instruction-3",
+                "text": "☐ Select the approved existing VPC.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-1-record-the-selected-vpc-instruction-4",
+                "text": "☐ Record its ID as [VPC_ID].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "One approved existing VPC is identified for every lab resource.",
+            "warning": "Do not create a new VPC for this Follow Along.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Record subnet placement",
+            "instruction": "☐ Open Subnets.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-1",
+                "text": "☐ Open Subnets.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-2",
+                "text": "☐ Filter by [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-3",
+                "text": "☐ Record a public subnet as [ALB_SUBNET_A_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-4",
+                "text": "☐ Record a different-AZ public subnet as [ALB_SUBNET_B_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-5",
+                "text": "☐ Record a suitable web subnet as [WEB_SUBNET_A_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-6",
+                "text": "☐ Record a different-AZ web subnet as [WEB_SUBNET_B_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-console-step-2-record-subnet-placement-instruction-7",
+                "text": "☐ Record two private DB subnets as [DB_SUBNET_A_ID] and [DB_SUBNET_B_ID].",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The learner has public ALB subnets in two AZs, web subnets in two AZs, and private DB subnets in two AZs.",
+            "warning": "The initial web server needs package-repository access through an existing internet gateway or NAT path. DB subnets must not provide direct public database placement.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer",
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 describe-vpcs --query \"Vpcs[].{VpcId:VpcId,Cidr:CidrBlock,Default:IsDefault}\" --output table --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "List VPCs and record the approved existing VPC ID as [VPC_ID].",
+            "expectedResult": "A table lists available VPC IDs and CIDR blocks.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not continue until the administrator has approved the VPC for training.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws ec2 describe-subnets --filters Name=vpc-id,Values=[VPC_ID] --query \"Subnets[].{SubnetId:SubnetId,AZ:AvailabilityZone,AvailableIPs:AvailableIpAddressCount,PublicIPv4OnLaunch:MapPublicIpOnLaunch}\" --output table --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [VPC_ID], then record subnet IDs and Availability Zones for the public ALB, web, and private DB tiers.",
+            "expectedResult": "A table lists subnets and their Availability Zones.",
+            "instructions": [],
+            "commands": [],
+            "warning": "[ALB_SUBNET_A_ID] and [ALB_SUBNET_B_ID] must be in different Availability Zones. [DB_SUBNET_A_ID] and [DB_SUBNET_B_ID] must also be in different Availability Zones.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer",
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-verification-1",
+            "title": "Confirm ALB multi-AZ coverage",
+            "instruction": "Confirm that [ALB_SUBNET_A_ID] and [ALB_SUBNET_B_ID] belong to [VPC_ID] and have different Availability Zone values.",
+            "expectedResult": "The ALB can be enabled in at least two Availability Zones.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-verification-2",
+            "title": "Confirm database privacy intent",
+            "instruction": "Confirm that [DB_SUBNET_A_ID] and [DB_SUBNET_B_ID] are intended for private database placement.",
+            "expectedResult": "The database tier is separated from the public entry tier.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002-cleanup-1",
+            "stepNumber": 1,
+            "title": "Delete local resource notes",
+            "instruction": "Delete only local notes containing the training resource identifiers after programme cleanup is complete.",
+            "description": "Delete only local notes containing the training resource identifiers after programme cleanup is complete.",
+            "verification": "No AWS resource was created by this task.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003",
+        "slug": "create-the-alb-web-and-rds-security-group-chain",
+        "title": "Create the ALB, web, and RDS security-group chain",
+        "service": "Relational Database Service",
+        "feature": "Amazon VPC security groups",
+        "goal": "Create separate security groups implementing internet → ALB HTTP, ALB → EC2 HTTP, and EC2 → RDS MySQL port 3306.",
+        "whyItMatters": "Security groups are stateful and can reference other security groups. This lets backend access survive EC2 private-IP changes. In SAA-C03 questions, wording such as “only application servers can reach the database” points to an RDS security-group rule sourced from the application security group, not a public CIDR or a single instance IP address.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-create-the-least-privilege-network-access-chain",
+        "prerequisites": [
+          "task-rds-inspect-the-vpc-and-select-public-and-private-subnets-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-official-aws-documentation",
+          "source-infrastructure-security-in-amazon-vpc",
+          "source-create-an-application-load-balancer"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the internet-facing ALB security group",
+            "instruction": "☐ Open Security Groups.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-1",
+                "text": "☐ Open Security Groups.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-2",
+                "text": "☐ Choose Create security group.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-3",
+                "text": "☐ Enter fa-rds-alb-ec2-alb-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-4",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-5",
+                "text": "☐ Add inbound HTTP from 0.0.0.0/0.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-1-create-the-internet-facing-alb-security-group-instruction-6",
+                "text": "☐ Create the security group.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "fa-rds-alb-ec2-alb-sg permits inbound HTTP from the internet.",
+            "warning": "This public rule applies only to the ALB security group.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the protected web security group",
+            "instruction": "☐ Choose Create security group.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group-instruction-1",
+                "text": "☐ Choose Create security group.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group-instruction-2",
+                "text": "☐ Enter fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group-instruction-3",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group-instruction-4",
+                "text": "☐ Add inbound HTTP from fa-rds-alb-ec2-alb-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-2-create-the-protected-web-security-group-instruction-5",
+                "text": "☐ Create the security group.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The web tier accepts HTTP only from network interfaces using the ALB security group.",
+            "warning": "Do not add inbound HTTP from 0.0.0.0/0 and do not add inbound SSH for this lab.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer",
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create the private database security group",
+            "instruction": "☐ Choose Create security group.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group-instruction-1",
+                "text": "☐ Choose Create security group.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group-instruction-2",
+                "text": "☐ Enter fa-rds-alb-ec2-rds-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group-instruction-3",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group-instruction-4",
+                "text": "☐ Add inbound MySQL/Aurora port 3306 from fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-console-step-3-create-the-private-database-security-group-instruction-5",
+                "text": "☐ Create the security group.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The RDS tier accepts TCP port 3306 only from the EC2 web security group.",
+            "warning": "Do not use 0.0.0.0/0 or an EC2 instance IP address as the database rule source.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 create-security-group --group-name fa-rds-alb-ec2-alb-sg --description \"Internet HTTP to ALB only\" --vpc-id [VPC_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [VPC_ID] and record the returned GroupId as [ALB_SG_ID].",
+            "expectedResult": "The command returns the ALB security group ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Security-group names must be unique in the VPC.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws ec2 authorize-security-group-ingress --group-id [ALB_SG_ID] --protocol tcp --port 80 --cidr 0.0.0.0/0 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [ALB_SG_ID] to permit temporary public HTTP only to the ALB tier.",
+            "expectedResult": "The ALB security group has an inbound TCP 80 CIDR rule.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not apply this rule to the web or RDS security group.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws ec2 create-security-group --group-name fa-rds-alb-ec2-web-sg --description \"HTTP from ALB only\" --vpc-id [VPC_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [VPC_ID] and record the returned GroupId as [WEB_SG_ID].",
+            "expectedResult": "The command returns the web security group ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Keep this group separate from the ALB group.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws ec2 authorize-security-group-ingress --group-id [WEB_SG_ID] --protocol tcp --port 80 --source-group [ALB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace both security-group IDs to create the ALB-to-web security-group reference.",
+            "expectedResult": "The web group permits TCP 80 only from the ALB security group.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Security-group references are preferred over individual EC2 IP addresses for this tier boundary.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws ec2 create-security-group --group-name fa-rds-alb-ec2-rds-sg --description \"MySQL from web tier only\" --vpc-id [VPC_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [VPC_ID] and record the returned GroupId as [RDS_SG_ID].",
+            "expectedResult": "The command returns the RDS security group ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not attach this group to the ALB or web EC2 instances.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ec2 authorize-security-group-ingress --group-id [RDS_SG_ID] --protocol tcp --port 3306 --source-group [WEB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace both security-group IDs to permit MySQL only from the web tier.",
+            "expectedResult": "The RDS group permits TCP 3306 from [WEB_SG_ID].",
+            "instructions": [],
+            "commands": [],
+            "warning": "Database authentication remains required after the network rule permits a connection.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-verification-1",
+            "title": "Confirm the three-hop flow",
+            "instruction": "Inspect inbound rules and confirm 0.0.0.0/0 → ALB TCP 80, ALB SG → web SG TCP 80, and web SG → RDS SG TCP 3306.",
+            "expectedResult": "Neither EC2 nor RDS permits direct public inbound application traffic.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-verification-2",
+            "title": "Compare security groups and network ACLs",
+            "instruction": "State that security groups are stateful and support security-group references, while network ACLs are subnet-level controls.",
+            "expectedResult": "The learner can select security groups for tier-to-tier access control in this architecture.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-create-the-alb-web-and-rds-security-group-chain-003-cleanup-1",
+            "stepNumber": 1,
+            "title": "Delete the three security groups last",
+            "instruction": "After the ALB, EC2 instances, RDS DB instance, and dependent network interfaces are deleted, delete only fa-rds-alb-ec2-alb-sg, fa-rds-alb-ec2-web-sg, and fa-rds-alb-ec2-rds-sg.",
+            "description": "After the ALB, EC2 instances, RDS DB instance, and dependent network interfaces are deleted, delete only fa-rds-alb-ec2-alb-sg, fa-rds-alb-ec2-web-sg, and fa-rds-alb-ec2-rds-sg.",
+            "verification": "The three named security groups no longer appear in [VPC_ID].",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+        "slug": "optionally-configure-session-manager-and-launch-web-target-a",
+        "title": "Optionally configure Session Manager and launch web target A",
+        "service": "Relational Database Service",
+        "feature": "Amazon EC2 and AWS Systems Manager",
+        "goal": "Prepare an optional Systems Manager instance role, then launch the first Amazon Linux web target with the web security group and simple HTTP bootstrap configuration.",
+        "whyItMatters": "Session Manager provides managed access without opening SSH to the internet. For SAA-C03, “avoid inbound administration ports,” “centralized instance access,” and “no bastion host” can indicate Systems Manager. The web target demonstrates why users should access the ALB rather than a backend instance directly.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-deploy-managed-access-web-targets-and-the-load-balancer",
+        "prerequisites": [
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-step-2-verify-or-add-instance-permissions-for-session-manager",
+          "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input",
+          "source-official-aws-documentation-2"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the optional Session Manager role",
+            "instruction": "☐ Open IAM Roles.",
+            "instructions": [
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-1",
+                "text": "☐ Open IAM Roles.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-2",
+                "text": "☐ Choose Create role.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-3",
+                "text": "☐ Select AWS service.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-4",
+                "text": "☐ Select EC2.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-5",
+                "text": "☐ Attach AmazonSSMManagedInstanceCore.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-6",
+                "text": "☐ Name the role fa-rds-alb-ec2-ssm-role.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-1-create-the-optional-session-manager-role-instruction-7",
+                "text": "☐ Create the role.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The instance role can provide Session Manager permissions to EC2.",
+            "warning": "The learning identity also needs narrowly scoped iam:PassRole permission for this role before it can attach the role during an EC2 launch.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Launch target A",
+            "instruction": "☐ Open the EC2 console.",
+            "instructions": [
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-1",
+                "text": "☐ Open the EC2 console.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-2",
+                "text": "☐ Choose Launch instance.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-3",
+                "text": "☐ Set Name to fa-rds-alb-ec2-web-a.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-4",
+                "text": "☐ Select an Amazon Linux AMI.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-5",
+                "text": "☐ Select a small supported instance type.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-6",
+                "text": "☐ Select [WEB_SUBNET_A_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-7",
+                "text": "☐ Select fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-8",
+                "text": "☐ Select fa-rds-alb-ec2-ssm-role.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-9",
+                "text": "☐ Open Advanced details.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-10",
+                "text": "☐ Paste the bootstrap user data.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-instruction-11",
+                "text": "☐ Launch the instance.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-console-step-2-launch-target-a-json-1",
+                "title": "Bootstrap user data for web target A",
+                "content": "#!/bin/bash\nDNF_CMD=$(command -v dnf || command -v yum)\n$DNF_CMD install -y httpd mariadb105 || $DNF_CMD install -y httpd mariadb\necho '<h1>fa-rds-alb-ec2 web target A</h1>' > /var/www/html/index.html\nsystemctl enable --now httpd",
+                "language": "text",
+                "sourceIds": [
+                  "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The EC2 instance enters Running and starts an HTTP service after user data completes.",
+            "warning": "Do not put database passwords, access keys, secret values, or database endpoints in user data.",
+            "sourceIds": [
+              "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws iam create-role --role-name fa-rds-alb-ec2-ssm-role --assume-role-policy-document file://ec2-trust-policy.json --profile fa-rds-alb-ec2-lab",
+            "explanation": "Use this optional command after saving the EC2 trust policy supplied by IAM to a local file named ec2-trust-policy.json. It creates the role used by the EC2 instance profile.",
+            "expectedResult": "The result includes the role ARN for fa-rds-alb-ec2-ssm-role.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This IAM command is global and intentionally has no Region parameter. The trust-policy file must allow EC2 to assume the role.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws iam attach-role-policy --role-name fa-rds-alb-ec2-ssm-role --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore --profile fa-rds-alb-ec2-lab",
+            "explanation": "Attach the AWS managed policy documented for managed EC2 instances and Session Manager.",
+            "expectedResult": "The role has AmazonSSMManagedInstanceCore attached.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This IAM command is global and intentionally has no Region parameter.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws iam create-instance-profile --instance-profile-name fa-rds-alb-ec2-ssm-profile --profile fa-rds-alb-ec2-lab",
+            "explanation": "Create the instance profile wrapper required to attach the IAM role to EC2.",
+            "expectedResult": "The result includes the instance-profile ARN.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This IAM command is global and intentionally has no Region parameter.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws iam add-role-to-instance-profile --instance-profile-name fa-rds-alb-ec2-ssm-profile --role-name fa-rds-alb-ec2-ssm-role --profile fa-rds-alb-ec2-lab",
+            "explanation": "Add the Session Manager role to the named instance profile.",
+            "expectedResult": "The instance profile contains fa-rds-alb-ec2-ssm-role.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This IAM command is global and intentionally has no Region parameter.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Record the returned Amazon Linux AMI ID as [AL2023_AMI_ID].",
+            "expectedResult": "The command returns a current regional AMI ID.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Confirm the AMI architecture supports the selected instance type.",
+            "sourceIds": [
+              "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ec2 run-instances --image-id [AL2023_AMI_ID] --instance-type t3.micro --count 1 --subnet-id [WEB_SUBNET_A_ID] --security-group-ids [WEB_SG_ID] --iam-instance-profile Name=fa-rds-alb-ec2-ssm-profile --user-data \"#!/bin/bash\nDNF_CMD=$(command -v dnf || command -v yum)\n$DNF_CMD install -y httpd mariadb105 || $DNF_CMD install -y httpd mariadb\necho '<h1>fa-rds-alb-ec2 web target A</h1>' > /var/www/html/index.html\nsystemctl enable --now httpd\" --tag-specifications \"ResourceType=instance,Tags=[{Key=Name,Value=fa-rds-alb-ec2-web-a}]\" --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [AL2023_AMI_ID], [WEB_SUBNET_A_ID], and [WEB_SG_ID]. Record the returned instance ID as [EC2_A_ID].",
+            "expectedResult": "A new web target is created in Pending state.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The caller requires iam:PassRole for fa-rds-alb-ec2-ssm-role. Allow time for user data to complete.",
+            "sourceIds": [
+              "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input",
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-verification-1",
+            "title": "Confirm web target protection",
+            "instruction": "Confirm that fa-rds-alb-ec2-web-a is running with fa-rds-alb-ec2-web-sg and does not have a public HTTP inbound rule.",
+            "expectedResult": "The EC2 backend is protected from direct internet HTTP access.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-verification-2",
+            "title": "Confirm Systems Manager readiness",
+            "instruction": "Open Systems Manager Fleet Manager or Managed nodes and confirm the instance becomes managed when its subnet has required outbound connectivity.",
+            "expectedResult": "The target can be accessed through Session Manager without opening SSH.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cleanup-1",
+            "stepNumber": 1,
+            "title": "Retain target A until ALB labs finish",
+            "instruction": "Do not terminate fa-rds-alb-ec2-web-a until it has been deregistered or the target group has been deleted during final cleanup.",
+            "description": "Do not terminate fa-rds-alb-ec2-web-a until it has been deregistered or the target group has been deleted during final cleanup.",
+            "verification": "The instance remains available for the following ALB and RDS verification tasks.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004-cleanup-2",
+            "stepNumber": 2,
+            "title": "Delete the Session Manager role after instances are gone",
+            "instruction": "After terminating all lab web instances, remove fa-rds-alb-ec2-ssm-role from fa-rds-alb-ec2-ssm-profile, delete the profile, detach AmazonSSMManagedInstanceCore, and delete only the named role.",
+            "description": "After terminating all lab web instances, remove fa-rds-alb-ec2-ssm-role from fa-rds-alb-ec2-ssm-profile, delete the profile, detach AmazonSSMManagedInstanceCore, and delete only the named role.",
+            "verification": "The named role and instance profile no longer appear in IAM.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+        "slug": "create-the-target-group-alb-listener-and-listener-rule",
+        "title": "Create the target group, ALB listener, and listener rule",
+        "service": "Relational Database Service",
+        "feature": "Elastic Load Balancing",
+        "goal": "Create an HTTP target group, register web target A, create an internet-facing ALB across two Availability Zones, and route HTTP traffic to healthy targets.",
+        "whyItMatters": "ALB is a Layer 7 load balancer using listeners, listener rules, target groups, and health checks. SAA-C03 wording such as “host-based routing,” “path-based routing,” “HTTP headers,” “web application,” or “single public HTTP(S) endpoint” should make you consider ALB. Use NLB instead for Layer 4 TCP/UDP/TLS requirements, static IP requirements, or very high connection performance.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-deploy-managed-access-web-targets-and-the-load-balancer",
+        "prerequisites": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-an-application-load-balancer",
+          "source-official-aws-documentation-3",
+          "source-official-aws-documentation-2",
+          "source-official-aws-documentation-4"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create and populate the target group",
+            "instruction": "☐ Open Target Groups.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-1",
+                "text": "☐ Open Target Groups.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-2",
+                "text": "☐ Choose Create target group.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-3",
+                "text": "☐ Select Instances.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-4",
+                "text": "☐ Enter fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-5",
+                "text": "☐ Select HTTP.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-6",
+                "text": "☐ Set port to 80.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-7",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-8",
+                "text": "☐ Register fa-rds-alb-ec2-web-a.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-1-create-and-populate-the-target-group-instruction-9",
+                "text": "☐ Create the target group.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "fa-rds-alb-ec2-tg contains web target A on port 80.",
+            "warning": "The target must be running and must use a security group allowing ALB listener and health-check traffic.",
+            "sourceIds": [
+              "source-official-aws-documentation-3",
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the internet-facing ALB",
+            "instruction": "☐ Open Load Balancers.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-1",
+                "text": "☐ Open Load Balancers.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-2",
+                "text": "☐ Choose Create load balancer.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-3",
+                "text": "☐ Choose Application Load Balancer.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-4",
+                "text": "☐ Enter fa-rds-alb-ec2.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-5",
+                "text": "☐ Select Internet-facing.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-6",
+                "text": "☐ Select IPv4.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-7",
+                "text": "☐ Select [ALB_SUBNET_A_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-8",
+                "text": "☐ Select [ALB_SUBNET_B_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-9",
+                "text": "☐ Select fa-rds-alb-ec2-alb-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-10",
+                "text": "☐ Forward HTTP port 80 to fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-2-create-the-internet-facing-alb-instruction-11",
+                "text": "☐ Create the load balancer.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The ALB has an HTTP listener forwarding its default action to the target group.",
+            "warning": "The two ALB subnets must be in different Availability Zones. This HTTP listener is for lab validation only; production web traffic should normally use HTTPS and an ACM certificate.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Add a path listener rule",
+            "instruction": "☐ Open the ALB Listeners and rules tab.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-1",
+                "text": "☐ Open the ALB Listeners and rules tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-2",
+                "text": "☐ Open the HTTP:80 listener.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-3",
+                "text": "☐ Choose Manage rules.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-4",
+                "text": "☐ Add a rule.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-5",
+                "text": "☐ Set path to /study/*.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-6",
+                "text": "☐ Set action to forward to fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-console-step-3-add-a-path-listener-rule-instruction-7",
+                "text": "☐ Save the rule.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Requests matching /study/* have an explicit listener rule forwarding to the web target group.",
+            "warning": "The static test page might return an application 404 for /study/*; the purpose of this step is to inspect Layer 7 listener-rule routing, not to build an application router.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws elbv2 create-target-group --name fa-rds-alb-ec2-tg --protocol HTTP --port 80 --target-type instance --health-check-path / --vpc-id [VPC_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [VPC_ID] and record TargetGroupArn as [TARGET_GROUP_ARN].",
+            "expectedResult": "The command returns an HTTP instance target group.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The target-group name must be unique in the Region.",
+            "sourceIds": [
+              "source-official-aws-documentation-3"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws elbv2 register-targets --target-group-arn [TARGET_GROUP_ARN] --targets Id=[EC2_A_ID],Port=80 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [TARGET_GROUP_ARN] and [EC2_A_ID] to register target A.",
+            "expectedResult": "Target A is registered on port 80.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The ALB begins routing only after initial health checks pass.",
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws elbv2 create-load-balancer --name fa-rds-alb-ec2 --type application --scheme internet-facing --ip-address-type ipv4 --subnets [ALB_SUBNET_A_ID] [ALB_SUBNET_B_ID] --security-groups [ALB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace subnet and security-group placeholders. Record LoadBalancerArn as [ALB_ARN] and DNSName as [ALB_DNS_NAME].",
+            "expectedResult": "The response includes an ALB ARN and DNS name.",
+            "instructions": [],
+            "commands": [],
+            "warning": "An Application Load Balancer requires at least two Availability Zones.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws elbv2 create-listener --load-balancer-arn [ALB_ARN] --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=[TARGET_GROUP_ARN] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [ALB_ARN] and [TARGET_GROUP_ARN] to configure the default forwarding action.",
+            "expectedResult": "The response includes an HTTP listener ARN.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use HTTPS and an appropriate certificate for production internet-facing workloads.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws elbv2 create-rule --listener-arn [LISTENER_ARN] --priority 10 --conditions Field=path-pattern,Values=/study/* --actions Type=forward,TargetGroupArn=[TARGET_GROUP_ARN] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [LISTENER_ARN] and [TARGET_GROUP_ARN] to add a Layer 7 path rule.",
+            "expectedResult": "The listener contains a priority 10 path rule.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Rule priorities must be unique for a listener.",
+            "sourceIds": [
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-verification-1",
+            "title": "Confirm healthy routing prerequisites",
+            "instruction": "Confirm that target A is registered, the ALB uses two Availability Zones, and the HTTP listener default action forwards to fa-rds-alb-ec2-tg.",
+            "expectedResult": "The public entry point and its backend routing configuration are complete.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-verification-2",
+            "title": "Record the ALB DNS name",
+            "instruction": "Record the ALB DNS name as [ALB_DNS_NAME].",
+            "expectedResult": "The learner has the endpoint used for browser validation.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-create-the-target-group-alb-listener-and-listener-rule-005-cleanup-1",
+            "stepNumber": 1,
+            "title": "Retain the ALB and target group for validation",
+            "instruction": "Keep fa-rds-alb-ec2 and fa-rds-alb-ec2-tg until the scale, failure, monitoring, and browser verification labs are complete.",
+            "description": "Keep fa-rds-alb-ec2 and fa-rds-alb-ec2-tg until the scale, failure, monitoring, and browser verification labs are complete.",
+            "verification": "The ALB and target group remain available for subsequent labs.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006",
+        "slug": "create-the-db-subnet-group-and-private-rds-for-mysql-instance",
+        "title": "Create the DB subnet group and private RDS for MySQL instance",
+        "service": "Relational Database Service",
+        "feature": "Amazon Relational Database Service",
+        "goal": "Create a DB subnet group in two private Availability Zones and create a non-public MySQL DB instance with backups and a private RDS security group.",
+        "whyItMatters": "A private RDS DB instance protects the database from direct internet access while the EC2 tier reaches it through a security-group reference. For SAA-C03, “automatic failover,” “higher availability,” and “standby that does not serve reads” suggest Multi-AZ. “Offload read traffic” suggests read replicas. Aurora may fit workloads needing Aurora-compatible managed relational features, while RDS Proxy can help applications with many short-lived database connections.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-create-and-validate-the-private-rds-for-mysql-database",
+        "prerequisites": [
+          "task-rds-create-the-alb-web-and-rds-security-group-chain-003",
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-creating-an-amazon-rds-db-instance",
+          "source-create-db-instance-aws-cli-command-reference",
+          "source-official-aws-documentation-5"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create the DB subnet group",
+            "instruction": "☐ Open the RDS console.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-1",
+                "text": "☐ Open the RDS console.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-2",
+                "text": "☐ Open Subnet groups.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-3",
+                "text": "☐ Choose Create DB subnet group.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-4",
+                "text": "☐ Enter fa-rds-alb-ec2-db-subnets.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-5",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-6",
+                "text": "☐ Select [DB_SUBNET_A_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-7",
+                "text": "☐ Select [DB_SUBNET_B_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-1-create-the-db-subnet-group-instruction-8",
+                "text": "☐ Create the subnet group.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The DB subnet group covers at least two Availability Zones in the selected VPC.",
+            "warning": "Use private database subnets for this architecture.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create the private MySQL DB instance",
+            "instruction": "☐ Open Databases.",
+            "instructions": [
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-1",
+                "text": "☐ Open Databases.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-2",
+                "text": "☐ Choose Create database.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-3",
+                "text": "☐ Choose Standard create.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-4",
+                "text": "☐ Select MySQL.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-5",
+                "text": "☐ Set DB instance identifier to fa-rds-alb-ec2-db.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-6",
+                "text": "☐ Set initial database name to appdb.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-7",
+                "text": "☐ Set master username to appadmin.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-8",
+                "text": "☐ Choose RDS-managed master credentials.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-9",
+                "text": "☐ Select a supported small DB instance class.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-10",
+                "text": "☐ Select [VPC_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-11",
+                "text": "☐ Select fa-rds-alb-ec2-db-subnets.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-12",
+                "text": "☐ Clear Public access.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-13",
+                "text": "☐ Select fa-rds-alb-ec2-rds-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-14",
+                "text": "☐ Set backup retention to 1 day.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-15",
+                "text": "☐ Select Single DB instance deployment.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-console-step-2-create-the-private-mysql-db-instance-instruction-16",
+                "text": "☐ Create database.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "RDS begins creating a private MySQL DB instance with one day of automated-backup retention.",
+            "warning": "Creation, storage, backups, and snapshots can incur charges. A DB subnet group with two AZs permits later Multi-AZ configuration, but a Single DB instance deployment does not itself provide standby failover.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance",
+              "source-official-aws-documentation-5"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws rds create-db-subnet-group --db-subnet-group-name fa-rds-alb-ec2-db-subnets --db-subnet-group-description \"Private DB subnets for RDS ALB EC2 lab\" --subnet-ids [DB_SUBNET_A_ID] [DB_SUBNET_B_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace the two DB subnet IDs with private subnets in different Availability Zones.",
+            "expectedResult": "The response includes DBSubnetGroupName fa-rds-alb-ec2-db-subnets.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The DB subnet group must cover at least two Availability Zones.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws rds create-db-instance --db-instance-identifier fa-rds-alb-ec2-db --db-name appdb --allocated-storage 20 --db-instance-class db.t3.micro --engine mysql --master-username appadmin --manage-master-user-password --vpc-security-group-ids [RDS_SG_ID] --db-subnet-group-name fa-rds-alb-ec2-db-subnets --backup-retention-period 1 --no-publicly-accessible --no-multi-az --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [RDS_SG_ID]. RDS manages the generated master secret, avoiding a password in the command. Record the DB identifier and, after creation, the master-secret reference shown by RDS.",
+            "expectedResult": "The response reports a DB instance in creating status.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Confirm that db.t3.micro and the selected MySQL engine are supported in eu-west-2 before running. The CLI path requires approved permission to read the generated secret later without exposing it in logs.",
+            "sourceIds": [
+              "source-create-db-instance-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws rds wait db-instance-available --db-instance-identifier fa-rds-alb-ec2-db --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Wait until the database reaches Available state.",
+            "expectedResult": "The waiter returns after the DB instance is available.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The waiter can return a nonzero status if RDS does not reach the available state within the waiter limit.",
+            "sourceIds": [
+              "source-create-db-instance-aws-cli-command-reference"
+            ]
+          },
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws rds describe-db-instances --db-instance-identifier fa-rds-alb-ec2-db --query \"DBInstances[0].{Status:DBInstanceStatus,Endpoint:Endpoint.Address,Port:Endpoint.Port,Public:PubliclyAccessible,MultiAZ:MultiAZ,BackupRetention:BackupRetentionPeriod,StorageType:StorageType}\" --output table --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Record Endpoint as [RDS_ENDPOINT]. Confirm Public is false, Port is 3306, MultiAZ is false for the initial deployment, and backup retention is 1 day.",
+            "expectedResult": "A table shows the private endpoint and database configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Treat the endpoint as internal infrastructure information.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance",
+              "source-create-db-instance-aws-cli-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-verification-1",
+            "title": "Confirm private DB placement",
+            "instruction": "Confirm fa-rds-alb-ec2-db is Available, Publicly accessible is false, the DB subnet group is fa-rds-alb-ec2-db-subnets, and the attached group is fa-rds-alb-ec2-rds-sg.",
+            "expectedResult": "The database is private and network access is limited to the web tier.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-verification-2",
+            "title": "Explain Multi-AZ and read replicas",
+            "instruction": "State that Multi-AZ is for availability and failover, while read replicas are for read scaling and can be promoted for recovery scenarios.",
+            "expectedResult": "The learner can distinguish these common SAA-C03 RDS options.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006-cleanup-1",
+            "stepNumber": 1,
+            "title": "Retain the DB instance for connectivity and backup labs",
+            "instruction": "Keep fa-rds-alb-ec2-db and fa-rds-alb-ec2-db-subnets until database connectivity, troubleshooting, monitoring, and snapshot labs are complete.",
+            "description": "Keep fa-rds-alb-ec2-db and fa-rds-alb-ec2-db-subnets until database connectivity, troubleshooting, monitoring, and snapshot labs are complete.",
+            "verification": "The database remains available for later tasks.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007",
+        "slug": "validate-alb-traffic-and-private-ec2-to-rds-connectivity",
+        "title": "Validate ALB traffic and private EC2-to-RDS connectivity",
+        "service": "Relational Database Service",
+        "feature": "ALB health checks and RDS network access",
+        "goal": "Verify target health and browser traffic through the ALB, then use Session Manager from EC2 to test the private MySQL endpoint and distinguish network access from database authentication.",
+        "whyItMatters": "ALB routes requests only to healthy targets. The connection path is internet client → ALB security group → web security group → RDS security group. SAA-C03 troubleshooting terms such as “502,” “503,” “unhealthy target,” “health check,” “connection timeout,” “authentication failed,” and “private database” require separating application, load-balancer, network, DNS, and credential failures.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-4-create-and-validate-the-private-rds-for-mysql-database",
+        "prerequisites": [
+          "task-rds-optionally-configure-session-manager-and-launch-web-target-a-004",
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-health-checks-for-application-load-balancer-target-groups",
+          "source-step-2-verify-or-add-instance-permissions-for-session-manager",
+          "source-creating-an-amazon-rds-db-instance",
+          "source-create-an-application-load-balancer",
+          "source-official-aws-documentation-6"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Validate ALB target health and browser traffic",
+            "instruction": "☐ Open Target Groups.",
+            "instructions": [
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic-instruction-1",
+                "text": "☐ Open Target Groups.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic-instruction-2",
+                "text": "☐ Select fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic-instruction-3",
+                "text": "☐ Open the Targets tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic-instruction-4",
+                "text": "☐ Wait for fa-rds-alb-ec2-web-a to become Healthy.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-1-validate-alb-target-health-and-browser-traffic-instruction-5",
+                "text": "☐ Open the ALB DNS name in a browser.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The browser displays fa-rds-alb-ec2 web target A through the ALB DNS name.",
+            "warning": "Do not browse directly to the web instance. The web security group intentionally permits HTTP only from the ALB security group.",
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups",
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Connect privately from EC2 through Session Manager",
+            "instruction": "☐ Open Systems Manager.",
+            "instructions": [
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-1",
+                "text": "☐ Open Systems Manager.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-2",
+                "text": "☐ Open Session Manager.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-3",
+                "text": "☐ Start a session for fa-rds-alb-ec2-web-a.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-4",
+                "text": "☐ Run a MySQL connection to [RDS_ENDPOINT].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-5",
+                "text": "☐ Enter the RDS-managed password only at the MySQL password prompt.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-6",
+                "text": "☐ Run SELECT 1;",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-7",
+                "text": "☐ Exit the MySQL client.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-instruction-8",
+                "text": "☐ End the Session Manager session.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-console-step-2-connect-privately-from-ec2-through-session-manager-json-1",
+                "title": "MySQL connection command to run inside the Session Manager shell",
+                "content": "mysql --host=[RDS_ENDPOINT] --port=3306 --user=appadmin --password appdb",
+                "language": "text",
+                "sourceIds": [
+                  "source-official-aws-documentation-6",
+                  "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "A successful SELECT 1 result proves EC2-to-RDS network access and valid MySQL credentials.",
+            "warning": "Obtain the RDS-managed secret through the approved Console procedure. Do not place the password in commands, user data, notes, browser pages, screenshots, or this Follow Along.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager",
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws elbv2 describe-target-health --target-group-arn [TARGET_GROUP_ARN] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [TARGET_GROUP_ARN] and inspect TargetHealth.State, Reason, and Description.",
+            "expectedResult": "Target A reports healthy after initial checks finish.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Target.ResponseCodeMismatch and Target.Timeout are troubleshooting evidence; do not solve them by exposing EC2 publicly.",
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups"
+            ]
+          },
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws elbv2 describe-load-balancers --names fa-rds-alb-ec2 --query \"LoadBalancers[0].DNSName\" --output text --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Record the result as [ALB_DNS_NAME] and open http://[ALB_DNS_NAME] in a browser.",
+            "expectedResult": "The ALB DNS name is returned.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This lab endpoint uses HTTP only for temporary validation.",
+            "sourceIds": [
+              "source-create-an-application-load-balancer"
+            ]
+          },
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws ssm start-session --target [EC2_A_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [EC2_A_ID] to open an interactive Session Manager shell. Run the documented MySQL client command in that shell.",
+            "expectedResult": "A Session Manager shell opens on target A.",
+            "instructions": [],
+            "commands": [],
+            "warning": "If this fails, verify the instance role, SSM managed-node status, and required outbound connectivity. Do not add public SSH merely to complete the lab.",
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          },
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "mysql --host=[RDS_ENDPOINT] --port=3306 --user=appadmin --password appdb",
+            "explanation": "Run this inside the Session Manager shell after replacing [RDS_ENDPOINT]. The client prompts for the password rather than receiving it in the command.",
+            "expectedResult": "A valid password opens a MySQL prompt for the appdb database.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This is a MySQL client command, not an AWS CLI command. A timeout indicates a network, security-group, routing, port, or placement issue; Access denied indicates a database credential issue.",
+            "sourceIds": [
+              "source-official-aws-documentation-6"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-verification-1",
+            "title": "Prove the internet-to-ALB-to-EC2 path",
+            "instruction": "Confirm that target A is Healthy and that http://[ALB_DNS_NAME] displays the target A page.",
+            "expectedResult": "Internet client → ALB → EC2 routing is working.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-verification-2",
+            "title": "Prove the EC2-to-RDS path",
+            "instruction": "From the Session Manager shell, verify that the MySQL client reaches [RDS_ENDPOINT] on port 3306 and that SELECT 1 succeeds with correct credentials.",
+            "expectedResult": "EC2 → private RDS network authorization and database authentication are both verified.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007-cleanup-1",
+            "stepNumber": 1,
+            "title": "End only the lab Session Manager session",
+            "instruction": "Terminate only the Session Manager session opened for fa-rds-alb-ec2-web-a.",
+            "description": "Terminate only the Session Manager session opened for fa-rds-alb-ec2-web-a.",
+            "verification": "The session no longer appears in Session Manager.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008",
+        "slug": "add-target-b-and-practice-graceful-deregistration",
+        "title": "Add target B and practice graceful deregistration",
+        "service": "Relational Database Service",
+        "feature": "ALB scaling and resilience",
+        "goal": "Launch a second web target in another Availability Zone, register it, observe healthy capacity, and gracefully deregister target A.",
+        "whyItMatters": "Multiple healthy targets across Availability Zones improve web-tier resilience. Production replacement and scale-out should normally use EC2 Auto Scaling rather than manually launched instances. SAA-C03 wording such as “replace failed instances automatically,” “maintain capacity,” “scale out,” and “multi-AZ web tier” points to an Auto Scaling group behind an ALB.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-scale-monitor-troubleshoot-and-connect-decisions-to-saa-c03",
+        "prerequisites": [
+          "task-rds-create-the-target-group-alb-listener-and-listener-rule-005",
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-official-aws-documentation-2",
+          "source-official-aws-documentation-7",
+          "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Launch and register target B",
+            "instruction": "☐ Open EC2 Instances.",
+            "instructions": [
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-1",
+                "text": "☐ Open EC2 Instances.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-2",
+                "text": "☐ Launch an instance.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-3",
+                "text": "☐ Set Name to fa-rds-alb-ec2-web-b.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-4",
+                "text": "☐ Select the same Amazon Linux configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-5",
+                "text": "☐ Select [WEB_SUBNET_B_ID].",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-6",
+                "text": "☐ Select fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-7",
+                "text": "☐ Select fa-rds-alb-ec2-ssm-role.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-8",
+                "text": "☐ Paste the target B bootstrap user data.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-9",
+                "text": "☐ Launch the instance.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-10",
+                "text": "☐ Open fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-instruction-11",
+                "text": "☐ Register fa-rds-alb-ec2-web-b on port 80.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-1-launch-and-register-target-b-json-1",
+                "title": "Bootstrap user data for web target B",
+                "content": "#!/bin/bash\nDNF_CMD=$(command -v dnf || command -v yum)\n$DNF_CMD install -y httpd mariadb105 || $DNF_CMD install -y httpd mariadb\necho '<h1>fa-rds-alb-ec2 web target B</h1>' > /var/www/html/index.html\nsystemctl enable --now httpd",
+                "language": "text",
+                "sourceIds": [
+                  "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Target B is registered in a different enabled Availability Zone.",
+            "warning": "Do not create a new public inbound rule for target B.",
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Observe draining and continuity",
+            "instruction": "☐ Wait for both targets to become Healthy.",
+            "instructions": [
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-1",
+                "text": "☐ Wait for both targets to become Healthy.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-2",
+                "text": "☐ Edit target-group attributes.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-3",
+                "text": "☐ Set deregistration delay to 60 seconds.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-4",
+                "text": "☐ Deregister fa-rds-alb-ec2-web-a.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-5",
+                "text": "☐ Observe target A enter Draining.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-console-step-2-observe-draining-and-continuity-instruction-6",
+                "text": "☐ Reload the ALB DNS name.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The ALB continues serving target B while target A drains.",
+            "warning": "The documented default deregistration delay is 300 seconds. Sixty seconds is for observation only and might be unsuitable for production requests.",
+            "sourceIds": [
+              "source-official-aws-documentation-2",
+              "source-official-aws-documentation-7"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ec2 run-instances --image-id [AL2023_AMI_ID] --instance-type t3.micro --count 1 --subnet-id [WEB_SUBNET_B_ID] --security-group-ids [WEB_SG_ID] --iam-instance-profile Name=fa-rds-alb-ec2-ssm-profile --user-data \"#!/bin/bash\nDNF_CMD=$(command -v dnf || command -v yum)\n$DNF_CMD install -y httpd mariadb105 || $DNF_CMD install -y httpd mariadb\necho '<h1>fa-rds-alb-ec2 web target B</h1>' > /var/www/html/index.html\nsystemctl enable --now httpd\" --tag-specifications \"ResourceType=instance,Tags=[{Key=Name,Value=fa-rds-alb-ec2-web-b}]\" --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace [AL2023_AMI_ID], [WEB_SUBNET_B_ID], and [WEB_SG_ID]. Record the returned ID as [EC2_B_ID].",
+            "expectedResult": "A second EC2 web target is created.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Use a subnet in the second ALB-enabled Availability Zone.",
+            "sourceIds": [
+              "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+            ]
+          },
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws elbv2 register-targets --target-group-arn [TARGET_GROUP_ARN] --targets Id=[EC2_B_ID],Port=80 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace placeholders to register target B.",
+            "expectedResult": "Target B is registered and later becomes healthy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The target receives requests only after it passes its initial health checks.",
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          },
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws elbv2 modify-target-group-attributes --target-group-arn [TARGET_GROUP_ARN] --attributes Key=deregistration_delay.timeout_seconds,Value=60 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Set an observable 60-second draining delay for this training exercise.",
+            "expectedResult": "The target-group deregistration-delay attribute is updated.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Restore an appropriate production value later if this target group is retained.",
+            "sourceIds": [
+              "source-official-aws-documentation-7"
+            ]
+          },
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws elbv2 deregister-targets --target-group-arn [TARGET_GROUP_ARN] --targets Id=[EC2_A_ID],Port=80 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace placeholders to begin graceful deregistration of target A.",
+            "expectedResult": "Target A transitions to draining and then unused.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Deregistering a target does not stop or terminate the EC2 instance.",
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-verification-1",
+            "title": "Confirm resilient target capacity",
+            "instruction": "Before deregistering target A, confirm target A and target B are Healthy and placed in different enabled Availability Zones.",
+            "expectedResult": "The ALB has healthy web capacity across two Availability Zones.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-verification-2",
+            "title": "Confirm graceful removal",
+            "instruction": "After deregistering target A, confirm that it reaches draining or unused while the ALB DNS name continues to return target B.",
+            "expectedResult": "The learner observed connection draining without terminating the target prematurely.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-add-target-b-and-practice-graceful-deregistration-008-cleanup-1",
+            "stepNumber": 1,
+            "title": "Terminate target B after the scaling lab",
+            "instruction": "After completing target-health and troubleshooting exercises, terminate only fa-rds-alb-ec2-web-b.",
+            "description": "After completing target-health and troubleshooting exercises, terminate only fa-rds-alb-ec2-web-b.",
+            "verification": "The target B instance reaches Terminated state.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-2"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009",
+        "slug": "practice-controlled-alb-and-rds-failure-recovery",
+        "title": "Practice controlled ALB and RDS failure recovery",
+        "service": "Relational Database Service",
+        "feature": "Troubleshooting",
+        "goal": "Create temporary health-check and security-group failures, observe the evidence, restore the exact baseline, and classify common ALB and RDS connection failures.",
+        "whyItMatters": "SAA-C03 questions often require finding the narrowest failed layer. A wrong health-check path causes unhealthy targets; an ALB security-group issue blocks clients; a web security-group source issue blocks ALB-to-EC2 traffic; an RDS security-group issue blocks EC2-to-RDS traffic. Wrong MySQL credentials and a wrong DNS endpoint are different classes of failures.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-scale-monitor-troubleshoot-and-connect-decisions-to-saa-c03",
+        "prerequisites": [
+          "task-rds-validate-alb-traffic-and-private-ec2-to-rds-connectivity-007",
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-health-checks-for-application-load-balancer-target-groups",
+          "source-official-aws-documentation",
+          "source-creating-an-amazon-rds-db-instance"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Test and restore an incorrect health-check path",
+            "instruction": "☐ Open fa-rds-alb-ec2-tg.",
+            "instructions": [
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-1",
+                "text": "☐ Open fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-2",
+                "text": "☐ Edit Health checks.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-3",
+                "text": "☐ Set path to /missing.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-4",
+                "text": "☐ Wait for an unhealthy reason.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-5",
+                "text": "☐ Set path back to /.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-1-test-and-restore-an-incorrect-health-check-path-instruction-6",
+                "text": "☐ Wait for healthy status.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The target becomes unhealthy with a health-check failure and recovers after the path is restored.",
+            "warning": "Do not leave the target group configured with /missing.",
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Test and restore blocked ALB-to-EC2 traffic",
+            "instruction": "☐ Open fa-rds-alb-ec2-web-sg.",
+            "instructions": [
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic-instruction-1",
+                "text": "☐ Open fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic-instruction-2",
+                "text": "☐ Remove the ALB-source HTTP rule.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic-instruction-3",
+                "text": "☐ Wait for unhealthy target evidence.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic-instruction-4",
+                "text": "☐ Restore HTTP from fa-rds-alb-ec2-alb-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-2-test-and-restore-blocked-alb-to-ec2-traffic-instruction-5",
+                "text": "☐ Wait for healthy target evidence.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Removing the web inbound source rule blocks ALB health checks; restoring the security-group reference repairs the flow.",
+            "warning": "Never replace the ALB security-group reference with 0.0.0.0/0.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Test and restore blocked EC2-to-RDS traffic",
+            "instruction": "☐ Open fa-rds-alb-ec2-rds-sg.",
+            "instructions": [
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic-instruction-1",
+                "text": "☐ Open fa-rds-alb-ec2-rds-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic-instruction-2",
+                "text": "☐ Remove the web-source MySQL rule.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic-instruction-3",
+                "text": "☐ Test MySQL from Session Manager.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic-instruction-4",
+                "text": "☐ Restore MySQL from fa-rds-alb-ec2-web-sg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-console-step-3-test-and-restore-blocked-ec2-to-rds-traffic-instruction-5",
+                "text": "☐ Test MySQL again.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The connection times out while network access is blocked and succeeds after the rule is restored with valid credentials.",
+            "warning": "Do not make RDS public and do not substitute an EC2 IP address for the web security-group reference.",
+            "sourceIds": [
+              "source-official-aws-documentation",
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws elbv2 modify-target-group --target-group-arn [TARGET_GROUP_ARN] --health-check-path /missing --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Temporarily set an invalid health-check path to observe the unhealthy state.",
+            "expectedResult": "Healthy targets later report an unhealthy health-check reason.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run the recovery command after observing the result.",
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws elbv2 modify-target-group --target-group-arn [TARGET_GROUP_ARN] --health-check-path / --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Restore the working health-check path.",
+            "expectedResult": "Targets can return to healthy after successful checks.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Recovery requires the configured healthy threshold to be met.",
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws ec2 revoke-security-group-ingress --group-id [WEB_SG_ID] --protocol tcp --port 80 --source-group [ALB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Temporarily remove ALB-to-web HTTP authorization to observe health-check failure.",
+            "expectedResult": "ALB health checks later fail to reach the web targets.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Restore the exact rule immediately after observing the failure.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws ec2 authorize-security-group-ingress --group-id [WEB_SG_ID] --protocol tcp --port 80 --source-group [ALB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Restore the original ALB-to-web security-group reference.",
+            "expectedResult": "The web tier again permits HTTP only from the ALB group.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not broaden the source to a public CIDR.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-5",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws ec2 revoke-security-group-ingress --group-id [RDS_SG_ID] --protocol tcp --port 3306 --source-group [WEB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Temporarily remove EC2-to-RDS MySQL authorization before testing from the Session Manager shell.",
+            "expectedResult": "A connection attempt from web target A times out or fails at the network layer.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Restore the exact rule after observing the failed connection.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cli-step-6",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ec2 authorize-security-group-ingress --group-id [RDS_SG_ID] --protocol tcp --port 3306 --source-group [WEB_SG_ID] --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Restore the original EC2-to-RDS MySQL security-group reference.",
+            "expectedResult": "The web tier can again reach MySQL port 3306 on RDS.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This permits network traffic only; valid MySQL credentials remain required.",
+            "sourceIds": [
+              "source-official-aws-documentation"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-verification-1",
+            "title": "Classify ALB target failures",
+            "instruction": "Confirm that /missing causes a health-check failure and that removing ALB-to-web TCP 80 causes a timeout or failed health check.",
+            "expectedResult": "The learner can distinguish a wrong health-check path from a security-group block.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-verification-2",
+            "title": "Classify database failures",
+            "instruction": "Classify a timeout as a security-group, route, port, subnet, or endpoint-path issue; classify Access denied as a MySQL username or password issue; classify a name-resolution error as an endpoint or DNS issue.",
+            "expectedResult": "The learner troubleshoots the failing layer without exposing RDS publicly.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-practice-controlled-alb-and-rds-failure-recovery-009-cleanup-1",
+            "stepNumber": 1,
+            "title": "Restore the exact baseline before continuing",
+            "instruction": "Confirm the target health-check path is /, the web security group permits TCP 80 only from fa-rds-alb-ec2-alb-sg, and the RDS security group permits TCP 3306 only from fa-rds-alb-ec2-web-sg.",
+            "description": "Confirm the target health-check path is /, the web security group permits TCP 80 only from fa-rds-alb-ec2-alb-sg, and the RDS security group permits TCP 3306 only from fa-rds-alb-ec2-web-sg.",
+            "verification": "The original three-tier security-group chain and target health are restored.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-health-checks-for-application-load-balancer-target-groups",
+              "source-official-aws-documentation"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010",
+        "slug": "inspect-monitoring-backups-snapshots-and-high-availability-choices",
+        "title": "Inspect monitoring, backups, snapshots, and high-availability choices",
+        "service": "Relational Database Service",
+        "feature": "CloudWatch and Amazon RDS resilience",
+        "goal": "Inspect EC2, ALB, and RDS metrics, create a no-action healthy-host alarm, create a manual DB snapshot, and review Multi-AZ, read replica, storage, and architecture choices.",
+        "whyItMatters": "CloudWatch identifies availability and saturation symptoms. RDS automated backups support point-in-time recovery during the retention period, while manual snapshots persist until deleted. For SAA-C03: choose Multi-AZ for failover, read replicas for read scaling, Auto Scaling behind ALB for automated EC2 replacement, RDS Proxy for connection pooling, Aurora for compatible high-performance managed relational workloads, NLB for Layer 4 needs, and serverless services when server management is unnecessary.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-5-scale-monitor-troubleshoot-and-connect-decisions-to-saa-c03",
+        "prerequisites": [
+          "task-rds-create-the-db-subnet-group-and-private-rds-for-mysql-instance-006",
+          "task-rds-add-target-b-and-practice-graceful-deregistration-008",
+          "task-rds-practice-controlled-alb-and-rds-failure-recovery-009"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-official-aws-documentation-5",
+          "source-creating-an-amazon-rds-db-instance",
+          "source-official-aws-documentation-7",
+          "source-official-aws-documentation-4"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-1-inspect-tier-metrics",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Inspect tier metrics",
+            "instruction": "☐ Open CloudWatch Metrics.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-1-inspect-tier-metrics-instruction-1",
+                "text": "☐ Open CloudWatch Metrics.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-1-inspect-tier-metrics-instruction-2",
+                "text": "☐ View EC2 CPUUtilization for target A.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-1-inspect-tier-metrics-instruction-3",
+                "text": "☐ View ApplicationELB HealthyHostCount for fa-rds-alb-ec2-tg.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-1-inspect-tier-metrics-instruction-4",
+                "text": "☐ View RDS DatabaseConnections for fa-rds-alb-ec2-db.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The learner can inspect baseline signals for compute, load balancing, and database connectivity.",
+            "warning": "A low-traffic training workload can legitimately show low or zero activity.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Create a no-action healthy-host alarm",
+            "instruction": "☐ Open CloudWatch Alarms.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-1",
+                "text": "☐ Open CloudWatch Alarms.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-2",
+                "text": "☐ Choose Create alarm.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-3",
+                "text": "☐ Select ApplicationELB HealthyHostCount.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-4",
+                "text": "☐ Select fa-rds-alb-ec2-tg dimensions.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-5",
+                "text": "☐ Set threshold below 1.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-6",
+                "text": "☐ Set one evaluation period.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-7",
+                "text": "☐ Name the alarm fa-rds-alb-ec2-low-healthy-hosts.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-8",
+                "text": "☐ Skip notification actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-2-create-a-no-action-healthy-host-alarm-instruction-9",
+                "text": "☐ Create the alarm.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "A training alarm exists without automated remediation.",
+            "warning": "Do not use this threshold design unchanged for production without defining availability objectives and notification actions.",
+            "sourceIds": [
+              "source-official-aws-documentation-7"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Create and inspect a manual RDS snapshot",
+            "instruction": "☐ Open RDS Databases.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-1",
+                "text": "☐ Open RDS Databases.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-2",
+                "text": "☐ Select fa-rds-alb-ec2-db.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-3",
+                "text": "☐ Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-4",
+                "text": "☐ Choose Take snapshot.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-5",
+                "text": "☐ Enter fa-rds-alb-ec2-db-snap-001.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-6",
+                "text": "☐ Create snapshot.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-3-create-and-inspect-a-manual-rds-snapshot-instruction-7",
+                "text": "☐ Wait for Available status.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "A manual DB snapshot becomes available.",
+            "warning": "Manual snapshots can continue to incur storage charges until they are deleted.",
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Review SAA-C03 architecture choices",
+            "instruction": "☐ Open the RDS DB instance configuration.",
+            "instructions": [
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-1",
+                "text": "☐ Open the RDS DB instance configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-2",
+                "text": "☐ Confirm Multi-AZ is disabled for the initial lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-3",
+                "text": "☐ Review the Modify option for Multi-AZ.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-4",
+                "text": "☐ Review the Create read replica option.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-5",
+                "text": "☐ Review the DB storage configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-6",
+                "text": "☐ Record the appropriate use of ALB.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-7",
+                "text": "☐ Record the appropriate use of NLB.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-8",
+                "text": "☐ Record the appropriate use of Auto Scaling.",
+                "detail": ""
+              },
+              {
+                "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-console-step-4-review-saa-c03-architecture-choices-instruction-9",
+                "text": "☐ Record the appropriate use of RDS Proxy.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The learner can map availability, read-scale, protocol, and connection-management requirements to the correct service pattern.",
+            "warning": "Do not enable Multi-AZ, create a read replica, or modify storage merely for this review unless the account owner has approved the extra cost and change window.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance",
+              "source-official-aws-documentation-4"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws cloudwatch put-metric-alarm --alarm-name fa-rds-alb-ec2-low-healthy-hosts --alarm-description \"Training alarm for ALB healthy hosts\" --namespace AWS/ApplicationELB --metric-name HealthyHostCount --dimensions Name=TargetGroup,Value=[TARGET_GROUP_DIMENSION] Name=LoadBalancer,Value=[LOAD_BALANCER_DIMENSION] --statistic Minimum --period 60 --evaluation-periods 1 --threshold 1 --comparison-operator LessThanThreshold --treat-missing-data breaching --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Replace the two dimension placeholders with the exact TargetGroup and LoadBalancer dimension values shown in CloudWatch for this ALB. The command creates no alarm action.",
+            "expectedResult": "The CloudWatch alarm is created in INSUFFICIENT_DATA, OK, or ALARM state.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Metric dimensions must exactly match the existing ALB and target group.",
+            "sourceIds": [
+              "source-official-aws-documentation-7"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws rds create-db-snapshot --db-instance-identifier fa-rds-alb-ec2-db --db-snapshot-identifier fa-rds-alb-ec2-db-snap-001 --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Create one manual recovery snapshot for the training DB instance.",
+            "expectedResult": "The response reports a DB snapshot in creating state.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The snapshot remains after DB deletion until it is explicitly deleted.",
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws rds describe-db-snapshots --db-snapshot-identifier fa-rds-alb-ec2-db-snap-001 --query \"DBSnapshots[0].Status\" --output text --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Check snapshot progress until the output is available.",
+            "expectedResult": "The snapshot status becomes available.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Do not delete the DB instance before the snapshot is available if the snapshot is intended as a recovery point.",
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cli-step-4",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws rds describe-db-instances --db-instance-identifier fa-rds-alb-ec2-db --query \"DBInstances[0].{MultiAZ:MultiAZ,StorageType:StorageType,AllocatedStorage:AllocatedStorage,ReadReplicas:ReadReplicaDBInstanceIdentifiers}\" --output table --profile fa-rds-alb-ec2-lab --region eu-west-2",
+            "explanation": "Inspect the current HA, storage, and read-replica state without modifying the DB instance.",
+            "expectedResult": "The output shows the initial Single-AZ setting, storage configuration, and no read replicas.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This inspection does not create a Multi-AZ standby or a read replica.",
+            "sourceIds": [
+              "source-creating-an-amazon-rds-db-instance"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-verification-1",
+            "title": "Confirm observability and recoverability",
+            "instruction": "Confirm CloudWatch exposes EC2 CPUUtilization, ALB HealthyHostCount, and RDS DatabaseConnections, and confirm the manual snapshot reaches available status.",
+            "expectedResult": "The learner has baseline visibility and a separately retained manual recovery point.",
+            "mode": "either"
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-verification-2",
+            "title": "Apply the SAA-C03 decision cues",
+            "instruction": "Explain: ALB for HTTP-aware routing; NLB for Layer 4 or static-IP needs; Auto Scaling for automatic EC2 replacement; Multi-AZ for DB failover; read replicas for read scaling; RDS Proxy for connection management; private DB subnets and SG references for least-privilege tiers.",
+            "expectedResult": "The learner can select an architecture based on requirement wording rather than product memorization.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cleanup-1",
+            "stepNumber": 1,
+            "title": "Delete the no-action alarm",
+            "instruction": "Delete only the CloudWatch alarm named fa-rds-alb-ec2-low-healthy-hosts.",
+            "description": "Delete only the CloudWatch alarm named fa-rds-alb-ec2-low-healthy-hosts.",
+            "verification": "The named alarm no longer appears in CloudWatch Alarms.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-7"
+            ]
+          },
+          {
+            "id": "task-rds-inspect-monitoring-backups-snapshots-and-high-availability-choices-010-cleanup-2",
+            "stepNumber": 2,
+            "title": "Delete the manual snapshot after review",
+            "instruction": "Delete only fa-rds-alb-ec2-db-snap-001 when it is no longer needed for recovery practice.",
+            "description": "Delete only fa-rds-alb-ec2-db-snap-001 when it is no longer needed for recovery practice.",
+            "verification": "The named manual snapshot no longer appears in RDS snapshots.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-official-aws-documentation-5"
+            ]
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "Application Load Balancers, EC2 instances, RDS DB instances, backups, snapshots, and data transfer can incur charges. Delete only the named Follow Along resources promptly after verification.",
+      "safety": "Inbound HTTP from 0.0.0.0/0 is permitted only on the temporary internet-facing ALB. EC2 web targets do not allow direct public HTTP. RDS does not allow public MySQL access. Production internet-facing applications should normally use HTTPS with an appropriate certificate.",
+      "credentials": "Do not use root access keys. Do not place passwords, access keys, session tokens, secret values, database endpoints, or private keys in user data, source code, browser pages, screenshots, or notes. Enter the RDS master password only at an approved password prompt.",
+      "region": "Perform all Console work in Europe (London), eu-west-2. Every regional CLI command in this Follow Along explicitly includes --region eu-west-2."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Delete the Application Load Balancer",
+          "instruction": "In eu-west-2, delete only the ALB named fa-rds-alb-ec2 after browser, health-check, scaling, and troubleshooting verification is complete.",
+          "description": "In eu-west-2, delete only the ALB named fa-rds-alb-ec2 after browser, health-check, scaling, and troubleshooting verification is complete.",
+          "verification": "fa-rds-alb-ec2 no longer appears in the Load Balancers list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-an-application-load-balancer"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Delete the target group",
+          "instruction": "After ALB deletion completes, delete only the target group named fa-rds-alb-ec2-tg.",
+          "description": "After ALB deletion completes, delete only the target group named fa-rds-alb-ec2-tg.",
+          "verification": "fa-rds-alb-ec2-tg no longer appears in the Target Groups list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-3"
+          ]
+        },
+        {
+          "id": "programme-cleanup-3",
+          "stepNumber": 3,
+          "title": "Terminate the web targets",
+          "instruction": "Terminate only EC2 instances named fa-rds-alb-ec2-web-a and fa-rds-alb-ec2-web-b.",
+          "description": "Terminate only EC2 instances named fa-rds-alb-ec2-web-a and fa-rds-alb-ec2-web-b.",
+          "verification": "Both named instances reach Terminated state.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-run-commands-when-you-launch-an-ec2-instance-with-user-data-input"
+          ]
+        },
+        {
+          "id": "programme-cleanup-4",
+          "stepNumber": 4,
+          "title": "Delete the RDS DB instance",
+          "instruction": "Delete only fa-rds-alb-ec2-db after deciding whether a final snapshot is required. Do not delete unrelated DB instances.",
+          "description": "Delete only fa-rds-alb-ec2-db after deciding whether a final snapshot is required. Do not delete unrelated DB instances.",
+          "verification": "fa-rds-alb-ec2-db no longer appears in the RDS Databases list.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-creating-an-amazon-rds-db-instance"
+          ]
+        },
+        {
+          "id": "programme-cleanup-5",
+          "stepNumber": 5,
+          "title": "Delete snapshots created only for this Follow Along",
+          "instruction": "Delete only fa-rds-alb-ec2-db-snap-001 and any final snapshot created solely for this Follow Along when no longer required.",
+          "description": "Delete only fa-rds-alb-ec2-db-snap-001 and any final snapshot created solely for this Follow Along when no longer required.",
+          "verification": "No manual DB snapshot created solely for this Follow Along remains.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation-5"
+          ]
+        },
+        {
+          "id": "programme-cleanup-6",
+          "stepNumber": 6,
+          "title": "Delete the DB subnet group",
+          "instruction": "After RDS confirms DB deletion, delete only fa-rds-alb-ec2-db-subnets.",
+          "description": "After RDS confirms DB deletion, delete only fa-rds-alb-ec2-db-subnets.",
+          "verification": "The named DB subnet group no longer appears in RDS.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-creating-an-amazon-rds-db-instance"
+          ]
+        },
+        {
+          "id": "programme-cleanup-7",
+          "stepNumber": 7,
+          "title": "Delete the three security groups",
+          "instruction": "After all dependent network interfaces are gone, delete only fa-rds-alb-ec2-alb-sg, fa-rds-alb-ec2-web-sg, and fa-rds-alb-ec2-rds-sg.",
+          "description": "After all dependent network interfaces are gone, delete only fa-rds-alb-ec2-alb-sg, fa-rds-alb-ec2-web-sg, and fa-rds-alb-ec2-rds-sg.",
+          "verification": "All three named groups no longer appear in [VPC_ID].",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-official-aws-documentation"
+          ]
+        },
+        {
+          "id": "programme-cleanup-8",
+          "stepNumber": 8,
+          "title": "Delete optional Session Manager IAM resources",
+          "instruction": "After web instances are terminated, delete only fa-rds-alb-ec2-ssm-profile and fa-rds-alb-ec2-ssm-role after removing the role from the profile and detaching its managed policy.",
+          "description": "After web instances are terminated, delete only fa-rds-alb-ec2-ssm-profile and fa-rds-alb-ec2-ssm-role after removing the role from the profile and detaching its managed policy.",
+          "verification": "The named role and instance profile no longer appear in IAM.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-step-2-verify-or-add-instance-permissions-for-session-manager"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The lab retains the existing programme identity rds-learning-path and display name RDS, EC2, and Application Load Balancer Follow Along, but the supplied output contract does not expose programmeId, task IDs, source revision, publication metadata, or arbitrary existing Study Tracker fields. These must be retained by the application when replacing the content package.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Confirm current eu-west-2 availability and pricing for the selected EC2 instance type, DB instance class, Amazon Linux AMI, and MySQL engine version before publishing or running the labs.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The AWS CLI create-db-instance route uses RDS-managed master credentials to avoid embedding a password in the command. The learner needs administrator-approved access to the RDS-managed secret through the Console to complete the interactive MySQL login.",
+          "status": "open"
+        },
+        {
+          "id": "finding-4",
+          "findingNumber": 4,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The optional Session Manager role requires the learning identity to have narrowly scoped iam:PassRole permission for fa-rds-alb-ec2-ssm-role. Validate the exact account policy attachment workflow in the existing Study Tracker implementation.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "rds-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 5,
+    "taskCount": 10,
+    "checkboxCount": 182,
+    "cliCommandCount": 43,
+    "verificationCheckCount": 20,
+    "cleanupItemCount": 21,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 17
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "b5de8cec29f4b6509ca9858a5c706ea01f389540a4aaef546c905cbe2e030575"
+  }
+}

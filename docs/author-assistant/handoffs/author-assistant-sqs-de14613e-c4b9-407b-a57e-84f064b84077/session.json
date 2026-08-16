@@ -1,0 +1,1357 @@
+{
+  "sessionId": "author-assistant-sqs-de14613e-c4b9-407b-a57e-84f064b84077",
+  "status": "handoff_package_ready_for_review",
+  "createdAt": "2026-08-10T18:16:04.636Z",
+  "inputs": {
+    "generationMode": "update_existing",
+    "updateTarget": {
+      "programmeId": "sqs-learning-path",
+      "displayName": "Amazon SQS: Basic Message Queue Test",
+      "serviceName": "Amazon Simple Queue Service",
+      "shortName": "SQS",
+      "serviceSlug": "sqs",
+      "sourceRevision": 4,
+      "candidateId": "release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r4-085a4b6a759b",
+      "contentHash": "9f2c55e04516d350e07d931d5ee1bae5866c48ecdaf62f73a7d7ceb823134653",
+      "publishedAt": "2026-08-10T17:59:06.9359+00:00",
+      "runtimeContent": {
+        "tasks": [
+          {
+            "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001",
+            "goal": "Open Amazon SQS in Europe (London) and confirm that the Queues page is available to the approved lab identity.",
+            "slug": "1-verify-amazon-sqs-console-access-in-eu-west-2",
+            "title": "1. Verify Amazon SQS Console Access in eu-west-2",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS console access and regional queue list",
+            "phaseId": "phase-1-access-and-standard-queue-basics",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-cli-step-1",
+                "number": 1,
+                "command": "aws sqs list-queues --region eu-west-2",
+                "warning": "This command requires preconfigured authorized CLI authentication. Do not create or expose credentials for this Follow Along.",
+                "commands": [
+                  {
+                    "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-cli-step-1-command-1",
+                    "text": "aws sqs list-queues --region eu-west-2",
+                    "explanation": "Lists the queue URLs that the configured, authorized CLI identity can access in Europe (London).",
+                    "expectedOutput": "The command returns QueueUrls when accessible queues exist, or an empty result when none exist."
+                  }
+                ],
+                "sourceIds": [
+                  "source-official-aws-documentation"
+                ],
+                "stepNumber": 1,
+                "explanation": "Lists the queue URLs that the configured, authorized CLI identity can access in Europe (London).",
+                "instructions": [],
+                "expectedResult": "The command returns QueueUrls when accessible queues exist, or an empty result when none exist."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-setting-the-default-region-in-the-aws-management-console",
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message",
+              "source-official-aws-documentation"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-1-select-the-lab-region",
+                "title": "Select the lab Region",
+                "number": 1,
+                "warning": "Use eu-west-2 throughout this Follow Along.",
+                "commands": [],
+                "sourceIds": [
+                  "source-setting-the-default-region-in-the-aws-management-console"
+                ],
+                "stepNumber": 1,
+                "instruction": "In the navigation bar, choose the Region selector.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-1-select-the-lab-region-instruction-1",
+                    "text": "In the navigation bar, choose the Region selector.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-1-select-the-lab-region-instruction-2",
+                    "text": "Choose Europe (London).",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The console shows Europe (London) as the selected Region."
+              },
+              {
+                "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-2-open-amazon-sqs",
+                "title": "Open Amazon SQS",
+                "number": 2,
+                "warning": "Use an approved non-root lab identity.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 2,
+                "instruction": "Open the Amazon SQS console.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-2-open-amazon-sqs-instruction-1",
+                    "text": "Open the Amazon SQS console.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-console-step-2-open-amazon-sqs-instruction-2",
+                    "text": "Choose Queues in the navigation pane.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The Queues page is visible in Europe (London)."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-verification-1",
+                "mode": "console",
+                "title": "Confirm the regional queue view",
+                "instruction": "Verify that the Amazon SQS Queues page remains open with Europe (London) selected.",
+                "expectedResult": "You can continue the Follow Along in eu-west-2."
+              },
+              {
+                "id": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001-verification-2",
+                "mode": "cli",
+                "title": "Confirm CLI access",
+                "instruction": "Review the result of the list-queues command.",
+                "expectedResult": "The command completes without an authorization error."
+              }
+            ],
+            "whyItMatters": "Amazon SQS queues are regional resources. Keeping all work in eu-west-2 ensures that the queue URLs, Console view, and CLI commands refer to the same Region.",
+            "prerequisites": [],
+            "estimatedMinutes": 10,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002",
+            "goal": "Create the standard queue named sqs-basic-test-standard and identify its queue URL and ARN.",
+            "slug": "2-create-a-standard-test-queue-and-record-its-identifiers",
+            "title": "2. Create a Standard Test Queue and Record Its Identifiers",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS standard queue",
+            "phaseId": "phase-1-access-and-standard-queue-basics",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-cli-step-1",
+                "number": 1,
+                "command": "aws sqs create-queue --queue-name sqs-basic-test-standard --region eu-west-2",
+                "warning": "If this queue name already exists with different attributes, Amazon SQS can return an error.",
+                "commands": [
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-cli-step-1-command-1",
+                    "text": "aws sqs create-queue --queue-name sqs-basic-test-standard --region eu-west-2",
+                    "explanation": "Creates the standard test queue. Omitting the FifoQueue attribute creates a standard queue.",
+                    "expectedOutput": "The command returns QueueUrl for sqs-basic-test-standard."
+                  }
+                ],
+                "sourceIds": [
+                  "source-create-queue-aws-cli-command-reference"
+                ],
+                "stepNumber": 1,
+                "explanation": "Creates the standard test queue. Omitting the FifoQueue attribute creates a standard queue.",
+                "instructions": [],
+                "expectedResult": "The command returns QueueUrl for sqs-basic-test-standard."
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-cli-step-2",
+                "number": 2,
+                "command": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-create-queue> --attribute-names QueueArn --region eu-west-2",
+                "warning": "The placeholder is required because the account-specific queue URL is returned only after queue creation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-cli-step-2-command-1",
+                    "text": "aws sqs get-queue-attributes --queue-url <standard-queue-url-from-create-queue> --attribute-names QueueArn --region eu-west-2",
+                    "explanation": "Retrieves the ARN for the standard queue. Replace <standard-queue-url-from-create-queue> with the QueueUrl returned by the immediately preceding create-queue command.",
+                    "expectedOutput": "The command returns the QueueArn attribute."
+                  }
+                ],
+                "sourceIds": [
+                  "source-official-aws-documentation"
+                ],
+                "stepNumber": 2,
+                "explanation": "Retrieves the ARN for the standard queue. Replace <standard-queue-url-from-create-queue> with the QueueUrl returned by the immediately preceding create-queue command.",
+                "instructions": [],
+                "expectedResult": "The command returns the QueueArn attribute."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message",
+              "source-create-queue-aws-cli-command-reference",
+              "source-official-aws-documentation"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-1-start-standard-queue-creation",
+                "title": "Start standard-queue creation",
+                "number": 1,
+                "warning": "Do not include confidential information in a queue name.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Choose Create queue.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-1-start-standard-queue-creation-instruction-1",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-1-start-standard-queue-creation-instruction-2",
+                    "text": "Keep Standard selected for Type.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-1-start-standard-queue-creation-instruction-3",
+                    "text": "Enter sqs-basic-test-standard in Name.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The queue name field contains sqs-basic-test-standard."
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-2-create-the-queue",
+                "title": "Create the queue",
+                "number": 2,
+                "warning": "Queue type cannot be changed after creation.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 2,
+                "instruction": "Leave the default Configuration values unchanged.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-2-create-the-queue-instruction-1",
+                    "text": "Leave the default Configuration values unchanged.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-2-create-the-queue-instruction-2",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The sqs-basic-test-standard Details page opens."
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-3-record-queue-identifiers",
+                "title": "Record queue identifiers",
+                "number": 3,
+                "warning": "Use the queue URL, not the queue name, in later CLI commands.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 3,
+                "instruction": "Copy the Queue URL from the Details page.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-3-record-queue-identifiers-instruction-1",
+                    "text": "Copy the Queue URL from the Details page.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-console-step-3-record-queue-identifiers-instruction-2",
+                    "text": "Copy the Queue ARN from the Details page.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "You have recorded the URL and ARN for sqs-basic-test-standard."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-verification-1",
+                "mode": "console",
+                "title": "Verify the standard queue in the Console",
+                "instruction": "On the sqs-basic-test-standard Details page, verify that the queue name is sqs-basic-test-standard and the Type is Standard.",
+                "expectedResult": "The intended standard queue is displayed."
+              },
+              {
+                "id": "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002-verification-2",
+                "mode": "cli",
+                "title": "Verify the queue URL from the CLI",
+                "instruction": "Review the QueueUrl returned by create-queue.",
+                "expectedResult": "The URL ends with sqs-basic-test-standard."
+              }
+            ],
+            "whyItMatters": "A queue URL identifies the queue for SQS API and CLI operations. A standard queue is appropriate when strict ordering is not required.",
+            "prerequisites": [
+              "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001"
+            ],
+            "estimatedMinutes": 20,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003",
+            "goal": "Send one harmless message, poll for it, inspect the visible message details, and explicitly delete it.",
+            "slug": "3-send-receive-inspect-and-delete-a-standard-queue-message",
+            "title": "3. Send, Receive, Inspect, and Delete a Standard-Queue Message",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS message lifecycle",
+            "phaseId": "phase-1-access-and-standard-queue-basics",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-1",
+                "number": 1,
+                "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"SQS basic test message\" --region eu-west-2",
+                "warning": "The placeholder is the QueueUrl produced in Task 2.",
+                "commands": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-1-command-1",
+                    "text": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"SQS basic test message\" --region eu-west-2",
+                    "explanation": "Sends the fixed harmless message to the standard queue. Replace <standard-queue-url-from-task-2> with the queue URL recorded in Task 2.",
+                    "expectedOutput": "The command returns a MessageId."
+                  }
+                ],
+                "sourceIds": [
+                  "source-send-message-aws-cli-command-reference"
+                ],
+                "stepNumber": 1,
+                "explanation": "Sends the fixed harmless message to the standard queue. Replace <standard-queue-url-from-task-2> with the queue URL recorded in Task 2.",
+                "instructions": [],
+                "expectedResult": "The command returns a MessageId."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-2",
+                "number": 2,
+                "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --message-system-attribute-names All --region eu-west-2",
+                "warning": "Record the ReceiptHandle from this receive result for the next command.",
+                "commands": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-2-command-1",
+                    "text": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --message-system-attribute-names All --region eu-west-2",
+                    "explanation": "Receives an available message and returns its message-system attributes and receipt handle. Replace the placeholder with the Task 2 queue URL.",
+                    "expectedOutput": "The command returns a Messages array containing MessageId, Body, Attributes, and ReceiptHandle when a message is available."
+                  }
+                ],
+                "sourceIds": [
+                  "source-receive-message-aws-cli-command-reference"
+                ],
+                "stepNumber": 2,
+                "explanation": "Receives an available message and returns its message-system attributes and receipt handle. Replace the placeholder with the Task 2 queue URL.",
+                "instructions": [],
+                "expectedResult": "The command returns a Messages array containing MessageId, Body, Attributes, and ReceiptHandle when a message is available."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-3",
+                "number": 3,
+                "command": "aws sqs delete-message --queue-url <standard-queue-url-from-task-2> --receipt-handle <receipt-handle-from-receive-message> --region eu-west-2",
+                "warning": "A receipt handle is temporary; use the one returned by the immediately preceding receive operation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-cli-step-3-command-1",
+                    "text": "aws sqs delete-message --queue-url <standard-queue-url-from-task-2> --receipt-handle <receipt-handle-from-receive-message> --region eu-west-2",
+                    "explanation": "Permanently deletes the received message. The queue URL comes from Task 2 and the receipt handle comes from the preceding receive-message result.",
+                    "expectedOutput": "The command completes without output when deletion succeeds."
+                  }
+                ],
+                "sourceIds": [
+                  "source-official-aws-documentation"
+                ],
+                "stepNumber": 3,
+                "explanation": "Permanently deletes the received message. The queue URL comes from Task 2 and the receipt handle comes from the preceding receive-message result.",
+                "instructions": [],
+                "expectedResult": "The command completes without output when deletion succeeds."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message",
+              "source-receiving-and-deleting-a-message-in-amazon-sqs",
+              "source-send-message-aws-cli-command-reference",
+              "source-receive-message-aws-cli-command-reference",
+              "source-official-aws-documentation"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-1-open-message-actions",
+                "title": "Open message actions",
+                "number": 1,
+                "warning": "Send only the fixed harmless sample message.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Choose Queues.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-1-open-message-actions-instruction-1",
+                    "text": "Choose Queues.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-1-open-message-actions-instruction-2",
+                    "text": "Choose sqs-basic-test-standard.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-1-open-message-actions-instruction-3",
+                    "text": "Choose Actions.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-1-open-message-actions-instruction-4",
+                    "text": "Choose Send and receive messages.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The Send and receive messages page opens."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-2-send-the-sample-message",
+                "title": "Send the sample message",
+                "number": 2,
+                "warning": "Do not enter personal, confidential, or production data.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 2,
+                "instruction": "Enter SQS basic test message in Message body.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-2-send-the-sample-message-instruction-1",
+                    "text": "Enter SQS basic test message in Message body.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-2-send-the-sample-message-instruction-2",
+                    "text": "Choose Send message.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-2-send-the-sample-message-instruction-3",
+                    "text": "Choose View details.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "A success message and sent-message details are visible."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-3-poll-for-the-message",
+                "title": "Poll for the message",
+                "number": 3,
+                "warning": "A queue with few messages can occasionally return an empty response; poll again if necessary.",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs"
+                ],
+                "stepNumber": 3,
+                "instruction": "Choose Poll for messages.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-3-poll-for-the-message-instruction-1",
+                    "text": "Choose Poll for messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-3-poll-for-the-message-instruction-2",
+                    "text": "Inspect the Message ID.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-3-poll-for-the-message-instruction-3",
+                    "text": "Inspect the Receive count.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "A message appears in Messages with its Message ID, sent date, size, and receive count."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-4-delete-the-processed-message",
+                "title": "Delete the processed message",
+                "number": 4,
+                "warning": "Delete only the fixed test message created by this Follow Along.",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs"
+                ],
+                "stepNumber": 4,
+                "instruction": "Select the received message.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-4-delete-the-processed-message-instruction-1",
+                    "text": "Select the received message.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-4-delete-the-processed-message-instruction-2",
+                    "text": "Choose Delete.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-console-step-4-delete-the-processed-message-instruction-3",
+                    "text": "Choose Delete in the Delete Messages dialog box.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The selected message is removed from the Messages list."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-verification-1",
+                "mode": "console",
+                "title": "Verify Console deletion",
+                "instruction": "Choose Poll for messages after deleting the selected test message.",
+                "expectedResult": "The deleted test message is not displayed."
+              },
+              {
+                "id": "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003-verification-2",
+                "mode": "cli",
+                "title": "Verify CLI deletion",
+                "instruction": "Run the receive-message command again after delete-message.",
+                "expectedResult": "The deleted test message is not returned."
+              }
+            ],
+            "whyItMatters": "Receiving a message does not delete it. A consumer must explicitly delete a successfully processed message using its receipt handle.",
+            "prerequisites": [
+              "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002"
+            ],
+            "estimatedMinutes": 25,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004",
+            "goal": "Set safe test values for queue retention, delivery delay, maximum message size, and long polling, then send one delayed test message.",
+            "slug": "4-configure-a-delayed-message-and-long-polling",
+            "title": "4. Configure a Delayed Message and Long Polling",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS queue parameters and delayed messages",
+            "phaseId": "phase-2-standard-queue-delivery-settings",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-1",
+                "number": 1,
+                "command": "aws sqs set-queue-attributes --queue-url <standard-queue-url-from-task-2> --attributes MessageRetentionPeriod=86400,DelaySeconds=0,MaximumMessageSize=1048576,ReceiveMessageWaitTimeSeconds=20 --region eu-west-2",
+                "warning": "Attribute changes can take time to propagate. This command changes only sqs-basic-test-standard when the correct URL is supplied.",
+                "commands": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-1-command-1",
+                    "text": "aws sqs set-queue-attributes --queue-url <standard-queue-url-from-task-2> --attributes MessageRetentionPeriod=86400,DelaySeconds=0,MaximumMessageSize=1048576,ReceiveMessageWaitTimeSeconds=20 --region eu-west-2",
+                    "explanation": "Sets one-day retention, no queue-level delay, a 1 MiB maximum message size, and a 20-second queue-level receive wait time. Replace the placeholder with the Task 2 queue URL.",
+                    "expectedOutput": "The command completes without output."
+                  }
+                ],
+                "sourceIds": [
+                  "source-set-queue-attributes-aws-cli-command-reference"
+                ],
+                "stepNumber": 1,
+                "explanation": "Sets one-day retention, no queue-level delay, a 1 MiB maximum message size, and a 20-second queue-level receive wait time. Replace the placeholder with the Task 2 queue URL.",
+                "instructions": [],
+                "expectedResult": "The command completes without output."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-2",
+                "number": 2,
+                "command": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Delayed SQS test message\" --delay-seconds 10 --region eu-west-2",
+                "warning": "Per-message delay is supported for standard queues and is limited to 900 seconds.",
+                "commands": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-2-command-1",
+                    "text": "aws sqs send-message --queue-url <standard-queue-url-from-task-2> --message-body \"Delayed SQS test message\" --delay-seconds 10 --region eu-west-2",
+                    "explanation": "Sends one harmless message that becomes available after 10 seconds. Replace the placeholder with the Task 2 queue URL.",
+                    "expectedOutput": "The command returns a MessageId."
+                  }
+                ],
+                "sourceIds": [
+                  "source-send-message-aws-cli-command-reference"
+                ],
+                "stepNumber": 2,
+                "explanation": "Sends one harmless message that becomes available after 10 seconds. Replace the placeholder with the Task 2 queue URL.",
+                "instructions": [],
+                "expectedResult": "The command returns a MessageId."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-3",
+                "number": 3,
+                "command": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --wait-time-seconds 20 --region eu-west-2",
+                "warning": "If a message is returned, delete it with a current receipt handle before cleanup.",
+                "commands": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-task-sqs-4-configure-a-delayed-message-and-long-polling-004-cli-step-3-command-1",
+                    "text": "aws sqs receive-message --queue-url <standard-queue-url-from-task-2> --wait-time-seconds 20 --region eu-west-2",
+                    "explanation": "Uses a 20-second receive wait time to retrieve an available message or return when the wait time expires. Replace the placeholder with the Task 2 queue URL.",
+                    "expectedOutput": "The command returns the delayed message after it becomes available, or an empty result if no message becomes available during the wait."
+                  }
+                ],
+                "sourceIds": [
+                  "source-receive-message-aws-cli-command-reference",
+                  "source-amazon-sqs-standard-queue-quotas"
+                ],
+                "stepNumber": 3,
+                "explanation": "Uses a 20-second receive wait time to retrieve an available message or return when the wait time expires. Replace the placeholder with the Task 2 queue URL.",
+                "instructions": [],
+                "expectedResult": "The command returns the delayed message after it becomes available, or an empty result if no message becomes available during the wait."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-configuring-queue-parameters-using-the-amazon-sqs-console",
+              "source-amazon-sqs-short-and-long-polling",
+              "source-set-queue-attributes-aws-cli-command-reference",
+              "source-send-message-aws-cli-command-reference",
+              "source-amazon-sqs-standard-queue-quotas",
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message",
+              "source-receiving-and-deleting-a-message-in-amazon-sqs",
+              "source-receive-message-aws-cli-command-reference"
+            ],
+            "difficulty": "Medium",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-1-open-queue-configuration",
+                "title": "Open queue configuration",
+                "number": 1,
+                "warning": "These edits apply only to the queue created in Task 2.",
+                "commands": [],
+                "sourceIds": [
+                  "source-configuring-queue-parameters-using-the-amazon-sqs-console"
+                ],
+                "stepNumber": 1,
+                "instruction": "Choose Queues.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-1-open-queue-configuration-instruction-1",
+                    "text": "Choose Queues.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-1-open-queue-configuration-instruction-2",
+                    "text": "Choose sqs-basic-test-standard.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-1-open-queue-configuration-instruction-3",
+                    "text": "Choose Edit.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-1-open-queue-configuration-instruction-4",
+                    "text": "Scroll to Configuration.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The Configuration section is visible for sqs-basic-test-standard."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-2-set-retention",
+                "title": "Set retention",
+                "number": 2,
+                "warning": "Reducing retention can expire older messages.",
+                "commands": [],
+                "sourceIds": [
+                  "source-configuring-queue-parameters-using-the-amazon-sqs-console"
+                ],
+                "stepNumber": 2,
+                "instruction": "Enter 1 in Message retention period.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-2-set-retention-instruction-1",
+                    "text": "Enter 1 in Message retention period.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-2-set-retention-instruction-2",
+                    "text": "Choose Days for Message retention period.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "Message retention period shows 1 Day."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-3-set-the-queue-delivery-delay",
+                "title": "Set the queue delivery delay",
+                "number": 3,
+                "warning": "The delayed-message test later uses a per-message delivery delay.",
+                "commands": [],
+                "sourceIds": [
+                  "source-configuring-queue-parameters-using-the-amazon-sqs-console"
+                ],
+                "stepNumber": 3,
+                "instruction": "Enter 0 in Delivery delay.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-3-set-the-queue-delivery-delay-instruction-1",
+                    "text": "Enter 0 in Delivery delay.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-3-set-the-queue-delivery-delay-instruction-2",
+                    "text": "Choose Seconds for Delivery delay.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "Delivery delay shows 0 Seconds."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-4-set-maximum-message-size",
+                "title": "Set maximum message size",
+                "number": 4,
+                "warning": "Do not use SQS for confidential payloads.",
+                "commands": [],
+                "sourceIds": [
+                  "source-configuring-queue-parameters-using-the-amazon-sqs-console"
+                ],
+                "stepNumber": 4,
+                "instruction": "Enter 1024 in Maximum message size.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-4-set-maximum-message-size-instruction-1",
+                    "text": "Enter 1024 in Maximum message size.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-4-set-maximum-message-size-instruction-2",
+                    "text": "Choose KiB for Maximum message size.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "Maximum message size shows 1024 KiB."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-5-enable-long-polling",
+                "title": "Enable long polling",
+                "number": 5,
+                "warning": "Twenty seconds is the maximum long-polling wait time.",
+                "commands": [],
+                "sourceIds": [
+                  "source-configuring-queue-parameters-using-the-amazon-sqs-console",
+                  "source-amazon-sqs-standard-queue-quotas"
+                ],
+                "stepNumber": 5,
+                "instruction": "Enter 20 in Receive message wait time.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-5-enable-long-polling-instruction-1",
+                    "text": "Enter 20 in Receive message wait time.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-5-enable-long-polling-instruction-2",
+                    "text": "Choose Seconds for Receive message wait time.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-5-enable-long-polling-instruction-3",
+                    "text": "Choose Save.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The queue Details page opens with the saved configuration."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message",
+                "title": "Send a delayed sample message",
+                "number": 6,
+                "warning": "Wait at least 10 seconds before polling for this message.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message"
+                ],
+                "stepNumber": 6,
+                "instruction": "Choose Actions.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-1",
+                    "text": "Choose Actions.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-2",
+                    "text": "Choose Send and receive messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-3",
+                    "text": "Enter Delayed SQS test message in Message body.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-4",
+                    "text": "Enter 10 in Delivery delay.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-5",
+                    "text": "Choose Seconds for Delivery delay.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-6-send-a-delayed-sample-message-instruction-6",
+                    "text": "Choose Send message.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "A success message confirms that the delayed message was sent."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-7-receive-and-delete-the-delayed-message",
+                "title": "Receive and delete the delayed message",
+                "number": 7,
+                "warning": "Do not delete messages that were not created by this Follow Along.",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs"
+                ],
+                "stepNumber": 7,
+                "instruction": "Choose Poll for messages.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-7-receive-and-delete-the-delayed-message-instruction-1",
+                    "text": "Choose Poll for messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-7-receive-and-delete-the-delayed-message-instruction-2",
+                    "text": "Select Delayed SQS test message.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-7-receive-and-delete-the-delayed-message-instruction-3",
+                    "text": "Choose Delete.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-console-step-7-receive-and-delete-the-delayed-message-instruction-4",
+                    "text": "Choose Delete in the Delete Messages dialog box.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The delayed test message appears after its delay and is then deleted."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-verification-1",
+                "mode": "console",
+                "title": "Verify saved queue settings",
+                "instruction": "On the queue Details page, verify the configured retention, delivery delay, maximum message size, and receive message wait time.",
+                "expectedResult": "The settings show 1 Day, 0 Seconds, 1024 KiB, and 20 Seconds."
+              },
+              {
+                "id": "task-sqs-4-configure-a-delayed-message-and-long-polling-004-verification-2",
+                "mode": "cli",
+                "title": "Verify long-poll receive behavior",
+                "instruction": "Review the receive-message command result after using --wait-time-seconds 20.",
+                "expectedResult": "The command waits for an available message or returns after its wait time expires."
+              }
+            ],
+            "whyItMatters": "Queue-level attributes control when messages become available, how long they remain available for processing, how large they can be, and how receive requests behave when no message is immediately available.",
+            "prerequisites": [
+              "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003"
+            ],
+            "estimatedMinutes": 30,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-5-create-and-test-a-fifo-queue-005",
+            "goal": "Create sqs-basic-test-orders.fifo, send one harmless FIFO message with a message group ID, and verify that the queue uses FIFO-specific fields.",
+            "slug": "5-create-and-test-a-fifo-queue",
+            "title": "5. Create and Test a FIFO Queue",
+            "region": "eu-west-2",
+            "status": "draft",
+            "values": [],
+            "cleanup": [],
+            "feature": "Amazon SQS FIFO queue",
+            "phaseId": "phase-3-fifo-queue-basics-and-cleanup",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-1",
+                "number": 1,
+                "command": "aws sqs create-queue --queue-name sqs-basic-test-orders.fifo --attributes FifoQueue=true --region eu-west-2",
+                "warning": "The .fifo suffix is required, and the queue type cannot be changed after creation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-1-command-1",
+                    "text": "aws sqs create-queue --queue-name sqs-basic-test-orders.fifo --attributes FifoQueue=true --region eu-west-2",
+                    "explanation": "Creates the FIFO test queue. The FifoQueue attribute specifies FIFO queue type.",
+                    "expectedOutput": "The command returns QueueUrl for sqs-basic-test-orders.fifo."
+                  }
+                ],
+                "sourceIds": [
+                  "source-create-queue-aws-cli-command-reference"
+                ],
+                "stepNumber": 1,
+                "explanation": "Creates the FIFO test queue. The FifoQueue attribute specifies FIFO queue type.",
+                "instructions": [],
+                "expectedResult": "The command returns QueueUrl for sqs-basic-test-orders.fifo."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-2",
+                "number": 2,
+                "command": "aws sqs send-message --queue-url <fifo-queue-url-from-create-queue> --message-body \"FIFO SQS test message\" --message-group-id test-order-group --message-deduplication-id fifo-test-message-001 --region eu-west-2",
+                "warning": "The FIFO queue URL is account-specific and is returned only after creation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-2-command-1",
+                    "text": "aws sqs send-message --queue-url <fifo-queue-url-from-create-queue> --message-body \"FIFO SQS test message\" --message-group-id test-order-group --message-deduplication-id fifo-test-message-001 --region eu-west-2",
+                    "explanation": "Sends a fixed harmless FIFO message. Replace <fifo-queue-url-from-create-queue> with the QueueUrl returned by the preceding create-queue command.",
+                    "expectedOutput": "The command returns a MessageId and SequenceNumber."
+                  }
+                ],
+                "sourceIds": [
+                  "source-send-message-aws-cli-command-reference"
+                ],
+                "stepNumber": 2,
+                "explanation": "Sends a fixed harmless FIFO message. Replace <fifo-queue-url-from-create-queue> with the QueueUrl returned by the preceding create-queue command.",
+                "instructions": [],
+                "expectedResult": "The command returns a MessageId and SequenceNumber."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-3",
+                "number": 3,
+                "command": "aws sqs receive-message --queue-url <fifo-queue-url-from-create-queue> --message-system-attribute-names All --region eu-west-2",
+                "warning": "Use the returned receipt handle immediately if deleting with the CLI.",
+                "commands": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-3-command-1",
+                    "text": "aws sqs receive-message --queue-url <fifo-queue-url-from-create-queue> --message-system-attribute-names All --region eu-west-2",
+                    "explanation": "Receives the FIFO test message and returns its current receipt handle. Replace the placeholder with the FIFO QueueUrl.",
+                    "expectedOutput": "The command returns the FIFO test message and a ReceiptHandle when the message is available."
+                  }
+                ],
+                "sourceIds": [
+                  "source-receive-message-aws-cli-command-reference"
+                ],
+                "stepNumber": 3,
+                "explanation": "Receives the FIFO test message and returns its current receipt handle. Replace the placeholder with the FIFO QueueUrl.",
+                "instructions": [],
+                "expectedResult": "The command returns the FIFO test message and a ReceiptHandle when the message is available."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-4",
+                "number": 4,
+                "command": "aws sqs delete-message --queue-url <fifo-queue-url-from-create-queue> --receipt-handle <receipt-handle-from-fifo-receive-message> --region eu-west-2",
+                "warning": "Do not reuse a receipt handle from an earlier receive operation.",
+                "commands": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-task-sqs-5-create-and-test-a-fifo-queue-005-cli-step-4-command-1",
+                    "text": "aws sqs delete-message --queue-url <fifo-queue-url-from-create-queue> --receipt-handle <receipt-handle-from-fifo-receive-message> --region eu-west-2",
+                    "explanation": "Deletes the received FIFO test message. The queue URL comes from FIFO queue creation and the receipt handle comes from the immediately preceding receive-message result.",
+                    "expectedOutput": "The command completes without output when deletion succeeds."
+                  }
+                ],
+                "sourceIds": [
+                  "source-official-aws-documentation"
+                ],
+                "stepNumber": 4,
+                "explanation": "Deletes the received FIFO test message. The queue URL comes from FIFO queue creation and the receipt handle comes from the immediately preceding receive-message result.",
+                "instructions": [],
+                "expectedResult": "The command completes without output when deletion succeeds."
+              }
+            ],
+            "concepts": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message",
+              "source-official-aws-documentation-2",
+              "source-create-queue-aws-cli-command-reference",
+              "source-send-message-aws-cli-command-reference",
+              "source-receiving-and-deleting-a-message-in-amazon-sqs",
+              "source-receive-message-aws-cli-command-reference",
+              "source-official-aws-documentation"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-start-fifo-queue-creation",
+                "title": "Start FIFO-queue creation",
+                "number": 1,
+                "warning": "A FIFO queue name must end with .fifo.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 1,
+                "instruction": "Choose Create queue.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-start-fifo-queue-creation-instruction-1",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-start-fifo-queue-creation-instruction-2",
+                    "text": "Choose FIFO for Type.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-1-start-fifo-queue-creation-instruction-3",
+                    "text": "Enter sqs-basic-test-orders.fifo in Name.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The queue form shows FIFO as the selected Type and sqs-basic-test-orders.fifo as the Name."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-create-the-fifo-queue",
+                "title": "Create the FIFO queue",
+                "number": 2,
+                "warning": "Queue type cannot be changed after creation.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 2,
+                "instruction": "Leave the default Configuration values unchanged.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-create-the-fifo-queue-instruction-1",
+                    "text": "Leave the default Configuration values unchanged.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-2-create-the-fifo-queue-instruction-2",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The sqs-basic-test-orders.fifo Details page opens."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message",
+                "title": "Send a FIFO test message",
+                "number": 3,
+                "warning": "FIFO queues do not support per-message delivery delays.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-fifo-queue-and-sending-a-message"
+                ],
+                "stepNumber": 3,
+                "instruction": "Choose Actions.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-1",
+                    "text": "Choose Actions.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-2",
+                    "text": "Choose Send and receive messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-3",
+                    "text": "Enter FIFO SQS test message in Message body.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-4",
+                    "text": "Enter test-order-group in Message group ID.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-5",
+                    "text": "Enter fifo-test-message-001 in Message deduplication ID.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-3-send-a-fifo-test-message-instruction-6",
+                    "text": "Choose Send message.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "A success message confirms that the FIFO test message was sent."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-and-delete-the-fifo-test-message",
+                "title": "Receive and delete the FIFO test message",
+                "number": 4,
+                "warning": "Delete only the harmless FIFO test message created in this task.",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs"
+                ],
+                "stepNumber": 4,
+                "instruction": "Choose Poll for messages.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-and-delete-the-fifo-test-message-instruction-1",
+                    "text": "Choose Poll for messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-and-delete-the-fifo-test-message-instruction-2",
+                    "text": "Select the returned FIFO test message.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-and-delete-the-fifo-test-message-instruction-3",
+                    "text": "Choose Delete.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-5-create-and-test-a-fifo-queue-005-console-step-4-receive-and-delete-the-fifo-test-message-instruction-4",
+                    "text": "Choose Delete in the Delete Messages dialog box.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The FIFO test message is deleted."
+              }
+            ],
+            "verification": [
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-verification-1",
+                "mode": "console",
+                "title": "Verify FIFO queue type",
+                "instruction": "On the sqs-basic-test-orders.fifo Details page, verify that the queue name ends in .fifo and the Type is FIFO.",
+                "expectedResult": "The intended FIFO queue is displayed."
+              },
+              {
+                "id": "task-sqs-5-create-and-test-a-fifo-queue-005-verification-2",
+                "mode": "cli",
+                "title": "Verify FIFO send result",
+                "instruction": "Review the send-message CLI result.",
+                "expectedResult": "The result includes a MessageId and SequenceNumber."
+              }
+            ],
+            "whyItMatters": "FIFO queues are used when message order matters or duplicates cannot be tolerated. FIFO queue names must end with .fifo, and sent FIFO messages require a message group ID.",
+            "prerequisites": [
+              "task-sqs-4-configure-a-delayed-message-and-long-polling-004"
+            ],
+            "estimatedMinutes": 30,
+            "modeAvailability": {
+              "cli": {
+                "reason": "",
+                "status": "available"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          }
+        ],
+        "phases": [
+          {
+            "id": "phase-1-access-and-standard-queue-basics",
+            "title": "Access and standard-queue basics",
+            "taskIds": [
+              "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001",
+              "task-sqs-2-create-a-standard-test-queue-and-record-its-identifiers-002",
+              "task-sqs-3-send-receive-inspect-and-delete-a-standard-queue-message-003"
+            ],
+            "isOptional": false,
+            "description": "Confirm Amazon SQS access in Europe (London), create one standard queue, and complete the basic send, receive, and delete lifecycle.",
+            "phaseNumber": 1
+          },
+          {
+            "id": "phase-2-standard-queue-delivery-settings",
+            "title": "Standard-queue delivery settings",
+            "taskIds": [
+              "task-sqs-4-configure-a-delayed-message-and-long-polling-004"
+            ],
+            "isOptional": false,
+            "description": "Edit the standard queue’s timing and payload settings, test a harmless delayed message, and use long polling.",
+            "phaseNumber": 2
+          },
+          {
+            "id": "phase-3-fifo-queue-basics-and-cleanup",
+            "title": "FIFO queue basics and cleanup",
+            "taskIds": [
+              "task-sqs-5-create-and-test-a-fifo-queue-005"
+            ],
+            "isOptional": false,
+            "description": "Create and test one FIFO queue, verify its required fields, and manually remove only the two queues created by this Follow Along.",
+            "phaseNumber": 3
+          }
+        ],
+        "schema": {
+          "profile": "canonical-follow-along",
+          "version": "1.0.0",
+          "createdWith": "author-assistant-simple-v1",
+          "sharedContractHash": null,
+          "authorPackageVersion": "1.0.0"
+        },
+        "cleanup": {
+          "steps": [
+            {
+              "id": "programme-cleanup-1",
+              "title": "Delete the standard queue created by this Follow Along",
+              "sourceIds": [
+                "source-deleting-an-amazon-sqs-queue"
+              ],
+              "stepNumber": 1,
+              "description": "Manually open Amazon SQS in eu-west-2, choose Queues, choose sqs-basic-test-standard, choose Delete, enter delete in the Delete queue dialog box, and choose Delete.",
+              "instruction": "Manually open Amazon SQS in eu-west-2, choose Queues, choose sqs-basic-test-standard, choose Delete, enter delete in the Delete queue dialog box, and choose Delete.",
+              "resourceKeys": [],
+              "verification": "sqs-basic-test-standard no longer appears on the Queues page."
+            },
+            {
+              "id": "programme-cleanup-2",
+              "title": "Delete the FIFO queue created by this Follow Along",
+              "sourceIds": [
+                "source-deleting-an-amazon-sqs-queue"
+              ],
+              "stepNumber": 2,
+              "description": "Manually open Amazon SQS in eu-west-2, choose Queues, choose sqs-basic-test-orders.fifo, choose Delete, enter delete in the Delete queue dialog box, and choose Delete.",
+              "instruction": "Manually open Amazon SQS in eu-west-2, choose Queues, choose sqs-basic-test-orders.fifo, choose Delete, enter delete in the Delete queue dialog box, and choose Delete.",
+              "resourceKeys": [],
+              "verification": "sqs-basic-test-orders.fifo no longer appears on the Queues page."
+            }
+          ],
+          "ordering": "reverse_dependency",
+          "manualOnly": true,
+          "completionGate": "acknowledgement"
+        },
+        "storage": {},
+        "progress": {
+          "initialTaskId": "task-sqs-1-verify-amazon-sqs-console-access-in-eu-west-2-001",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "completionStatuses": [
+            "in_progress",
+            "completed_retained",
+            "completed_cleaned"
+          ],
+          "optionalTasksCountTowardsProgress": false
+        },
+        "warnings": {
+          "cost": "Amazon SQS requests can incur charges. This Follow Along creates only two small queues and sends only harmless test messages, but delete both queues after verification.",
+          "region": "Perform every regional Amazon SQS action in Europe (London), eu-west-2. Queue URLs are Region-specific.",
+          "safety": "Use only the fixed queue names and fixed sample messages in this package. Do not send personal, confidential, production, or regulated data. Delete only sqs-basic-test-standard and sqs-basic-test-orders.fifo.",
+          "credentials": "Do not create, reveal, download, or share access keys. Console and CLI access must use an already approved authentication method."
+        },
+        "programme": {
+          "pathId": "sqs-learning-path",
+          "category": "Messaging",
+          "subtitle": "sqs-learning-path · Complete beginner replacement for published source revision 3",
+          "shortName": "SQS",
+          "difficulty": "Beginner",
+          "description": "A complete beginner-friendly Amazon Simple Queue Service (Amazon SQS) Follow Along in Europe (London) (eu-west-2). It uses two fixed, harmless queues: sqs-basic-test-standard and sqs-basic-test-orders.fifo.",
+          "displayName": "Amazon SQS: Basic Message Queue Test",
+          "programmeId": "sqs-learning-path",
+          "regionScope": "regional",
+          "serviceName": "Amazon Simple Queue Service",
+          "serviceSlug": "sqs",
+          "defaultRegion": "eu-west-2",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "learningOutcome": "Use the Amazon SQS console and separate AWS CLI commands to verify access, create standard and FIFO queues, send, receive, delete, delay, and verify harmless test messages, then manually delete only the queues created in this Follow Along.",
+          "estimatedMinutes": 115,
+          "componentNamespace": "",
+          "publicationVisibility": "published"
+        },
+        "resources": {
+          "schema": [],
+          "variables": {
+            "region": "eu-west-2"
+          },
+          "interpolationAliases": {},
+          "chargeableResourceKeys": []
+        },
+        "extensions": {
+          "registrations": []
+        },
+        "publication": {
+          "publishedAt": "2026-08-10T17:59:06.9359+00:00",
+          "publishStatus": "published",
+          "sourceRevision": 4,
+          "approvedContentHash": "9f2c55e04516d350e07d931d5ee1bae5866c48ecdaf62f73a7d7ceb823134653"
+        },
+        "capabilities": {},
+        "presentation": {
+          "iconName": "",
+          "badgeText": "",
+          "iconLabel": "SQS",
+          "accentColor": "#0891b2"
+        }
+      }
+    },
+    "serviceName": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "learnerLevel": "Beginner",
+    "buildOutcome": "Create and add a complete set of Amazon SQS hands-on labs for the existing Study Tracker app, focused specifically on the AWS Certified Solutions Architect Associate SAA-C03 exam. The app and lab structure already exist, so follow the existing structure, formatting, fields, naming conventions and implementation pattern exactly. Do not describe this as a catalogue, future work, placeholder content, deferred instructions, or something that will be completed later. Every lab must be fully populated and usable. Every lab must be beginner friendly and assume the learner may never have used SQS before. Every lab must contain BOTH complete AWS Management Console steps and complete AWS CLI steps. Never leave Console actions, CLI actions, validation steps, IAM requirements, explanations or cleanup sections empty. Walk the learner through every important click, field, setting and command, explain what each important option does and why it matters, include expected results and verification steps, and keep programming to an absolute minimum. The first lab must create the IAM user and permissions required for the SQS training labs, including creating the user, explaining why root should not be used, assigning suitable permissions using least privilege where practical, signing in as the IAM user, configuring AWS CLI credentials, selecting the region, testing CLI access and verifying SQS permissions. If later labs use Lambda, SNS, S3, CloudWatch, EventBridge, EC2, Auto Scaling or KMS, include the required IAM permissions as part of the relevant lab. Create all practical SQS labs relevant to SAA-C03, including Standard queues; sending, receiving and deleting messages; queue URLs and message IDs; message retention; delay queues; message size; purging and deleting queues; short and long polling; visibility timeout; messages becoming invisible and returning; changing visibility; duplicate processing; at-least-once delivery; best-effort ordering; multiple producers and consumers; FIFO queues; .fifo naming; Message Group IDs; Deduplication IDs; content-based deduplication; ordering; Standard versus FIFO; dead-letter queues; redrive policies; maxReceiveCount; failed and poison messages; moving messages to a DLQ; inspecting and redriving messages; producer to SQS to consumer architectures; worker queues; decoupling; buffering traffic spikes; SQS with Lambda; Lambda retries, failures and batch processing; SNS plus SQS fan-out; S3 event notifications to SQS; EventBridge to SQS; EC2 workers consuming SQS; CloudWatch monitoring and alarms; SQS-driven Auto Scaling; ApproximateNumberOfMessagesVisible; ApproximateNumberOfMessagesNotVisible; ApproximateAgeOfOldestMessage; messages sent, received and deleted; queue policies; SendMessage and ReceiveMessage permissions; service permissions; encryption; KMS and KMS permissions; cross-account SQS; message attributes; large-message patterns using S3; consumer crashes; retry behaviour; permission failures and queue policy failures. Also include practical SAA-C03 comparison and architecture labs covering SQS versus SNS, EventBridge and Kinesis, Standard versus FIFO, SQS versus direct Lambda invocation, traffic spikes, slow backends, failed orders, strict ordering, fan-out, worker failure, serverless processing and Auto Scaling based on queue backlog. Arrange all labs in a logical beginner learning order and implement them directly into the existing app structure as complete labs with no placeholder, deferred, empty or future-content wording.",
+    "updateRequest": "Create and add a complete set of Amazon SQS hands-on labs for the existing Study Tracker app, focused specifically on the AWS Certified Solutions Architect Associate SAA-C03 exam. The app and lab structure already exist, so follow the existing structure, formatting, fields, naming conventions and implementation pattern exactly. Do not describe this as a catalogue, future work, placeholder content, deferred instructions, or something that will be completed later. Every lab must be fully populated and usable. Every lab must be beginner friendly and assume the learner may never have used SQS before. Every lab must contain BOTH complete AWS Management Console steps and complete AWS CLI steps. Never leave Console actions, CLI actions, validation steps, IAM requirements, explanations or cleanup sections empty. Walk the learner through every important click, field, setting and command, explain what each important option does and why it matters, include expected results and verification steps, and keep programming to an absolute minimum. The first lab must create the IAM user and permissions required for the SQS training labs, including creating the user, explaining why root should not be used, assigning suitable permissions using least privilege where practical, signing in as the IAM user, configuring AWS CLI credentials, selecting the region, testing CLI access and verifying SQS permissions. If later labs use Lambda, SNS, S3, CloudWatch, EventBridge, EC2, Auto Scaling or KMS, include the required IAM permissions as part of the relevant lab. Create all practical SQS labs relevant to SAA-C03, including Standard queues; sending, receiving and deleting messages; queue URLs and message IDs; message retention; delay queues; message size; purging and deleting queues; short and long polling; visibility timeout; messages becoming invisible and returning; changing visibility; duplicate processing; at-least-once delivery; best-effort ordering; multiple producers and consumers; FIFO queues; .fifo naming; Message Group IDs; Deduplication IDs; content-based deduplication; ordering; Standard versus FIFO; dead-letter queues; redrive policies; maxReceiveCount; failed and poison messages; moving messages to a DLQ; inspecting and redriving messages; producer to SQS to consumer architectures; worker queues; decoupling; buffering traffic spikes; SQS with Lambda; Lambda retries, failures and batch processing; SNS plus SQS fan-out; S3 event notifications to SQS; EventBridge to SQS; EC2 workers consuming SQS; CloudWatch monitoring and alarms; SQS-driven Auto Scaling; ApproximateNumberOfMessagesVisible; ApproximateNumberOfMessagesNotVisible; ApproximateAgeOfOldestMessage; messages sent, received and deleted; queue policies; SendMessage and ReceiveMessage permissions; service permissions; encryption; KMS and KMS permissions; cross-account SQS; message attributes; large-message patterns using S3; consumer crashes; retry behaviour; permission failures and queue policy failures. Also include practical SAA-C03 comparison and architecture labs covering SQS versus SNS, EventBridge and Kinesis, Standard versus FIFO, SQS versus direct Lambda invocation, traffic spikes, slow backends, failed orders, strict ordering, fan-out, worker failure, serverless processing and Auto Scaling based on queue backlog. Arrange all labs in a logical beginner learning order and implement them directly into the existing app structure as complete labs with no placeholder, deferred, empty or future-content wording.",
+    "preferredRegion": "eu-west-2"
+  },
+  "boundaries": {
+    "handoffPackagePrepared": true,
+    "stage12Prepared": false,
+    "authorDraftWritten": false,
+    "supabaseConnected": false,
+    "awsConnected": false,
+    "candidatePrepared": false,
+    "published": false
+  }
+}

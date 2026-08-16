@@ -1,0 +1,1436 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-lambda-664bc12f-a159-4d8b-8468-76b05db16789",
+  "preparedAt": "2026-08-10T17:04:20.094Z",
+  "service": {
+    "officialName": "AWS Lambda",
+    "shortName": "Lambda"
+  },
+  "generationMode": "update_existing",
+  "updateTarget": {
+    "programmeId": "lambda-learning-path",
+    "displayName": "Build and Test Your First AWS Lambda Function",
+    "serviceName": "AWS Lambda",
+    "shortName": "Lambda",
+    "serviceSlug": "lambda",
+    "sourceRevision": 84,
+    "candidateId": "release-author-draft-e6dee7a5-5868-423f-bcfe-7c74d92b3ad6-r84-f22215ad2662",
+    "contentHash": "42bc8308236878f75de8bddb764d93d4b693745402e40e507755af34614b26db",
+    "publishedAt": "2026-08-09T17:59:18.198313+00:00"
+  },
+  "acceptedFingerprintChain": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "ac27c686c42c63fd68281aca68ff8476a12819c31d446d38e24a70fa7496709b"
+    }
+  },
+  "acceptedRecordManifest": {
+    "completeGeneration": {
+      "algorithm": "sha256-json-v1",
+      "value": "ac27c686c42c63fd68281aca68ff8476a12819c31d446d38e24a70fa7496709b"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "author-assistant-simple-v1"
+    },
+    "programme": {
+      "serviceSlug": "lambda",
+      "serviceName": "AWS Lambda",
+      "shortName": "Lambda",
+      "displayName": "Build and Test Your First AWS Lambda Function",
+      "subtitle": "Create, test, and clean up a simple Node.js Lambda function.",
+      "description": "Create a small AWS Lambda function in Europe (London), test it with safe sample JSON, review its logs, and remove only the resources created in this Follow Along.",
+      "learningOutcome": "Create and test a Node.js Lambda function, view its invocation logs, and manually clean up the Lambda resources created for this exercise.",
+      "programmeId": "lambda-learning-path",
+      "pathId": "lambda-learning-path",
+      "componentNamespace": "",
+      "category": "Compute",
+      "difficulty": "Beginner",
+      "estimatedMinutes": 45,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished"
+    },
+    "sources": [
+      {
+        "id": "source-create-your-first-lambda-function",
+        "title": "Create your first Lambda function",
+        "url": "https://docs.aws.amazon.com/us_en/lambda/latest/dg/getting-started.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the beginner Lambda console workflow, Node.js example code, test event, logs, and cleanup.",
+        "taskIds": [
+          "task-lambda-create-the-lambda-function-002",
+          "task-lambda-invoke-the-function-with-a-test-event-003",
+          "task-lambda-inspect-the-invocation-logs-004",
+          "task-lambda-clean-up-the-follow-along-resources-005"
+        ]
+      },
+      {
+        "id": "source-building-lambda-functions-with-node-js",
+        "title": "Building Lambda functions with Node.js",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the Node.js 24.x runtime, index.mjs file, handler, deployment, and CloudWatch Logs behavior.",
+        "taskIds": [
+          "task-lambda-create-the-lambda-function-002",
+          "task-lambda-inspect-the-invocation-logs-004"
+        ]
+      },
+      {
+        "id": "source-testing-lambda-functions-in-the-console",
+        "title": "Testing Lambda functions in the console",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/testing-functions.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports creating a private test event and running it in the Lambda console.",
+        "taskIds": [
+          "task-lambda-invoke-the-function-with-a-test-event-003"
+        ]
+      },
+      {
+        "id": "source-create-an-iam-user-in-your-aws-account",
+        "title": "Create an IAM user in your AWS account",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports creating an IAM user and explains that IAM users require permissions before they can access AWS resources.",
+        "taskIds": [
+          "task-lambda-create-the-iam-user-record-001"
+        ]
+      },
+      {
+        "id": "source-create-user-aws-cli-2-35-23-command-reference",
+        "title": "create-user — AWS CLI 2.35.23 Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/iam/create-user.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports the AWS CLI command that creates an IAM user.",
+        "taskIds": [
+          "task-lambda-create-the-iam-user-record-001"
+        ]
+      },
+      {
+        "id": "source-create-function-aws-cli-2-36-2-command-reference",
+        "title": "create-function — AWS CLI 2.36.2 Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports Lambda function configuration requirements and default log-group naming.",
+        "taskIds": [
+          "task-lambda-create-the-lambda-function-002",
+          "task-lambda-inspect-the-invocation-logs-004"
+        ]
+      },
+      {
+        "id": "source-invoke-aws-cli-2-35-23-command-reference",
+        "title": "invoke — AWS CLI 2.35.23 Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/latest/reference/lambda/invoke.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports synchronous AWS CLI invocation with a JSON payload.",
+        "taskIds": [
+          "task-lambda-invoke-the-function-with-a-test-event-003"
+        ]
+      },
+      {
+        "id": "source-remove-or-deactivate-an-iam-user",
+        "title": "Remove or deactivate an IAM user",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_remove.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports manual IAM user removal and explains CLI deletion prerequisites.",
+        "taskIds": [
+          "task-lambda-clean-up-the-follow-along-resources-005"
+        ]
+      },
+      {
+        "id": "source-delete-log-group-aws-cli-1-45-10-command-reference",
+        "title": "delete-log-group — AWS CLI 1.45.10 Command Reference",
+        "url": "https://docs.aws.amazon.com/cli/v1/reference/logs/delete-log-group.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports deletion of the Lambda log group.",
+        "taskIds": [
+          "task-lambda-clean-up-the-follow-along-resources-005"
+        ]
+      },
+      {
+        "id": "source-use-deletefunction-with-an-aws-sdk-or-cli",
+        "title": "Use DeleteFunction with an AWS SDK or CLI",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/example_lambda_DeleteFunction_section.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Supports deletion of a Lambda function with AWS CLI.",
+        "taskIds": [
+          "task-lambda-clean-up-the-follow-along-resources-005"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0891b2",
+      "iconLabel": "LAM",
+      "iconName": "",
+      "badgeText": ""
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-lambda-create-the-iam-user-record-001",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-1-prepare-access",
+        "phaseNumber": 1,
+        "title": "Prepare access",
+        "description": "Create a clearly named IAM user record, then stop for administrator-approved access setup before using that identity.",
+        "taskIds": [
+          "task-lambda-create-the-iam-user-record-001"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-2-create-and-test-the-function",
+        "phaseNumber": 2,
+        "title": "Create and test the function",
+        "description": "Create a Node.js Lambda function, replace the starter code, and test it with harmless sample input.",
+        "taskIds": [
+          "task-lambda-create-the-lambda-function-002",
+          "task-lambda-invoke-the-function-with-a-test-event-003"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-3-observe-and-clean-up",
+        "phaseNumber": 3,
+        "title": "Observe and clean up",
+        "description": "Review the invocation evidence in CloudWatch Logs, verify the result, and manually remove only this Follow Along's resources.",
+        "taskIds": [
+          "task-lambda-inspect-the-invocation-logs-004",
+          "task-lambda-clean-up-the-follow-along-resources-005"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-lambda-create-the-iam-user-record-001",
+        "slug": "create-the-iam-user-record",
+        "title": "Create the IAM User Record",
+        "service": "AWS Lambda",
+        "feature": "IAM user",
+        "goal": "Create an IAM user named follow-along-lambda-user without creating access keys or entering secret data.",
+        "whyItMatters": "IAM users have no permissions by default. Creating the user separately makes the access boundary visible before any Lambda resources are created.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 5,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-1-prepare-access",
+        "prerequisites": [],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-an-iam-user-in-your-aws-account",
+          "source-create-user-aws-cli-2-35-23-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-console-step-1-open-iam",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open IAM",
+            "instruction": "Open the IAM console.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-1-open-iam-instruction-1",
+                "text": "Open the IAM console.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The IAM dashboard opens.",
+            "warning": "Use an existing authorized administrator identity for this step.",
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-console-step-2-start-user-creation",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Start user creation",
+            "instruction": "Choose Users.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-2-start-user-creation-instruction-1",
+                "text": "Choose Users.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-2-start-user-creation-instruction-2",
+                "text": "Choose Create user.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Create user page opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-console-step-3-name-the-user",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Name the user",
+            "instruction": "Enter follow-along-lambda-user as the user name.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-3-name-the-user-instruction-1",
+                "text": "Enter follow-along-lambda-user as the user name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The user name is shown as follow-along-lambda-user.",
+            "warning": "Do not use a personal name or confidential information.",
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-console-step-4-avoid-credential-creation",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Avoid credential creation",
+            "instruction": "Do not create an access key.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-4-avoid-credential-creation-instruction-1",
+                "text": "Do not create an access key.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-4-avoid-credential-creation-instruction-2",
+                "text": "Do not enter passwords or secrets in this Follow Along.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "No access key or secret value is created or recorded by this Follow Along.",
+            "warning": "Access keys, passwords, and MFA setup are credentials and are intentionally outside this Follow Along.",
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-console-step-5-create-the-user",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Create the user",
+            "instruction": "Choose Create user.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-iam-user-record-001-console-step-5-create-the-user-instruction-1",
+                "text": "Choose Create user.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Users list includes follow-along-lambda-user.",
+            "warning": "The new IAM user has no permissions until an authorized administrator assigns organization-approved access.",
+            "sourceIds": [
+              "source-create-an-iam-user-in-your-aws-account"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws iam create-user --user-name follow-along-lambda-user",
+            "explanation": "Creates the same IAM user record by using AWS CLI credentials that are already configured outside this Follow Along.",
+            "expectedResult": "The response includes a User object with UserName follow-along-lambda-user.",
+            "instructions": [],
+            "commands": [],
+            "warning": "This command does not create access keys, a console password, or permissions.",
+            "sourceIds": [
+              "source-create-user-aws-cli-2-35-23-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-lambda-create-the-iam-user-record-001-verification-1",
+            "title": "Confirm the IAM user record",
+            "instruction": "In IAM, search Users for follow-along-lambda-user.",
+            "expectedResult": "The search returns exactly the IAM user created for this Follow Along.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-lambda-create-the-lambda-function-002",
+        "slug": "create-the-lambda-function",
+        "title": "Create the Lambda Function",
+        "service": "AWS Lambda",
+        "feature": "Lambda function, Node.js runtime, and execution role",
+        "goal": "Create follow-along-lambda-area in eu-west-2, replace its starter code, and deploy the update.",
+        "whyItMatters": "This introduces a Lambda function, its handler, and the execution role that lets the function write invocation logs.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 15,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-create-and-test-the-function",
+        "prerequisites": [
+          "task-lambda-create-the-iam-user-record-001"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-your-first-lambda-function",
+          "source-building-lambda-functions-with-node-js",
+          "source-create-function-aws-cli-2-36-2-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-1-open-lambda-in-the-correct-region",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open Lambda in the correct Region",
+            "instruction": "Open the Lambda console.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-1-open-lambda-in-the-correct-region-instruction-1",
+                "text": "Open the Lambda console.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-1-open-lambda-in-the-correct-region-instruction-2",
+                "text": "Choose Europe (London) eu-west-2.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Lambda Functions page is open in eu-west-2.",
+            "warning": "Create and later delete the function in the same Region.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-2-start-function-creation",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Start function creation",
+            "instruction": "Choose Create function.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-2-start-function-creation-instruction-1",
+                "text": "Choose Create function.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-2-start-function-creation-instruction-2",
+                "text": "Choose Author from scratch.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The Basic information section is displayed.",
+            "warning": "",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-3-set-function-basics",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Set function basics",
+            "instruction": "Enter follow-along-lambda-area as the function name.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-3-set-function-basics-instruction-1",
+                "text": "Enter follow-along-lambda-area as the function name.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-3-set-function-basics-instruction-2",
+                "text": "Choose Node.js 24.x as the runtime.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-3-set-function-basics-instruction-3",
+                "text": "Keep x86_64 as the architecture.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The function settings show the fixed test name, Node.js 24.x, and x86_64.",
+            "warning": "Use the exact function name so the log group is easy to identify during cleanup.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-building-lambda-functions-with-node-js"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-4-create-the-function",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Create the function",
+            "instruction": "Choose Create function.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-4-create-the-function-instruction-1",
+                "text": "Choose Create function.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The function page opens for follow-along-lambda-area.",
+            "warning": "Lambda creates an execution role for this console workflow that provides basic CloudWatch Logs access.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-5-open-the-code-file",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Open the code file",
+            "instruction": "Choose the Code tab.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-5-open-the-code-file-instruction-1",
+                "text": "Choose the Code tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-5-open-the-code-file-instruction-2",
+                "text": "Open index.mjs.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The built-in code editor displays index.mjs.",
+            "warning": "",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-building-lambda-functions-with-node-js"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-6-replace-the-starter-code",
+            "stepNumber": 6,
+            "number": 6,
+            "title": "Replace the starter code",
+            "instruction": "Replace the starter code with the documented area-calculation example.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-6-replace-the-starter-code-instruction-1",
+                "text": "Replace the starter code with the documented area-calculation example.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The handler reads length and width, logs the calculated area, and returns an area response.",
+            "warning": "Use only the harmless test values in this Follow Along. Do not add passwords, keys, tokens, or personal data.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-create-the-lambda-function-002-console-step-7-deploy-the-code",
+            "stepNumber": 7,
+            "number": 7,
+            "title": "Deploy the code",
+            "instruction": "Choose Deploy.",
+            "instructions": [
+              {
+                "id": "task-lambda-create-the-lambda-function-002-console-step-7-deploy-the-code-instruction-1",
+                "text": "Choose Deploy.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The console confirms that the function code was updated.",
+            "warning": "Code changes are not active until deployment succeeds.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-building-lambda-functions-with-node-js"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-lambda-create-the-lambda-function-002-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws lambda get-function --function-name follow-along-lambda-area --region eu-west-2",
+            "explanation": "Checks the function created in the console without changing it.",
+            "expectedResult": "The response identifies follow-along-lambda-area and its configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this only after the console creation step has completed.",
+            "sourceIds": [
+              "source-create-function-aws-cli-2-36-2-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-lambda-create-the-lambda-function-002-verification-1",
+            "title": "Confirm the deployed function",
+            "instruction": "On the function page, confirm the function name, Node.js 24.x runtime, and successful deployment message.",
+            "expectedResult": "The page shows follow-along-lambda-area with deployed Node.js code.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-lambda-invoke-the-function-with-a-test-event-003",
+        "slug": "invoke-the-function-with-a-test-event",
+        "title": "Invoke the Function with a Test Event",
+        "service": "AWS Lambda",
+        "feature": "Lambda test event and synchronous invocation",
+        "goal": "Run follow-along-lambda-area with length 6 and width 7 and confirm an area of 42.",
+        "whyItMatters": "A saved test event shows how Lambda passes JSON input to the Node.js handler and returns the result.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-2-create-and-test-the-function",
+        "prerequisites": [
+          "task-lambda-create-the-lambda-function-002"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-your-first-lambda-function",
+          "source-testing-lambda-functions-in-the-console",
+          "source-invoke-aws-cli-2-35-23-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-1-open-the-test-tab",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the Test tab",
+            "instruction": "Choose the Test tab.",
+            "instructions": [
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-1-open-the-test-tab-instruction-1",
+                "text": "Choose the Test tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-1-open-the-test-tab-instruction-2",
+                "text": "Choose Create new event.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The test-event editor opens.",
+            "warning": "",
+            "sourceIds": [
+              "source-testing-lambda-functions-in-the-console"
+            ]
+          },
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-2-name-the-test-event",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Name the test event",
+            "instruction": "Enter area-test as the event name.",
+            "instructions": [
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-2-name-the-test-event-instruction-1",
+                "text": "Enter area-test as the event name.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-2-name-the-test-event-instruction-2",
+                "text": "Choose Private.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The event is named area-test and is private.",
+            "warning": "Private test events are available only to their creator.",
+            "sourceIds": [
+              "source-testing-lambda-functions-in-the-console"
+            ]
+          },
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-3-enter-safe-sample-json",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Enter safe sample JSON",
+            "instruction": "Enter the JSON object with length 6 and width 7.",
+            "instructions": [
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-3-enter-safe-sample-json-instruction-1",
+                "text": "Enter the JSON object with length 6 and width 7.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-3-enter-safe-sample-json-instruction-2",
+                "text": "Choose Save.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The saved event contains the two numeric values.",
+            "warning": "Do not put secrets or personal information in a Lambda test event.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-testing-lambda-functions-in-the-console"
+            ]
+          },
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-4-run-the-test",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Run the test",
+            "instruction": "Choose Test.",
+            "instructions": [
+              {
+                "id": "task-lambda-invoke-the-function-with-a-test-event-003-console-step-4-run-the-test-instruction-1",
+                "text": "Choose Test.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Execution result reports Succeeded and returns an area of 42.",
+            "warning": "If the result differs, check the code, deploy it again, and rerun the test.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-testing-lambda-functions-in-the-console"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws lambda invoke --function-name follow-along-lambda-area --cli-binary-format raw-in-base64-out --payload '{\"length\":6,\"width\":7}' response.json --region eu-west-2",
+            "explanation": "Synchronously invokes the deployed function with the same harmless JSON input and writes the function response to response.json.",
+            "expectedResult": "The command response reports StatusCode 200, and response.json contains the function response.",
+            "instructions": [],
+            "commands": [],
+            "warning": "The quoted JSON syntax is for Unix-like shells; adapt quotation marks for your terminal if necessary.",
+            "sourceIds": [
+              "source-invoke-aws-cli-2-35-23-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-lambda-invoke-the-function-with-a-test-event-003-verification-1",
+            "title": "Confirm the area result",
+            "instruction": "Expand Execution result for area-test.",
+            "expectedResult": "Status is Succeeded and the response contains an area of 42.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-lambda-inspect-the-invocation-logs-004",
+        "slug": "inspect-the-invocation-logs",
+        "title": "Inspect the Invocation Logs",
+        "service": "AWS Lambda",
+        "feature": "Amazon CloudWatch Logs",
+        "goal": "Find the successful invocation records for follow-along-lambda-area in its CloudWatch Logs log group.",
+        "whyItMatters": "Logs provide evidence that the handler ran and show the request lifecycle records used for basic troubleshooting.",
+        "difficulty": "Easy",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-observe-and-clean-up",
+        "prerequisites": [
+          "task-lambda-invoke-the-function-with-a-test-event-003"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-your-first-lambda-function",
+          "source-building-lambda-functions-with-node-js",
+          "source-create-function-aws-cli-2-36-2-command-reference"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-lambda-inspect-the-invocation-logs-004-console-step-1-open-the-monitoring-page",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Open the monitoring page",
+            "instruction": "Choose the Monitor tab.",
+            "instructions": [
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-1-open-the-monitoring-page-instruction-1",
+                "text": "Choose the Monitor tab.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-1-open-the-monitoring-page-instruction-2",
+                "text": "Choose View CloudWatch logs.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "CloudWatch opens the log group for follow-along-lambda-area.",
+            "warning": "Logs can take a short time to appear after the first invocation.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-inspect-the-invocation-logs-004-console-step-2-open-the-newest-log-stream",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Open the newest log stream",
+            "instruction": "Open Log streams.",
+            "instructions": [
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-2-open-the-newest-log-stream-instruction-1",
+                "text": "Open Log streams.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-2-open-the-newest-log-stream-instruction-2",
+                "text": "Choose the stream with the newest Last event time.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The log stream displays records from the test invocation.",
+            "warning": "",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-inspect-the-invocation-logs-004-console-step-3-find-the-successful-invocation-records",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Find the successful invocation records",
+            "instruction": "Find the area log message.",
+            "instructions": [
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-3-find-the-successful-invocation-records-instruction-1",
+                "text": "Find the area log message.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-3-find-the-successful-invocation-records-instruction-2",
+                "text": "Find the START record.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-3-find-the-successful-invocation-records-instruction-3",
+                "text": "Find the END record.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-inspect-the-invocation-logs-004-console-step-3-find-the-successful-invocation-records-instruction-4",
+                "text": "Find the REPORT record.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The stream shows the calculated area and Lambda invocation lifecycle records.",
+            "warning": "Refresh the log-stream list if the newest invocation is not visible yet.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function",
+              "source-building-lambda-functions-with-node-js"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-lambda-inspect-the-invocation-logs-004-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws logs describe-log-streams --log-group-name /aws/lambda/follow-along-lambda-area --order-by LastEventTime --descending --region eu-west-2",
+            "explanation": "Lists the function log streams with the newest activity first.",
+            "expectedResult": "The response includes one or more log streams for the Lambda function after a successful invocation.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run this after invoking the function at least once.",
+            "sourceIds": [
+              "source-create-function-aws-cli-2-36-2-command-reference"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-lambda-inspect-the-invocation-logs-004-verification-1",
+            "title": "Confirm the invocation log",
+            "instruction": "Inspect the newest stream in /aws/lambda/follow-along-lambda-area.",
+            "expectedResult": "The stream contains the area calculation and the START, END, and REPORT records.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-lambda-clean-up-the-follow-along-resources-005",
+        "slug": "clean-up-the-follow-along-resources",
+        "title": "Clean Up the Follow Along Resources",
+        "service": "AWS Lambda",
+        "feature": "Lambda, CloudWatch Logs, and IAM cleanup",
+        "goal": "After verifying the function, manually remove only the Lambda function, its log group, its generated execution role, and the IAM user record created for this Follow Along.",
+        "whyItMatters": "Cleanup reduces account clutter and prevents unintended ongoing use of the practice resources.",
+        "difficulty": "Medium",
+        "estimatedMinutes": 10,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-3-observe-and-clean-up",
+        "prerequisites": [
+          "task-lambda-inspect-the-invocation-logs-004"
+        ],
+        "isOptional": false,
+        "sourceIds": [
+          "source-create-your-first-lambda-function",
+          "source-use-deletefunction-with-an-aws-sdk-or-cli",
+          "source-delete-log-group-aws-cli-1-45-10-command-reference",
+          "source-remove-or-deactivate-an-iam-user"
+        ],
+        "concepts": [],
+        "values": [],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": ""
+          },
+          "cli": {
+            "status": "available",
+            "reason": ""
+          }
+        },
+        "consoleSteps": [
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-1-record-the-execution-role-name",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Record the execution role name",
+            "instruction": "Open Configuration.",
+            "instructions": [
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-1-record-the-execution-role-name-instruction-1",
+                "text": "Open Configuration.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-1-record-the-execution-role-name-instruction-2",
+                "text": "Choose Permissions.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-1-record-the-execution-role-name-instruction-3",
+                "text": "Record the execution role name.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "You have the exact role name created for follow-along-lambda-area.",
+            "warning": "Record only the role name. Do not copy credentials or secret values.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function",
+            "stepNumber": 2,
+            "number": 2,
+            "title": "Delete the Lambda function",
+            "instruction": "Open the Functions page.",
+            "instructions": [
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-1",
+                "text": "Open the Functions page.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-2",
+                "text": "Select follow-along-lambda-area.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-3",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-4",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-5",
+                "text": "Enter confirm.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-2-delete-the-lambda-function-instruction-6",
+                "text": "Choose Delete.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "follow-along-lambda-area no longer appears in the Functions list.",
+            "warning": "Delete only the function with the exact fixed test name.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group",
+            "stepNumber": 3,
+            "number": 3,
+            "title": "Delete the Lambda log group",
+            "instruction": "Open the CloudWatch Log groups page.",
+            "instructions": [
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group-instruction-1",
+                "text": "Open the CloudWatch Log groups page.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group-instruction-2",
+                "text": "Select /aws/lambda/follow-along-lambda-area.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group-instruction-3",
+                "text": "Choose Actions.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group-instruction-4",
+                "text": "Choose Delete log group(s).",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-3-delete-the-lambda-log-group-instruction-5",
+                "text": "Choose Delete.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The function log group no longer appears in eu-west-2.",
+            "warning": "Delete only /aws/lambda/follow-along-lambda-area.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role",
+            "stepNumber": 4,
+            "number": 4,
+            "title": "Delete the generated execution role",
+            "instruction": "Open the IAM Roles page.",
+            "instructions": [
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-1",
+                "text": "Open the IAM Roles page.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-2",
+                "text": "Search for the recorded role name.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-3",
+                "text": "Open the exact recorded role.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-4",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-5",
+                "text": "Complete the confirmation.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-4-delete-the-generated-execution-role-instruction-6",
+                "text": "Choose Delete.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "The generated execution role no longer appears in IAM.",
+            "warning": "Do not delete a shared or unfamiliar role.",
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record",
+            "stepNumber": 5,
+            "number": 5,
+            "title": "Delete the IAM user record",
+            "instruction": "Open the IAM Users page.",
+            "instructions": [
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record-instruction-1",
+                "text": "Open the IAM Users page.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record-instruction-2",
+                "text": "Select follow-along-lambda-user.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record-instruction-3",
+                "text": "Choose Delete.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record-instruction-4",
+                "text": "Complete the confirmation.",
+                "detail": ""
+              },
+              {
+                "id": "task-lambda-clean-up-the-follow-along-resources-005-console-step-5-delete-the-iam-user-record-instruction-5",
+                "text": "Choose Delete user.",
+                "detail": ""
+              }
+            ],
+            "commands": [],
+            "expectedResult": "follow-along-lambda-user no longer appears in IAM.",
+            "warning": "Before deletion, an administrator must remove any credentials or permissions that were added outside this Follow Along.",
+            "sourceIds": [
+              "source-remove-or-deactivate-an-iam-user"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cli-step-1",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws lambda delete-function --function-name follow-along-lambda-area --region eu-west-2",
+            "explanation": "Deletes only the Lambda function created for this Follow Along.",
+            "expectedResult": "The command completes without returning a function object.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run only after recording the execution-role name and completing all verification.",
+            "sourceIds": [
+              "source-use-deletefunction-with-an-aws-sdk-or-cli"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cli-step-2",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws logs delete-log-group --log-group-name /aws/lambda/follow-along-lambda-area --region eu-west-2",
+            "explanation": "Permanently deletes only the Lambda log group created for this Follow Along.",
+            "expectedResult": "The command completes without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Run only after deleting follow-along-lambda-area.",
+            "sourceIds": [
+              "source-delete-log-group-aws-cli-1-45-10-command-reference"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cli-step-3",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws iam delete-user --user-name follow-along-lambda-user",
+            "explanation": "Deletes the IAM user record created for this Follow Along after all externally added user items have been removed.",
+            "expectedResult": "The command completes without output when the user has no remaining attached items.",
+            "instructions": [],
+            "commands": [],
+            "warning": "AWS CLI IAM-user deletion requires attached items to be removed first; do not remove unfamiliar items.",
+            "sourceIds": [
+              "source-remove-or-deactivate-an-iam-user"
+            ]
+          }
+        ],
+        "createdResourceKeys": [],
+        "verification": [
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-verification-1",
+            "title": "Confirm Lambda cleanup",
+            "instruction": "Search Lambda Functions in eu-west-2 for follow-along-lambda-area.",
+            "expectedResult": "No matching function appears.",
+            "mode": "console"
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-verification-2",
+            "title": "Confirm log-group cleanup",
+            "instruction": "Search CloudWatch Log groups in eu-west-2 for /aws/lambda/follow-along-lambda-area.",
+            "expectedResult": "No matching log group appears.",
+            "mode": "console"
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-verification-3",
+            "title": "Confirm IAM cleanup",
+            "instruction": "Search IAM Roles for the recorded role name and IAM Users for follow-along-lambda-user.",
+            "expectedResult": "No matching role or IAM user appears.",
+            "mode": "console"
+          }
+        ],
+        "cleanup": [
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cleanup-1",
+            "stepNumber": 1,
+            "title": "Remove only the trial function",
+            "instruction": "Manually delete follow-along-lambda-area in eu-west-2 if it remains after verification.",
+            "description": "Manually delete follow-along-lambda-area in eu-west-2 if it remains after verification.",
+            "verification": "A Lambda Functions search in eu-west-2 returns no match for follow-along-lambda-area.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cleanup-2",
+            "stepNumber": 2,
+            "title": "Remove only the trial log group",
+            "instruction": "Manually delete /aws/lambda/follow-along-lambda-area in eu-west-2 if it remains after verification.",
+            "description": "Manually delete /aws/lambda/follow-along-lambda-area in eu-west-2 if it remains after verification.",
+            "verification": "A CloudWatch Log groups search in eu-west-2 returns no match for /aws/lambda/follow-along-lambda-area.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cleanup-3",
+            "stepNumber": 3,
+            "title": "Remove only the recorded trial role",
+            "instruction": "Manually delete only the exact execution role recorded from follow-along-lambda-area if it remains after verification.",
+            "description": "Manually delete only the exact execution role recorded from follow-along-lambda-area if it remains after verification.",
+            "verification": "An IAM Roles search returns no match for the exact recorded role name.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-create-your-first-lambda-function"
+            ]
+          },
+          {
+            "id": "task-lambda-clean-up-the-follow-along-resources-005-cleanup-4",
+            "stepNumber": 4,
+            "title": "Remove only the trial IAM user",
+            "instruction": "Manually delete follow-along-lambda-user only after an administrator confirms that any externally added user items have been removed.",
+            "description": "Manually delete follow-along-lambda-user only after an administrator confirms that any externally added user items have been removed.",
+            "verification": "An IAM Users search returns no match for follow-along-lambda-user.",
+            "resourceKeys": [],
+            "sourceIds": [
+              "source-remove-or-deactivate-an-iam-user"
+            ]
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "schema": [],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2"
+      }
+    },
+    "warnings": {
+      "cost": "AWS Lambda has a free tier, but AWS usage can result in charges. Delete the function and log group when you finish.",
+      "safety": "Use only the fixed names in this Follow Along. Before every deletion, confirm the exact resource name and Region. Never delete shared or unfamiliar resources.",
+      "credentials": "Do not paste access keys, secret keys, passwords, MFA codes, tokens, or personal data into the function, test event, terminal, or notes.",
+      "region": "Create, invoke, inspect, and delete Lambda and CloudWatch Logs resources in Europe (London), eu-west-2. IAM is global."
+    },
+    "cleanup": {
+      "steps": [
+        {
+          "id": "programme-cleanup-1",
+          "stepNumber": 1,
+          "title": "Perform final regional checks",
+          "instruction": "In eu-west-2, search for follow-along-lambda-area in Lambda Functions and /aws/lambda/follow-along-lambda-area in CloudWatch Log groups.",
+          "description": "In eu-west-2, search for follow-along-lambda-area in Lambda Functions and /aws/lambda/follow-along-lambda-area in CloudWatch Log groups.",
+          "verification": "Neither regional resource appears.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-your-first-lambda-function"
+          ]
+        },
+        {
+          "id": "programme-cleanup-2",
+          "stepNumber": 2,
+          "title": "Perform final IAM checks",
+          "instruction": "In IAM, search for the recorded execution role name and follow-along-lambda-user.",
+          "description": "In IAM, search for the recorded execution role name and follow-along-lambda-user.",
+          "verification": "Neither IAM identity appears.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-create-your-first-lambda-function",
+            "source-remove-or-deactivate-an-iam-user"
+          ]
+        }
+      ],
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency"
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "finding-1",
+          "findingNumber": 1,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The requested update asks for an IAM user with the correct permissions, but no organization-approved permission model or policy ARN was supplied. This package intentionally does not invent, attach, or propose an IAM policy. An authorized administrator must determine and grant the least-privilege permissions required by the organization's controls before follow-along-lambda-user can be used for Lambda work.",
+          "status": "open"
+        },
+        {
+          "id": "finding-2",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The IAM user task creates only a named IAM user record and deliberately creates no access keys, console password, or other credentials. It therefore cannot by itself provide usable Lambda access.",
+          "status": "open"
+        },
+        {
+          "id": "finding-3",
+          "findingNumber": 3,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "The documented console tutorial creates an execution role automatically for the function with basic CloudWatch Logs access. The exact generated role name is account-specific and must be recorded during cleanup rather than guessed.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "lambda-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The browser import binds the currently signed-in Author only after the final local preview is accepted."
+  },
+  "summary": {
+    "phaseCount": 3,
+    "taskCount": 5,
+    "checkboxCount": 59,
+    "cliCommandCount": 7,
+    "verificationCheckCount": 7,
+    "cleanupItemCount": 6,
+    "learnerResourceValueCount": 0,
+    "officialAwsSourceCount": 10
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "5d549abd8f6bcd5f1e68317817904047341df9aedc8b64289b505f4f36cbae62"
+  }
+}

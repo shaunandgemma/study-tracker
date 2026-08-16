@@ -1,0 +1,727 @@
+{
+  "sessionId": "author-assistant-sqs-e63c2e01-9c6b-4e67-aeab-dc45f5ce295e",
+  "status": "handoff_package_ready_for_review",
+  "createdAt": "2026-08-10T17:48:55.024Z",
+  "inputs": {
+    "generationMode": "update_existing",
+    "updateTarget": {
+      "programmeId": "sqs-learning-path",
+      "displayName": "Amazon SQS: Basic Message Queue Test",
+      "serviceName": "Amazon Simple Queue Service",
+      "shortName": "SQS",
+      "serviceSlug": "sqs",
+      "sourceRevision": 2,
+      "candidateId": "release-author-draft-import-8d9133a061e04bacfba136cad4680e329750c8f7daa0c170fa05672423a011ec-r2-b56d599d5479",
+      "contentHash": "fb7bdd2366c460439b4035e73867009fb2340f671ff4317811e37f731a45038a",
+      "publishedAt": "2026-08-10T13:49:02.442315+00:00",
+      "runtimeContent": {
+        "tasks": [
+          {
+            "id": "task-sqs-confirm-safe-scope-and-required-access-001",
+            "goal": "Use a non-confidential queue name and confirm that the required SQS actions are available before starting.",
+            "title": "Confirm safe scope and required access",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [],
+            "feature": "SQS permissions and safe naming",
+            "phaseId": "phase-1-prepare",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+              "source-actions-resources-and-condition-keys-for-amazon-sqs-service-authorizat",
+              "source-choosing-your-region-aws-management-console",
+              "source-using-policies-with-amazon-sqs"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-1-set-the-region",
+                "title": "Set the Region",
+                "number": 1,
+                "warning": "",
+                "commands": [],
+                "sourceIds": [
+                  "source-choosing-your-region-aws-management-console"
+                ],
+                "stepNumber": 1,
+                "instruction": "Select eu-west-2 in the Console Region selector.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-1-set-the-region-instruction-1",
+                    "text": "Select eu-west-2 in the Console Region selector.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "eu-west-2 is the selected Console Region."
+              },
+              {
+                "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-2-choose-safe-test-data",
+                "title": "Choose safe test data",
+                "number": 2,
+                "warning": "Do not include PII or confidential information in the queue name.",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim"
+                ],
+                "stepNumber": 2,
+                "instruction": "Choose the non-confidential queue name sqs-beginner-test.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-2-choose-safe-test-data-instruction-1",
+                    "text": "Choose the non-confidential queue name sqs-beginner-test.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "A harmless queue name is ready to use."
+              },
+              {
+                "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-3-confirm-existing-access",
+                "title": "Confirm existing access",
+                "number": 3,
+                "warning": "",
+                "commands": [],
+                "sourceIds": [
+                  "source-using-policies-with-amazon-sqs",
+                  "source-actions-resources-and-condition-keys-for-amazon-sqs-service-authorizat"
+                ],
+                "stepNumber": 3,
+                "instruction": "Confirm your signed-in account or role already has required SQS Console access.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-confirm-safe-scope-and-required-access-001-console-step-3-confirm-existing-access-instruction-1",
+                    "text": "Confirm your signed-in account or role already has required SQS Console access.",
+                    "detail": "Do not create, attach, recommend, or edit an IAM policy."
+                  }
+                ],
+                "expectedResult": "You are ready to use the SQS Console with access already granted by an administrator."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-the-selected-region",
+                "mode": "console",
+                "title": "Verify the selected Region",
+                "instruction": "Inspect the Console Region selector.",
+                "expectedResult": "eu-west-2 is selected."
+              },
+              {
+                "id": "verify-2-verify-the-queue-name-is-non-confidential",
+                "mode": "console",
+                "title": "Verify the queue name is non-confidential",
+                "instruction": "Inspect the chosen queue name before creating the queue.",
+                "expectedResult": "The name is sqs-beginner-test and contains no sensitive information."
+              }
+            ],
+            "whyItMatters": "Queue names should not contain PII or other confidential information, and the learner needs authorization for the planned operations.",
+            "prerequisites": [],
+            "estimatedMinutes": 10,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-create-a-standard-queue-002",
+            "goal": "Create one basic standard SQS queue for the test.",
+            "title": "Create a standard queue",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [],
+            "feature": "Standard queue creation",
+            "phaseId": "phase-2-create",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+              "source-create-queue-aws-cli-2-35-24-command-reference"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue",
+                "title": "Create the queue",
+                "number": 1,
+                "warning": "",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim"
+                ],
+                "stepNumber": 1,
+                "instruction": "Open the Amazon SQS console.\nChoose Create queue.\nKeep Standard queue selected.\nEnter `sqs-beginner-test` for Name.\nChoose Create queue.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue-instruction-1",
+                    "text": "Open the Amazon SQS console.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue-instruction-2",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue-instruction-3",
+                    "text": "Keep Standard queue selected.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue-instruction-4",
+                    "text": "Enter `sqs-beginner-test` for Name.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-create-a-standard-queue-002-console-step-1-create-the-queue-instruction-5",
+                    "text": "Choose Create queue.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "Amazon SQS displays the new queue’s Details page."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-queue-creation",
+                "mode": "console",
+                "title": "Verify queue creation",
+                "instruction": "Inspect the page displayed after creating the queue.",
+                "expectedResult": "The Details page for sqs-beginner-test is displayed."
+              }
+            ],
+            "whyItMatters": "The queue provides the destination for the test message and keeps the exercise focused on the standard-queue workflow.",
+            "prerequisites": [
+              "task-sqs-confirm-safe-scope-and-required-access-001"
+            ],
+            "estimatedMinutes": 10,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-send-one-harmless-test-message-003",
+            "goal": "Send a single non-confidential test message to the new queue.",
+            "title": "Send one harmless test message",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [],
+            "feature": "Message sending",
+            "phaseId": "phase-3-send",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim",
+              "source-send-message-aws-cli-2-35-23-command-reference"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message",
+                "title": "Send the test message",
+                "number": 1,
+                "warning": "",
+                "commands": [],
+                "sourceIds": [
+                  "source-creating-an-amazon-sqs-standard-queue-and-sending-a-message-amazon-sim"
+                ],
+                "stepNumber": 1,
+                "instruction": "Choose Queues.\nSelect `sqs-beginner-test`.\nChoose Actions, then Send and receive messages.\nEnter `Hello from an SQS test` in Message body.\nChoose Send message.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message-instruction-1",
+                    "text": "Choose Queues.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message-instruction-2",
+                    "text": "Select `sqs-beginner-test`.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message-instruction-3",
+                    "text": "Choose Actions, then Send and receive messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message-instruction-4",
+                    "text": "Enter `Hello from an SQS test` in Message body.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-send-one-harmless-test-message-003-console-step-1-send-the-test-message-instruction-5",
+                    "text": "Choose Send message.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The console displays a success message."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-message-submission",
+                "mode": "console",
+                "title": "Verify message submission",
+                "instruction": "Inspect the confirmation shown after sending the message.",
+                "expectedResult": "The Console displays a message-sent success confirmation."
+              }
+            ],
+            "whyItMatters": "A single harmless message gives the learner a controlled item to receive and handle.",
+            "prerequisites": [
+              "task-sqs-create-a-standard-queue-002"
+            ],
+            "estimatedMinutes": 5,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-receive-and-inspect-the-test-message-004",
+            "goal": "Poll the queue, receive the harmless test message, and inspect its details in the Console.",
+            "title": "Receive and inspect the test message",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [],
+            "feature": "Message receiving",
+            "phaseId": "phase-4-receive-and-verify",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser",
+              "source-receive-message-aws-cli-2-35-19-command-reference"
+            ],
+            "difficulty": "Medium",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message",
+                "title": "Receive the test message",
+                "number": 1,
+                "warning": "",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser"
+                ],
+                "stepNumber": 1,
+                "instruction": "Open the Amazon SQS console.\nChoose Queues.\nChoose your test queue.\nSelect Send and receive messages.\nSelect Poll for messages.\nSelect the harmless test message in Messages.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-1",
+                    "text": "Open the Amazon SQS console.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-2",
+                    "text": "Choose Queues.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-3",
+                    "text": "Choose your test queue.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-4",
+                    "text": "Select Send and receive messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-5",
+                    "text": "Select Poll for messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-receive-and-inspect-the-test-message-004-console-step-1-receive-the-test-message-instruction-6",
+                    "text": "Select the harmless test message in Messages.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The Messages section shows the received test message with its Message ID, Sent date, Size, and Receive count."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-the-received-message",
+                "mode": "console",
+                "title": "Verify the received message",
+                "instruction": "Inspect the Messages section after polling.",
+                "expectedResult": "The received test message shows a Message ID, Sent date, Size, and Receive count."
+              }
+            ],
+            "whyItMatters": "Receiving a message does not automatically delete it; the receipt handle is required to complete the test safely.",
+            "prerequisites": [
+              "task-sqs-send-one-harmless-test-message-003"
+            ],
+            "estimatedMinutes": 10,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-delete-the-received-test-message-005",
+            "goal": "Select and delete the received harmless test message in the Console.",
+            "title": "Delete the received test message",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [],
+            "feature": "Message deletion",
+            "phaseId": "phase-5-complete-the-test",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser",
+              "source-delete-message-aws-cli-2-35-21-command-reference"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-delete-the-received-test-message-005-console-step-1-delete-the-test-message",
+                "title": "Delete the test message",
+                "number": 1,
+                "warning": "Messages are not deleted automatically after retrieval.",
+                "commands": [],
+                "sourceIds": [
+                  "source-receiving-and-deleting-a-message-in-amazon-sqs-amazon-simple-queue-ser"
+                ],
+                "stepNumber": 1,
+                "instruction": "Select the retrieved harmless test message.\nSelect Delete.\nIn Delete Messages, select Delete.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-delete-the-received-test-message-005-console-step-1-delete-the-test-message-instruction-1",
+                    "text": "Select the retrieved harmless test message.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-delete-the-received-test-message-005-console-step-1-delete-the-test-message-instruction-2",
+                    "text": "Select Delete.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-delete-the-received-test-message-005-console-step-1-delete-the-test-message-instruction-3",
+                    "text": "In Delete Messages, select Delete.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "The selected test message is deleted from the queue."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-deletion-confirmation",
+                "mode": "console",
+                "title": "Verify deletion confirmation",
+                "instruction": "Inspect the Messages section after confirming deletion.",
+                "expectedResult": "The selected test message is no longer shown."
+              }
+            ],
+            "whyItMatters": "Deleting the message prevents it from being received again and completes the basic message-handling test.",
+            "prerequisites": [
+              "task-sqs-receive-and-inspect-the-test-message-004"
+            ],
+            "estimatedMinutes": 5,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          },
+          {
+            "id": "task-sqs-review-queue-deletion-effects-006",
+            "goal": "Understand the permanent effects and timing considerations of deleting an SQS queue after a test.",
+            "title": "Review queue deletion effects",
+            "region": "eu-west-2",
+            "status": "draft",
+            "cleanup": [
+              {
+                "id": "task-sqs-review-queue-deletion-effects-006-cleanup-1-open-the-target-queue",
+                "title": "Open the target queue",
+                "stepNumber": 1,
+                "description": "In the Amazon SQS console, choose Queues and select sqs-beginner-test only.",
+                "instruction": "In the Amazon SQS console, choose Queues and select sqs-beginner-test only.",
+                "resourceKeys": [],
+                "verification": "Confirm sqs-beginner-test is the selected queue; do not select messages, other queues, or other AWS resources."
+              },
+              {
+                "id": "task-sqs-review-queue-deletion-effects-006-cleanup-2-delete-the-approved-queue",
+                "title": "Delete the approved queue",
+                "stepNumber": 2,
+                "description": "With sqs-beginner-test selected, choose Delete, enter delete in the confirmation dialog, then choose Delete.",
+                "instruction": "With sqs-beginner-test selected, choose Delete, enter delete in the confirmation dialog, then choose Delete.",
+                "resourceKeys": [],
+                "verification": "Confirm the deletion action was submitted for sqs-beginner-test only."
+              },
+              {
+                "id": "task-sqs-review-queue-deletion-effects-006-cleanup-3-refresh-and-verify-removal",
+                "title": "Refresh and verify removal",
+                "stepNumber": 3,
+                "description": "Return to the Queues list and refresh it after deleting sqs-beginner-test.",
+                "instruction": "Return to the Queues list and refresh it after deleting sqs-beginner-test.",
+                "resourceKeys": [],
+                "verification": "Visibly confirm that sqs-beginner-test is no longer listed."
+              }
+            ],
+            "feature": "Queue lifecycle awareness",
+            "phaseId": "phase-5-complete-the-test",
+            "service": "Amazon Simple Queue Service",
+            "cliSteps": [],
+            "sourceIds": [
+              "source-deleting-an-amazon-sqs-queue-amazon-simple-queue-service",
+              "source-delete-queue-aws-cli-2-35-14-command-reference"
+            ],
+            "difficulty": "Easy",
+            "isOptional": false,
+            "consoleSteps": [
+              {
+                "id": "task-sqs-review-queue-deletion-effects-006-console-step-1-review-lifecycle-effects",
+                "title": "Review lifecycle effects",
+                "number": 1,
+                "warning": "Do not delete the queue in Stage 6.",
+                "commands": [],
+                "sourceIds": [
+                  "source-deleting-an-amazon-sqs-queue-amazon-simple-queue-service",
+                  "source-delete-queue-aws-cli-2-35-14-command-reference"
+                ],
+                "stepNumber": 1,
+                "instruction": "Acknowledge that deleting a queue removes its messages.\nAcknowledge that the temporary queue will be removed during Stage 8.",
+                "instructions": [
+                  {
+                    "id": "task-sqs-review-queue-deletion-effects-006-console-step-1-review-lifecycle-effects-instruction-1",
+                    "text": "Acknowledge that deleting a queue removes its messages.",
+                    "detail": ""
+                  },
+                  {
+                    "id": "task-sqs-review-queue-deletion-effects-006-console-step-1-review-lifecycle-effects-instruction-2",
+                    "text": "Acknowledge that the temporary queue will be removed during Stage 8.",
+                    "detail": ""
+                  }
+                ],
+                "expectedResult": "You understand that queue deletion is permanent for the queue’s messages and is deferred to Stage 8."
+              }
+            ],
+            "verification": [
+              {
+                "id": "verify-1-verify-lifecycle-understanding",
+                "mode": "console",
+                "title": "Verify lifecycle understanding",
+                "instruction": "Inspect the queue-deletion guidance.",
+                "expectedResult": "It states that a queue can be deleted even when it is not empty."
+              }
+            ],
+            "whyItMatters": "Queue deletion permanently removes its messages and has timing considerations for recreating a queue with the same name.",
+            "prerequisites": [
+              "task-sqs-delete-the-received-test-message-005"
+            ],
+            "estimatedMinutes": 5,
+            "modeAvailability": {
+              "cli": {
+                "reason": "CLI instructions are outside approved Step 84.",
+                "status": "not_applicable"
+              },
+              "console": {
+                "reason": "",
+                "status": "available"
+              }
+            },
+            "createdResourceKeys": []
+          }
+        ],
+        "phases": [
+          {
+            "id": "phase-1-prepare",
+            "title": "Prepare",
+            "taskIds": [
+              "task-sqs-confirm-safe-scope-and-required-access-001"
+            ],
+            "isOptional": false,
+            "description": "Confirm the intended scope, permissions, and safe test-data approach.",
+            "phaseNumber": 1
+          },
+          {
+            "id": "phase-2-create",
+            "title": "Create",
+            "taskIds": [
+              "task-sqs-create-a-standard-queue-002"
+            ],
+            "isOptional": false,
+            "description": "Create a basic Amazon SQS standard queue.",
+            "phaseNumber": 2
+          },
+          {
+            "id": "phase-3-send",
+            "title": "Send",
+            "taskIds": [
+              "task-sqs-send-one-harmless-test-message-003"
+            ],
+            "isOptional": false,
+            "description": "Place one harmless test message on the queue.",
+            "phaseNumber": 3
+          },
+          {
+            "id": "phase-4-receive-and-verify",
+            "title": "Receive and verify",
+            "taskIds": [
+              "task-sqs-receive-and-inspect-the-test-message-004"
+            ],
+            "isOptional": false,
+            "description": "Receive the test message and confirm the queue behaviour.",
+            "phaseNumber": 4
+          },
+          {
+            "id": "phase-5-complete-the-test",
+            "title": "Complete the test",
+            "taskIds": [
+              "task-sqs-delete-the-received-test-message-005",
+              "task-sqs-review-queue-deletion-effects-006"
+            ],
+            "isOptional": false,
+            "description": "Delete the received test message and review queue lifecycle implications.",
+            "phaseNumber": 5
+          }
+        ],
+        "schema": {
+          "profile": "canonical-follow-along",
+          "version": "1.0.0",
+          "createdWith": "author-v1",
+          "sharedContractHash": null,
+          "authorPackageVersion": "1.0.0"
+        },
+        "cleanup": {
+          "steps": [
+            {
+              "id": "programme-cleanup-1-manual-cleanup-acknowledgement",
+              "title": "Manual cleanup acknowledgement",
+              "stepNumber": 1,
+              "description": "Record that the Stage 8 manual Console cleanup check is complete for sqs-beginner-test.",
+              "instruction": "Record that the Stage 8 manual Console cleanup check is complete for sqs-beginner-test.",
+              "resourceKeys": [],
+              "verification": "Confirmed sqs-beginner-test is no longer listed after refresh and no other resources were selected for deletion."
+            }
+          ],
+          "ordering": "reverse_dependency",
+          "manualOnly": true,
+          "completionGate": "acknowledgement"
+        },
+        "storage": {},
+        "progress": {
+          "initialTaskId": "",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "completionStatuses": [
+            "in_progress",
+            "completed_retained",
+            "completed_cleaned"
+          ],
+          "optionalTasksCountTowardsProgress": false
+        },
+        "warnings": {
+          "cost": "",
+          "region": "",
+          "safety": "Cleanup is manual only.",
+          "credentials": "Never save AWS secrets or private keys."
+        },
+        "programme": {
+          "pathId": "sqs-learning-path",
+          "category": "Messaging",
+          "subtitle": "Create and test a standard queue with one harmless message",
+          "shortName": "SQS",
+          "difficulty": "Beginner",
+          "description": "A short beginner programme for using Amazon Simple Queue Service (SQS) to create a standard queue, send one test message, receive it, and delete the received message.",
+          "displayName": "Amazon SQS: Basic Message Queue Test",
+          "programmeId": "sqs-learning-path",
+          "regionScope": "regional",
+          "serviceName": "Amazon Simple Queue Service",
+          "serviceSlug": "sqs",
+          "defaultRegion": "eu-west-2",
+          "supportedModes": [
+            "console",
+            "cli",
+            "both"
+          ],
+          "learningOutcome": "Build and test a basic message queue safely",
+          "estimatedMinutes": 45,
+          "componentNamespace": "",
+          "publicationVisibility": "published"
+        },
+        "resources": {
+          "schema": [],
+          "variables": {},
+          "interpolationAliases": {},
+          "chargeableResourceKeys": []
+        },
+        "extensions": {
+          "registrations": []
+        },
+        "publication": {
+          "publishedAt": "2026-08-10T13:49:02.442315+00:00",
+          "publishStatus": "published",
+          "sourceRevision": 2,
+          "approvedContentHash": "fb7bdd2366c460439b4035e73867009fb2340f671ff4317811e37f731a45038a"
+        },
+        "capabilities": {},
+        "presentation": {
+          "iconName": "",
+          "badgeText": "",
+          "iconLabel": "SQS",
+          "accentColor": "#0891b2"
+        }
+      }
+    },
+    "serviceName": "Amazon Simple Queue Service",
+    "shortName": "SQS",
+    "learnerLevel": "Beginner",
+    "buildOutcome": "Create a complete list of hands-on Amazon SQS labs that a learner can realistically perform in AWS, focused specifically on the AWS Certified Solutions Architect Associate SAA-C03 exam. The labs must be beginner friendly and assume the user may never have used SQS before. The goal is to take the learner from basic SQS setup through real SAA-C03 architecture patterns. For every lab use simple language, prefer the AWS Management Console, walk through every important click and setting, explain what each setting does and why it matters, include IAM permissions, testing steps, clean-up steps, SAA-C03 exam connections and common exam traps, keep coding to an absolute minimum, and use current AWS features and behaviour. The first lab must be Create an IAM User for the SQS Labs. Walk through opening IAM, creating the IAM user, explaining why root should not be used, creating or attaching suitable SQS permissions using least privilege where practical, explaining the permissions, signing in as the IAM user and verifying SQS access. If later labs require Lambda, SNS, S3, CloudWatch, EventBridge, EC2, Auto Scaling or KMS, explain and add the required IAM permissions before using them. Create as many individual labs as needed to cover: creating Standard queues; sending, receiving and deleting messages; queue URLs; message IDs; message retention; delay queues; message size; purging and deleting queues; short and long polling; visibility timeout; receiving without deleting; messages becoming invisible and returning; changing visibility timeout; duplicate processing; at-least-once delivery; best-effort ordering; multiple producers and consumers; FIFO queues; .fifo naming; Message Group IDs; Deduplication IDs; content-based deduplication; message ordering; Standard versus FIFO; dead-letter queues; redrive policies; maxReceiveCount; forcing failures; moving messages to DLQs; inspecting and redriving failed messages; producer to SQS to consumer patterns; worker queues; application decoupling; buffering traffic spikes; SQS with Lambda; Lambda failures, retries and batching; SNS plus SQS fan-out; S3 event notifications to SQS; EventBridge to SQS; EC2 workers consuming SQS messages; CloudWatch monitoring; SQS-driven Auto Scaling; ApproximateNumberOfMessagesVisible; ApproximateNumberOfMessagesNotVisible; ApproximateAgeOfOldestMessage; messages sent, received and deleted; CloudWatch alarms; queue policies; SendMessage and ReceiveMessage permissions; AWS service permissions; encryption; KMS; KMS permissions; cross-account SQS; message attributes; large-message patterns using S3; poison messages; consumer crashes; retry behaviour; permission failures and queue policy failures. Include practical comparison labs for SQS versus SNS, SQS versus EventBridge, SQS versus Kinesis, Standard versus FIFO, SQS versus direct Lambda invocation and SQS buffering versus direct backend processing. Include SAA-C03 scenario labs covering traffic spikes, slow backends, failed orders, strict ordering, fan-out, worker failures, serverless processing and Auto Scaling based on queue backlog. Arrange the labs in a logical beginner learning order. First produce only a numbered master list of every possible lab with title, difficulty, approximate time, AWS services used, goal and SAA-C03 relevance. Do not generate the detailed instructions yet. Stop after the catalogue.",
+    "updateRequest": "Create a complete list of hands-on Amazon SQS labs that a learner can realistically perform in AWS, focused specifically on the AWS Certified Solutions Architect Associate SAA-C03 exam. The labs must be beginner friendly and assume the user may never have used SQS before. The goal is to take the learner from basic SQS setup through real SAA-C03 architecture patterns. For every lab use simple language, prefer the AWS Management Console, walk through every important click and setting, explain what each setting does and why it matters, include IAM permissions, testing steps, clean-up steps, SAA-C03 exam connections and common exam traps, keep coding to an absolute minimum, and use current AWS features and behaviour. The first lab must be Create an IAM User for the SQS Labs. Walk through opening IAM, creating the IAM user, explaining why root should not be used, creating or attaching suitable SQS permissions using least privilege where practical, explaining the permissions, signing in as the IAM user and verifying SQS access. If later labs require Lambda, SNS, S3, CloudWatch, EventBridge, EC2, Auto Scaling or KMS, explain and add the required IAM permissions before using them. Create as many individual labs as needed to cover: creating Standard queues; sending, receiving and deleting messages; queue URLs; message IDs; message retention; delay queues; message size; purging and deleting queues; short and long polling; visibility timeout; receiving without deleting; messages becoming invisible and returning; changing visibility timeout; duplicate processing; at-least-once delivery; best-effort ordering; multiple producers and consumers; FIFO queues; .fifo naming; Message Group IDs; Deduplication IDs; content-based deduplication; message ordering; Standard versus FIFO; dead-letter queues; redrive policies; maxReceiveCount; forcing failures; moving messages to DLQs; inspecting and redriving failed messages; producer to SQS to consumer patterns; worker queues; application decoupling; buffering traffic spikes; SQS with Lambda; Lambda failures, retries and batching; SNS plus SQS fan-out; S3 event notifications to SQS; EventBridge to SQS; EC2 workers consuming SQS messages; CloudWatch monitoring; SQS-driven Auto Scaling; ApproximateNumberOfMessagesVisible; ApproximateNumberOfMessagesNotVisible; ApproximateAgeOfOldestMessage; messages sent, received and deleted; CloudWatch alarms; queue policies; SendMessage and ReceiveMessage permissions; AWS service permissions; encryption; KMS; KMS permissions; cross-account SQS; message attributes; large-message patterns using S3; poison messages; consumer crashes; retry behaviour; permission failures and queue policy failures. Include practical comparison labs for SQS versus SNS, SQS versus EventBridge, SQS versus Kinesis, Standard versus FIFO, SQS versus direct Lambda invocation and SQS buffering versus direct backend processing. Include SAA-C03 scenario labs covering traffic spikes, slow backends, failed orders, strict ordering, fan-out, worker failures, serverless processing and Auto Scaling based on queue backlog. Arrange the labs in a logical beginner learning order. First produce only a numbered master list of every possible lab with title, difficulty, approximate time, AWS services used, goal and SAA-C03 relevance. Do not generate the detailed instructions yet. Stop after the catalogue.",
+    "preferredRegion": "eu-west-2"
+  },
+  "boundaries": {
+    "handoffPackagePrepared": true,
+    "stage12Prepared": false,
+    "authorDraftWritten": false,
+    "supabaseConnected": false,
+    "awsConnected": false,
+    "candidatePrepared": false,
+    "published": false
+  }
+}
