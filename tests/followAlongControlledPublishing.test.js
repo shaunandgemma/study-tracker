@@ -106,6 +106,21 @@ test('Step 54 controlled publishing', async t => {
     assert.equal(config.storage.remoteResourcesTable, 'user_learning_path_resources');
   });
 
+  await t.test('2a. Terraform Import and Maintenance hides unnecessary learner resource fields', () => {
+    const row = approvedRuntimeRow();
+    row.programme_id = 'terraform-import-maintenance-learning-path';
+    row.runtime_content.programme.programmeId = 'terraform-import-maintenance-learning-path';
+    row.runtime_content.programme.pathId = 'terraform-import-maintenance-learning-path';
+
+    const config = buildPublishedFollowAlongConfig(row);
+
+    assert.deepEqual(config.tasks[0].createdResourceKeys, []);
+    assert.equal(config.capabilities.resourceCapture.status, 'not_applicable');
+    assert.equal(config.resources.schema.length, 1);
+    assert.deepEqual(row.runtime_content.tasks[0].createdResourceKeys, ['functionName']);
+    assert.deepEqual(validateFollowAlongConfig(config), { valid: true, errors: [], warnings: [] });
+  });
+
   await t.test('3. Published Lambda replaces only its coming-soon card', () => {
     const original = structuredClone(FOLLOW_ALONG_PROGRAMMES);
     const lambda = buildPublishedProgrammeCard(approvedRuntimeRow());

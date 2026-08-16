@@ -1,0 +1,3315 @@
+{
+  "schemaVersion": 1,
+  "kind": "author_local_handoff_package",
+  "status": "awaiting_human_handoff_review",
+  "sessionId": "author-assistant-terraform-import-maintenance-codex-20260815-001",
+  "preparedAt": "2026-08-15T22:30:00.000Z",
+  "generationMode": "new",
+  "service": {
+    "officialName": "HashiCorp Terraform on AWS Systems Manager",
+    "shortName": "Terraform Import Maintenance"
+  },
+  "acceptedFingerprintChain": {
+    "stage6": {
+      "algorithm": "sha256-json-v1",
+      "value": "67ba7f13ee724e2d0476453a1649ac1d3c8e0a95e3386f9518f5869d6a6cbd1f"
+    },
+    "stage7": {
+      "algorithm": "sha256-json-v1",
+      "value": "ced4f2a1a6d841d6ed7e7d844c2328882712b2e30e20123d52c9d87f1b6f0454"
+    },
+    "stage8": {
+      "algorithm": "sha256-json-v1",
+      "value": "fd70dd817203b2d4c99ca5453911c0075e24ef25d3a03b97c3d1ce1b24144875"
+    },
+    "stage9": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "stage10": {
+      "algorithm": "sha256-json-v1",
+      "value": "1b62997957c0f9757b009788c5de53bbaec6b28c397e50a574219dfd2bcab604"
+    },
+    "stage11": {
+      "algorithm": "sha256-json-v1",
+      "value": "79872cbf6cd5435ac563baeeccb4c991dbaad07ac521ef3d680dfae597028192"
+    }
+  },
+  "acceptedRecordManifest": {
+    "planning": {
+      "algorithm": "sha256-json-v1",
+      "value": "29b0e398fb6cc0691d3440dc2da538c8cc0fff9442ada35b9658675c88ac15b2"
+    },
+    "instructions": {
+      "algorithm": "sha256-json-v1",
+      "value": "67ba7f13ee724e2d0476453a1649ac1d3c8e0a95e3386f9518f5869d6a6cbd1f"
+    },
+    "resourcesAndChecks": {
+      "algorithm": "sha256-json-v1",
+      "value": "ced4f2a1a6d841d6ed7e7d844c2328882712b2e30e20123d52c9d87f1b6f0454"
+    },
+    "cleanup": {
+      "algorithm": "sha256-json-v1",
+      "value": "fd70dd817203b2d4c99ca5453911c0075e24ef25d3a03b97c3d1ce1b24144875"
+    },
+    "authoringCheck": {
+      "algorithm": "sha256-json-v1",
+      "value": "feee3d0680d03a712a303f7f5b571c5f02c93f9cdd40904d0d2ce54a3428e76b"
+    },
+    "learnerPreview": {
+      "algorithm": "sha256-json-v1",
+      "value": "1b62997957c0f9757b009788c5de53bbaec6b28c397e50a574219dfd2bcab604"
+    },
+    "structuredReview": {
+      "algorithm": "sha256-json-v1",
+      "value": "79872cbf6cd5435ac563baeeccb4c991dbaad07ac521ef3d680dfae597028192"
+    }
+  },
+  "authorDraftContent": {
+    "schema": {
+      "profile": "canonical-follow-along",
+      "version": "1.0.0",
+      "authorPackageVersion": "1.0.0",
+      "sharedContractHash": null,
+      "createdWith": "codex-local-handoff"
+    },
+    "programme": {
+      "serviceSlug": "terraform-import-maintenance",
+      "serviceName": "HashiCorp Terraform on AWS Systems Manager",
+      "shortName": "Terraform Import Maintenance",
+      "displayName": "Terraform Import and Maintenance Follow Along",
+      "subtitle": "Adopt an existing AWS parameter, diagnose drift and recover its state binding safely.",
+      "description": "Start with no lab infrastructure. Prepare restricted access, create one harmless unmanaged Parameter Store String, write matching Terraform configuration, import it through a saved plan, inspect state, detect and repair deliberate drift, use temporary diagnostic logging, remove and recover the binding, then destroy every cloud and local artifact in reverse-dependency order.",
+      "learningOutcome": "Confidently import an existing AWS object with an import block, distinguish configuration from state and remote infrastructure, inspect and repair drift, use TF_LOG safely, recover a removed state binding and complete verified teardown.",
+      "programmeId": "terraform-import-maintenance-learning-path",
+      "pathId": "terraform-import-maintenance-learning-path",
+      "componentNamespace": "",
+      "category": "Terraform Import, State and Maintenance",
+      "difficulty": "Beginner to Intermediate",
+      "estimatedMinutes": null,
+      "defaultRegion": "eu-west-2",
+      "regionScope": "mixed",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "publicationVisibility": "unpublished",
+      "examId": "terraform-associate-004"
+    },
+    "sources": [
+      {
+        "id": "source-import-maintenance-aws-iam-safety",
+        "title": "Security best practices in IAM",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Use non-root, least-privilege and short-lived training access.",
+        "taskIds": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-aws-cli-install",
+        "title": "Installing or updating to the latest version of the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Install and verify the AWS CLI before any AWS command.",
+        "taskIds": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-aws-cli-configure",
+        "title": "Configuration and credential file settings in the AWS CLI",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create and later remove the exact named training profile.",
+        "taskIds": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-aws-parameter-store",
+        "title": "Working with Parameter Store",
+        "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-working-with.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Create, inspect, update and delete the harmless String parameter.",
+        "taskIds": [
+          "task-import-maintenance-002-create-one-unmanaged-parameter-store-value",
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "task-import-maintenance-005-detect-drift-and-restore-the-declared-value",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely",
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-aws-parameter-cli",
+        "title": "Creating a Parameter Store parameter using the AWS CLI",
+        "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/param-create-cli.html",
+        "publisher": "AWS",
+        "sourceType": "official_documentation",
+        "purpose": "Provide the complete CLI creation and verification route.",
+        "taskIds": [
+          "task-import-maintenance-002-create-one-unmanaged-parameter-store-value",
+          "task-import-maintenance-005-detect-drift-and-restore-the-declared-value"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-install",
+        "title": "Install Terraform",
+        "url": "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Install the Terraform CLI and verify that it is on PATH.",
+        "taskIds": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-provider-requirements",
+        "title": "Provider requirements",
+        "url": "https://developer.hashicorp.com/terraform/language/providers/requirements",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Pin the required AWS provider source and compatible version.",
+        "taskIds": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-init",
+        "title": "Initialize the Terraform working directory",
+        "url": "https://developer.hashicorp.com/terraform/cli/init",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Initialize the isolated directory and install its provider.",
+        "taskIds": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-import-overview",
+        "title": "Import existing infrastructure resources",
+        "url": "https://developer.hashicorp.com/terraform/cli/import",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Explain the relationship between an existing object, configuration and state.",
+        "taskIds": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration",
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-import-block",
+        "title": "Import resources overview",
+        "url": "https://developer.hashicorp.com/terraform/language/import",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Use a reviewable import block in the normal plan-and-apply workflow.",
+        "taskIds": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration",
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-plan",
+        "title": "Terraform plan command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/plan",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Review import, refresh-only, repair, re-import and destroy plans before applying.",
+        "taskIds": [
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "task-import-maintenance-005-detect-drift-and-restore-the-declared-value",
+          "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely",
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-state-list",
+        "title": "Terraform state list command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/state/list",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "List the exact managed resource address.",
+        "taskIds": [
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely",
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-state-show",
+        "title": "Terraform state show command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/state/show",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Inspect the imported resource attributes recorded in state.",
+        "taskIds": [
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-state-rm",
+        "title": "Terraform state rm command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/state/rm",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Safely demonstrate that removing a binding does not delete the remote object.",
+        "taskIds": [
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-cli-environment",
+        "title": "Terraform CLI environment variables reference",
+        "url": "https://developer.hashicorp.com/terraform/cli/config/environment-variables",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Enable and disable diagnostic logging without persisting a log file.",
+        "taskIds": [
+          "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file"
+        ]
+      },
+      {
+        "id": "source-import-maintenance-tf-destroy",
+        "title": "Terraform destroy command",
+        "url": "https://developer.hashicorp.com/terraform/cli/commands/destroy",
+        "publisher": "HashiCorp",
+        "sourceType": "official_documentation",
+        "purpose": "Remove the imported managed parameter through a reviewed destroy plan.",
+        "taskIds": [
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ]
+      }
+    ],
+    "presentation": {
+      "accentColor": "#0f766e",
+      "iconLabel": "TF5",
+      "iconName": "Import",
+      "badgeText": "Terraform Card 5"
+    },
+    "storage": {},
+    "progress": {
+      "initialTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+      "supportedModes": [
+        "console",
+        "cli",
+        "both"
+      ],
+      "optionalTasksCountTowardsProgress": false,
+      "completionStatuses": [
+        "in_progress",
+        "completed_retained",
+        "completed_cleaned"
+      ]
+    },
+    "capabilities": {},
+    "phases": [
+      {
+        "id": "phase-import-maintenance-01-prepare-an-isolated-maintenance-workspace",
+        "phaseNumber": 1,
+        "title": "Prepare an isolated maintenance workspace",
+        "description": "Install the tools, create restricted training access and enter a new empty folder.",
+        "taskIds": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-import-maintenance-02-create-and-describe-unmanaged-infrastructure",
+        "phaseNumber": 2,
+        "title": "Create and describe unmanaged infrastructure",
+        "description": "Create one exact Standard String parameter outside Terraform and prove that no state exists yet.",
+        "taskIds": [
+          "task-import-maintenance-002-create-one-unmanaged-parameter-store-value"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-import-maintenance-03-import-the-parameter-into-terraform",
+        "phaseNumber": 3,
+        "title": "Import the parameter into Terraform",
+        "description": "Write complete configuration, plan the import, apply it and inspect the new state binding.",
+        "taskIds": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration",
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-import-maintenance-04-practise-controlled-maintenance",
+        "phaseNumber": 4,
+        "title": "Practise controlled maintenance",
+        "description": "Detect drift, repair it, use diagnostic logging and safely detach and re-import the state binding.",
+        "taskIds": [
+          "task-import-maintenance-005-detect-drift-and-restore-the-declared-value",
+          "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file",
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely"
+        ],
+        "isOptional": false
+      },
+      {
+        "id": "phase-import-maintenance-05-destroy-and-acknowledge-cleanup",
+        "phaseNumber": 5,
+        "title": "Destroy and acknowledge cleanup",
+        "description": "Destroy the cloud parameter first, then remove credentials, state and local files in reverse-dependency order.",
+        "taskIds": [
+          "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact"
+        ],
+        "isOptional": false
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+        "slug": "install-tools-and-create-restricted-training-access",
+        "title": "Install tools and create restricted training access",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "Terraform CLI, AWS CLI, IAM and isolated local workspace",
+        "goal": "Prepare a verified Terraform and AWS CLI environment, one restricted training identity and one empty working folder.",
+        "whyItMatters": "Import changes Terraform state and later changes a real AWS object, so the learner must establish the exact identity, Region and filesystem boundary first.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-01-prepare-an-isolated-maintenance-workspace",
+        "orderInPhase": 1,
+        "prerequisites": [],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-aws-iam-safety",
+          "source-import-maintenance-aws-cli-install",
+          "source-import-maintenance-aws-cli-configure",
+          "source-import-maintenance-tf-install"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [
+          "resource-import-maintenance-policy-fa-terraform-import-maintenance-policy",
+          "resource-import-maintenance-user-fa-terraform-import-maintenance-user",
+          "resource-import-maintenance-access-key-fa-terraform-import-maintenance-user",
+          "resource-import-maintenance-profile-fa-terraform-import-maintenance",
+          "resource-import-maintenance-folder-fa-terraform-import-maintenance"
+        ],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Install tools and create restricted training access",
+            "instruction": "On Windows, open the official Terraform install source, choose the Windows AMD64 download, save the ZIP, choose Extract All, create C:\\Tools\\Terraform, copy terraform.exe into that folder, open Edit the system environment variables, choose Environment Variables, edit your user Path, add C:\\Tools\\Terraform, confirm every dialog and open a new PowerShell window.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-01",
+                "text": "On Windows, open the official Terraform install source, choose the Windows AMD64 download, save the ZIP, choose Extract All, create C:\\Tools\\Terraform, copy terraform.exe into that folder, open Edit the system environment variables, choose Environment Variables, edit your user Path, add C:\\Tools\\Terraform, confirm every dialog and open a new PowerShell window.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-02",
+                "text": "On macOS or Linux, open the same official Terraform install source, select the tab for your operating system and run its displayed package-manager commands one at a time; open a new terminal when installation finishes.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-03",
+                "text": "Open the official AWS CLI install source, select your operating system, download the current AWS CLI v2 installer, run it with the displayed default options and open a new terminal after it finishes.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-04",
+                "text": "Run terraform version and aws --version. If either command is not found, stop and correct the installation or PATH before continuing.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-05",
+                "text": "Sign in to the training AWS account with an existing administrator-capable identity; do not use the root user for routine lab work.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-06",
+                "text": "Open the account menu in the upper-right and confirm that this is the intended training account.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-07",
+                "text": "Use the Region selector in the upper-right to choose Europe (London), whose Region code is eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-08",
+                "text": "In the AWS Console search box enter IAM, open IAM, choose Policies in the left navigation and choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-09",
+                "text": "Choose the JSON editor, remove its existing example and paste the complete fa-terraform-import-maintenance-policy.json block shown below.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-10",
+                "text": "Read the policy before saving: it permits identity verification, parameter listing and changes only to /fa-terraform-import-maintenance/development/app-mode in eu-west-2.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-11",
+                "text": "Choose Next, enter fa-terraform-import-maintenance-policy as the policy name, enter Temporary access for the Terraform import maintenance lab as the description and choose Create policy.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-12",
+                "text": "Choose Users, choose Create user, enter fa-terraform-import-maintenance-user and do not enable Console access for this CLI-only training identity.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-13",
+                "text": "On Set permissions choose Attach policies directly, select only fa-terraform-import-maintenance-policy, choose Next, review the exact user and policy and choose Create user.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-14",
+                "text": "Open fa-terraform-import-maintenance-user, choose Security credentials, choose Create access key, choose Command Line Interface, read and acknowledge the recommendation, enter Terraform import maintenance lab as the description and create the key.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-15",
+                "text": "Keep the access-key screen open only while running aws configure --profile fa-terraform-import-maintenance. Enter the access key ID and secret at the protected prompts, enter eu-west-2 for Default region name and json for Default output format.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-16",
+                "text": "Close the access-key screen after configuration. Never paste either credential into a Terraform file, command, screenshot, Author, Git or chat.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-17",
+                "text": "For CloudShell, macOS, Linux or WSL, open a Bash terminal, create ~/fa-terraform-import-maintenance, enter it and use pwd to verify the exact folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-18",
+                "text": "For Windows PowerShell, create $env:USERPROFILE\\fa-terraform-import-maintenance, enter it and use Get-Location to verify the exact folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-checkbox-19",
+                "text": "List the folder and confirm it contains no .tf file, .terraform directory, plan file, state file or unrelated content.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-console-01-install-tools-and-create-restricted-training-access-editable-block-01",
+                "title": "fa-terraform-import-maintenance-policy.json",
+                "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"VerifyTrainingIdentity\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:GetCallerIdentity\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ListParameterMetadata\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:DescribeParameters\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyTheImportMaintenanceParameter\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:PutParameter\",\n        \"ssm:GetParameter\",\n        \"ssm:GetParameters\",\n        \"ssm:GetParameterHistory\",\n        \"ssm:DeleteParameter\",\n        \"ssm:AddTagsToResource\",\n        \"ssm:RemoveTagsFromResource\",\n        \"ssm:ListTagsForResource\"\n      ],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-terraform-import-maintenance/development/app-mode\"\n    }\n  ]\n}",
+                "language": "json",
+                "sourceIds": [
+                  "source-import-maintenance-aws-iam-safety",
+                  "source-import-maintenance-aws-cli-install",
+                  "source-import-maintenance-aws-cli-configure",
+                  "source-import-maintenance-tf-install"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Terraform and AWS CLI report versions, the named training identity resolves in the intended account, eu-west-2 is configured and the exact working folder is empty.",
+            "warning": "The IAM access key is a temporary lab credential. Prefer federated temporary access where available and delete this key immediately after the cloud parameter is destroyed.",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform version",
+            "explanation": "Verify that Terraform is installed and available on PATH.",
+            "expectedResult": "Terraform prints its installed version and platform.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws --version",
+            "explanation": "Verify that AWS CLI v2 is installed and available on PATH.",
+            "expectedResult": "The output begins aws-cli/2.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws configure --profile fa-terraform-import-maintenance",
+            "explanation": "Store the temporary training key through protected prompts and set eu-west-2 with json output.",
+            "expectedResult": "All four prompts complete and the named profile is written locally.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Never type credentials directly into a visible command.",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "aws sts get-caller-identity --profile fa-terraform-import-maintenance",
+            "explanation": "Verify the exact caller before any resource operation.",
+            "expectedResult": "Account contains the intended 12-digit account and Arn ends user/fa-terraform-import-maintenance-user.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "aws configure get region --profile fa-terraform-import-maintenance",
+            "explanation": "Verify the profile Region.",
+            "expectedResult": "The command prints eu-west-2.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "mkdir -p ~/fa-terraform-import-maintenance",
+            "explanation": "Bash route: create the exact isolated folder.",
+            "expectedResult": "The command returns without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "cd ~/fa-terraform-import-maintenance",
+            "explanation": "Bash route: enter the exact folder.",
+            "expectedResult": "The shell working directory changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "pwd",
+            "explanation": "Bash route: display the current directory.",
+            "expectedResult": "The path ends /fa-terraform-import-maintenance.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-09",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "New-Item -ItemType Directory -Path \"$env:USERPROFILE\\fa-terraform-import-maintenance\" -Force",
+            "explanation": "PowerShell route: create the exact isolated folder.",
+            "expectedResult": "PowerShell displays the fa-terraform-import-maintenance directory.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "Set-Location \"$env:USERPROFILE\\fa-terraform-import-maintenance\"",
+            "explanation": "PowerShell route: enter the exact folder.",
+            "expectedResult": "The PowerShell working directory changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-11",
+            "stepNumber": 11,
+            "number": 11,
+            "command": "Get-Location",
+            "explanation": "PowerShell route: display the current directory.",
+            "expectedResult": "The path ends \\fa-terraform-import-maintenance.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-cli-12",
+            "stepNumber": 12,
+            "number": 12,
+            "command": "Get-ChildItem -Force",
+            "explanation": "PowerShell route: include hidden items while checking the new folder.",
+            "expectedResult": "No Terraform configuration, plan or state item appears.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-install",
+              "source-import-maintenance-aws-cli-configure",
+              "source-import-maintenance-tf-install"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-verification-01",
+            "title": "Verify tools",
+            "instruction": "Read the outputs from terraform version and aws --version.",
+            "expectedResult": "Both commands return version information rather than a command-not-found error.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-verification-02",
+            "title": "Verify identity and Region",
+            "instruction": "Compare get-caller-identity and the configured Region with the Console account and Region selector.",
+            "expectedResult": "The account matches, the ARN names fa-terraform-import-maintenance-user and the Region is eu-west-2.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-001-install-tools-and-create-restricted-training-access-verification-03",
+            "title": "Verify the empty boundary",
+            "instruction": "Show the exact current path and list hidden files.",
+            "expectedResult": "The path is the new fa-terraform-import-maintenance folder and it contains no previous Terraform content.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value",
+        "slug": "create-one-unmanaged-parameter-store-value",
+        "title": "Create one unmanaged Parameter Store value",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "AWS Systems Manager Parameter Store Standard String parameter",
+        "goal": "Create one exact harmless parameter outside Terraform and verify that it exists in AWS while Terraform state remains absent.",
+        "whyItMatters": "Import begins with a real object that exists independently of Terraform. Proving that starting condition prevents confusion between creation and import.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-02-create-and-describe-unmanaged-infrastructure",
+        "orderInPhase": 1,
+        "prerequisites": [
+          "task-import-maintenance-001-install-tools-and-create-restricted-training-access"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-aws-parameter-store",
+          "source-import-maintenance-aws-parameter-cli"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [
+          "resource-import-maintenance-parameter-app-mode"
+        ],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Create one unmanaged Parameter Store value",
+            "instruction": "Choose exactly one creation route for this task: either complete the Console creation clicks or run the first AWS CLI command. Do not create the same name twice.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-01",
+                "text": "Choose exactly one creation route for this task: either complete the Console creation clicks or run the first AWS CLI command. Do not create the same name twice.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-02",
+                "text": "For the Console route, use the original administrator-capable Console session, confirm the intended training account again, keep Europe (London) eu-west-2 selected, search for Systems Manager and open it; do not add Console access to the CLI-only training user.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-03",
+                "text": "In the left navigation choose Parameter Store, then choose Create parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-04",
+                "text": "For Name enter exactly /fa-terraform-import-maintenance/development/app-mode, including the leading slash.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-05",
+                "text": "For Description enter exactly Harmless application mode used by the Terraform import maintenance lab.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-06",
+                "text": "Choose Standard tier, choose String as the Type, leave Data type as text and enter console-created as the Value.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-07",
+                "text": "In Tags choose Add tag, enter Lab as the first key and fa-terraform-import-maintenance as its value.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-08",
+                "text": "Choose Add tag again, enter ManagedBy as the second key and ManualBeforeImport as its value.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-09",
+                "text": "Review the name, Region, tier, type, data type, value and both tags, then choose Create parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-10",
+                "text": "Open the parameter detail page and read its Overview and Tags tabs.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-11",
+                "text": "Run the AWS CLI get-parameter and list-tags-for-resource verification commands regardless of which creation route you selected.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-12",
+                "text": "Remain in the empty local folder and run terraform state list; because no Terraform configuration or state exists yet, the command must not show a managed address.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-console-01-create-one-unmanaged-parameter-store-value-checkbox-13",
+                "text": "Do not create any second parameter and do not use SecureString or a real secret in this lab.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "AWS shows exactly one Standard String parameter with value console-created and the two exact tags, while Terraform has no state binding.",
+            "warning": "The CLI put-parameter command is an alternative to the Console clicks. Running both creation routes will produce ParameterAlreadyExists, which is not a reason to add --overwrite at this stage.",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ssm put-parameter --name /fa-terraform-import-maintenance/development/app-mode --description \"Harmless application mode used by the Terraform import maintenance lab\" --type String --tier Standard --data-type text --value console-created --tags Key=Lab,Value=fa-terraform-import-maintenance Key=ManagedBy,Value=ManualBeforeImport --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "CLI creation route only: create the exact Standard String parameter instead of using the Console form.",
+            "expectedResult": "The JSON response contains Version 1 and Tier Standard.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Skip this creation command if the Console route already created the parameter.",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Read the exact remote parameter.",
+            "expectedResult": "Name, Type String, Value console-created, Version 1 and DataType text are visible.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "aws ssm list-tags-for-resource --resource-type Parameter --resource-id /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Read the parameter tags.",
+            "expectedResult": "The TagList contains Lab=fa-terraform-import-maintenance and ManagedBy=ManualBeforeImport.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform state list",
+            "explanation": "Prove that the remote object is not yet tracked by Terraform.",
+            "expectedResult": "Terraform reports no state file or returns no resource address.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-verification-01",
+            "title": "Verify the unmanaged object",
+            "instruction": "Compare the Parameter Store detail page with both AWS CLI read commands.",
+            "expectedResult": "All surfaces show the one exact name, Standard String type, console-created value and two exact tags.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value-verification-02",
+            "title": "Verify Terraform is not managing it",
+            "instruction": "Run terraform state list before creating configuration.",
+            "expectedResult": "No aws_ssm_parameter.application_mode address exists.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-003-write-the-matching-terraform-configuration",
+        "slug": "write-the-matching-terraform-configuration",
+        "title": "Write the matching Terraform configuration",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "Provider requirements, resource configuration, import block and outputs",
+        "goal": "Create four complete Terraform files whose declared resource exactly matches the unmanaged AWS parameter.",
+        "whyItMatters": "Import records a binding; it does not replace the need for configuration. A mismatch would make the first plan combine import with an unintended update.",
+        "difficulty": "Easy",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-03-import-the-parameter-into-terraform",
+        "orderInPhase": 1,
+        "prerequisites": [
+          "task-import-maintenance-002-create-one-unmanaged-parameter-store-value"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-tf-provider-requirements",
+          "source-import-maintenance-tf-init",
+          "source-import-maintenance-tf-import-overview",
+          "source-import-maintenance-tf-import-block"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Write the matching Terraform configuration",
+            "instruction": "Confirm the terminal is still inside the exact fa-terraform-import-maintenance folder.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-01",
+                "text": "Confirm the terminal is still inside the exact fa-terraform-import-maintenance folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-02",
+                "text": "Open a plain-text code editor. In Visual Studio Code choose File, Open Folder, select fa-terraform-import-maintenance and choose Select Folder; in another editor use Save As with UTF-8 and All files so .txt is not appended.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-03",
+                "text": "Choose New File, name it provider.tf and paste only the supplied provider.tf block.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-04",
+                "text": "Read required_version as the minimum Terraform version that supports import blocks, and read the AWS provider source and compatible major-version constraint.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-05",
+                "text": "Read the provider block and confirm it uses the exact eu-west-2 Region and fa-terraform-import-maintenance profile.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-06",
+                "text": "Create parameter.tf and paste only the supplied parameter.tf block.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-07",
+                "text": "Compare every argument in parameter.tf with the AWS detail page: exact name, description, String type, Standard tier, text data type, console-created value and two tags.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-08",
+                "text": "Create imports.tf and paste only the supplied imports.tf block.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-09",
+                "text": "Read to as the Terraform resource address that will receive the binding, and id as the existing AWS parameter name that the provider uses to find the object.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-10",
+                "text": "Create outputs.tf and paste only the supplied outputs.tf block.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-11",
+                "text": "Save all four files and use the editor file tree to verify their names end .tf rather than .tf.txt.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-12",
+                "text": "Run terraform fmt; it may print changed filenames and must not change the meaning.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-13",
+                "text": "Run terraform init and wait for successful backend and provider initialization.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-14",
+                "text": "Run terraform validate and correct any reported filename and line before continuing.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-15",
+                "text": "List the folder and identify the generated .terraform directory and .terraform.lock.hcl lock file.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-checkbox-16",
+                "text": "Do not run terraform apply in this task; the import must first be reviewed as a saved plan.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-editable-block-01",
+                "title": "provider.tf",
+                "content": "terraform {\n  required_version = \">= 1.5.0\"\n\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 6.0\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  region  = \"eu-west-2\"\n  profile = \"fa-terraform-import-maintenance\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-import-maintenance-tf-provider-requirements",
+                  "source-import-maintenance-tf-init",
+                  "source-import-maintenance-tf-import-overview",
+                  "source-import-maintenance-tf-import-block"
+                ]
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-editable-block-02",
+                "title": "parameter.tf",
+                "content": "resource \"aws_ssm_parameter\" \"application_mode\" {\n  name        = \"/fa-terraform-import-maintenance/development/app-mode\"\n  description = \"Harmless application mode used by the Terraform import maintenance lab\"\n  type        = \"String\"\n  tier        = \"Standard\"\n  data_type   = \"text\"\n  value       = \"console-created\"\n\n  tags = {\n    Lab       = \"fa-terraform-import-maintenance\"\n    ManagedBy = \"ManualBeforeImport\"\n  }\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-import-maintenance-tf-provider-requirements",
+                  "source-import-maintenance-tf-init",
+                  "source-import-maintenance-tf-import-overview",
+                  "source-import-maintenance-tf-import-block"
+                ]
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-editable-block-03",
+                "title": "imports.tf",
+                "content": "import {\n  to = aws_ssm_parameter.application_mode\n  id = \"/fa-terraform-import-maintenance/development/app-mode\"\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-import-maintenance-tf-provider-requirements",
+                  "source-import-maintenance-tf-init",
+                  "source-import-maintenance-tf-import-overview",
+                  "source-import-maintenance-tf-import-block"
+                ]
+              },
+              {
+                "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-console-01-write-the-matching-terraform-configuration-editable-block-04",
+                "title": "outputs.tf",
+                "content": "output \"imported_parameter_name\" {\n  description = \"The exact Parameter Store name now managed by Terraform\"\n  value       = aws_ssm_parameter.application_mode.name\n}\n\noutput \"imported_parameter_arn\" {\n  description = \"The AWS ARN recorded after import\"\n  value       = aws_ssm_parameter.application_mode.arn\n}",
+                "language": "text",
+                "sourceIds": [
+                  "source-import-maintenance-tf-provider-requirements",
+                  "source-import-maintenance-tf-init",
+                  "source-import-maintenance-tf-import-overview",
+                  "source-import-maintenance-tf-import-block"
+                ]
+              }
+            ],
+            "commands": [],
+            "expectedResult": "Four exact editable .tf files exist, Terraform initializes the AWS provider and validation reports that the configuration is valid.",
+            "warning": "The parameter value is intentionally harmless plaintext. Never copy a password, access key, token or real secret into configuration or state.",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform fmt",
+            "explanation": "Format every .tf file in the current folder.",
+            "expectedResult": "Terraform returns normally and may list formatted filenames.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform init",
+            "explanation": "Initialize the local backend and install the required AWS provider.",
+            "expectedResult": "Terraform has been successfully initialized! appears.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform validate",
+            "explanation": "Check syntax, provider schema, references and the import block.",
+            "expectedResult": "Success! The configuration is valid.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform providers",
+            "explanation": "Show which provider the configuration requires.",
+            "expectedResult": "The output lists registry.terraform.io/hashicorp/aws under the root configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "Get-ChildItem -Force",
+            "explanation": "PowerShell route: show the four source files plus generated initialization items.",
+            "expectedResult": "provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform and .terraform.lock.hcl are visible.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "ls -la",
+            "explanation": "Bash route: show the four source files plus generated initialization items.",
+            "expectedResult": "provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform and .terraform.lock.hcl are visible.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-provider-requirements",
+              "source-import-maintenance-tf-init",
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-verification-01",
+            "title": "Verify exact filenames and blocks",
+            "instruction": "Open each of the four files and compare it character-for-character with its supplied editable block.",
+            "expectedResult": "The file names and contents match, with no .txt suffix or omitted argument.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-003-write-the-matching-terraform-configuration-verification-02",
+            "title": "Verify initialization and validation",
+            "instruction": "Read the final lines from terraform init and terraform validate.",
+            "expectedResult": "Initialization succeeds and validation says the configuration is valid.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+        "slug": "plan-and-apply-the-declarative-import",
+        "title": "Plan and apply the declarative import",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "Import block, saved plan, local state and outputs",
+        "goal": "Bind the existing parameter to aws_ssm_parameter.application_mode without creating or destroying a remote object.",
+        "whyItMatters": "A reviewed import plan proves that Terraform will adopt the existing object at one stable address rather than attempt to replace it.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-03-import-the-parameter-into-terraform",
+        "orderInPhase": 2,
+        "prerequisites": [
+          "task-import-maintenance-003-write-the-matching-terraform-configuration"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-tf-import-overview",
+          "source-import-maintenance-tf-import-block",
+          "source-import-maintenance-tf-plan",
+          "source-import-maintenance-tf-state-list",
+          "source-import-maintenance-tf-state-show",
+          "source-import-maintenance-aws-parameter-store"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [
+          "resource-import-maintenance-local-terraform-state"
+        ],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Plan and apply the declarative import",
+            "instruction": "Run terraform plan -out=initial-import.tfplan from the initialized folder.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-01",
+                "text": "Run terraform plan -out=initial-import.tfplan from the initialized folder.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-02",
+                "text": "Read the summary and require exactly 1 to import, 0 to add, 0 to change and 0 to destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-03",
+                "text": "In the plan body identify aws_ssm_parameter.application_mode and the exact import ID /fa-terraform-import-maintenance/development/app-mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-04",
+                "text": "Stop if Terraform proposes an add, update, replacement or destroy; compare the Console fields with parameter.tf until the plan is import-only.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-05",
+                "text": "Run terraform show initial-import.tfplan and review the saved plan a second time.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-06",
+                "text": "Run terraform apply initial-import.tfplan only after the saved plan is import-only.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-07",
+                "text": "Run terraform state list and confirm exactly one address: aws_ssm_parameter.application_mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-08",
+                "text": "Run terraform state show aws_ssm_parameter.application_mode and compare name, description, type, tier, data_type, value and tags with parameter.tf.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-09",
+                "text": "Run both terraform outputs and confirm the name and ARN refer to the exact eu-west-2 parameter.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-10",
+                "text": "Open Systems Manager, choose Parameter Store and refresh the detail page.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-11",
+                "text": "Confirm the parameter still exists, retains Version 1 and has not been recreated; import changed Terraform state, not the remote object.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-console-01-plan-and-apply-the-declarative-import-checkbox-12",
+                "text": "Keep imports.tf in place because the later state-recovery exercise deliberately uses the same declarative import again.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "Terraform imports exactly one existing parameter, state lists one stable address and AWS still shows the same Version 1 object.",
+            "warning": "Never apply an import plan that includes an unexplained add, change, replace or destroy action.",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan -out=initial-import.tfplan",
+            "explanation": "Create a saved plan for the declarative import.",
+            "expectedResult": "Plan: 1 to import, 0 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform show initial-import.tfplan",
+            "explanation": "Inspect the immutable saved plan before applying it.",
+            "expectedResult": "Only aws_ssm_parameter.application_mode is marked for import.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform apply initial-import.tfplan",
+            "explanation": "Apply the exact reviewed import plan.",
+            "expectedResult": "Apply completes with one imported resource and no remote create, change or destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform state list",
+            "explanation": "List all addresses in local state.",
+            "expectedResult": "Exactly aws_ssm_parameter.application_mode is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform state show aws_ssm_parameter.application_mode",
+            "explanation": "Display the imported attributes stored for the one address.",
+            "expectedResult": "The exact name, description, String type, Standard tier, text data type, console-created value and tags are shown.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform output imported_parameter_name",
+            "explanation": "Read the learner-facing imported name output.",
+            "expectedResult": "The output is /fa-terraform-import-maintenance/development/app-mode.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform output imported_parameter_arn",
+            "explanation": "Read the provider-computed ARN output.",
+            "expectedResult": "The ARN contains ssm, eu-west-2 and parameter/fa-terraform-import-maintenance/development/app-mode.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Verify the same AWS object after import.",
+            "expectedResult": "The parameter remains Version 1 with value console-created.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-import-overview",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-verification-01",
+            "title": "Verify an import-only plan",
+            "instruction": "Compare the saved plan summary with the import block and resource address.",
+            "expectedResult": "There is one import and zero add, change or destroy actions.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-verification-02",
+            "title": "Verify one state binding",
+            "instruction": "Compare terraform state list and terraform state show with Parameter Store.",
+            "expectedResult": "One Terraform address maps to the one exact AWS parameter.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-004-plan-and-apply-the-declarative-import-verification-03",
+            "title": "Verify no recreation",
+            "instruction": "Read the parameter Version in AWS after apply.",
+            "expectedResult": "Version remains 1, demonstrating that import did not recreate or overwrite the object.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value",
+        "slug": "detect-drift-and-restore-the-declared-value",
+        "title": "Detect drift and restore the declared value",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "Out-of-band change, refresh-only preview and normal repair plan",
+        "goal": "Make one deliberate harmless Console change, observe it without accepting it and restore the configuration value through a saved plan.",
+        "whyItMatters": "Maintenance requires distinguishing a refresh-only state reconciliation from a normal plan that changes AWS back to the declared configuration.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-04-practise-controlled-maintenance",
+        "orderInPhase": 1,
+        "prerequisites": [
+          "task-import-maintenance-004-plan-and-apply-the-declarative-import"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-aws-parameter-store",
+          "source-import-maintenance-aws-parameter-cli",
+          "source-import-maintenance-tf-plan"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Detect drift and restore the declared value",
+            "instruction": "Choose exactly one drift route: either edit through Parameter Store in the Console or run the AWS CLI overwrite command. Do not update twice.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-01",
+                "text": "Choose exactly one drift route: either edit through Parameter Store in the Console or run the AWS CLI overwrite command. Do not update twice.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-02",
+                "text": "For the Console route, open Systems Manager in eu-west-2, choose Parameter Store and open /fa-terraform-import-maintenance/development/app-mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-03",
+                "text": "Choose Edit, leave the name, description, Standard tier, String type, text data type and tags unchanged, replace only the value with console-drifted and save changes.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-04",
+                "text": "Refresh the detail page and confirm the visible value is console-drifted and Version is 2.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-05",
+                "text": "Run terraform plan -refresh-only -out=observed-drift.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-06",
+                "text": "Read the refresh-only plan as an observation of the remote change; do not apply observed-drift.tfplan because the declared configuration still says console-created.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-07",
+                "text": "Run terraform plan -out=repair-drift.tfplan in normal mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-08",
+                "text": "Confirm the plan proposes one in-place update from console-drifted back to console-created, with zero additions and zero destroys.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-09",
+                "text": "Run terraform show repair-drift.tfplan, verify only the value changes and then apply the saved repair plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-10",
+                "text": "Open the parameter in the Console and refresh it; confirm the value is console-created and the Version has advanced to 3.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-11",
+                "text": "Run the AWS CLI read command and a new terraform plan to prove AWS and configuration agree again.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-console-01-detect-drift-and-restore-the-declared-value-checkbox-12",
+                "text": "Keep observed-drift.tfplan and repair-drift.tfplan until final cleanup so every generated local file is removed together after cloud cleanup.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The refresh-only plan reports the out-of-band value, the normal saved plan restores console-created and the final plan reports no changes.",
+            "warning": "Do not apply the refresh-only plan in this exercise. Applying it would accept the remote drift into state without changing the configuration that caused the mismatch.",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "aws ssm put-parameter --name /fa-terraform-import-maintenance/development/app-mode --type String --value console-drifted --overwrite --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "CLI drift route only: replace the harmless value outside Terraform.",
+            "expectedResult": "The response contains Version 2 and Tier Standard.",
+            "instructions": [],
+            "commands": [],
+            "warning": "Skip this overwrite command if the Console route already created the drift.",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform plan -refresh-only -out=observed-drift.tfplan",
+            "explanation": "Preview only the state and output changes caused by the remote edit.",
+            "expectedResult": "Terraform reports that the object changed outside Terraform and does not propose a remote write.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform show observed-drift.tfplan",
+            "explanation": "Inspect the saved observation without applying it.",
+            "expectedResult": "The value observed from AWS is console-drifted.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform plan -out=repair-drift.tfplan",
+            "explanation": "Create a normal saved plan that restores the declared value.",
+            "expectedResult": "Plan: 0 to add, 1 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform show repair-drift.tfplan",
+            "explanation": "Verify the exact in-place repair before applying.",
+            "expectedResult": "Only value changes from console-drifted to console-created.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "terraform apply repair-drift.tfplan",
+            "explanation": "Apply the reviewed normal repair plan.",
+            "expectedResult": "Apply complete! Resources: 0 added, 1 changed, 0 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Read the repaired AWS value and version.",
+            "expectedResult": "Value is console-created and Version is 3.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform plan",
+            "explanation": "Confirm the repaired remote object now matches configuration and state.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-parameter-cli",
+              "source-import-maintenance-tf-plan"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-verification-01",
+            "title": "Verify drift was visible",
+            "instruction": "Read observed-drift.tfplan and the Parameter Store Version before repair.",
+            "expectedResult": "The plan sees console-drifted and AWS shows Version 2.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-verification-02",
+            "title": "Verify the repair scope",
+            "instruction": "Read repair-drift.tfplan before apply.",
+            "expectedResult": "Only one in-place value update appears, with no add, replace or destroy.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-005-detect-drift-and-restore-the-declared-value-verification-03",
+            "title": "Verify convergence",
+            "instruction": "Compare the final AWS CLI value with a fresh Terraform plan.",
+            "expectedResult": "AWS returns console-created and Terraform reports no changes.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file",
+        "slug": "use-diagnostic-logging-without-saving-a-log-file",
+        "title": "Use diagnostic logging without saving a log file",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "TF_LOG diagnostic environment variable and clean planning",
+        "goal": "Temporarily enable INFO logging for one no-change plan, recognize diagnostic lines and disable logging immediately.",
+        "whyItMatters": "Verbose logging helps diagnose provider and state operations, but it can expose request details and should be enabled only for a controlled interval.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-04-practise-controlled-maintenance",
+        "orderInPhase": 2,
+        "prerequisites": [
+          "task-import-maintenance-005-detect-drift-and-restore-the-declared-value"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-tf-cli-environment",
+          "source-import-maintenance-tf-plan"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Use diagnostic logging without saving a log file",
+            "instruction": "Confirm a normal terraform plan reports no changes before enabling diagnostics.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-01",
+                "text": "Confirm a normal terraform plan reports no changes before enabling diagnostics.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-02",
+                "text": "Choose the command set for your shell: use the PowerShell environment commands in PowerShell, or the export and unset commands in Bash, macOS, Linux or WSL.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-03",
+                "text": "Set TF_LOG to INFO. This sends additional diagnostic lines to the terminal standard-error stream and does not create a file because TF_LOG_PATH is not set.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-04",
+                "text": "Run terraform plan and look for timestamped INFO lines describing Terraform or provider activity followed by the normal no-change result.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-05",
+                "text": "Do not copy or share diagnostic output; provider logs can contain account, resource or request details even when this lab uses only harmless data.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-06",
+                "text": "Disable logging immediately with Remove-Item Env:TF_LOG in PowerShell or unset TF_LOG in Bash.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-07",
+                "text": "Run terraform plan again and confirm the timestamped INFO lines are gone while the no-change result remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-08",
+                "text": "Use Get-ChildItem Env:TF_LOG in PowerShell or printenv TF_LOG in Bash to verify that the variable is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-console-01-use-diagnostic-logging-without-saving-a-log-file-checkbox-09",
+                "text": "List the working folder and confirm no terraform.log file exists because no TF_LOG_PATH was configured.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "One plan displays INFO diagnostics, logging is then disabled, the next plan is quiet and no diagnostic file exists.",
+            "warning": "Terraform logs can contain sensitive operational details. This exercise displays INFO output only in the terminal and never persists or shares it.",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform plan",
+            "explanation": "Establish a clean baseline before logging.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "$env:TF_LOG = \"INFO\"",
+            "explanation": "PowerShell route: enable INFO diagnostics for the current process.",
+            "expectedResult": "PowerShell sets TF_LOG without printing credential data.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform plan",
+            "explanation": "PowerShell or Bash route: run one diagnostic plan.",
+            "expectedResult": "Timestamped INFO lines appear and the plan still reports no changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "Remove-Item Env:TF_LOG",
+            "explanation": "PowerShell route: disable Terraform logging.",
+            "expectedResult": "The TF_LOG environment entry is removed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "Get-ChildItem Env:TF_LOG",
+            "explanation": "PowerShell route: verify logging is disabled.",
+            "expectedResult": "PowerShell reports that Env:TF_LOG does not exist.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "export TF_LOG=INFO",
+            "explanation": "Bash route: enable INFO diagnostics for the current shell.",
+            "expectedResult": "The command returns to the prompt without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform plan",
+            "explanation": "Bash route: run one diagnostic plan.",
+            "expectedResult": "Timestamped INFO lines appear and the plan still reports no changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "unset TF_LOG",
+            "explanation": "Bash route: disable Terraform logging.",
+            "expectedResult": "The command returns to the prompt without output.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-09",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "printenv TF_LOG",
+            "explanation": "Bash route: verify logging is disabled.",
+            "expectedResult": "No value is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-cli-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "terraform plan",
+            "explanation": "Verify normal quiet behavior after disabling TF_LOG.",
+            "expectedResult": "No timestamped INFO stream appears and Terraform reports no changes.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-cli-environment",
+              "source-import-maintenance-tf-plan"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-verification-01",
+            "title": "Verify temporary diagnostics",
+            "instruction": "Compare the plan while TF_LOG=INFO with the plan after TF_LOG is removed.",
+            "expectedResult": "Only the first plan contains timestamped INFO diagnostics; both report no infrastructure changes.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file-verification-02",
+            "title": "Verify no log artifact",
+            "instruction": "List all files in the exact working folder.",
+            "expectedResult": "No terraform.log or other diagnostic log file exists.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely",
+        "slug": "detach-and-re-import-the-state-binding-safely",
+        "title": "Detach and re-import the state binding safely",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "terraform state rm dry run, remote verification and declarative re-import",
+        "goal": "Remove only the Terraform binding, prove the AWS object survives and recover the binding through the existing import block.",
+        "whyItMatters": "State repair is hazardous unless the learner understands that forgetting an address is different from destroying its remote object and verifies both sides at every step.",
+        "difficulty": "Hard",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-04-practise-controlled-maintenance",
+        "orderInPhase": 3,
+        "prerequisites": [
+          "task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-tf-state-list",
+          "source-import-maintenance-tf-state-show",
+          "source-import-maintenance-tf-state-rm",
+          "source-import-maintenance-tf-import-block",
+          "source-import-maintenance-tf-plan",
+          "source-import-maintenance-aws-parameter-store"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Detach and re-import the state binding safely",
+            "instruction": "Run terraform state list and require exactly aws_ssm_parameter.application_mode before changing state.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-01",
+                "text": "Run terraform state list and require exactly aws_ssm_parameter.application_mode before changing state.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-02",
+                "text": "Run terraform state rm -dry-run aws_ssm_parameter.application_mode and confirm exactly one matching instance is reported without modifying state.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-03",
+                "text": "Run terraform state list again and confirm the address still exists after the dry run.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-04",
+                "text": "Run terraform state rm aws_ssm_parameter.application_mode to remove only the binding from local state.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-05",
+                "text": "Read the success message and note that Terraform writes a local state backup when state is modified.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-06",
+                "text": "Run terraform state list and confirm no address remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-07",
+                "text": "Immediately open Parameter Store in eu-west-2 and refresh /fa-terraform-import-maintenance/development/app-mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-08",
+                "text": "Confirm the AWS parameter still exists with value console-created and Version 3; state rm did not call AWS to delete it.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-09",
+                "text": "Do not run a normal apply while the binding is absent unless the import block is present and the plan is import-only.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-10",
+                "text": "Open imports.tf and confirm it still maps the exact AWS name to aws_ssm_parameter.application_mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-11",
+                "text": "Run terraform plan -out=reimport-binding.tfplan and require exactly 1 to import with zero add, change or destroy.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-12",
+                "text": "Show and apply the saved re-import plan.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-13",
+                "text": "Run terraform state list, terraform state show and the AWS CLI get command to prove the one-to-one binding is restored.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-console-01-detach-and-re-import-the-state-binding-safely-checkbox-14",
+                "text": "Run terraform plan and require no changes before proceeding to cleanup.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "The dry run changes nothing, the real state removal leaves AWS untouched and the declarative re-import restores exactly one clean state binding.",
+            "warning": "State removal makes Terraform forget an object without deleting it. Stop if the recovery plan proposes a new resource instead of an import.",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform state list",
+            "explanation": "Inventory the binding before state maintenance.",
+            "expectedResult": "Exactly aws_ssm_parameter.application_mode is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform state rm -dry-run aws_ssm_parameter.application_mode",
+            "explanation": "Preview the exact address that would be forgotten.",
+            "expectedResult": "Terraform reports one matching resource instance without removing it.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform state list",
+            "explanation": "Prove the dry run left state unchanged.",
+            "expectedResult": "Exactly aws_ssm_parameter.application_mode is still printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform state rm aws_ssm_parameter.application_mode",
+            "explanation": "Remove only the local binding after the dry-run review.",
+            "expectedResult": "Successfully removed 1 resource instance(s).",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform state list",
+            "explanation": "Confirm local state currently tracks no resource.",
+            "expectedResult": "No resource address is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Prove the remote parameter survived state removal.",
+            "expectedResult": "AWS still returns value console-created and Version 3.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "terraform plan -out=reimport-binding.tfplan",
+            "explanation": "Use the retained import block to rebuild the binding.",
+            "expectedResult": "Plan: 1 to import, 0 to add, 0 to change, 0 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "terraform show reimport-binding.tfplan",
+            "explanation": "Inspect the recovery plan before applying.",
+            "expectedResult": "Only the exact parameter is marked for import at aws_ssm_parameter.application_mode.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-09",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "terraform apply reimport-binding.tfplan",
+            "explanation": "Apply the reviewed recovery plan.",
+            "expectedResult": "Apply completes with one imported resource and no remote change.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "terraform state list",
+            "explanation": "Confirm the stable address is restored.",
+            "expectedResult": "Exactly aws_ssm_parameter.application_mode is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-11",
+            "stepNumber": 11,
+            "number": 11,
+            "command": "terraform state show aws_ssm_parameter.application_mode",
+            "explanation": "Inspect the recovered state record.",
+            "expectedResult": "The exact name, console-created value and two tags are shown.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-cli-12",
+            "stepNumber": 12,
+            "number": 12,
+            "command": "terraform plan",
+            "explanation": "Confirm configuration, state and AWS agree after recovery.",
+            "expectedResult": "No changes. Your infrastructure matches the configuration.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-tf-state-show",
+              "source-import-maintenance-tf-state-rm",
+              "source-import-maintenance-tf-import-block",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-aws-parameter-store"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-verification-01",
+            "title": "Verify dry-run safety",
+            "instruction": "Compare state list before and after terraform state rm -dry-run.",
+            "expectedResult": "The same one address exists both times.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-verification-02",
+            "title": "Verify the remote object survived",
+            "instruction": "Read the parameter in both AWS CLI and Parameter Store after the real state removal.",
+            "expectedResult": "The exact parameter still exists with console-created and Version 3.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely-verification-03",
+            "title": "Verify recovered one-to-one binding",
+            "instruction": "Compare the re-import plan, final state list and final clean plan.",
+            "expectedResult": "One import restores one address and the final plan reports no changes.",
+            "mode": "cli"
+          }
+        ],
+        "cleanup": []
+      },
+      {
+        "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact",
+        "slug": "destroy-the-parameter-and-remove-every-lab-artifact",
+        "title": "Destroy the parameter and remove every lab artifact",
+        "service": "HashiCorp Terraform on AWS Systems Manager",
+        "feature": "Saved destroy plan, AWS verification, credential removal, state and file cleanup",
+        "goal": "Remove the exact cloud parameter first, then the access key, IAM identity, CLI profile, Terraform state and local folder, and acknowledge complete cleanup.",
+        "whyItMatters": "Deleting credentials or state before the managed object can strand infrastructure. Reverse-dependency cleanup preserves the ability to verify and recover until AWS is empty.",
+        "difficulty": "Medium",
+        "estimatedMinutes": null,
+        "region": "eu-west-2",
+        "status": "draft",
+        "phaseId": "phase-import-maintenance-05-destroy-and-acknowledge-cleanup",
+        "orderInPhase": 1,
+        "prerequisites": [
+          "task-import-maintenance-007-detach-and-re-import-the-state-binding-safely"
+        ],
+        "isOptional": false,
+        "requiredPermissions": [
+          "Use only fa-terraform-import-maintenance-user and /fa-terraform-import-maintenance/development/app-mode in eu-west-2."
+        ],
+        "modeAvailability": {
+          "console": {
+            "status": "available",
+            "reason": "Complete AWS Console and graphical file-building guidance is included."
+          },
+          "cli": {
+            "status": "available",
+            "reason": "Complete Terraform and AWS CLI commands with visible outcomes are included."
+          }
+        },
+        "sourceIds": [
+          "source-import-maintenance-tf-destroy",
+          "source-import-maintenance-tf-plan",
+          "source-import-maintenance-tf-state-list",
+          "source-import-maintenance-aws-parameter-store",
+          "source-import-maintenance-aws-iam-safety",
+          "source-import-maintenance-aws-cli-configure"
+        ],
+        "concepts": [],
+        "values": [],
+        "createdResourceKeys": [],
+        "consoleSteps": [
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact",
+            "stepNumber": 1,
+            "number": 1,
+            "title": "Destroy the parameter and remove every lab artifact",
+            "instruction": "Run terraform state list and confirm exactly aws_ssm_parameter.application_mode is tracked before teardown.",
+            "instructions": [
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-01",
+                "text": "Run terraform state list and confirm exactly aws_ssm_parameter.application_mode is tracked before teardown.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-02",
+                "text": "Run terraform plan -destroy -out=destroy-import-maintenance.tfplan.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-03",
+                "text": "Run terraform show destroy-import-maintenance.tfplan and confirm exactly one destroy: /fa-terraform-import-maintenance/development/app-mode.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-04",
+                "text": "Confirm the destroy plan contains no IAM user, IAM policy or unrelated Parameter Store name.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-05",
+                "text": "Apply the saved destroy plan and wait for Resources: 1 destroyed.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-06",
+                "text": "Run terraform state list and confirm no resource address remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-07",
+                "text": "Run the AWS CLI get command and expect ParameterNotFound, then open Parameter Store in eu-west-2, search the exact path and confirm no result.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-08",
+                "text": "Only after both cloud verifications, sign in again with the administrator-capable identity, open IAM, choose Users, open fa-terraform-import-maintenance-user and choose Security credentials.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-09",
+                "text": "Under Access keys, locate the one lab key, choose Actions, Deactivate, confirm, choose Actions again, choose Delete, enter the requested confirmation text and delete it.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-10",
+                "text": "Open the Permissions tab, select fa-terraform-import-maintenance-policy, choose Remove and confirm.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-11",
+                "text": "Return to Users, select fa-terraform-import-maintenance-user, choose Delete, enter the exact user name when requested and confirm deletion.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-12",
+                "text": "Open IAM Policies, search fa-terraform-import-maintenance-policy, select it, choose Actions, Delete, enter the exact policy name when requested and confirm deletion.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-13",
+                "text": "In the terminal run aws sts get-caller-identity with the training profile and confirm it now fails because the access key was deleted.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-14",
+                "text": "Open the AWS shared credentials file and remove only the complete [fa-terraform-import-maintenance] section; leave every other profile unchanged.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-15",
+                "text": "Open the AWS shared config file and remove only the complete [profile fa-terraform-import-maintenance] section; leave every other profile unchanged.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-16",
+                "text": "Run aws configure list-profiles and confirm fa-terraform-import-maintenance is absent.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-17",
+                "text": "Before deleting files, verify the exact fa-terraform-import-maintenance folder path, leave that folder and inspect the target directory name one final time.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-18",
+                "text": "Delete only the fa-terraform-import-maintenance folder. This removes provider cache, lock file, provider.tf, parameter.tf, imports.tf, outputs.tf, initial-import.tfplan, observed-drift.tfplan, repair-drift.tfplan, reimport-binding.tfplan, destroy-import-maintenance.tfplan, terraform.tfstate and all terraform.tfstate backup files.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-19",
+                "text": "Search Parameter Store, IAM, AWS profiles and the local filesystem for the exact lab names and confirm nothing remains.",
+                "detail": ""
+              },
+              {
+                "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-console-01-destroy-the-parameter-and-remove-every-lab-artifact-checkbox-20",
+                "text": "Complete the programme-cleanup acknowledgement only when the parameter, access key, IAM user, IAM policy, CLI profile, Terraform binding, state, plans, configuration and exact local folder are all absent.",
+                "detail": ""
+              }
+            ],
+            "jsonBlocks": [],
+            "commands": [],
+            "expectedResult": "AWS, IAM, the named CLI profile and the exact local workspace contain no resource, credential, state, plan or file created by this programme.",
+            "warning": "Do not delete the access key, profile, state or local folder until the saved Terraform destroy has completed and AWS visibly confirms the parameter is absent.",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          }
+        ],
+        "cliSteps": [
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-01",
+            "stepNumber": 1,
+            "number": 1,
+            "command": "terraform state list",
+            "explanation": "Inventory the one managed binding before destruction.",
+            "expectedResult": "Exactly aws_ssm_parameter.application_mode is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-02",
+            "stepNumber": 2,
+            "number": 2,
+            "command": "terraform plan -destroy -out=destroy-import-maintenance.tfplan",
+            "explanation": "Create a saved reverse-dependency destroy plan.",
+            "expectedResult": "Plan: 0 to add, 0 to change, 1 to destroy.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-03",
+            "stepNumber": 3,
+            "number": 3,
+            "command": "terraform show destroy-import-maintenance.tfplan",
+            "explanation": "Inspect the exact cloud deletion.",
+            "expectedResult": "Only /fa-terraform-import-maintenance/development/app-mode is marked for destruction.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-04",
+            "stepNumber": 4,
+            "number": 4,
+            "command": "terraform apply destroy-import-maintenance.tfplan",
+            "explanation": "Apply the exact reviewed cloud teardown.",
+            "expectedResult": "Apply complete! Resources: 1 destroyed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-05",
+            "stepNumber": 5,
+            "number": 5,
+            "command": "terraform state list",
+            "explanation": "Verify no managed address remains before credential or file cleanup.",
+            "expectedResult": "No resource address is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-06",
+            "stepNumber": 6,
+            "number": 6,
+            "command": "aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance",
+            "explanation": "Verify AWS no longer has the parameter while the training credential still works.",
+            "expectedResult": "AWS returns ParameterNotFound.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-07",
+            "stepNumber": 7,
+            "number": 7,
+            "command": "aws sts get-caller-identity --profile fa-terraform-import-maintenance",
+            "explanation": "After deleting the access key in IAM, prove the training credential no longer works.",
+            "expectedResult": "AWS returns an invalid or inactive access-key error.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-08",
+            "stepNumber": 8,
+            "number": 8,
+            "command": "aws configure list-profiles",
+            "explanation": "After removing only the two named profile sections, verify the profile list.",
+            "expectedResult": "fa-terraform-import-maintenance is absent and unrelated profiles remain.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-09",
+            "stepNumber": 9,
+            "number": 9,
+            "command": "Set-Location \"$env:USERPROFILE\"",
+            "explanation": "PowerShell route: leave the lab folder before deleting it.",
+            "expectedResult": "Get-Location will show the user profile directory.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-10",
+            "stepNumber": 10,
+            "number": 10,
+            "command": "Get-Item -LiteralPath \"$env:USERPROFILE\\fa-terraform-import-maintenance\"",
+            "explanation": "PowerShell route: resolve and inspect the exact deletion target.",
+            "expectedResult": "The displayed FullName ends exactly \\fa-terraform-import-maintenance.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-11",
+            "stepNumber": 11,
+            "number": 11,
+            "command": "Remove-Item -LiteralPath \"$env:USERPROFILE\\fa-terraform-import-maintenance\" -Recurse -Force",
+            "explanation": "PowerShell route: delete only the verified lab folder and its local artifacts.",
+            "expectedResult": "The exact folder is removed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-12",
+            "stepNumber": 12,
+            "number": 12,
+            "command": "Test-Path -LiteralPath \"$env:USERPROFILE\\fa-terraform-import-maintenance\"",
+            "explanation": "PowerShell route: verify local deletion.",
+            "expectedResult": "False is printed.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-13",
+            "stepNumber": 13,
+            "number": 13,
+            "command": "cd ~",
+            "explanation": "Bash route: leave the lab folder before deleting it.",
+            "expectedResult": "pwd will show the user home directory.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-14",
+            "stepNumber": 14,
+            "number": 14,
+            "command": "realpath ~/fa-terraform-import-maintenance",
+            "explanation": "Bash route: resolve and inspect the exact deletion target.",
+            "expectedResult": "The resolved path ends exactly /fa-terraform-import-maintenance.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-15",
+            "stepNumber": 15,
+            "number": 15,
+            "command": "rm -rf -- ~/fa-terraform-import-maintenance",
+            "explanation": "Bash route: delete only the verified lab folder and its local artifacts.",
+            "expectedResult": "The command returns without an error.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-cli-16",
+            "stepNumber": 16,
+            "number": 16,
+            "command": "test ! -e ~/fa-terraform-import-maintenance",
+            "explanation": "Bash route: verify local deletion.",
+            "expectedResult": "The command succeeds and prints nothing.",
+            "instructions": [],
+            "commands": [],
+            "warning": "",
+            "sourceIds": [
+              "source-import-maintenance-tf-destroy",
+              "source-import-maintenance-tf-plan",
+              "source-import-maintenance-tf-state-list",
+              "source-import-maintenance-aws-parameter-store",
+              "source-import-maintenance-aws-iam-safety",
+              "source-import-maintenance-aws-cli-configure"
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-verification-01",
+            "title": "Verify cloud cleanup",
+            "instruction": "Search Parameter Store in eu-west-2 and run the exact AWS CLI get command before deleting credentials.",
+            "expectedResult": "The Console returns no matching parameter and AWS CLI returns ParameterNotFound.",
+            "mode": "either"
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-verification-02",
+            "title": "Verify IAM cleanup",
+            "instruction": "Search IAM Users and Policies for the two exact fa-terraform-import-maintenance names.",
+            "expectedResult": "Neither the user nor customer-managed policy appears and the access key is gone.",
+            "mode": "console"
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-verification-03",
+            "title": "Verify profile and filesystem cleanup",
+            "instruction": "List AWS CLI profiles and test the exact local folder path.",
+            "expectedResult": "The named profile is absent, unrelated profiles remain and the exact folder does not exist.",
+            "mode": "cli"
+          },
+          {
+            "id": "task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact-verification-04",
+            "title": "Acknowledge complete programme cleanup",
+            "instruction": "Confirm every named cloud, credential, state and local target in the final checklist is absent.",
+            "expectedResult": "The learner can truthfully record the complete programme-cleanup acknowledgement.",
+            "mode": "either"
+          }
+        ],
+        "cleanup": []
+      }
+    ],
+    "resources": {
+      "schema": [
+        {
+          "key": "resource-import-maintenance-policy-fa-terraform-import-maintenance-policy",
+          "label": "IAM policy fa-terraform-import-maintenance-policy",
+          "sourceTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "type": "security",
+          "description": "The exact customer-managed policy attached only to the temporary training user.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-user-fa-terraform-import-maintenance-user",
+          "label": "IAM user fa-terraform-import-maintenance-user",
+          "sourceTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "type": "identity",
+          "description": "The exact CLI-only temporary identity created for this lab.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-access-key-fa-terraform-import-maintenance-user",
+          "label": "Access key for fa-terraform-import-maintenance-user",
+          "sourceTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "type": "identity",
+          "description": "The single temporary access key entered only through the AWS CLI protected prompt.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-profile-fa-terraform-import-maintenance",
+          "label": "AWS CLI profile fa-terraform-import-maintenance",
+          "sourceTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "type": "identity",
+          "description": "The exact local named profile that resolves the training credentials and eu-west-2.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-folder-fa-terraform-import-maintenance",
+          "label": "Local folder fa-terraform-import-maintenance",
+          "sourceTaskId": "task-import-maintenance-001-install-tools-and-create-restricted-training-access",
+          "type": "other",
+          "description": "The isolated local folder containing only this lab configuration, plans, provider cache and state.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-parameter-app-mode",
+          "label": "SSM parameter /fa-terraform-import-maintenance/development/app-mode",
+          "sourceTaskId": "task-import-maintenance-002-create-one-unmanaged-parameter-store-value",
+          "type": "other",
+          "description": "The one harmless Standard String parameter created outside Terraform, imported, maintained and destroyed.",
+          "required": true
+        },
+        {
+          "key": "resource-import-maintenance-local-terraform-state",
+          "label": "Local binding aws_ssm_parameter.application_mode",
+          "sourceTaskId": "task-import-maintenance-004-plan-and-apply-the-declarative-import",
+          "type": "other",
+          "description": "The one Terraform state binding and its local terraform.tfstate data created by the import apply.",
+          "required": true
+        }
+      ],
+      "interpolationAliases": {},
+      "chargeableResourceKeys": [],
+      "variables": {
+        "region": "eu-west-2",
+        "parameterName": "/fa-terraform-import-maintenance/development/app-mode"
+      }
+    },
+    "warnings": {
+      "cost": "This programme uses one Standard Parameter Store parameter, which is normally available without an additional parameter charge at this scale. Account activity can still vary; destroy the exact parameter and verify its absence.",
+      "safety": "Operate only on /fa-terraform-import-maintenance/development/app-mode and the exact named IAM and local resources. Never apply a plan containing an unrelated address, add, replacement or destroy.",
+      "credentials": "Use only the temporary fa-terraform-import-maintenance-user access key through the protected AWS CLI prompt. Never place credentials or real secrets in Terraform configuration, state, plans, logs, screenshots, Author, Git or chat; delete the key after cloud cleanup.",
+      "region": "Create, import, inspect, repair and destroy the parameter only in Europe (London), eu-west-2. IAM is global; always verify the account and Region before a change."
+    },
+    "cleanup": {
+      "completionGate": "acknowledgement",
+      "manualOnly": true,
+      "ordering": "reverse_dependency",
+      "steps": [
+        {
+          "id": "programme-cleanup-import-maintenance-01-inventory-the-exact-terraform-binding-and-aws-parameter",
+          "stepNumber": 1,
+          "title": "Inventory the exact Terraform binding and AWS parameter",
+          "instruction": "Before deletion, confirm state contains only aws_ssm_parameter.application_mode and AWS contains only /fa-terraform-import-maintenance/development/app-mode for this programme.",
+          "description": "Before deletion, confirm state contains only aws_ssm_parameter.application_mode and AWS contains only /fa-terraform-import-maintenance/development/app-mode for this programme.",
+          "verification": "Terraform lists one exact address and Parameter Store displays one exact programme parameter.",
+          "resourceKeys": [
+            "resource-import-maintenance-local-terraform-state",
+            "resource-import-maintenance-parameter-app-mode"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-tf-state-list",
+            "source-import-maintenance-aws-parameter-store"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-02-destroy-fa-terraform-import-maintenance-development-app-mode",
+          "stepNumber": 2,
+          "title": "Destroy /fa-terraform-import-maintenance/development/app-mode",
+          "instruction": "Create, show and apply destroy-import-maintenance.tfplan so Terraform destroys only the exact imported Standard String parameter before any credential, state or local file is removed.",
+          "description": "Create, show and apply destroy-import-maintenance.tfplan so Terraform destroys only the exact imported Standard String parameter before any credential, state or local file is removed.",
+          "verification": "Terraform reports one destroyed resource and terraform state list returns no address.",
+          "resourceKeys": [
+            "resource-import-maintenance-parameter-app-mode",
+            "resource-import-maintenance-local-terraform-state"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-tf-destroy",
+            "source-import-maintenance-tf-plan"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-03-verify-parameter-store-is-empty-for-the-exact-path",
+          "stepNumber": 3,
+          "title": "Verify Parameter Store is empty for the exact path",
+          "instruction": "While the training profile still works, require ParameterNotFound from AWS CLI and no Console search result for /fa-terraform-import-maintenance/development/app-mode in eu-west-2.",
+          "description": "While the training profile still works, require ParameterNotFound from AWS CLI and no Console search result for /fa-terraform-import-maintenance/development/app-mode in eu-west-2.",
+          "verification": "Both CLI and Console visibly confirm that the exact cloud parameter is absent.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-import-maintenance-aws-parameter-store"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-04-delete-the-fa-terraform-import-maintenance-user-access-key",
+          "stepNumber": 4,
+          "title": "Delete the fa-terraform-import-maintenance-user access key",
+          "instruction": "In IAM, deactivate and delete the single access key under fa-terraform-import-maintenance-user only after cloud verification succeeds.",
+          "description": "In IAM, deactivate and delete the single access key under fa-terraform-import-maintenance-user only after cloud verification succeeds.",
+          "verification": "The user Security credentials tab contains no access key and the named profile can no longer authenticate.",
+          "resourceKeys": [
+            "resource-import-maintenance-access-key-fa-terraform-import-maintenance-user"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-aws-iam-safety"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-05-delete-fa-terraform-import-maintenance-user-and-policy",
+          "stepNumber": 5,
+          "title": "Delete fa-terraform-import-maintenance-user and policy",
+          "instruction": "Detach fa-terraform-import-maintenance-policy, delete fa-terraform-import-maintenance-user, then delete the now-unattached fa-terraform-import-maintenance-policy.",
+          "description": "Detach fa-terraform-import-maintenance-policy, delete fa-terraform-import-maintenance-user, then delete the now-unattached fa-terraform-import-maintenance-policy.",
+          "verification": "IAM searches return no exact training user or customer-managed policy.",
+          "resourceKeys": [
+            "resource-import-maintenance-user-fa-terraform-import-maintenance-user",
+            "resource-import-maintenance-policy-fa-terraform-import-maintenance-policy"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-aws-iam-safety"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-06-remove-only-the-fa-terraform-import-maintenance-cli-profile",
+          "stepNumber": 6,
+          "title": "Remove only the fa-terraform-import-maintenance CLI profile",
+          "instruction": "Remove the exact [fa-terraform-import-maintenance] credentials section and [profile fa-terraform-import-maintenance] config section without changing any unrelated profile.",
+          "description": "Remove the exact [fa-terraform-import-maintenance] credentials section and [profile fa-terraform-import-maintenance] config section without changing any unrelated profile.",
+          "verification": "aws configure list-profiles does not show fa-terraform-import-maintenance and still shows every unrelated profile.",
+          "resourceKeys": [
+            "resource-import-maintenance-profile-fa-terraform-import-maintenance"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-aws-cli-configure"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-07-delete-the-verified-fa-terraform-import-maintenance-folder",
+          "stepNumber": 7,
+          "title": "Delete the verified fa-terraform-import-maintenance folder",
+          "instruction": "Leave the exact folder, resolve its full path and delete only fa-terraform-import-maintenance with provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform, .terraform.lock.hcl, every named .tfplan, terraform.tfstate and every terraform.tfstate backup.",
+          "description": "Leave the exact folder, resolve its full path and delete only fa-terraform-import-maintenance with provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform, .terraform.lock.hcl, every named .tfplan, terraform.tfstate and every terraform.tfstate backup.",
+          "verification": "The exact local folder path no longer exists and no programme state, plan or configuration file remains.",
+          "resourceKeys": [
+            "resource-import-maintenance-folder-fa-terraform-import-maintenance",
+            "resource-import-maintenance-local-terraform-state"
+          ],
+          "sourceIds": [
+            "source-import-maintenance-tf-state-rm"
+          ]
+        },
+        {
+          "id": "programme-cleanup-import-maintenance-08-complete-programme-cleanup-acknowledgement",
+          "stepNumber": 8,
+          "title": "Complete programme-cleanup acknowledgement",
+          "instruction": "Acknowledge: I verified that /fa-terraform-import-maintenance/development/app-mode, fa-terraform-import-maintenance-user, its access key, fa-terraform-import-maintenance-policy, the fa-terraform-import-maintenance CLI profile, aws_ssm_parameter.application_mode, all state and plan files, and the fa-terraform-import-maintenance folder are absent.",
+          "description": "Acknowledge: I verified that /fa-terraform-import-maintenance/development/app-mode, fa-terraform-import-maintenance-user, its access key, fa-terraform-import-maintenance-policy, the fa-terraform-import-maintenance CLI profile, aws_ssm_parameter.application_mode, all state and plan files, and the fa-terraform-import-maintenance folder are absent.",
+          "verification": "The acknowledgement names every exact programme cloud resource, credential, state binding and local artifact and is completed only after all visible checks pass.",
+          "resourceKeys": [],
+          "sourceIds": [
+            "source-import-maintenance-tf-destroy",
+            "source-import-maintenance-aws-parameter-store",
+            "source-import-maintenance-aws-iam-safety"
+          ]
+        }
+      ]
+    },
+    "extensions": {
+      "registrations": []
+    },
+    "review": {
+      "validationStatus": "passed",
+      "validationErrors": [],
+      "validationWarnings": [],
+      "sourceReviewStatus": "reviewed",
+      "learnerPreviewStatus": "reviewed",
+      "approvalDecision": "pending",
+      "reviewStatus": "ready_for_approval",
+      "findings": [
+        {
+          "id": "review-import-maintenance-001-credential-lifetime",
+          "findingNumber": 1,
+          "section": "warnings",
+          "priority": "advisory",
+          "message": "The temporary CLI access key must be entered only through the protected prompt and deleted after the parameter is destroyed and verified absent.",
+          "status": "open"
+        },
+        {
+          "id": "review-import-maintenance-002-import-only-plan",
+          "findingNumber": 2,
+          "section": "instructions",
+          "priority": "advisory",
+          "message": "Both initial and recovery imports must stop unless their saved plans contain one import and zero add, change or destroy actions.",
+          "status": "open"
+        },
+        {
+          "id": "review-import-maintenance-003-cleanup-order",
+          "findingNumber": 3,
+          "section": "cleanup",
+          "priority": "advisory",
+          "message": "The AWS parameter must be destroyed and visibly absent before credentials, state, plans or local files are removed.",
+          "status": "open"
+        }
+      ]
+    },
+    "publication": {
+      "publishStatus": "not_published",
+      "targetProgrammeId": "terraform-import-maintenance-learning-path",
+      "proposedChanges": []
+    }
+  },
+  "identityBinding": {
+    "status": "required_before_author_write",
+    "assignedAuthorId": null,
+    "assignedDraftId": null,
+    "assignedRevision": null,
+    "rule": "The local Author import must bind the currently signed-in Author and create exactly one private draft only after separate import approval."
+  },
+  "summary": {
+    "phaseCount": 5,
+    "taskCount": 8,
+    "checkboxCount": 115,
+    "cliCommandCount": 76,
+    "verificationCheckCount": 22,
+    "cleanupItemCount": 8,
+    "learnerResourceValueCount": 7,
+    "officialSourceCount": 16,
+    "officialAwsSourceCount": 5,
+    "officialTerraformSourceCount": 11
+  },
+  "handoffBoundary": {
+    "localPackageOnly": true,
+    "stage12Started": false,
+    "authorDraftWritten": false,
+    "authorIdentityBound": false,
+    "connectedToAuthor": false,
+    "connectedToSupabase": false,
+    "connectedToAws": false,
+    "releaseCandidatePrepared": false,
+    "candidateIdGenerated": false,
+    "approvalPerformed": false,
+    "published": false
+  },
+  "acceptedStagesOneToElevenChanged": false,
+  "handoffFingerprint": {
+    "algorithm": "sha256-json-v1",
+    "value": "74ef5357bea45bb53b7649267dc0d304a7ab7bde92341d1ea8f33746dc622987"
+  }
+}

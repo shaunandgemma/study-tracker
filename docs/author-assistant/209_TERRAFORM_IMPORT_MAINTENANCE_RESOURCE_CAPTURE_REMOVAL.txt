@@ -1,0 +1,21 @@
+209. TERRAFORM IMPORT AND MAINTENANCE RESOURCE CAPTURE REMOVAL
+
+1. Scope
+
+Remove the Saved Resource Capture input boxes from the learner-facing Terraform Import and Maintenance Follow Along only.
+
+2. Reason
+
+The programme uses fixed training names for its IAM policy, IAM user, AWS CLI profile, local folder and SSM parameter. Learners do not need to record these values. An access key must never be entered into Study Tracker.
+
+3. Implementation
+
+The published-content adapter clears createdResourceKeys only when the programme ID is terraform-import-maintenance-learning-path. It also marks resource capture as not applicable for that runtime view.
+
+4. Preserved behaviour
+
+The accepted handoff package and published database record remain unchanged. Cleanup references remain available. Resource capture remains enabled for other Follow Alongs that genuinely require generated, non-secret identifiers.
+
+5. Safety boundary
+
+No AWS, Supabase, Author, Shared Draft, candidate, approval or publication operation is performed by this correction.

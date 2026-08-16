@@ -1,0 +1,727 @@
+AUTHOR LOCAL HANDOFF PACKAGE - TERRAFORM IMPORT AND MAINTENANCE
+
+Programme: Terraform Import and Maintenance Follow Along
+Programme ID: terraform-import-maintenance-learning-path
+Exam: Terraform Associate 004
+Card: 5
+Phases: 5
+Tasks: 8
+Separate editable checkboxes: 115
+CLI commands: 76
+Verification checks: 22
+Cleanup items: 8
+Official sources: 16
+Official AWS sources: 5
+Official HashiCorp sources: 11
+SHA-256 handoff fingerprint: 74ef5357bea45bb53b7649267dc0d304a7ab7bde92341d1ea8f33746dc622987
+
+PHASES
+1. Prepare an isolated maintenance workspace [phase-import-maintenance-01-prepare-an-isolated-maintenance-workspace]
+   Install the tools, create restricted training access and enter a new empty folder.
+2. Create and describe unmanaged infrastructure [phase-import-maintenance-02-create-and-describe-unmanaged-infrastructure]
+   Create one exact Standard String parameter outside Terraform and prove that no state exists yet.
+3. Import the parameter into Terraform [phase-import-maintenance-03-import-the-parameter-into-terraform]
+   Write complete configuration, plan the import, apply it and inspect the new state binding.
+4. Practise controlled maintenance [phase-import-maintenance-04-practise-controlled-maintenance]
+   Detect drift, repair it, use diagnostic logging and safely detach and re-import the state binding.
+5. Destroy and acknowledge cleanup [phase-import-maintenance-05-destroy-and-acknowledge-cleanup]
+   Destroy the cloud parameter first, then remove credentials, state and local files in reverse-dependency order.
+
+COMPLETE TASK CONTENT
+
+task-import-maintenance-001-install-tools-and-create-restricted-training-access: Install tools and create restricted training access
+Feature: Terraform CLI, AWS CLI, IAM and isolated local workspace
+Goal: Prepare a verified Terraform and AWS CLI environment, one restricted training identity and one empty working folder.
+Why it matters: Import changes Terraform state and later changes a real AWS object, so the learner must establish the exact identity, Region and filesystem boundary first.
+Difficulty: Easy
+Phase ID: phase-import-maintenance-01-prepare-an-isolated-maintenance-workspace
+Prerequisites: None
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-aws-iam-safety, source-import-maintenance-aws-cli-install, source-import-maintenance-aws-cli-configure, source-import-maintenance-tf-install
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Install tools and create restricted training access
+[ ] On Windows, open the official Terraform install source, choose the Windows AMD64 download, save the ZIP, choose Extract All, create C:\Tools\Terraform, copy terraform.exe into that folder, open Edit the system environment variables, choose Environment Variables, edit your user Path, add C:\Tools\Terraform, confirm every dialog and open a new PowerShell window.
+[ ] On macOS or Linux, open the same official Terraform install source, select the tab for your operating system and run its displayed package-manager commands one at a time; open a new terminal when installation finishes.
+[ ] Open the official AWS CLI install source, select your operating system, download the current AWS CLI v2 installer, run it with the displayed default options and open a new terminal after it finishes.
+[ ] Run terraform version and aws --version. If either command is not found, stop and correct the installation or PATH before continuing.
+[ ] Sign in to the training AWS account with an existing administrator-capable identity; do not use the root user for routine lab work.
+[ ] Open the account menu in the upper-right and confirm that this is the intended training account.
+[ ] Use the Region selector in the upper-right to choose Europe (London), whose Region code is eu-west-2.
+[ ] In the AWS Console search box enter IAM, open IAM, choose Policies in the left navigation and choose Create policy.
+[ ] Choose the JSON editor, remove its existing example and paste the complete fa-terraform-import-maintenance-policy.json block shown below.
+[ ] Read the policy before saving: it permits identity verification, parameter listing and changes only to /fa-terraform-import-maintenance/development/app-mode in eu-west-2.
+[ ] Choose Next, enter fa-terraform-import-maintenance-policy as the policy name, enter Temporary access for the Terraform import maintenance lab as the description and choose Create policy.
+[ ] Choose Users, choose Create user, enter fa-terraform-import-maintenance-user and do not enable Console access for this CLI-only training identity.
+[ ] On Set permissions choose Attach policies directly, select only fa-terraform-import-maintenance-policy, choose Next, review the exact user and policy and choose Create user.
+[ ] Open fa-terraform-import-maintenance-user, choose Security credentials, choose Create access key, choose Command Line Interface, read and acknowledge the recommendation, enter Terraform import maintenance lab as the description and create the key.
+[ ] Keep the access-key screen open only while running aws configure --profile fa-terraform-import-maintenance. Enter the access key ID and secret at the protected prompts, enter eu-west-2 for Default region name and json for Default output format.
+[ ] Close the access-key screen after configuration. Never paste either credential into a Terraform file, command, screenshot, Author, Git or chat.
+[ ] For CloudShell, macOS, Linux or WSL, open a Bash terminal, create ~/fa-terraform-import-maintenance, enter it and use pwd to verify the exact folder.
+[ ] For Windows PowerShell, create $env:USERPROFILE\fa-terraform-import-maintenance, enter it and use Get-Location to verify the exact folder.
+[ ] List the folder and confirm it contains no .tf file, .terraform directory, plan file, state file or unrelated content.
+
+EDITABLE BLOCK: fa-terraform-import-maintenance-policy.json [language: json]
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VerifyTrainingIdentity",
+      "Effect": "Allow",
+      "Action": "sts:GetCallerIdentity",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ListParameterMetadata",
+      "Effect": "Allow",
+      "Action": "ssm:DescribeParameters",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageOnlyTheImportMaintenanceParameter",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+        "ssm:GetParameterHistory",
+        "ssm:DeleteParameter",
+        "ssm:AddTagsToResource",
+        "ssm:RemoveTagsFromResource",
+        "ssm:ListTagsForResource"
+      ],
+      "Resource": "arn:aws:ssm:eu-west-2:*:parameter/fa-terraform-import-maintenance/development/app-mode"
+    }
+  ]
+}
+END EDITABLE BLOCK
+Expected result: Terraform and AWS CLI report versions, the named training identity resolves in the intended account, eu-west-2 is configured and the exact working folder is empty.
+Warning: The IAM access key is a temporary lab credential. Prefer federated temporary access where available and delete this key immediately after the cloud parameter is destroyed.
+
+CLI COMMANDS
+1. terraform version
+   Why: Verify that Terraform is installed and available on PATH.
+   Expected: Terraform prints its installed version and platform.
+2. aws --version
+   Why: Verify that AWS CLI v2 is installed and available on PATH.
+   Expected: The output begins aws-cli/2.
+3. aws configure --profile fa-terraform-import-maintenance
+   Why: Store the temporary training key through protected prompts and set eu-west-2 with json output.
+   Expected: All four prompts complete and the named profile is written locally.
+   Warning: Never type credentials directly into a visible command.
+4. aws sts get-caller-identity --profile fa-terraform-import-maintenance
+   Why: Verify the exact caller before any resource operation.
+   Expected: Account contains the intended 12-digit account and Arn ends user/fa-terraform-import-maintenance-user.
+5. aws configure get region --profile fa-terraform-import-maintenance
+   Why: Verify the profile Region.
+   Expected: The command prints eu-west-2.
+6. mkdir -p ~/fa-terraform-import-maintenance
+   Why: Bash route: create the exact isolated folder.
+   Expected: The command returns without an error.
+7. cd ~/fa-terraform-import-maintenance
+   Why: Bash route: enter the exact folder.
+   Expected: The shell working directory changes.
+8. pwd
+   Why: Bash route: display the current directory.
+   Expected: The path ends /fa-terraform-import-maintenance.
+9. New-Item -ItemType Directory -Path "$env:USERPROFILE\fa-terraform-import-maintenance" -Force
+   Why: PowerShell route: create the exact isolated folder.
+   Expected: PowerShell displays the fa-terraform-import-maintenance directory.
+10. Set-Location "$env:USERPROFILE\fa-terraform-import-maintenance"
+   Why: PowerShell route: enter the exact folder.
+   Expected: The PowerShell working directory changes.
+11. Get-Location
+   Why: PowerShell route: display the current directory.
+   Expected: The path ends \fa-terraform-import-maintenance.
+12. Get-ChildItem -Force
+   Why: PowerShell route: include hidden items while checking the new folder.
+   Expected: No Terraform configuration, plan or state item appears.
+
+VERIFICATION CHECKS
+- Verify tools [cli]: Read the outputs from terraform version and aws --version. Expected: Both commands return version information rather than a command-not-found error.
+- Verify identity and Region [either]: Compare get-caller-identity and the configured Region with the Console account and Region selector. Expected: The account matches, the ARN names fa-terraform-import-maintenance-user and the Region is eu-west-2.
+- Verify the empty boundary [cli]: Show the exact current path and list hidden files. Expected: The path is the new fa-terraform-import-maintenance folder and it contains no previous Terraform content.
+
+task-import-maintenance-002-create-one-unmanaged-parameter-store-value: Create one unmanaged Parameter Store value
+Feature: AWS Systems Manager Parameter Store Standard String parameter
+Goal: Create one exact harmless parameter outside Terraform and verify that it exists in AWS while Terraform state remains absent.
+Why it matters: Import begins with a real object that exists independently of Terraform. Proving that starting condition prevents confusion between creation and import.
+Difficulty: Easy
+Phase ID: phase-import-maintenance-02-create-and-describe-unmanaged-infrastructure
+Prerequisites: task-import-maintenance-001-install-tools-and-create-restricted-training-access
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-aws-parameter-store, source-import-maintenance-aws-parameter-cli
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Create one unmanaged Parameter Store value
+[ ] Choose exactly one creation route for this task: either complete the Console creation clicks or run the first AWS CLI command. Do not create the same name twice.
+[ ] For the Console route, use the original administrator-capable Console session, confirm the intended training account again, keep Europe (London) eu-west-2 selected, search for Systems Manager and open it; do not add Console access to the CLI-only training user.
+[ ] In the left navigation choose Parameter Store, then choose Create parameter.
+[ ] For Name enter exactly /fa-terraform-import-maintenance/development/app-mode, including the leading slash.
+[ ] For Description enter exactly Harmless application mode used by the Terraform import maintenance lab.
+[ ] Choose Standard tier, choose String as the Type, leave Data type as text and enter console-created as the Value.
+[ ] In Tags choose Add tag, enter Lab as the first key and fa-terraform-import-maintenance as its value.
+[ ] Choose Add tag again, enter ManagedBy as the second key and ManualBeforeImport as its value.
+[ ] Review the name, Region, tier, type, data type, value and both tags, then choose Create parameter.
+[ ] Open the parameter detail page and read its Overview and Tags tabs.
+[ ] Run the AWS CLI get-parameter and list-tags-for-resource verification commands regardless of which creation route you selected.
+[ ] Remain in the empty local folder and run terraform state list; because no Terraform configuration or state exists yet, the command must not show a managed address.
+[ ] Do not create any second parameter and do not use SecureString or a real secret in this lab.
+Expected result: AWS shows exactly one Standard String parameter with value console-created and the two exact tags, while Terraform has no state binding.
+Warning: The CLI put-parameter command is an alternative to the Console clicks. Running both creation routes will produce ParameterAlreadyExists, which is not a reason to add --overwrite at this stage.
+
+CLI COMMANDS
+1. aws ssm put-parameter --name /fa-terraform-import-maintenance/development/app-mode --description "Harmless application mode used by the Terraform import maintenance lab" --type String --tier Standard --data-type text --value console-created --tags Key=Lab,Value=fa-terraform-import-maintenance Key=ManagedBy,Value=ManualBeforeImport --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: CLI creation route only: create the exact Standard String parameter instead of using the Console form.
+   Expected: The JSON response contains Version 1 and Tier Standard.
+   Warning: Skip this creation command if the Console route already created the parameter.
+2. aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Read the exact remote parameter.
+   Expected: Name, Type String, Value console-created, Version 1 and DataType text are visible.
+3. aws ssm list-tags-for-resource --resource-type Parameter --resource-id /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Read the parameter tags.
+   Expected: The TagList contains Lab=fa-terraform-import-maintenance and ManagedBy=ManualBeforeImport.
+4. terraform state list
+   Why: Prove that the remote object is not yet tracked by Terraform.
+   Expected: Terraform reports no state file or returns no resource address.
+
+VERIFICATION CHECKS
+- Verify the unmanaged object [either]: Compare the Parameter Store detail page with both AWS CLI read commands. Expected: All surfaces show the one exact name, Standard String type, console-created value and two exact tags.
+- Verify Terraform is not managing it [cli]: Run terraform state list before creating configuration. Expected: No aws_ssm_parameter.application_mode address exists.
+
+task-import-maintenance-003-write-the-matching-terraform-configuration: Write the matching Terraform configuration
+Feature: Provider requirements, resource configuration, import block and outputs
+Goal: Create four complete Terraform files whose declared resource exactly matches the unmanaged AWS parameter.
+Why it matters: Import records a binding; it does not replace the need for configuration. A mismatch would make the first plan combine import with an unintended update.
+Difficulty: Easy
+Phase ID: phase-import-maintenance-03-import-the-parameter-into-terraform
+Prerequisites: task-import-maintenance-002-create-one-unmanaged-parameter-store-value
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-tf-provider-requirements, source-import-maintenance-tf-init, source-import-maintenance-tf-import-overview, source-import-maintenance-tf-import-block
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Write the matching Terraform configuration
+[ ] Confirm the terminal is still inside the exact fa-terraform-import-maintenance folder.
+[ ] Open a plain-text code editor. In Visual Studio Code choose File, Open Folder, select fa-terraform-import-maintenance and choose Select Folder; in another editor use Save As with UTF-8 and All files so .txt is not appended.
+[ ] Choose New File, name it provider.tf and paste only the supplied provider.tf block.
+[ ] Read required_version as the minimum Terraform version that supports import blocks, and read the AWS provider source and compatible major-version constraint.
+[ ] Read the provider block and confirm it uses the exact eu-west-2 Region and fa-terraform-import-maintenance profile.
+[ ] Create parameter.tf and paste only the supplied parameter.tf block.
+[ ] Compare every argument in parameter.tf with the AWS detail page: exact name, description, String type, Standard tier, text data type, console-created value and two tags.
+[ ] Create imports.tf and paste only the supplied imports.tf block.
+[ ] Read to as the Terraform resource address that will receive the binding, and id as the existing AWS parameter name that the provider uses to find the object.
+[ ] Create outputs.tf and paste only the supplied outputs.tf block.
+[ ] Save all four files and use the editor file tree to verify their names end .tf rather than .tf.txt.
+[ ] Run terraform fmt; it may print changed filenames and must not change the meaning.
+[ ] Run terraform init and wait for successful backend and provider initialization.
+[ ] Run terraform validate and correct any reported filename and line before continuing.
+[ ] List the folder and identify the generated .terraform directory and .terraform.lock.hcl lock file.
+[ ] Do not run terraform apply in this task; the import must first be reviewed as a saved plan.
+
+EDITABLE BLOCK: provider.tf [language: text]
+terraform {
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+
+provider "aws" {
+  region  = "eu-west-2"
+  profile = "fa-terraform-import-maintenance"
+}
+END EDITABLE BLOCK
+
+EDITABLE BLOCK: parameter.tf [language: text]
+resource "aws_ssm_parameter" "application_mode" {
+  name        = "/fa-terraform-import-maintenance/development/app-mode"
+  description = "Harmless application mode used by the Terraform import maintenance lab"
+  type        = "String"
+  tier        = "Standard"
+  data_type   = "text"
+  value       = "console-created"
+
+  tags = {
+    Lab       = "fa-terraform-import-maintenance"
+    ManagedBy = "ManualBeforeImport"
+  }
+}
+END EDITABLE BLOCK
+
+EDITABLE BLOCK: imports.tf [language: text]
+import {
+  to = aws_ssm_parameter.application_mode
+  id = "/fa-terraform-import-maintenance/development/app-mode"
+}
+END EDITABLE BLOCK
+
+EDITABLE BLOCK: outputs.tf [language: text]
+output "imported_parameter_name" {
+  description = "The exact Parameter Store name now managed by Terraform"
+  value       = aws_ssm_parameter.application_mode.name
+}
+
+output "imported_parameter_arn" {
+  description = "The AWS ARN recorded after import"
+  value       = aws_ssm_parameter.application_mode.arn
+}
+END EDITABLE BLOCK
+Expected result: Four exact editable .tf files exist, Terraform initializes the AWS provider and validation reports that the configuration is valid.
+Warning: The parameter value is intentionally harmless plaintext. Never copy a password, access key, token or real secret into configuration or state.
+
+CLI COMMANDS
+1. terraform fmt
+   Why: Format every .tf file in the current folder.
+   Expected: Terraform returns normally and may list formatted filenames.
+2. terraform init
+   Why: Initialize the local backend and install the required AWS provider.
+   Expected: Terraform has been successfully initialized! appears.
+3. terraform validate
+   Why: Check syntax, provider schema, references and the import block.
+   Expected: Success! The configuration is valid.
+4. terraform providers
+   Why: Show which provider the configuration requires.
+   Expected: The output lists registry.terraform.io/hashicorp/aws under the root configuration.
+5. Get-ChildItem -Force
+   Why: PowerShell route: show the four source files plus generated initialization items.
+   Expected: provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform and .terraform.lock.hcl are visible.
+6. ls -la
+   Why: Bash route: show the four source files plus generated initialization items.
+   Expected: provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform and .terraform.lock.hcl are visible.
+
+VERIFICATION CHECKS
+- Verify exact filenames and blocks [either]: Open each of the four files and compare it character-for-character with its supplied editable block. Expected: The file names and contents match, with no .txt suffix or omitted argument.
+- Verify initialization and validation [cli]: Read the final lines from terraform init and terraform validate. Expected: Initialization succeeds and validation says the configuration is valid.
+
+task-import-maintenance-004-plan-and-apply-the-declarative-import: Plan and apply the declarative import
+Feature: Import block, saved plan, local state and outputs
+Goal: Bind the existing parameter to aws_ssm_parameter.application_mode without creating or destroying a remote object.
+Why it matters: A reviewed import plan proves that Terraform will adopt the existing object at one stable address rather than attempt to replace it.
+Difficulty: Medium
+Phase ID: phase-import-maintenance-03-import-the-parameter-into-terraform
+Prerequisites: task-import-maintenance-003-write-the-matching-terraform-configuration
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-tf-import-overview, source-import-maintenance-tf-import-block, source-import-maintenance-tf-plan, source-import-maintenance-tf-state-list, source-import-maintenance-tf-state-show, source-import-maintenance-aws-parameter-store
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Plan and apply the declarative import
+[ ] Run terraform plan -out=initial-import.tfplan from the initialized folder.
+[ ] Read the summary and require exactly 1 to import, 0 to add, 0 to change and 0 to destroy.
+[ ] In the plan body identify aws_ssm_parameter.application_mode and the exact import ID /fa-terraform-import-maintenance/development/app-mode.
+[ ] Stop if Terraform proposes an add, update, replacement or destroy; compare the Console fields with parameter.tf until the plan is import-only.
+[ ] Run terraform show initial-import.tfplan and review the saved plan a second time.
+[ ] Run terraform apply initial-import.tfplan only after the saved plan is import-only.
+[ ] Run terraform state list and confirm exactly one address: aws_ssm_parameter.application_mode.
+[ ] Run terraform state show aws_ssm_parameter.application_mode and compare name, description, type, tier, data_type, value and tags with parameter.tf.
+[ ] Run both terraform outputs and confirm the name and ARN refer to the exact eu-west-2 parameter.
+[ ] Open Systems Manager, choose Parameter Store and refresh the detail page.
+[ ] Confirm the parameter still exists, retains Version 1 and has not been recreated; import changed Terraform state, not the remote object.
+[ ] Keep imports.tf in place because the later state-recovery exercise deliberately uses the same declarative import again.
+Expected result: Terraform imports exactly one existing parameter, state lists one stable address and AWS still shows the same Version 1 object.
+Warning: Never apply an import plan that includes an unexplained add, change, replace or destroy action.
+
+CLI COMMANDS
+1. terraform plan -out=initial-import.tfplan
+   Why: Create a saved plan for the declarative import.
+   Expected: Plan: 1 to import, 0 to add, 0 to change, 0 to destroy.
+2. terraform show initial-import.tfplan
+   Why: Inspect the immutable saved plan before applying it.
+   Expected: Only aws_ssm_parameter.application_mode is marked for import.
+3. terraform apply initial-import.tfplan
+   Why: Apply the exact reviewed import plan.
+   Expected: Apply completes with one imported resource and no remote create, change or destroy.
+4. terraform state list
+   Why: List all addresses in local state.
+   Expected: Exactly aws_ssm_parameter.application_mode is printed.
+5. terraform state show aws_ssm_parameter.application_mode
+   Why: Display the imported attributes stored for the one address.
+   Expected: The exact name, description, String type, Standard tier, text data type, console-created value and tags are shown.
+6. terraform output imported_parameter_name
+   Why: Read the learner-facing imported name output.
+   Expected: The output is /fa-terraform-import-maintenance/development/app-mode.
+7. terraform output imported_parameter_arn
+   Why: Read the provider-computed ARN output.
+   Expected: The ARN contains ssm, eu-west-2 and parameter/fa-terraform-import-maintenance/development/app-mode.
+8. aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Verify the same AWS object after import.
+   Expected: The parameter remains Version 1 with value console-created.
+
+VERIFICATION CHECKS
+- Verify an import-only plan [cli]: Compare the saved plan summary with the import block and resource address. Expected: There is one import and zero add, change or destroy actions.
+- Verify one state binding [either]: Compare terraform state list and terraform state show with Parameter Store. Expected: One Terraform address maps to the one exact AWS parameter.
+- Verify no recreation [either]: Read the parameter Version in AWS after apply. Expected: Version remains 1, demonstrating that import did not recreate or overwrite the object.
+
+task-import-maintenance-005-detect-drift-and-restore-the-declared-value: Detect drift and restore the declared value
+Feature: Out-of-band change, refresh-only preview and normal repair plan
+Goal: Make one deliberate harmless Console change, observe it without accepting it and restore the configuration value through a saved plan.
+Why it matters: Maintenance requires distinguishing a refresh-only state reconciliation from a normal plan that changes AWS back to the declared configuration.
+Difficulty: Medium
+Phase ID: phase-import-maintenance-04-practise-controlled-maintenance
+Prerequisites: task-import-maintenance-004-plan-and-apply-the-declarative-import
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-aws-parameter-store, source-import-maintenance-aws-parameter-cli, source-import-maintenance-tf-plan
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Detect drift and restore the declared value
+[ ] Choose exactly one drift route: either edit through Parameter Store in the Console or run the AWS CLI overwrite command. Do not update twice.
+[ ] For the Console route, open Systems Manager in eu-west-2, choose Parameter Store and open /fa-terraform-import-maintenance/development/app-mode.
+[ ] Choose Edit, leave the name, description, Standard tier, String type, text data type and tags unchanged, replace only the value with console-drifted and save changes.
+[ ] Refresh the detail page and confirm the visible value is console-drifted and Version is 2.
+[ ] Run terraform plan -refresh-only -out=observed-drift.tfplan.
+[ ] Read the refresh-only plan as an observation of the remote change; do not apply observed-drift.tfplan because the declared configuration still says console-created.
+[ ] Run terraform plan -out=repair-drift.tfplan in normal mode.
+[ ] Confirm the plan proposes one in-place update from console-drifted back to console-created, with zero additions and zero destroys.
+[ ] Run terraform show repair-drift.tfplan, verify only the value changes and then apply the saved repair plan.
+[ ] Open the parameter in the Console and refresh it; confirm the value is console-created and the Version has advanced to 3.
+[ ] Run the AWS CLI read command and a new terraform plan to prove AWS and configuration agree again.
+[ ] Keep observed-drift.tfplan and repair-drift.tfplan until final cleanup so every generated local file is removed together after cloud cleanup.
+Expected result: The refresh-only plan reports the out-of-band value, the normal saved plan restores console-created and the final plan reports no changes.
+Warning: Do not apply the refresh-only plan in this exercise. Applying it would accept the remote drift into state without changing the configuration that caused the mismatch.
+
+CLI COMMANDS
+1. aws ssm put-parameter --name /fa-terraform-import-maintenance/development/app-mode --type String --value console-drifted --overwrite --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: CLI drift route only: replace the harmless value outside Terraform.
+   Expected: The response contains Version 2 and Tier Standard.
+   Warning: Skip this overwrite command if the Console route already created the drift.
+2. terraform plan -refresh-only -out=observed-drift.tfplan
+   Why: Preview only the state and output changes caused by the remote edit.
+   Expected: Terraform reports that the object changed outside Terraform and does not propose a remote write.
+3. terraform show observed-drift.tfplan
+   Why: Inspect the saved observation without applying it.
+   Expected: The value observed from AWS is console-drifted.
+4. terraform plan -out=repair-drift.tfplan
+   Why: Create a normal saved plan that restores the declared value.
+   Expected: Plan: 0 to add, 1 to change, 0 to destroy.
+5. terraform show repair-drift.tfplan
+   Why: Verify the exact in-place repair before applying.
+   Expected: Only value changes from console-drifted to console-created.
+6. terraform apply repair-drift.tfplan
+   Why: Apply the reviewed normal repair plan.
+   Expected: Apply complete! Resources: 0 added, 1 changed, 0 destroyed.
+7. aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Read the repaired AWS value and version.
+   Expected: Value is console-created and Version is 3.
+8. terraform plan
+   Why: Confirm the repaired remote object now matches configuration and state.
+   Expected: No changes. Your infrastructure matches the configuration.
+
+VERIFICATION CHECKS
+- Verify drift was visible [either]: Read observed-drift.tfplan and the Parameter Store Version before repair. Expected: The plan sees console-drifted and AWS shows Version 2.
+- Verify the repair scope [cli]: Read repair-drift.tfplan before apply. Expected: Only one in-place value update appears, with no add, replace or destroy.
+- Verify convergence [either]: Compare the final AWS CLI value with a fresh Terraform plan. Expected: AWS returns console-created and Terraform reports no changes.
+
+task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file: Use diagnostic logging without saving a log file
+Feature: TF_LOG diagnostic environment variable and clean planning
+Goal: Temporarily enable INFO logging for one no-change plan, recognize diagnostic lines and disable logging immediately.
+Why it matters: Verbose logging helps diagnose provider and state operations, but it can expose request details and should be enabled only for a controlled interval.
+Difficulty: Medium
+Phase ID: phase-import-maintenance-04-practise-controlled-maintenance
+Prerequisites: task-import-maintenance-005-detect-drift-and-restore-the-declared-value
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-tf-cli-environment, source-import-maintenance-tf-plan
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Use diagnostic logging without saving a log file
+[ ] Confirm a normal terraform plan reports no changes before enabling diagnostics.
+[ ] Choose the command set for your shell: use the PowerShell environment commands in PowerShell, or the export and unset commands in Bash, macOS, Linux or WSL.
+[ ] Set TF_LOG to INFO. This sends additional diagnostic lines to the terminal standard-error stream and does not create a file because TF_LOG_PATH is not set.
+[ ] Run terraform plan and look for timestamped INFO lines describing Terraform or provider activity followed by the normal no-change result.
+[ ] Do not copy or share diagnostic output; provider logs can contain account, resource or request details even when this lab uses only harmless data.
+[ ] Disable logging immediately with Remove-Item Env:TF_LOG in PowerShell or unset TF_LOG in Bash.
+[ ] Run terraform plan again and confirm the timestamped INFO lines are gone while the no-change result remains.
+[ ] Use Get-ChildItem Env:TF_LOG in PowerShell or printenv TF_LOG in Bash to verify that the variable is absent.
+[ ] List the working folder and confirm no terraform.log file exists because no TF_LOG_PATH was configured.
+Expected result: One plan displays INFO diagnostics, logging is then disabled, the next plan is quiet and no diagnostic file exists.
+Warning: Terraform logs can contain sensitive operational details. This exercise displays INFO output only in the terminal and never persists or shares it.
+
+CLI COMMANDS
+1. terraform plan
+   Why: Establish a clean baseline before logging.
+   Expected: No changes. Your infrastructure matches the configuration.
+2. $env:TF_LOG = "INFO"
+   Why: PowerShell route: enable INFO diagnostics for the current process.
+   Expected: PowerShell sets TF_LOG without printing credential data.
+3. terraform plan
+   Why: PowerShell or Bash route: run one diagnostic plan.
+   Expected: Timestamped INFO lines appear and the plan still reports no changes.
+4. Remove-Item Env:TF_LOG
+   Why: PowerShell route: disable Terraform logging.
+   Expected: The TF_LOG environment entry is removed.
+5. Get-ChildItem Env:TF_LOG
+   Why: PowerShell route: verify logging is disabled.
+   Expected: PowerShell reports that Env:TF_LOG does not exist.
+6. export TF_LOG=INFO
+   Why: Bash route: enable INFO diagnostics for the current shell.
+   Expected: The command returns to the prompt without output.
+7. terraform plan
+   Why: Bash route: run one diagnostic plan.
+   Expected: Timestamped INFO lines appear and the plan still reports no changes.
+8. unset TF_LOG
+   Why: Bash route: disable Terraform logging.
+   Expected: The command returns to the prompt without output.
+9. printenv TF_LOG
+   Why: Bash route: verify logging is disabled.
+   Expected: No value is printed.
+10. terraform plan
+   Why: Verify normal quiet behavior after disabling TF_LOG.
+   Expected: No timestamped INFO stream appears and Terraform reports no changes.
+
+VERIFICATION CHECKS
+- Verify temporary diagnostics [cli]: Compare the plan while TF_LOG=INFO with the plan after TF_LOG is removed. Expected: Only the first plan contains timestamped INFO diagnostics; both report no infrastructure changes.
+- Verify no log artifact [cli]: List all files in the exact working folder. Expected: No terraform.log or other diagnostic log file exists.
+
+task-import-maintenance-007-detach-and-re-import-the-state-binding-safely: Detach and re-import the state binding safely
+Feature: terraform state rm dry run, remote verification and declarative re-import
+Goal: Remove only the Terraform binding, prove the AWS object survives and recover the binding through the existing import block.
+Why it matters: State repair is hazardous unless the learner understands that forgetting an address is different from destroying its remote object and verifies both sides at every step.
+Difficulty: Hard
+Phase ID: phase-import-maintenance-04-practise-controlled-maintenance
+Prerequisites: task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-tf-state-list, source-import-maintenance-tf-state-show, source-import-maintenance-tf-state-rm, source-import-maintenance-tf-import-block, source-import-maintenance-tf-plan, source-import-maintenance-aws-parameter-store
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Detach and re-import the state binding safely
+[ ] Run terraform state list and require exactly aws_ssm_parameter.application_mode before changing state.
+[ ] Run terraform state rm -dry-run aws_ssm_parameter.application_mode and confirm exactly one matching instance is reported without modifying state.
+[ ] Run terraform state list again and confirm the address still exists after the dry run.
+[ ] Run terraform state rm aws_ssm_parameter.application_mode to remove only the binding from local state.
+[ ] Read the success message and note that Terraform writes a local state backup when state is modified.
+[ ] Run terraform state list and confirm no address remains.
+[ ] Immediately open Parameter Store in eu-west-2 and refresh /fa-terraform-import-maintenance/development/app-mode.
+[ ] Confirm the AWS parameter still exists with value console-created and Version 3; state rm did not call AWS to delete it.
+[ ] Do not run a normal apply while the binding is absent unless the import block is present and the plan is import-only.
+[ ] Open imports.tf and confirm it still maps the exact AWS name to aws_ssm_parameter.application_mode.
+[ ] Run terraform plan -out=reimport-binding.tfplan and require exactly 1 to import with zero add, change or destroy.
+[ ] Show and apply the saved re-import plan.
+[ ] Run terraform state list, terraform state show and the AWS CLI get command to prove the one-to-one binding is restored.
+[ ] Run terraform plan and require no changes before proceeding to cleanup.
+Expected result: The dry run changes nothing, the real state removal leaves AWS untouched and the declarative re-import restores exactly one clean state binding.
+Warning: State removal makes Terraform forget an object without deleting it. Stop if the recovery plan proposes a new resource instead of an import.
+
+CLI COMMANDS
+1. terraform state list
+   Why: Inventory the binding before state maintenance.
+   Expected: Exactly aws_ssm_parameter.application_mode is printed.
+2. terraform state rm -dry-run aws_ssm_parameter.application_mode
+   Why: Preview the exact address that would be forgotten.
+   Expected: Terraform reports one matching resource instance without removing it.
+3. terraform state list
+   Why: Prove the dry run left state unchanged.
+   Expected: Exactly aws_ssm_parameter.application_mode is still printed.
+4. terraform state rm aws_ssm_parameter.application_mode
+   Why: Remove only the local binding after the dry-run review.
+   Expected: Successfully removed 1 resource instance(s).
+5. terraform state list
+   Why: Confirm local state currently tracks no resource.
+   Expected: No resource address is printed.
+6. aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Prove the remote parameter survived state removal.
+   Expected: AWS still returns value console-created and Version 3.
+7. terraform plan -out=reimport-binding.tfplan
+   Why: Use the retained import block to rebuild the binding.
+   Expected: Plan: 1 to import, 0 to add, 0 to change, 0 to destroy.
+8. terraform show reimport-binding.tfplan
+   Why: Inspect the recovery plan before applying.
+   Expected: Only the exact parameter is marked for import at aws_ssm_parameter.application_mode.
+9. terraform apply reimport-binding.tfplan
+   Why: Apply the reviewed recovery plan.
+   Expected: Apply completes with one imported resource and no remote change.
+10. terraform state list
+   Why: Confirm the stable address is restored.
+   Expected: Exactly aws_ssm_parameter.application_mode is printed.
+11. terraform state show aws_ssm_parameter.application_mode
+   Why: Inspect the recovered state record.
+   Expected: The exact name, console-created value and two tags are shown.
+12. terraform plan
+   Why: Confirm configuration, state and AWS agree after recovery.
+   Expected: No changes. Your infrastructure matches the configuration.
+
+VERIFICATION CHECKS
+- Verify dry-run safety [cli]: Compare state list before and after terraform state rm -dry-run. Expected: The same one address exists both times.
+- Verify the remote object survived [either]: Read the parameter in both AWS CLI and Parameter Store after the real state removal. Expected: The exact parameter still exists with console-created and Version 3.
+- Verify recovered one-to-one binding [cli]: Compare the re-import plan, final state list and final clean plan. Expected: One import restores one address and the final plan reports no changes.
+
+task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact: Destroy the parameter and remove every lab artifact
+Feature: Saved destroy plan, AWS verification, credential removal, state and file cleanup
+Goal: Remove the exact cloud parameter first, then the access key, IAM identity, CLI profile, Terraform state and local folder, and acknowledge complete cleanup.
+Why it matters: Deleting credentials or state before the managed object can strand infrastructure. Reverse-dependency cleanup preserves the ability to verify and recover until AWS is empty.
+Difficulty: Medium
+Phase ID: phase-import-maintenance-05-destroy-and-acknowledge-cleanup
+Prerequisites: task-import-maintenance-007-detach-and-re-import-the-state-binding-safely
+Modes: Console=available; CLI=available
+Source IDs: source-import-maintenance-tf-destroy, source-import-maintenance-tf-plan, source-import-maintenance-tf-state-list, source-import-maintenance-aws-parameter-store, source-import-maintenance-aws-iam-safety, source-import-maintenance-aws-cli-configure
+
+CONSOLE / GRAPHICAL INSTRUCTIONS
+1. Destroy the parameter and remove every lab artifact
+[ ] Run terraform state list and confirm exactly aws_ssm_parameter.application_mode is tracked before teardown.
+[ ] Run terraform plan -destroy -out=destroy-import-maintenance.tfplan.
+[ ] Run terraform show destroy-import-maintenance.tfplan and confirm exactly one destroy: /fa-terraform-import-maintenance/development/app-mode.
+[ ] Confirm the destroy plan contains no IAM user, IAM policy or unrelated Parameter Store name.
+[ ] Apply the saved destroy plan and wait for Resources: 1 destroyed.
+[ ] Run terraform state list and confirm no resource address remains.
+[ ] Run the AWS CLI get command and expect ParameterNotFound, then open Parameter Store in eu-west-2, search the exact path and confirm no result.
+[ ] Only after both cloud verifications, sign in again with the administrator-capable identity, open IAM, choose Users, open fa-terraform-import-maintenance-user and choose Security credentials.
+[ ] Under Access keys, locate the one lab key, choose Actions, Deactivate, confirm, choose Actions again, choose Delete, enter the requested confirmation text and delete it.
+[ ] Open the Permissions tab, select fa-terraform-import-maintenance-policy, choose Remove and confirm.
+[ ] Return to Users, select fa-terraform-import-maintenance-user, choose Delete, enter the exact user name when requested and confirm deletion.
+[ ] Open IAM Policies, search fa-terraform-import-maintenance-policy, select it, choose Actions, Delete, enter the exact policy name when requested and confirm deletion.
+[ ] In the terminal run aws sts get-caller-identity with the training profile and confirm it now fails because the access key was deleted.
+[ ] Open the AWS shared credentials file and remove only the complete [fa-terraform-import-maintenance] section; leave every other profile unchanged.
+[ ] Open the AWS shared config file and remove only the complete [profile fa-terraform-import-maintenance] section; leave every other profile unchanged.
+[ ] Run aws configure list-profiles and confirm fa-terraform-import-maintenance is absent.
+[ ] Before deleting files, verify the exact fa-terraform-import-maintenance folder path, leave that folder and inspect the target directory name one final time.
+[ ] Delete only the fa-terraform-import-maintenance folder. This removes provider cache, lock file, provider.tf, parameter.tf, imports.tf, outputs.tf, initial-import.tfplan, observed-drift.tfplan, repair-drift.tfplan, reimport-binding.tfplan, destroy-import-maintenance.tfplan, terraform.tfstate and all terraform.tfstate backup files.
+[ ] Search Parameter Store, IAM, AWS profiles and the local filesystem for the exact lab names and confirm nothing remains.
+[ ] Complete the programme-cleanup acknowledgement only when the parameter, access key, IAM user, IAM policy, CLI profile, Terraform binding, state, plans, configuration and exact local folder are all absent.
+Expected result: AWS, IAM, the named CLI profile and the exact local workspace contain no resource, credential, state, plan or file created by this programme.
+Warning: Do not delete the access key, profile, state or local folder until the saved Terraform destroy has completed and AWS visibly confirms the parameter is absent.
+
+CLI COMMANDS
+1. terraform state list
+   Why: Inventory the one managed binding before destruction.
+   Expected: Exactly aws_ssm_parameter.application_mode is printed.
+2. terraform plan -destroy -out=destroy-import-maintenance.tfplan
+   Why: Create a saved reverse-dependency destroy plan.
+   Expected: Plan: 0 to add, 0 to change, 1 to destroy.
+3. terraform show destroy-import-maintenance.tfplan
+   Why: Inspect the exact cloud deletion.
+   Expected: Only /fa-terraform-import-maintenance/development/app-mode is marked for destruction.
+4. terraform apply destroy-import-maintenance.tfplan
+   Why: Apply the exact reviewed cloud teardown.
+   Expected: Apply complete! Resources: 1 destroyed.
+5. terraform state list
+   Why: Verify no managed address remains before credential or file cleanup.
+   Expected: No resource address is printed.
+6. aws ssm get-parameter --name /fa-terraform-import-maintenance/development/app-mode --region eu-west-2 --profile fa-terraform-import-maintenance
+   Why: Verify AWS no longer has the parameter while the training credential still works.
+   Expected: AWS returns ParameterNotFound.
+7. aws sts get-caller-identity --profile fa-terraform-import-maintenance
+   Why: After deleting the access key in IAM, prove the training credential no longer works.
+   Expected: AWS returns an invalid or inactive access-key error.
+8. aws configure list-profiles
+   Why: After removing only the two named profile sections, verify the profile list.
+   Expected: fa-terraform-import-maintenance is absent and unrelated profiles remain.
+9. Set-Location "$env:USERPROFILE"
+   Why: PowerShell route: leave the lab folder before deleting it.
+   Expected: Get-Location will show the user profile directory.
+10. Get-Item -LiteralPath "$env:USERPROFILE\fa-terraform-import-maintenance"
+   Why: PowerShell route: resolve and inspect the exact deletion target.
+   Expected: The displayed FullName ends exactly \fa-terraform-import-maintenance.
+11. Remove-Item -LiteralPath "$env:USERPROFILE\fa-terraform-import-maintenance" -Recurse -Force
+   Why: PowerShell route: delete only the verified lab folder and its local artifacts.
+   Expected: The exact folder is removed.
+12. Test-Path -LiteralPath "$env:USERPROFILE\fa-terraform-import-maintenance"
+   Why: PowerShell route: verify local deletion.
+   Expected: False is printed.
+13. cd ~
+   Why: Bash route: leave the lab folder before deleting it.
+   Expected: pwd will show the user home directory.
+14. realpath ~/fa-terraform-import-maintenance
+   Why: Bash route: resolve and inspect the exact deletion target.
+   Expected: The resolved path ends exactly /fa-terraform-import-maintenance.
+15. rm -rf -- ~/fa-terraform-import-maintenance
+   Why: Bash route: delete only the verified lab folder and its local artifacts.
+   Expected: The command returns without an error.
+16. test ! -e ~/fa-terraform-import-maintenance
+   Why: Bash route: verify local deletion.
+   Expected: The command succeeds and prints nothing.
+
+VERIFICATION CHECKS
+- Verify cloud cleanup [either]: Search Parameter Store in eu-west-2 and run the exact AWS CLI get command before deleting credentials. Expected: The Console returns no matching parameter and AWS CLI returns ParameterNotFound.
+- Verify IAM cleanup [console]: Search IAM Users and Policies for the two exact fa-terraform-import-maintenance names. Expected: Neither the user nor customer-managed policy appears and the access key is gone.
+- Verify profile and filesystem cleanup [cli]: List AWS CLI profiles and test the exact local folder path. Expected: The named profile is absent, unrelated profiles remain and the exact folder does not exist.
+- Acknowledge complete programme cleanup [either]: Confirm every named cloud, credential, state and local target in the final checklist is absent. Expected: The learner can truthfully record the complete programme-cleanup acknowledgement.
+
+PROGRAMME CLEANUP - MANUAL REVERSE DEPENDENCY ORDER
+1. Inventory the exact Terraform binding and AWS parameter [programme-cleanup-import-maintenance-01-inventory-the-exact-terraform-binding-and-aws-parameter]
+   Instruction: Before deletion, confirm state contains only aws_ssm_parameter.application_mode and AWS contains only /fa-terraform-import-maintenance/development/app-mode for this programme.
+   Verification: Terraform lists one exact address and Parameter Store displays one exact programme parameter.
+2. Destroy /fa-terraform-import-maintenance/development/app-mode [programme-cleanup-import-maintenance-02-destroy-fa-terraform-import-maintenance-development-app-mode]
+   Instruction: Create, show and apply destroy-import-maintenance.tfplan so Terraform destroys only the exact imported Standard String parameter before any credential, state or local file is removed.
+   Verification: Terraform reports one destroyed resource and terraform state list returns no address.
+3. Verify Parameter Store is empty for the exact path [programme-cleanup-import-maintenance-03-verify-parameter-store-is-empty-for-the-exact-path]
+   Instruction: While the training profile still works, require ParameterNotFound from AWS CLI and no Console search result for /fa-terraform-import-maintenance/development/app-mode in eu-west-2.
+   Verification: Both CLI and Console visibly confirm that the exact cloud parameter is absent.
+4. Delete the fa-terraform-import-maintenance-user access key [programme-cleanup-import-maintenance-04-delete-the-fa-terraform-import-maintenance-user-access-key]
+   Instruction: In IAM, deactivate and delete the single access key under fa-terraform-import-maintenance-user only after cloud verification succeeds.
+   Verification: The user Security credentials tab contains no access key and the named profile can no longer authenticate.
+5. Delete fa-terraform-import-maintenance-user and policy [programme-cleanup-import-maintenance-05-delete-fa-terraform-import-maintenance-user-and-policy]
+   Instruction: Detach fa-terraform-import-maintenance-policy, delete fa-terraform-import-maintenance-user, then delete the now-unattached fa-terraform-import-maintenance-policy.
+   Verification: IAM searches return no exact training user or customer-managed policy.
+6. Remove only the fa-terraform-import-maintenance CLI profile [programme-cleanup-import-maintenance-06-remove-only-the-fa-terraform-import-maintenance-cli-profile]
+   Instruction: Remove the exact [fa-terraform-import-maintenance] credentials section and [profile fa-terraform-import-maintenance] config section without changing any unrelated profile.
+   Verification: aws configure list-profiles does not show fa-terraform-import-maintenance and still shows every unrelated profile.
+7. Delete the verified fa-terraform-import-maintenance folder [programme-cleanup-import-maintenance-07-delete-the-verified-fa-terraform-import-maintenance-folder]
+   Instruction: Leave the exact folder, resolve its full path and delete only fa-terraform-import-maintenance with provider.tf, parameter.tf, imports.tf, outputs.tf, .terraform, .terraform.lock.hcl, every named .tfplan, terraform.tfstate and every terraform.tfstate backup.
+   Verification: The exact local folder path no longer exists and no programme state, plan or configuration file remains.
+8. Complete programme-cleanup acknowledgement [programme-cleanup-import-maintenance-08-complete-programme-cleanup-acknowledgement]
+   Instruction: Acknowledge: I verified that /fa-terraform-import-maintenance/development/app-mode, fa-terraform-import-maintenance-user, its access key, fa-terraform-import-maintenance-policy, the fa-terraform-import-maintenance CLI profile, aws_ssm_parameter.application_mode, all state and plan files, and the fa-terraform-import-maintenance folder are absent.
+   Verification: The acknowledgement names every exact programme cloud resource, credential, state binding and local artifact and is completed only after all visible checks pass.
+
+OFFICIAL SOURCES
+source-import-maintenance-aws-iam-safety: Security best practices in IAM
+URL: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Used by: task-import-maintenance-001-install-tools-and-create-restricted-training-access, task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+source-import-maintenance-aws-cli-install: Installing or updating to the latest version of the AWS CLI
+URL: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+Used by: task-import-maintenance-001-install-tools-and-create-restricted-training-access
+source-import-maintenance-aws-cli-configure: Configuration and credential file settings in the AWS CLI
+URL: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+Used by: task-import-maintenance-001-install-tools-and-create-restricted-training-access, task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+source-import-maintenance-aws-parameter-store: Working with Parameter Store
+URL: https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-working-with.html
+Used by: task-import-maintenance-002-create-one-unmanaged-parameter-store-value, task-import-maintenance-004-plan-and-apply-the-declarative-import, task-import-maintenance-005-detect-drift-and-restore-the-declared-value, task-import-maintenance-007-detach-and-re-import-the-state-binding-safely, task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+source-import-maintenance-aws-parameter-cli: Creating a Parameter Store parameter using the AWS CLI
+URL: https://docs.aws.amazon.com/systems-manager/latest/userguide/param-create-cli.html
+Used by: task-import-maintenance-002-create-one-unmanaged-parameter-store-value, task-import-maintenance-005-detect-drift-and-restore-the-declared-value
+source-import-maintenance-tf-install: Install Terraform
+URL: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+Used by: task-import-maintenance-001-install-tools-and-create-restricted-training-access
+source-import-maintenance-tf-provider-requirements: Provider requirements
+URL: https://developer.hashicorp.com/terraform/language/providers/requirements
+Used by: task-import-maintenance-003-write-the-matching-terraform-configuration
+source-import-maintenance-tf-init: Initialize the Terraform working directory
+URL: https://developer.hashicorp.com/terraform/cli/init
+Used by: task-import-maintenance-003-write-the-matching-terraform-configuration
+source-import-maintenance-tf-import-overview: Import existing infrastructure resources
+URL: https://developer.hashicorp.com/terraform/cli/import
+Used by: task-import-maintenance-003-write-the-matching-terraform-configuration, task-import-maintenance-004-plan-and-apply-the-declarative-import
+source-import-maintenance-tf-import-block: Import resources overview
+URL: https://developer.hashicorp.com/terraform/language/import
+Used by: task-import-maintenance-003-write-the-matching-terraform-configuration, task-import-maintenance-004-plan-and-apply-the-declarative-import, task-import-maintenance-007-detach-and-re-import-the-state-binding-safely
+source-import-maintenance-tf-plan: Terraform plan command
+URL: https://developer.hashicorp.com/terraform/cli/commands/plan
+Used by: task-import-maintenance-004-plan-and-apply-the-declarative-import, task-import-maintenance-005-detect-drift-and-restore-the-declared-value, task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file, task-import-maintenance-007-detach-and-re-import-the-state-binding-safely, task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+source-import-maintenance-tf-state-list: Terraform state list command
+URL: https://developer.hashicorp.com/terraform/cli/commands/state/list
+Used by: task-import-maintenance-004-plan-and-apply-the-declarative-import, task-import-maintenance-007-detach-and-re-import-the-state-binding-safely, task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+source-import-maintenance-tf-state-show: Terraform state show command
+URL: https://developer.hashicorp.com/terraform/cli/commands/state/show
+Used by: task-import-maintenance-004-plan-and-apply-the-declarative-import, task-import-maintenance-007-detach-and-re-import-the-state-binding-safely
+source-import-maintenance-tf-state-rm: Terraform state rm command
+URL: https://developer.hashicorp.com/terraform/cli/commands/state/rm
+Used by: task-import-maintenance-007-detach-and-re-import-the-state-binding-safely
+source-import-maintenance-tf-cli-environment: Terraform CLI environment variables reference
+URL: https://developer.hashicorp.com/terraform/cli/config/environment-variables
+Used by: task-import-maintenance-006-use-diagnostic-logging-without-saving-a-log-file
+source-import-maintenance-tf-destroy: Terraform destroy command
+URL: https://developer.hashicorp.com/terraform/cli/commands/destroy
+Used by: task-import-maintenance-008-destroy-the-parameter-and-remove-every-lab-artifact
+
+VALIDATION
+Planning: passed
+Content: passed
+Structured review: passed
+
+BOUNDARIES
+No Author identity is bound.
+Nothing was written to Author, Supabase or AWS by this builder.
+No release candidate or candidate ID was created.
+Nothing was approved or published.
+Stage 12 has not started.
+The Stage 90A acceptance file does not exist and requires exact human fingerprint approval.

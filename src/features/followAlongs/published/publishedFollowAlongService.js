@@ -5,6 +5,10 @@ const runtimeEnv = (typeof import.meta !== 'undefined' && import.meta.env) ? imp
 export const CONTROLLED_PUBLISHING_FLAG = 'VITE_FOLLOW_ALONG_CONTROLLED_PUBLISHING';
 export const PUBLISHED_FOLLOW_ALONG_TABLE = 'follow_along_published_programmes';
 
+const PROGRAMMES_WITHOUT_LEARNER_RESOURCE_CAPTURE = new Set([
+  'terraform-import-maintenance-learning-path'
+]);
+
 export function isControlledPublishingEnabled(environment = runtimeEnv) {
   return String(environment?.[CONTROLLED_PUBLISHING_FLAG] || '').toLowerCase() === 'true';
 }
@@ -86,9 +90,10 @@ function normalizedCliSteps(task) {
   }));
 }
 
-function normalizedTasks(tasks = []) {
+function normalizedTasks(tasks = [], { hideResourceCapture = false } = {}) {
   return tasks.map(task => ({
     ...task,
+    ...(hideResourceCapture ? { createdResourceKeys: [] } : {}),
     consoleSteps: normalizedConsoleSteps(task),
     cliSteps: normalizedCliSteps(task),
     modeAvailability: {
@@ -128,6 +133,7 @@ export function buildPublishedFollowAlongConfig(row) {
   if (!snapshot || !programme) return null;
   const programmeId = clean(programme.programmeId || programme.pathId);
   const pathId = clean(programme.pathId || programme.programmeId);
+  const hideResourceCapture = PROGRAMMES_WITHOUT_LEARNER_RESOURCE_CAPTURE.has(programmeId);
   const storage = { ...storageDefaults(programme), ...(snapshot.storage || {}) };
   const cleanup = normalizedCleanup(snapshot);
   const resources = {
@@ -140,6 +146,13 @@ export function buildPublishedFollowAlongConfig(row) {
       ...(snapshot.resources?.variables || {})
     }
   };
+  const capabilities = { ...capabilityDefaults(snapshot, cleanup), ...(snapshot.capabilities || {}) };
+  if (hideResourceCapture) {
+    capabilities.resourceCapture = {
+      status: 'not_applicable',
+      reason: 'This programme uses fixed, non-secret training names and does not ask learners to save resource bindings.'
+    };
+  }
   return {
     template: {
       profile: snapshot.schema?.profile,
@@ -162,9 +175,9 @@ export function buildPublishedFollowAlongConfig(row) {
     },
     storage,
     progress: snapshot.progress || {},
-    capabilities: { ...capabilityDefaults(snapshot, cleanup), ...(snapshot.capabilities || {}) },
+    capabilities,
     phases: snapshot.phases || [],
-    tasks: normalizedTasks(snapshot.tasks),
+    tasks: normalizedTasks(snapshot.tasks, { hideResourceCapture }),
     resources,
     warnings: snapshot.warnings || {},
     cleanup,
