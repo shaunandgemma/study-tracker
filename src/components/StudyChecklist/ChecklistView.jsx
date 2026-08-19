@@ -222,7 +222,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
 
       {isDemoAccount && (
         <DemoContentNotice>
-          The first {DEMO_CONTENT_LIMITS.checklistItems} checklist rows and their matching Knowledge Guide pages are available for this exam. Later objectives are reserved for signed-in learner accounts.
+          The first {DEMO_CONTENT_LIMITS.checklistItems} checklist rows and their matching Knowledge Guide pages are available for this exam. The paid exam workspace unlocks every objective and lesson.
         </DemoContentNotice>
       )}
 

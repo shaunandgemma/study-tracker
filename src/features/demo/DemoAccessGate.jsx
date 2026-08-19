@@ -1,11 +1,13 @@
 import React from 'react';
 import { FlaskConical, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { AuthModal } from '../../components/Modals/AuthModal.jsx';
+import { DemoAnnualAccessAdvert } from './DemoAnnualAccessPromotion.jsx';
 
 export const DemoAccessGate = ({ onSignIn = () => {}, onEnterDemo = () => {}, enteringDemo = false }) => (
   <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100">
-    <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-      <section className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-indigo-950/35 to-slate-950 p-7 shadow-2xl sm:p-10">
+    <div className="mx-auto max-w-5xl space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <section className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-indigo-950/35 to-slate-950 p-7 shadow-2xl sm:p-10">
         <span className="inline-flex items-center gap-2 rounded-full border border-indigo-700/70 bg-indigo-950/70 px-3 py-1 text-xs font-bold text-indigo-200">
           <ShieldCheck className="h-4 w-4" /> Safe demonstration access
         </span>
@@ -25,9 +27,9 @@ export const DemoAccessGate = ({ onSignIn = () => {}, onEnterDemo = () => {}, en
             </div>
           ))}
         </div>
-      </section>
+        </section>
 
-      <aside className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+        <aside className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
         <LockKeyhole className="h-8 w-8 text-indigo-300" />
         <h2 className="mt-4 text-xl font-bold text-white">Choose access</h2>
         <p className="mt-2 text-xs leading-6 text-slate-400">Registered learners and administrators sign in with their protected account. Visitors use the temporary demo account.</p>
@@ -42,7 +44,10 @@ export const DemoAccessGate = ({ onSignIn = () => {}, onEnterDemo = () => {}, en
         <p className="mt-5 rounded-xl border border-amber-800/50 bg-amber-950/20 p-3 text-[11px] leading-5 text-amber-200">
           Demo access cannot open Author or Approvals, and it cannot change live application data.
         </p>
-      </aside>
+        </aside>
+      </div>
+
+      <DemoAnnualAccessAdvert />
     </div>
     <AuthModal />
   </main>

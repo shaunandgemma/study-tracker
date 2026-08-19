@@ -118,7 +118,7 @@ export const FollowAlongLandingPage = ({
 
       {demoAccount && (
         <DemoContentNotice>
-          Two Follow Alongs are available in this exam workspace. The full Follow Along library is reserved for signed-in learner accounts.
+          Two Follow Alongs are available in this exam workspace. The paid exam workspace unlocks the complete assigned Follow Along library.
         </DemoContentNotice>
       )}
 

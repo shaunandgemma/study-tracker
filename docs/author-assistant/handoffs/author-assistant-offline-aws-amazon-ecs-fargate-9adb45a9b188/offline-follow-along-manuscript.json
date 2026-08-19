@@ -1,0 +1,2999 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "Amazon ECS and AWS Fargate Follow Along",
+    "suggestedProgrammeId": "aws-amazon-ecs-fargate-learning-path",
+    "topic": "Amazon ECS and AWS Fargate",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Intermediate",
+    "outcome": "Build and push a private ECR image; create an ECS cluster, Fargate task definition and ECS service; integrate the service with an Application Load Balancer; separate task and execution IAM roles; send container logs to CloudWatch; configure ECS Service Auto Scaling and demonstrate controlled scale-out; compare ECS, EKS, Fargate and Lambda; then safely delete only resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-ecs-fargate-eks",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "administratorAccessModel": "Use an existing AWS administrator account for this disposable training lab. Do not create a separate human IAM user or static access key.",
+    "completionDefinition": [
+      "The existing AWS administrator training account is verified and used without creating a separate human IAM user/access key.",
+      "A custom Flask application image is built in AWS CloudShell, health-tested locally and pushed to private ECR as immutable tag v1.",
+      "A two-AZ VPC, ALB, IP target group and restricted ALB-to-task security-group flow are created.",
+      "Separate ECS task execution and application task roles are created; the application proves task-role access by reading one exact SSM parameter.",
+      "A Fargate task definition uses awsvpc, 0.25 vCPU/0.5 GB, ECR v1, awslogs and a container /health check.",
+      "An ECS service maintains two Fargate tasks across the two subnets and registers healthy task IPs with the ALB.",
+      "CloudWatch Logs contains application/task output.",
+      "ECS Service Auto Scaling manages desired count between 2 and 4 using CPU target tracking and a fixed five-minute load test demonstrates scale-out.",
+      "The learner can choose ECS, EKS or Lambda based on orchestration/execution requirements and can explain that Fargate is container compute rather than an orchestrator.",
+      "All automation, tasks, ALB/ECR/log/IAM/network resources and CloudShell files are removed in reverse dependency order while the existing administrator account remains unchanged."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-saa-domain3",
+      "title": "Content Domain 3: Design High-Performing Architectures",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03-domain3.html",
+      "purpose": "SAA-C03 container orchestration, Fargate and compute-selection coverage.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-14-ecs-eks-lambda"
+      ]
+    },
+    {
+      "id": "src-saa-scope",
+      "title": "In-Scope AWS Services - AWS Certified Solutions Architect - Associate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/saa-03-in-scope-services.html",
+      "purpose": "Current in-scope AWS services for SAA-C03.",
+      "taskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-ecr-what",
+      "title": "What is Amazon Elastic Container Registry?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html",
+      "purpose": "Amazon ECR registry concepts.",
+      "taskIds": [
+        "task-03-ecr-repository",
+        "task-04-build-push-image",
+        "task-15-exam-review"
+      ]
+    },
+    {
+      "id": "src-ecr-repo",
+      "title": "Creating an Amazon ECR private repository to store images",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html",
+      "purpose": "Private ECR repository creation.",
+      "taskIds": [
+        "task-03-ecr-repository"
+      ]
+    },
+    {
+      "id": "src-ecr-push",
+      "title": "Pushing a Docker image to an Amazon ECR private repository",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html",
+      "purpose": "Authenticate, tag and push images to ECR.",
+      "taskIds": [
+        "task-03-ecr-repository",
+        "task-04-build-push-image",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-cloudshell-docker",
+      "title": "Building a Docker container inside CloudShell and pushing it to an Amazon ECR repository",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cloudshell/latest/userguide/tutorial-docker-cli.html",
+      "purpose": "AWS-hosted Docker build and ECR push workflow.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-create-app-files",
+        "task-04-build-push-image",
+        "task-18-cloudshell-cleanup"
+      ]
+    },
+    {
+      "id": "src-ecs-image",
+      "title": "Creating a container image for use on Amazon ECS",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html",
+      "purpose": "Container image creation and ECR use with ECS.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-create-app-files",
+        "task-04-build-push-image"
+      ]
+    },
+    {
+      "id": "src-ecs-cluster",
+      "title": "Amazon ECS clusters",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/clusters.html",
+      "purpose": "ECS cluster concepts.",
+      "taskIds": [
+        "task-08-cluster-taskdef",
+        "task-14-ecs-eks-lambda"
+      ]
+    },
+    {
+      "id": "src-ecs-taskdef",
+      "title": "Amazon ECS task definitions",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html",
+      "purpose": "Task definition as the application blueprint.",
+      "taskIds": [
+        "task-02-create-app-files",
+        "task-08-cluster-taskdef",
+        "task-15-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-ecs-fargate-taskdef",
+      "title": "Amazon ECS task definition differences for Fargate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-tasks-services.html",
+      "purpose": "Fargate task requirements including awsvpc networking.",
+      "taskIds": [
+        "task-08-cluster-taskdef",
+        "task-09-create-service"
+      ]
+    },
+    {
+      "id": "src-ecs-task-params",
+      "title": "Amazon ECS task definition parameters for Fargate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html",
+      "purpose": "Task/execution role, CPU, memory, networking and container parameters.",
+      "taskIds": [
+        "task-08-cluster-taskdef"
+      ]
+    },
+    {
+      "id": "src-ecs-task-role",
+      "title": "Amazon ECS task IAM role",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html",
+      "purpose": "Application permissions delivered to containers through the task role.",
+      "taskIds": [
+        "task-07-roles-logs-parameter",
+        "task-10-verify-app-task-role",
+        "task-15-exam-review"
+      ]
+    },
+    {
+      "id": "src-ecs-exec-role",
+      "title": "Amazon ECS task execution IAM role",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html",
+      "purpose": "Permissions ECS/Fargate agents use for ECR pulls and CloudWatch logging.",
+      "taskIds": [
+        "task-07-roles-logs-parameter",
+        "task-11-cloudwatch-logs",
+        "task-15-exam-review"
+      ]
+    },
+    {
+      "id": "src-ecs-role-best",
+      "title": "Best practices for IAM roles in Amazon ECS",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html",
+      "purpose": "Distinguishes task and task execution roles.",
+      "taskIds": [
+        "task-07-roles-logs-parameter",
+        "task-10-verify-app-task-role"
+      ]
+    },
+    {
+      "id": "src-ecs-services",
+      "title": "Amazon ECS services",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html",
+      "purpose": "Desired task count and long-running ECS services.",
+      "taskIds": [
+        "task-09-create-service",
+        "task-10-verify-app-task-role",
+        "task-15-exam-review",
+        "task-16-stop-scaling-service"
+      ]
+    },
+    {
+      "id": "src-ecs-alb",
+      "title": "Use an Application Load Balancer for Amazon ECS",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/alb.html",
+      "purpose": "ALB integration and ip target type for awsvpc/Fargate tasks.",
+      "taskIds": [
+        "task-06-alb-network",
+        "task-09-create-service",
+        "task-10-verify-app-task-role",
+        "task-13-generate-load",
+        "task-15-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-ecs-lb",
+      "title": "Use load balancing to distribute Amazon ECS service traffic",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-load-balancing.html",
+      "purpose": "ECS service load-balancer support.",
+      "taskIds": [
+        "task-06-alb-network",
+        "task-09-create-service"
+      ]
+    },
+    {
+      "id": "src-ecs-networking",
+      "title": "Amazon ECS task networking options for Fargate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html",
+      "purpose": "Fargate awsvpc ENIs and public-subnet networking.",
+      "taskIds": [
+        "task-05-network",
+        "task-09-create-service"
+      ]
+    },
+    {
+      "id": "src-ecs-outbound",
+      "title": "Connect Amazon ECS applications to the internet",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/networking-outbound.html",
+      "purpose": "Public-IP versus private-subnet/NAT networking patterns.",
+      "taskIds": [
+        "task-05-network"
+      ]
+    },
+    {
+      "id": "src-ecs-logs",
+      "title": "Send Amazon ECS logs to CloudWatch",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html",
+      "purpose": "awslogs task-definition driver and CloudWatch Logs.",
+      "taskIds": [
+        "task-07-roles-logs-parameter",
+        "task-08-cluster-taskdef",
+        "task-11-cloudwatch-logs",
+        "task-15-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-ecs-monitor",
+      "title": "Monitor Amazon ECS using CloudWatch",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-metrics.html",
+      "purpose": "ECS service utilization metrics.",
+      "taskIds": [
+        "task-12-service-autoscaling",
+        "task-13-generate-load"
+      ]
+    },
+    {
+      "id": "src-ecs-autoscaling",
+      "title": "Automatically scale your Amazon ECS service",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html",
+      "purpose": "Application Auto Scaling for ECS desired task count.",
+      "taskIds": [
+        "task-12-service-autoscaling",
+        "task-13-generate-load",
+        "task-15-exam-review",
+        "task-16-stop-scaling-service"
+      ]
+    },
+    {
+      "id": "src-ecs-targettracking",
+      "title": "Use a target metric to scale Amazon ECS services",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-autoscaling-targettracking.html",
+      "purpose": "Target tracking scaling policies for ECS services.",
+      "taskIds": [
+        "task-12-service-autoscaling",
+        "task-13-generate-load"
+      ]
+    },
+    {
+      "id": "src-ecs-target-create",
+      "title": "Create a target tracking scaling policy for Amazon ECS service auto scaling",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/target-tracking-create-policy.html",
+      "purpose": "Practical target tracking configuration.",
+      "taskIds": [
+        "task-12-service-autoscaling"
+      ]
+    },
+    {
+      "id": "src-ecs-autoscale-iam",
+      "title": "IAM permissions required for Amazon ECS service auto scaling",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/auto-scaling-IAM.html",
+      "purpose": "ECS Application Auto Scaling service-linked role behavior.",
+      "taskIds": [
+        "task-12-service-autoscaling"
+      ]
+    },
+    {
+      "id": "src-ecs-cloudwatch-view",
+      "title": "Viewing CloudWatch Logs for Amazon ECS services",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/monitoring-cloudwatchlogs-view.html",
+      "purpose": "View ECS container logs from ECS or CloudWatch.",
+      "taskIds": [
+        "task-11-cloudwatch-logs"
+      ]
+    },
+    {
+      "id": "src-container-choice",
+      "title": "Choosing an AWS container service",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/decision-guides/latest/containers-on-aws-how-to-choose/choosing-aws-container-service.html",
+      "purpose": "Container-service selection across ECS, EKS and other AWS options.",
+      "taskIds": [
+        "task-14-ecs-eks-lambda"
+      ]
+    },
+    {
+      "id": "src-fargate-lambda",
+      "title": "AWS Fargate or AWS Lambda?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/pdfs/decision-guides/latest/fargate-or-lambda/fargate-or-lambda.pdf",
+      "purpose": "Fargate container execution versus Lambda event-driven function execution.",
+      "taskIds": [
+        "task-14-ecs-eks-lambda"
+      ]
+    },
+    {
+      "id": "src-alb-target",
+      "title": "Target groups for your Application Load Balancers",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html",
+      "purpose": "ALB target groups and IP targets.",
+      "taskIds": [
+        "task-06-alb-network"
+      ]
+    },
+    {
+      "id": "src-vpc-create",
+      "title": "Create a VPC",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html",
+      "purpose": "Dedicated training VPC/subnets.",
+      "taskIds": [
+        "task-05-network"
+      ]
+    },
+    {
+      "id": "src-vpc-igw",
+      "title": "Connect your VPC to the internet using an internet gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html",
+      "purpose": "Public subnet internet routing.",
+      "taskIds": [
+        "task-05-network",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-vpc-sg",
+      "title": "Control traffic to your AWS resources using security groups",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html",
+      "purpose": "ALB-to-task security-group flow.",
+      "taskIds": [
+        "task-06-alb-network"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare",
+      "sequence": 1,
+      "title": "Prepare the administrator session and application files",
+      "goal": "Use an existing AWS administrator account, verify CloudShell/Docker, and create the complete container application files."
+    },
+    {
+      "id": "phase-02-ecr",
+      "sequence": 2,
+      "title": "Build and publish the application image",
+      "goal": "Create a private ECR repository, build the container in AWS CloudShell, test it locally, and push immutable image tag v1."
+    },
+    {
+      "id": "phase-03-network-alb",
+      "sequence": 3,
+      "title": "Build the Fargate network and load balancer",
+      "goal": "Create a two-AZ public VPC, ALB/task security groups, an IP target group and an internet-facing Application Load Balancer."
+    },
+    {
+      "id": "phase-04-ecs",
+      "sequence": 4,
+      "title": "Create roles, logs, cluster, task definition and Fargate service",
+      "goal": "Separate execution/task IAM responsibilities, create CloudWatch logging, register the task blueprint and run two Fargate tasks behind the ALB."
+    },
+    {
+      "id": "phase-05-scale-monitor",
+      "sequence": 5,
+      "title": "Verify task IAM, logs and service auto scaling",
+      "goal": "Prove the application uses its task role, inspect CloudWatch logs, configure CPU target tracking, and generate controlled load to demonstrate scale-out."
+    },
+    {
+      "id": "phase-06-selection",
+      "sequence": 6,
+      "title": "Compare ECS, EKS, Fargate and Lambda",
+      "goal": "Turn the hands-on service into a clear SAA-C03 compute/container service-selection model."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Reverse-dependency cleanup",
+      "goal": "Stop automation first, then delete the service, ALB, task definitions, cluster, image/repository, roles, network and CloudShell files."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare",
+      "title": "Verify the AWS administrator account, CloudShell and Docker",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm the disposable AWS administrator training account, eu-west-2, AWS CloudShell and Docker before creating resources.",
+      "whyItMatters": "This Follow Along deliberately uses an existing AWS administrator account for bootstrap and lab execution so no separate human IAM user or access key is created.",
+      "examRelevance": "SAA-C03 includes Fargate/serverless compute and ECS/EKS container orchestration selection.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-saa-domain3",
+        "src-saa-scope",
+        "src-cloudshell-docker",
+        "src-ecs-image"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the disposable AWS training account using an existing AWS administrator account."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm the account ID is the intended training account and that no production workload uses the fa-ecs-fargate-eks prefix."
+        },
+        {
+          "sequence": 3,
+          "instruction": "In the upper-right Region selector choose Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open AWS CloudShell from the console toolbar."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run aws sts get-caller-identity."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Run aws --version."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Run docker --version."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run docker info."
+        },
+        {
+          "sequence": 9,
+          "instruction": "If Docker is not currently ready in CloudShell, reopen CloudShell and rerun docker info before continuing."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Do not create a separate human IAM user or static access key for this Follow Along."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - verify caller",
+          "language": "text",
+          "content": "aws sts get-caller-identity"
+        },
+        {
+          "title": "CloudShell - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        },
+        {
+          "title": "CloudShell - verify Docker CLI",
+          "language": "text",
+          "content": "docker --version"
+        },
+        {
+          "title": "CloudShell - verify Docker engine",
+          "language": "text",
+          "content": "docker info"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The caller identity belongs to the intended administrator training account.",
+        "AWS CLI and Docker both respond successfully in CloudShell.",
+        "No lab resource exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "The current Region is eu-west-2."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No static credential is created for the lab."
+        }
+      ]
+    },
+    {
+      "id": "task-02-create-app-files",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the complete container application and load-generator files",
+      "feature": "Container application files",
+      "difficulty": "Medium",
+      "goal": "Create the Flask application, Dockerfile, dependency file, task-registration script, load generator and service-selection matrix in CloudShell.",
+      "whyItMatters": "The application contains health, configuration and controlled CPU endpoints so later tasks can prove ALB health, task IAM and auto scaling instead of deploying a passive hello-world container.",
+      "examRelevance": "A task definition points at a container image; application behavior remains inside the image rather than ECS configuration.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-ecs-image",
+        "src-cloudshell-docker",
+        "src-ecs-taskdef"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In CloudShell create ~/fa-ecs-fargate-eks."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Enter that folder."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create app.py, requirements.txt, Dockerfile, register-task-definition.sh, generate-load.sh and service-selection.json."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Paste the complete supplied contents into each file."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run python -m py_compile app.py to catch Python syntax errors before building."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Run python -m json.tool service-selection.json to validate the decision file."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Run chmod +x on both shell scripts."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - create folder",
+          "language": "text",
+          "content": "mkdir -p ~/fa-ecs-fargate-eks"
+        },
+        {
+          "title": "CloudShell - enter folder",
+          "language": "text",
+          "content": "cd ~/fa-ecs-fargate-eks"
+        },
+        {
+          "title": "CloudShell - validate Python",
+          "language": "text",
+          "content": "python3 -m py_compile app.py"
+        },
+        {
+          "title": "CloudShell - validate JSON",
+          "language": "text",
+          "content": "python3 -m json.tool service-selection.json >/dev/null"
+        },
+        {
+          "title": "CloudShell - make scripts executable",
+          "language": "text",
+          "content": "chmod +x register-task-definition.sh generate-load.sh"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "app.py",
+          "language": "text",
+          "content": "import json\nimport math\nimport os\nimport time\nimport urllib.request\n\nimport boto3\nfrom flask import Flask, jsonify, request\n\napp = Flask(__name__)\nssm = boto3.client(\"ssm\", region_name=os.environ.get(\"AWS_REGION\", \"eu-west-2\"))\n\n\ndef task_metadata():\n    uri = os.environ.get(\"ECS_CONTAINER_METADATA_URI_V4\")\n    if not uri:\n        return {\"metadata\": \"ECS metadata URI is not available\"}\n    try:\n        with urllib.request.urlopen(f\"{uri}/task\", timeout=2) as response:\n            payload = json.loads(response.read().decode(\"utf-8\"))\n        return {\n            \"task_arn\": payload.get(\"TaskARN\"),\n            \"cluster\": payload.get(\"Cluster\"),\n            \"availability_zone\": payload.get(\"AvailabilityZone\"),\n            \"launch_type\": payload.get(\"LaunchType\")\n        }\n    except Exception as exc:\n        return {\"metadata_error\": str(exc)}\n\n\n@app.get(\"/\")\ndef index():\n    return jsonify(\n        message=\"Amazon ECS and AWS Fargate Follow Along\",\n        service=\"fa-ecs-fargate-eks-service\",\n        task=task_metadata()\n    )\n\n\n@app.get(\"/health\")\ndef health():\n    return \"healthy\\n\", 200, {\"Content-Type\": \"text/plain\"}\n\n\n@app.get(\"/config\")\ndef config():\n    parameter_name = os.environ[\"MESSAGE_PARAMETER\"]\n    response = ssm.get_parameter(Name=parameter_name, WithDecryption=False)\n    return jsonify(\n        parameter=parameter_name,\n        value=response[\"Parameter\"][\"Value\"],\n        task=task_metadata()\n    )\n\n\n@app.get(\"/burn\")\ndef burn():\n    seconds = min(max(float(request.args.get(\"seconds\", \"5\")), 1.0), 10.0)\n    end = time.time() + seconds\n    result = 0.0\n    while time.time() < end:\n        result += math.sqrt(12345.6789) * math.sqrt(98765.4321)\n    return jsonify(message=\"CPU training request complete\", seconds=seconds, checksum=result)\n\n\n@app.after_request\ndef log_request(response):\n    print(\n        json.dumps(\n            {\n                \"path\": request.path,\n                \"status\": response.status_code,\n                \"task\": task_metadata()\n            }\n        ),\n        flush=True\n    )\n    return response"
+        },
+        {
+          "title": "requirements.txt",
+          "language": "text",
+          "content": "Flask>=3.0,<4.0\nboto3>=1.34,<2.0\ngunicorn>=22,<24"
+        },
+        {
+          "title": "Dockerfile",
+          "language": "text",
+          "content": "FROM public.ecr.aws/docker/library/python:3.12-slim\n\nWORKDIR /app\n\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nCOPY app.py .\n\nEXPOSE 8080\n\nCMD [\"gunicorn\", \"--bind\", \"0.0.0.0:8080\", \"--workers\", \"2\", \"--threads\", \"2\", \"--access-logfile\", \"-\", \"--error-logfile\", \"-\", \"app:app\"]"
+        },
+        {
+          "title": "register-task-definition.sh",
+          "language": "text",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\nAWS_REGION=\"eu-west-2\"\nAWS_ACCOUNT_ID=\"$(aws sts get-caller-identity --query Account --output text)\"\nEXECUTION_ROLE_ARN=\"$(aws iam get-role --role-name fa-ecs-fargate-eks-execution-role --query Role.Arn --output text)\"\nTASK_ROLE_ARN=\"$(aws iam get-role --role-name fa-ecs-fargate-eks-task-role --query Role.Arn --output text)\"\nIMAGE_URI=\"${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/fa-ecs-fargate-eks-app:v1\"\n\ncat > task-definition.json <<EOF\n{\n  \"family\": \"fa-ecs-fargate-eks-task\",\n  \"networkMode\": \"awsvpc\",\n  \"requiresCompatibilities\": [\n    \"FARGATE\"\n  ],\n  \"cpu\": \"256\",\n  \"memory\": \"512\",\n  \"executionRoleArn\": \"${EXECUTION_ROLE_ARN}\",\n  \"taskRoleArn\": \"${TASK_ROLE_ARN}\",\n  \"containerDefinitions\": [\n    {\n      \"name\": \"fa-ecs-fargate-eks-app\",\n      \"image\": \"${IMAGE_URI}\",\n      \"essential\": true,\n      \"portMappings\": [\n        {\n          \"containerPort\": 8080,\n          \"protocol\": \"tcp\",\n          \"appProtocol\": \"http\"\n        }\n      ],\n      \"environment\": [\n        {\n          \"name\": \"MESSAGE_PARAMETER\",\n          \"value\": \"/fa-ecs-fargate-eks/message\"\n        },\n        {\n          \"name\": \"AWS_REGION\",\n          \"value\": \"eu-west-2\"\n        }\n      ],\n      \"logConfiguration\": {\n        \"logDriver\": \"awslogs\",\n        \"options\": {\n          \"awslogs-group\": \"/ecs/fa-ecs-fargate-eks\",\n          \"awslogs-region\": \"eu-west-2\",\n          \"awslogs-stream-prefix\": \"ecs\"\n        }\n      },\n      \"healthCheck\": {\n        \"command\": [\n          \"CMD-SHELL\",\n          \"python -c \\\"import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)\\\" || exit 1\"\n        ],\n        \"interval\": 30,\n        \"timeout\": 5,\n        \"retries\": 3,\n        \"startPeriod\": 20\n      }\n    }\n  ]\n}\nEOF\n\naws ecs register-task-definition \\\n  --cli-input-json file://task-definition.json \\\n  --region \"${AWS_REGION}\""
+        },
+        {
+          "title": "generate-load.sh",
+          "language": "text",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\nif [ \"$#\" -ne 1 ]; then\n  echo \"Usage: ./generate-load.sh <ALB_DNS_NAME>\"\n  exit 1\nfi\n\nALB_DNS_NAME=\"$1\"\nEND_TIME=$((SECONDS + 300))\nPIDS=()\n\nfor WORKER in 1 2 3 4; do\n  (\n    while [ \"$SECONDS\" -lt \"$END_TIME\" ]; do\n      curl --fail --silent --show-error \\\n        \"http://${ALB_DNS_NAME}/burn?seconds=5\" \\\n        >/dev/null || true\n    done\n  ) &\n  PIDS+=(\"$!\")\ndone\n\nfor PID in \"${PIDS[@]}\"; do\n  wait \"$PID\"\ndone\n\necho \"Controlled five-minute load test finished.\""
+        },
+        {
+          "title": "service-selection.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"Amazon ECS and AWS Fargate Follow Along\",\n  \"resourcePrefix\": \"fa-ecs-fargate-eks\",\n  \"serviceSelection\": [\n    {\n      \"service\": \"Amazon ECS\",\n      \"orchestrationModel\": \"AWS-native container orchestration\",\n      \"bestFit\": \"Containerized services when Kubernetes APIs/ecosystem compatibility are not a requirement and tight AWS integration plus operational simplicity are priorities.\",\n      \"computeChoices\": [\n        \"AWS Fargate\",\n        \"Amazon EC2\",\n        \"Amazon ECS Managed Instances\"\n      ]\n    },\n    {\n      \"service\": \"Amazon EKS\",\n      \"orchestrationModel\": \"Managed Kubernetes control plane\",\n      \"bestFit\": \"Workloads that require Kubernetes APIs, Kubernetes portability, Kubernetes-specific tooling/operators, or an existing Kubernetes operating model.\",\n      \"computeChoices\": [\n        \"AWS Fargate\",\n        \"Amazon EC2\",\n        \"Amazon EKS Auto Mode and supported Kubernetes compute options\"\n      ]\n    },\n    {\n      \"service\": \"AWS Lambda\",\n      \"orchestrationModel\": \"Event-driven serverless functions\",\n      \"bestFit\": \"Short-lived event-driven function execution where the application fits the Lambda execution model rather than a continuously running container service.\"\n    }\n  ],\n  \"fargateReminder\": \"AWS Fargate is a serverless compute engine for containers used with orchestration services such as Amazon ECS; Fargate is not itself a container orchestrator.\",\n  \"examDecisionRule\": \"Choose by execution model and orchestration requirement first: AWS-native containers -> ECS, Kubernetes requirement -> EKS, event-driven functions -> Lambda.\"\n}"
+        }
+      ],
+      "expectedResults": [
+        "All six files exist.",
+        "app.py compiles.",
+        "The service-selection JSON is valid."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-create-app-files-verify-01",
+          "text": "No credential appears in any file."
+        },
+        {
+          "id": "task-02-create-app-files-verify-02",
+          "text": "The application exposes /, /health, /config and /burn."
+        }
+      ]
+    },
+    {
+      "id": "task-03-ecr-repository",
+      "phaseId": "phase-02-ecr",
+      "title": "Create the private Amazon ECR repository",
+      "feature": "Amazon ECR",
+      "difficulty": "Medium",
+      "goal": "Create fa-ecs-fargate-eks-app as a private ECR repository with immutable tags and scan-on-push enabled.",
+      "whyItMatters": "The registry becomes the controlled image source that the Fargate task execution role pulls from later.",
+      "examRelevance": "ECR is the AWS-native private registry commonly paired with ECS task definitions.",
+      "prerequisites": [
+        "task-02-create-app-files"
+      ],
+      "sourceIds": [
+        "src-ecr-what",
+        "src-ecr-repo",
+        "src-ecr-push"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Amazon ECR in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Repositories."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Create repository."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Visibility: Private."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Repository name: fa-ecs-fargate-eks-app."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Image tag mutability: Immutable."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Turn scan on push on."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create the repository."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Open it and copy/record the repository URI."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - create ECR repository",
+          "language": "text",
+          "content": "ECR_URI=\"$(aws ecr create-repository --repository-name fa-ecs-fargate-eks-app --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=true --query repository.repositoryUri --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - show repository URI",
+          "language": "text",
+          "content": "printf \"ECR_URI=%s\\n\" \"$ECR_URI\""
+        },
+        {
+          "title": "CloudShell - describe repository",
+          "language": "text",
+          "content": "aws ecr describe-repositories --repository-names fa-ecs-fargate-eks-app --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The private repository exists in eu-west-2.",
+        "Tag mutability is IMMUTABLE.",
+        "Scan on push is enabled."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-ecr-repository-verify-01",
+          "text": "The repository name is exactly fa-ecs-fargate-eks-app."
+        },
+        {
+          "id": "task-03-ecr-repository-verify-02",
+          "text": "The generated URI includes the current AWS account ID."
+        }
+      ]
+    },
+    {
+      "id": "task-04-build-push-image",
+      "phaseId": "phase-02-ecr",
+      "title": "Build, test and push container image v1",
+      "feature": "Container image lifecycle",
+      "difficulty": "Hard",
+      "goal": "Build the application image in CloudShell, run a local health check, authenticate Docker to ECR and push immutable tag v1.",
+      "whyItMatters": "Testing before pushing separates application-image faults from later ECS networking or IAM faults.",
+      "examRelevance": "Fargate pulls the image specified in the task definition; ECR authorization is handled through the task execution role at runtime.",
+      "prerequisites": [
+        "task-03-ecr-repository"
+      ],
+      "sourceIds": [
+        "src-cloudshell-docker",
+        "src-ecr-push",
+        "src-ecs-image",
+        "src-ecr-what"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Remain in ~/fa-ecs-fargate-eks."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Build the image as fa-ecs-fargate-eks-app:v1."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Run the image locally mapping local TCP 8080 to container TCP 8080."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Use curl against http://localhost:8080/health and confirm healthy."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Stop/remove the local test container."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Get the account ID and ECR registry URI."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Authenticate Docker to ECR with aws ecr get-login-password piped to docker login --password-stdin. The pipe intentionally sends the short-lived ECR authorization password to Docker through standard input rather than putting it in a file."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Tag the image with the exact private ECR URI and v1."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Push v1."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open ECR and confirm image tag v1 appears."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - build image",
+          "language": "text",
+          "content": "docker build --tag fa-ecs-fargate-eks-app:v1 ."
+        },
+        {
+          "title": "CloudShell - run test container",
+          "language": "text",
+          "content": "docker run --detach --name fa-ecs-fargate-eks-local --publish 8080:8080 fa-ecs-fargate-eks-app:v1"
+        },
+        {
+          "title": "CloudShell - test local health",
+          "language": "text",
+          "content": "curl --fail http://localhost:8080/health"
+        },
+        {
+          "title": "CloudShell - remove local test container",
+          "language": "text",
+          "content": "docker rm --force fa-ecs-fargate-eks-local"
+        },
+        {
+          "title": "CloudShell - derive ECR values",
+          "language": "text",
+          "content": "AWS_ACCOUNT_ID=\"$(aws sts get-caller-identity --query Account --output text)\"; ECR_REGISTRY=\"${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com\"; ECR_URI=\"${ECR_REGISTRY}/fa-ecs-fargate-eks-app\""
+        },
+        {
+          "title": "CloudShell - authenticate Docker",
+          "language": "text",
+          "content": "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin \"$ECR_REGISTRY\""
+        },
+        {
+          "title": "CloudShell - tag image",
+          "language": "text",
+          "content": "docker tag fa-ecs-fargate-eks-app:v1 \"${ECR_URI}:v1\""
+        },
+        {
+          "title": "CloudShell - push image",
+          "language": "text",
+          "content": "docker push \"${ECR_URI}:v1\""
+        },
+        {
+          "title": "CloudShell - verify ECR image",
+          "language": "text",
+          "content": "aws ecr describe-images --repository-name fa-ecs-fargate-eks-app --image-ids imageTag=v1 --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Local /health returns healthy.",
+        "ECR contains immutable image tag v1.",
+        "The image push completes successfully."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-build-push-image-verify-01",
+          "text": "The ECR image URI ends /fa-ecs-fargate-eks-app:v1."
+        },
+        {
+          "id": "task-04-build-push-image-verify-02",
+          "text": "No registry password was saved to a lab file."
+        }
+      ]
+    },
+    {
+      "id": "task-05-network",
+      "phaseId": "phase-03-network-alb",
+      "title": "Create the two-AZ public VPC for ALB and Fargate",
+      "feature": "Fargate networking",
+      "difficulty": "Hard",
+      "goal": "Create fa-ecs-fargate-eks-vpc with one public subnet in eu-west-2a and one in eu-west-2b, an internet gateway and public route table.",
+      "whyItMatters": "This cost-conscious lab gives Fargate tasks public IPs so they can pull from ECR and reach CloudWatch/SSM without a NAT gateway; task SG rules still prevent direct inbound application traffic.",
+      "examRelevance": "Fargate uses awsvpc networking, so each task receives its own ENI and security groups.",
+      "prerequisites": [
+        "task-04-build-push-image"
+      ],
+      "sourceIds": [
+        "src-vpc-create",
+        "src-vpc-igw",
+        "src-ecs-networking",
+        "src-ecs-outbound"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create VPC fa-ecs-fargate-eks-vpc with CIDR 10.140.0.0/16."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create fa-ecs-fargate-eks-public-a in eu-west-2a with CIDR 10.140.1.0/24."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-ecs-fargate-eks-public-b in eu-west-2b with CIDR 10.140.2.0/24."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Enable auto-assign public IPv4 on both subnets."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create fa-ecs-fargate-eks-igw and attach it to the VPC."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create fa-ecs-fargate-eks-public-rt."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Add 0.0.0.0/0 -> fa-ecs-fargate-eks-igw."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Associate both public subnets with the route table."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Record the design trade-off: public IPs remove NAT-gateway cost for this lab; production services commonly place tasks in private subnets and provide egress through NAT or private VPC endpoints."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - create VPC",
+          "language": "text",
+          "content": "VPC_ID=\"$(aws ec2 create-vpc --cidr-block 10.140.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-vpc},{Key=FollowAlong,Value=fa-ecs-fargate-eks}]\" --query Vpc.VpcId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - subnet A",
+          "language": "text",
+          "content": "SUBNET_A_ID=\"$(aws ec2 create-subnet --vpc-id \"$VPC_ID\" --availability-zone eu-west-2a --cidr-block 10.140.1.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-public-a}]\" --query Subnet.SubnetId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - subnet B",
+          "language": "text",
+          "content": "SUBNET_B_ID=\"$(aws ec2 create-subnet --vpc-id \"$VPC_ID\" --availability-zone eu-west-2b --cidr-block 10.140.2.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-public-b}]\" --query Subnet.SubnetId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - enable public IP A",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id \"$SUBNET_A_ID\" --map-public-ip-on-launch --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - enable public IP B",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id \"$SUBNET_B_ID\" --map-public-ip-on-launch --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create IGW",
+          "language": "text",
+          "content": "IGW_ID=\"$(aws ec2 create-internet-gateway --tag-specifications \"ResourceType=internet-gateway,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-igw}]\" --query InternetGateway.InternetGatewayId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - attach IGW",
+          "language": "text",
+          "content": "aws ec2 attach-internet-gateway --internet-gateway-id \"$IGW_ID\" --vpc-id \"$VPC_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create route table",
+          "language": "text",
+          "content": "RT_ID=\"$(aws ec2 create-route-table --vpc-id \"$VPC_ID\" --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-public-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - create internet route",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id \"$RT_ID\" --destination-cidr-block 0.0.0.0/0 --gateway-id \"$IGW_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - associate A",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id \"$RT_ID\" --subnet-id \"$SUBNET_A_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - associate B",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id \"$RT_ID\" --subnet-id \"$SUBNET_B_ID\" --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The VPC spans eu-west-2a and eu-west-2b.",
+        "Both subnets route 0.0.0.0/0 to the IGW and auto-assign public IPv4."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-network-verify-01",
+          "text": "The VPC CIDR is 10.140.0.0/16."
+        },
+        {
+          "id": "task-05-network-verify-02",
+          "text": "No NAT gateway is created."
+        }
+      ]
+    },
+    {
+      "id": "task-06-alb-network",
+      "phaseId": "phase-03-network-alb",
+      "title": "Create ALB/task security groups, IP target group and Application Load Balancer",
+      "feature": "ALB integration",
+      "difficulty": "Hard",
+      "goal": "Expose only the ALB on HTTP:80 and allow Fargate task TCP:8080 only from the ALB security group; create an IP target group and listener.",
+      "whyItMatters": "Fargate tasks use awsvpc ENIs, so an ECS/ALB target group for the service must use IP targets rather than instance targets.",
+      "examRelevance": "The ALB creates a stable client endpoint while ECS registers/deregisters task IPs as the service changes.",
+      "prerequisites": [
+        "task-05-network"
+      ],
+      "sourceIds": [
+        "src-vpc-sg",
+        "src-ecs-alb",
+        "src-ecs-lb",
+        "src-alb-target"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The ALB is chargeable while running. Complete the lab and cleanup promptly."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Security Groups."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-ecs-fargate-eks-alb-sg in the training VPC."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Allow inbound HTTP TCP 80 from 0.0.0.0/0; keep default outbound."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-ecs-fargate-eks-task-sg."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Allow inbound Custom TCP 8080 from fa-ecs-fargate-eks-alb-sg only."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not allow TCP 8080 from the internet."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open Target Groups and create fa-ecs-fargate-eks-tg."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Target type: IP addresses."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Protocol/port: HTTP:8080."
+        },
+        {
+          "sequence": 10,
+          "instruction": "VPC: fa-ecs-fargate-eks-vpc."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Health check path: /health; success code 200."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Do not manually register targets."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Create internet-facing Application Load Balancer fa-ecs-fargate-eks-alb across both training public subnets using fa-ecs-fargate-eks-alb-sg."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Create HTTP:80 listener forwarding to fa-ecs-fargate-eks-tg."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Wait for the ALB to become Active and record its DNS name."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - rebuild network IDs",
+          "language": "text",
+          "content": "VPC_ID=\"$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-ecs-fargate-eks-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2)\"; SUBNET_A_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\"; SUBNET_B_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - create ALB SG",
+          "language": "text",
+          "content": "ALB_SG_ID=\"$(aws ec2 create-security-group --group-name fa-ecs-fargate-eks-alb-sg --description \"HTTP to ECS training ALB\" --vpc-id \"$VPC_ID\" --tag-specifications \"ResourceType=security-group,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-alb-sg}]\" --query GroupId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - allow HTTP to ALB",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id \"$ALB_SG_ID\" --protocol tcp --port 80 --cidr 0.0.0.0/0 --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create task SG",
+          "language": "text",
+          "content": "TASK_SG_ID=\"$(aws ec2 create-security-group --group-name fa-ecs-fargate-eks-task-sg --description \"Application traffic only from ALB\" --vpc-id \"$VPC_ID\" --tag-specifications \"ResourceType=security-group,Tags=[{Key=Name,Value=fa-ecs-fargate-eks-task-sg}]\" --query GroupId --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - allow ALB to tasks",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id \"$TASK_SG_ID\" --protocol tcp --port 8080 --source-group \"$ALB_SG_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create IP target group",
+          "language": "text",
+          "content": "TG_ARN=\"$(aws elbv2 create-target-group --name fa-ecs-fargate-eks-tg --protocol HTTP --port 8080 --target-type ip --vpc-id \"$VPC_ID\" --health-check-path /health --health-check-protocol HTTP --matcher HttpCode=200 --tags Key=FollowAlong,Value=fa-ecs-fargate-eks --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - create ALB",
+          "language": "text",
+          "content": "ALB_ARN=\"$(aws elbv2 create-load-balancer --name fa-ecs-fargate-eks-alb --scheme internet-facing --type application --ip-address-type ipv4 --subnets \"$SUBNET_A_ID\" \"$SUBNET_B_ID\" --security-groups \"$ALB_SG_ID\" --tags Key=FollowAlong,Value=fa-ecs-fargate-eks --query \"LoadBalancers[0].LoadBalancerArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - wait ALB",
+          "language": "text",
+          "content": "aws elbv2 wait load-balancer-available --load-balancer-arns \"$ALB_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create listener",
+          "language": "text",
+          "content": "LISTENER_ARN=\"$(aws elbv2 create-listener --load-balancer-arn \"$ALB_ARN\" --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=\"$TG_ARN\" --query \"Listeners[0].ListenerArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - get DNS",
+          "language": "text",
+          "content": "ALB_DNS=\"$(aws elbv2 describe-load-balancers --load-balancer-arns \"$ALB_ARN\" --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2)\"; printf \"ALB_DNS=%s\\n\" \"$ALB_DNS\""
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The ALB is Active across both AZs.",
+        "The target group type is ip.",
+        "Task SG port 8080 accepts traffic only from the ALB SG."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-alb-network-verify-01",
+          "text": "The listener forwards HTTP:80 to fa-ecs-fargate-eks-tg."
+        },
+        {
+          "id": "task-06-alb-network-verify-02",
+          "text": "No task target is registered yet."
+        }
+      ]
+    },
+    {
+      "id": "task-07-roles-logs-parameter",
+      "phaseId": "phase-04-ecs",
+      "title": "Create ECS execution/task IAM roles, CloudWatch log group and training parameter",
+      "feature": "Task IAM and logging prerequisites",
+      "difficulty": "Hard",
+      "goal": "Create separate execution and task roles, create the awslogs destination, and create the exact SSM parameter the application reads.",
+      "whyItMatters": "The execution role is used by ECS/Fargate infrastructure to pull ECR images and send logs; the task role is delivered to application containers for AWS API calls.",
+      "examRelevance": "Confusing execution-role permissions with application task-role permissions is a common container-security design mistake.",
+      "prerequisites": [
+        "task-06-alb-network"
+      ],
+      "sourceIds": [
+        "src-ecs-task-role",
+        "src-ecs-exec-role",
+        "src-ecs-role-best",
+        "src-ecs-logs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open IAM > Roles > Create role."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-ecs-fargate-eks-execution-role trusted by ecs-tasks.amazonaws.com."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Attach AmazonECSTaskExecutionRolePolicy."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-ecs-fargate-eks-task-role with the same ecs-tasks.amazonaws.com trust principal."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Add inline policy fa-ecs-fargate-eks-task-ssm allowing only ssm:GetParameter on /fa-ecs-fargate-eks/message in this account and eu-west-2."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open CloudWatch > Log groups and create /ecs/fa-ecs-fargate-eks."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Set retention to 1 day."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Open Systems Manager > Parameter Store."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create String parameter /fa-ecs-fargate-eks/message with value hello-from-task-iam-role."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Do not give the task role ECR or CloudWatch Logs permissions; those belong to the execution role in this design."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - save ECS task trust",
+          "language": "text",
+          "content": "cat > ecs-task-trust.json <<'EOF'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ecs-tasks.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\nEOF"
+        },
+        {
+          "title": "CloudShell - create execution role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-ecs-fargate-eks-execution-role --assume-role-policy-document file://ecs-task-trust.json"
+        },
+        {
+          "title": "CloudShell - attach execution managed policy",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name fa-ecs-fargate-eks-execution-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+        },
+        {
+          "title": "CloudShell - create task role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-ecs-fargate-eks-task-role --assume-role-policy-document file://ecs-task-trust.json"
+        },
+        {
+          "title": "CloudShell - derive account and write task policy",
+          "language": "text",
+          "content": "AWS_ACCOUNT_ID=\"$(aws sts get-caller-identity --query Account --output text)\"; sed \"s/ACCOUNT_ID/${AWS_ACCOUNT_ID}/g\" task-ssm-policy.template.json > task-ssm-policy.json"
+        },
+        {
+          "title": "CloudShell - attach task inline policy",
+          "language": "text",
+          "content": "aws iam put-role-policy --role-name fa-ecs-fargate-eks-task-role --policy-name fa-ecs-fargate-eks-task-ssm --policy-document file://task-ssm-policy.json"
+        },
+        {
+          "title": "CloudShell - create log group",
+          "language": "text",
+          "content": "aws logs create-log-group --log-group-name /ecs/fa-ecs-fargate-eks --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - set log retention",
+          "language": "text",
+          "content": "aws logs put-retention-policy --log-group-name /ecs/fa-ecs-fargate-eks --retention-in-days 1 --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create SSM parameter",
+          "language": "text",
+          "content": "aws ssm put-parameter --name /fa-ecs-fargate-eks/message --type String --value hello-from-task-iam-role --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "ECS task trust policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ecs-tasks.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "task-ssm-policy.template.json",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadOnlyTrainingMessage\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:GetParameter\",\n      \"Resource\": \"arn:aws:ssm:eu-west-2:ACCOUNT_ID:parameter/fa-ecs-fargate-eks/message\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "Both IAM roles exist.",
+        "The execution role has AmazonECSTaskExecutionRolePolicy.",
+        "The task role can read only the training SSM parameter.",
+        "The log group and parameter exist."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-roles-logs-parameter-verify-01",
+          "text": "The two role ARNs are different."
+        },
+        {
+          "id": "task-07-roles-logs-parameter-verify-02",
+          "text": "The log retention is 1 day."
+        }
+      ]
+    },
+    {
+      "id": "task-08-cluster-taskdef",
+      "phaseId": "phase-04-ecs",
+      "title": "Create the ECS cluster and register the Fargate task definition",
+      "feature": "ECS cluster and task definition",
+      "difficulty": "Hard",
+      "goal": "Create the ECS cluster and register a Fargate task definition using the ECR image, awsvpc, two IAM roles, awslogs and container health check.",
+      "whyItMatters": "The task definition is the versioned application blueprint while the cluster is the logical ECS orchestration boundary.",
+      "examRelevance": "Fargate task definitions require awsvpc networking and supported CPU/memory combinations.",
+      "prerequisites": [
+        "task-07-roles-logs-parameter"
+      ],
+      "sourceIds": [
+        "src-ecs-cluster",
+        "src-ecs-taskdef",
+        "src-ecs-fargate-taskdef",
+        "src-ecs-task-params",
+        "src-ecs-logs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Amazon ECS."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Clusters > Create cluster."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Cluster name: fa-ecs-fargate-eks-cluster."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create the cluster without adding EC2 container instances."
+        },
+        {
+          "sequence": 5,
+          "instruction": "In CloudShell run register-task-definition.sh."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open ECS > Task definitions > fa-ecs-fargate-eks-task."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open revision 1."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Confirm launch compatibility includes Fargate."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Confirm CPU 0.25 vCPU and memory 0.5 GB."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Confirm network mode awsvpc."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Confirm execution role and task role are different."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Confirm container port 8080, awslogs configuration and /health container health check."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - create cluster",
+          "language": "text",
+          "content": "aws ecs create-cluster --cluster-name fa-ecs-fargate-eks-cluster --tags key=FollowAlong,value=fa-ecs-fargate-eks --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - register task definition",
+          "language": "text",
+          "content": "./register-task-definition.sh"
+        },
+        {
+          "title": "CloudShell - capture task definition ARN",
+          "language": "text",
+          "content": "TASK_DEF_ARN=\"$(aws ecs describe-task-definition --task-definition fa-ecs-fargate-eks-task --query \"taskDefinition.taskDefinitionArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - inspect task definition",
+          "language": "text",
+          "content": "aws ecs describe-task-definition --task-definition \"$TASK_DEF_ARN\" --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "register-task-definition.sh",
+          "language": "text",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\nAWS_REGION=\"eu-west-2\"\nAWS_ACCOUNT_ID=\"$(aws sts get-caller-identity --query Account --output text)\"\nEXECUTION_ROLE_ARN=\"$(aws iam get-role --role-name fa-ecs-fargate-eks-execution-role --query Role.Arn --output text)\"\nTASK_ROLE_ARN=\"$(aws iam get-role --role-name fa-ecs-fargate-eks-task-role --query Role.Arn --output text)\"\nIMAGE_URI=\"${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/fa-ecs-fargate-eks-app:v1\"\n\ncat > task-definition.json <<EOF\n{\n  \"family\": \"fa-ecs-fargate-eks-task\",\n  \"networkMode\": \"awsvpc\",\n  \"requiresCompatibilities\": [\n    \"FARGATE\"\n  ],\n  \"cpu\": \"256\",\n  \"memory\": \"512\",\n  \"executionRoleArn\": \"${EXECUTION_ROLE_ARN}\",\n  \"taskRoleArn\": \"${TASK_ROLE_ARN}\",\n  \"containerDefinitions\": [\n    {\n      \"name\": \"fa-ecs-fargate-eks-app\",\n      \"image\": \"${IMAGE_URI}\",\n      \"essential\": true,\n      \"portMappings\": [\n        {\n          \"containerPort\": 8080,\n          \"protocol\": \"tcp\",\n          \"appProtocol\": \"http\"\n        }\n      ],\n      \"environment\": [\n        {\n          \"name\": \"MESSAGE_PARAMETER\",\n          \"value\": \"/fa-ecs-fargate-eks/message\"\n        },\n        {\n          \"name\": \"AWS_REGION\",\n          \"value\": \"eu-west-2\"\n        }\n      ],\n      \"logConfiguration\": {\n        \"logDriver\": \"awslogs\",\n        \"options\": {\n          \"awslogs-group\": \"/ecs/fa-ecs-fargate-eks\",\n          \"awslogs-region\": \"eu-west-2\",\n          \"awslogs-stream-prefix\": \"ecs\"\n        }\n      },\n      \"healthCheck\": {\n        \"command\": [\n          \"CMD-SHELL\",\n          \"python -c \\\"import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)\\\" || exit 1\"\n        ],\n        \"interval\": 30,\n        \"timeout\": 5,\n        \"retries\": 3,\n        \"startPeriod\": 20\n      }\n    }\n  ]\n}\nEOF\n\naws ecs register-task-definition \\\n  --cli-input-json file://task-definition.json \\\n  --region \"${AWS_REGION}\""
+        }
+      ],
+      "expectedResults": [
+        "The ECS cluster is Active.",
+        "Task definition revision 1 is ACTIVE and Fargate-compatible.",
+        "The task blueprint references ECR v1 and the CloudWatch log group."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-cluster-taskdef-verify-01",
+          "text": "networkMode is awsvpc."
+        },
+        {
+          "id": "task-08-cluster-taskdef-verify-02",
+          "text": "executionRoleArn and taskRoleArn are both set."
+        },
+        {
+          "id": "task-08-cluster-taskdef-verify-03",
+          "text": "Container port is 8080."
+        }
+      ]
+    },
+    {
+      "id": "task-09-create-service",
+      "phaseId": "phase-04-ecs",
+      "title": "Create the two-task Fargate ECS service behind the ALB",
+      "feature": "ECS service on Fargate",
+      "difficulty": "Hard",
+      "goal": "Create fa-ecs-fargate-eks-service with desired count 2 across both public subnets, public task ENIs, task SG and ALB target group.",
+      "whyItMatters": "An ECS service continuously maintains the desired number of tasks and integrates task registration with the load balancer.",
+      "examRelevance": "Fargate removes EC2 container-host management while ECS remains the orchestrator.",
+      "prerequisites": [
+        "task-08-cluster-taskdef"
+      ],
+      "sourceIds": [
+        "src-ecs-services",
+        "src-ecs-fargate-taskdef",
+        "src-ecs-alb",
+        "src-ecs-lb",
+        "src-ecs-networking"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Fargate tasks, task public IPv4 addresses and the ALB are chargeable while running. Complete verification/scaling and cleanup promptly."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open ECS > fa-ecs-fargate-eks-cluster > Services > Create."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Compute options: Launch type."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Launch type: FARGATE."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Platform version: LATEST."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Application type: Service."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Task definition family: fa-ecs-fargate-eks-task, latest revision."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Service name: fa-ecs-fargate-eks-service."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Desired tasks: 2."
+        },
+        {
+          "sequence": 9,
+          "instruction": "VPC: fa-ecs-fargate-eks-vpc."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Subnets: both training public subnets."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Security group: fa-ecs-fargate-eks-task-sg."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Public IP: Turned on for this lab."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Load balancing: Application Load Balancer."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Use existing fa-ecs-fargate-eks-alb listener and fa-ecs-fargate-eks-tg."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Container: fa-ecs-fargate-eks-app:8080."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Health check grace period: 60 seconds."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Create the service."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Wait until the service reports 2 Running tasks and the target group reports 2 healthy IP targets."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - rebuild service networking",
+          "language": "text",
+          "content": "SUBNET_A_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\"; SUBNET_B_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\"; TASK_SG_ID=\"$(aws ec2 describe-security-groups --filters Name=group-name,Values=fa-ecs-fargate-eks-task-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2)\"; TG_ARN=\"$(aws elbv2 describe-target-groups --names fa-ecs-fargate-eks-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - create Fargate service",
+          "language": "text",
+          "content": "aws ecs create-service --cluster fa-ecs-fargate-eks-cluster --service-name fa-ecs-fargate-eks-service --task-definition fa-ecs-fargate-eks-task --desired-count 2 --launch-type FARGATE --platform-version LATEST --network-configuration \"awsvpcConfiguration={subnets=[$SUBNET_A_ID,$SUBNET_B_ID],securityGroups=[$TASK_SG_ID],assignPublicIp=ENABLED}\" --load-balancers \"targetGroupArn=$TG_ARN,containerName=fa-ecs-fargate-eks-app,containerPort=8080\" --health-check-grace-period-seconds 60 --deployment-configuration minimumHealthyPercent=50,maximumPercent=200 --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - wait service stable",
+          "language": "text",
+          "content": "aws ecs wait services-stable --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - inspect service",
+          "language": "text",
+          "content": "aws ecs describe-services --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - inspect target health",
+          "language": "text",
+          "content": "aws elbv2 describe-target-health --target-group-arn \"$TG_ARN\" --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The service reaches steady state with desired/running count 2.",
+        "The target group shows two healthy IP targets.",
+        "Tasks are Fargate tasks with awsvpc ENIs."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-create-service-verify-01",
+          "text": "The target type is ip rather than instance."
+        },
+        {
+          "id": "task-09-create-service-verify-02",
+          "text": "Direct inbound 8080 is restricted to the ALB SG."
+        }
+      ]
+    },
+    {
+      "id": "task-10-verify-app-task-role",
+      "phaseId": "phase-05-scale-monitor",
+      "title": "Verify ALB routing and task IAM role access",
+      "feature": "Task IAM verification",
+      "difficulty": "Hard",
+      "goal": "Call /, /health and /config through the ALB to prove healthy Fargate routing and application-level SSM access through the task role.",
+      "whyItMatters": "A successful /config call proves the application container receives task-role credentials independently from the execution role used to launch the task.",
+      "examRelevance": "Use task roles for application AWS API access rather than embedding credentials in images or environment files.",
+      "prerequisites": [
+        "task-09-create-service"
+      ],
+      "sourceIds": [
+        "src-ecs-task-role",
+        "src-ecs-role-best",
+        "src-ecs-alb",
+        "src-ecs-services"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Load Balancers > fa-ecs-fargate-eks-alb and copy its DNS name."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open http://<ALB-DNS>/ and confirm JSON identifies the ECS service/task metadata."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open /health and confirm healthy."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open /config."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm value hello-from-task-iam-role is returned."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Refresh / several times and observe task metadata can change as the ALB distributes requests."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open ECS service Tasks and compare task ARNs/AZs with the application responses."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - get ALB DNS",
+          "language": "text",
+          "content": "ALB_DNS=\"$(aws elbv2 describe-load-balancers --names fa-ecs-fargate-eks-alb --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - request application",
+          "language": "text",
+          "content": "curl --fail \"http://${ALB_DNS}/\""
+        },
+        {
+          "title": "CloudShell - request health",
+          "language": "text",
+          "content": "curl --fail \"http://${ALB_DNS}/health\""
+        },
+        {
+          "title": "CloudShell - prove task-role SSM read",
+          "language": "text",
+          "content": "curl --fail \"http://${ALB_DNS}/config\""
+        },
+        {
+          "title": "CloudShell - list service tasks",
+          "language": "text",
+          "content": "aws ecs list-tasks --cluster fa-ecs-fargate-eks-cluster --service-name fa-ecs-fargate-eks-service --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The ALB returns successful application responses.",
+        "/config returns the exact SSM training message.",
+        "No AWS credential was supplied to the container."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-verify-app-task-role-verify-01",
+          "text": "The application can read only the parameter authorized to the task role."
+        },
+        {
+          "id": "task-10-verify-app-task-role-verify-02",
+          "text": "The target group remains healthy."
+        }
+      ]
+    },
+    {
+      "id": "task-11-cloudwatch-logs",
+      "phaseId": "phase-05-scale-monitor",
+      "title": "Inspect container stdout/stderr in CloudWatch Logs",
+      "feature": "CloudWatch logs",
+      "difficulty": "Medium",
+      "goal": "Locate task log streams and verify application request entries written by the awslogs driver.",
+      "whyItMatters": "Centralized container logs are essential because Fargate does not provide a customer-managed host filesystem to inspect like a traditional EC2 container host.",
+      "examRelevance": "The task execution role supplies logging permissions while the container writes application output to stdout/stderr.",
+      "prerequisites": [
+        "task-10-verify-app-task-role"
+      ],
+      "sourceIds": [
+        "src-ecs-logs",
+        "src-ecs-cloudwatch-view",
+        "src-ecs-exec-role"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open CloudWatch > Log groups > /ecs/fa-ecs-fargate-eks."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open the ecs/fa-ecs-fargate-eks-app task log streams."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Find entries for /, /health or /config."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Return to ECS > service > Logs and confirm the same centralized log data is visible there when the console surfaces it."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm retention is 1 day."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - list streams",
+          "language": "text",
+          "content": "aws logs describe-log-streams --log-group-name /ecs/fa-ecs-fargate-eks --order-by LastEventTime --descending --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - tail logs",
+          "language": "text",
+          "content": "aws logs tail /ecs/fa-ecs-fargate-eks --since 10m --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "CloudWatch contains container logs for requests made through the ALB.",
+        "Multiple task log streams can appear as tasks run/redeploy."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-cloudwatch-logs-verify-01",
+          "text": "The log group name exactly matches the task definition."
+        },
+        {
+          "id": "task-11-cloudwatch-logs-verify-02",
+          "text": "Retention is 1 day."
+        }
+      ]
+    },
+    {
+      "id": "task-12-service-autoscaling",
+      "phaseId": "phase-05-scale-monitor",
+      "title": "Configure ECS Service Auto Scaling with CPU target tracking",
+      "feature": "ECS Service Auto Scaling",
+      "difficulty": "Hard",
+      "goal": "Register the service as a scalable target with min 2/max 4 and apply ECSServiceAverageCPUUtilization target 30%.",
+      "whyItMatters": "Application Auto Scaling changes the ECS service desired count rather than creating EC2 container hosts because Fargate capacity is managed by AWS.",
+      "examRelevance": "Target tracking is useful when the desired task count should follow service utilization automatically.",
+      "prerequisites": [
+        "task-11-cloudwatch-logs"
+      ],
+      "sourceIds": [
+        "src-ecs-autoscaling",
+        "src-ecs-targettracking",
+        "src-ecs-target-create",
+        "src-ecs-autoscale-iam",
+        "src-ecs-monitor"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open ECS > fa-ecs-fargate-eks-service."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Service Auto Scaling / service configuration update."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Minimum tasks: 2."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Maximum tasks: 4."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create target tracking policy fa-ecs-fargate-eks-cpu-scaling."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Metric: ECS service average CPU utilization."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Target value: 30%."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Scale-out cooldown: 60 seconds."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Scale-in cooldown: 120 seconds."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Keep scale in enabled."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Save."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Open CloudWatch alarms and observe the alarms managed for target tracking."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - register scalable target",
+          "language": "text",
+          "content": "aws application-autoscaling register-scalable-target --service-namespace ecs --resource-id service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --scalable-dimension ecs:service:DesiredCount --min-capacity 2 --max-capacity 4 --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - create target tracking policy",
+          "language": "text",
+          "content": "aws application-autoscaling put-scaling-policy --service-namespace ecs --resource-id service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --scalable-dimension ecs:service:DesiredCount --policy-name fa-ecs-fargate-eks-cpu-scaling --policy-type TargetTrackingScaling --target-tracking-scaling-policy-configuration '{\"TargetValue\":30.0,\"PredefinedMetricSpecification\":{\"PredefinedMetricType\":\"ECSServiceAverageCPUUtilization\"},\"ScaleOutCooldown\":60,\"ScaleInCooldown\":120,\"DisableScaleIn\":false}' --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - inspect scalable target",
+          "language": "text",
+          "content": "aws application-autoscaling describe-scalable-targets --service-namespace ecs --resource-ids service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - inspect scaling policy",
+          "language": "text",
+          "content": "aws application-autoscaling describe-scaling-policies --service-namespace ecs --resource-id service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --scalable-dimension ecs:service:DesiredCount --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The service scalable target has min 2/max 4.",
+        "The target tracking policy target is 30% average CPU.",
+        "Target tracking alarms are created/managed by Application Auto Scaling."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-service-autoscaling-verify-01",
+          "text": "The scalable resource ID matches cluster/service exactly."
+        },
+        {
+          "id": "task-12-service-autoscaling-verify-02",
+          "text": "Scale-in is enabled."
+        }
+      ]
+    },
+    {
+      "id": "task-13-generate-load",
+      "phaseId": "phase-05-scale-monitor",
+      "title": "Generate controlled CPU load and observe Fargate task scale-out",
+      "feature": "Scaling verification",
+      "difficulty": "Hard",
+      "goal": "Run a five-minute four-worker HTTP load against /burn and observe ECS increase desired/running task count above 2 without exceeding 4.",
+      "whyItMatters": "This proves end-to-end interaction between ALB request distribution, container CPU, CloudWatch ECS metrics and Application Auto Scaling.",
+      "examRelevance": "Autoscaling is metric-driven and asynchronous, so scaling verification requires observing service events, desired count and metrics over several minutes.",
+      "prerequisites": [
+        "task-12-service-autoscaling"
+      ],
+      "sourceIds": [
+        "src-ecs-autoscaling",
+        "src-ecs-targettracking",
+        "src-ecs-monitor",
+        "src-ecs-alb"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Scaling depends on CloudWatch metric evaluation and task startup time. Allow several minutes before deciding that the target tracking policy did not react."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open ECS > fa-ecs-fargate-eks-service and keep the Events/Tasks area visible."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open CloudWatch ECS service CPUUtilization for the service."
+        },
+        {
+          "sequence": 3,
+          "instruction": "In CloudShell get ALB_DNS."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run ./generate-load.sh \"$ALB_DNS\"."
+        },
+        {
+          "sequence": 5,
+          "instruction": "The script runs four concurrent workers for five minutes; do not increase the worker count or duration."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Watch desired count and running tasks."
+        },
+        {
+          "sequence": 7,
+          "instruction": "When a scale-out event occurs, note desired count greater than 2."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Wait for new task target health to become healthy."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Confirm desired count never exceeds maximum 4."
+        },
+        {
+          "sequence": 10,
+          "instruction": "After the five-minute script finishes, stop generating traffic and allow the service to settle; scale-in is not required before the next task."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - get ALB DNS",
+          "language": "text",
+          "content": "ALB_DNS=\"$(aws elbv2 describe-load-balancers --names fa-ecs-fargate-eks-alb --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - run controlled load",
+          "language": "text",
+          "content": "./generate-load.sh \"$ALB_DNS\""
+        },
+        {
+          "title": "CloudShell - inspect ECS service",
+          "language": "text",
+          "content": "aws ecs describe-services --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --query \"services[0].{Desired:desiredCount,Running:runningCount,Pending:pendingCount,Events:events[0:8]}\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - inspect scaling activity via ECS events",
+          "language": "text",
+          "content": "aws ecs describe-services --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --query \"services[0].events[0:10]\" --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "generate-load.sh",
+          "language": "text",
+          "content": "#!/usr/bin/env bash\nset -euo pipefail\n\nif [ \"$#\" -ne 1 ]; then\n  echo \"Usage: ./generate-load.sh <ALB_DNS_NAME>\"\n  exit 1\nfi\n\nALB_DNS_NAME=\"$1\"\nEND_TIME=$((SECONDS + 300))\nPIDS=()\n\nfor WORKER in 1 2 3 4; do\n  (\n    while [ \"$SECONDS\" -lt \"$END_TIME\" ]; do\n      curl --fail --silent --show-error \\\n        \"http://${ALB_DNS_NAME}/burn?seconds=5\" \\\n        >/dev/null || true\n    done\n  ) &\n  PIDS+=(\"$!\")\ndone\n\nfor PID in \"${PIDS[@]}\"; do\n  wait \"$PID\"\ndone\n\necho \"Controlled five-minute load test finished.\""
+        }
+      ],
+      "expectedResults": [
+        "CPU rises during controlled /burn traffic.",
+        "The service can increase desired count above 2, up to maximum 4.",
+        "New Fargate tasks are automatically registered with the ALB target group."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-generate-load-verify-01",
+          "text": "Desired count never exceeds 4."
+        },
+        {
+          "id": "task-13-generate-load-verify-02",
+          "text": "The application remains reachable through the ALB during scale-out."
+        }
+      ]
+    },
+    {
+      "id": "task-14-ecs-eks-lambda",
+      "phaseId": "phase-06-selection",
+      "title": "Compare ECS, EKS, Fargate and Lambda",
+      "feature": "Container service selection",
+      "difficulty": "Hard",
+      "goal": "Use the decision file and official AWS decision guidance to choose ECS, EKS or Lambda, while treating Fargate correctly as container compute rather than an orchestrator.",
+      "whyItMatters": "A correct SAA-C03 answer usually starts with execution/orchestration requirements, not familiarity with a service name.",
+      "examRelevance": "ECS and EKS orchestrate containers; Lambda is a serverless function execution model; Fargate supplies serverless container compute for supported orchestration platforms.",
+      "prerequisites": [
+        "task-13-generate-load"
+      ],
+      "sourceIds": [
+        "src-container-choice",
+        "src-fargate-lambda",
+        "src-saa-domain3",
+        "src-ecs-cluster"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open service-selection.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Review Amazon ECS: AWS-native container orchestration without requiring Kubernetes APIs."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review Amazon EKS: managed Kubernetes when Kubernetes APIs, portability, operators or Kubernetes tooling are requirements."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review AWS Lambda: event-driven functions for workloads that fit the Lambda execution model."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Review the Fargate reminder: Fargate is serverless container compute, not a separate orchestrator."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open the AWS container decision guide and compare the same services."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Apply the exam rule: AWS-native container service with no Kubernetes requirement -> ECS; Kubernetes requirement -> EKS; event-driven function -> Lambda."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Relate the live lab to the decision: this is ECS orchestration + Fargate compute + ECR registry + ALB + Application Auto Scaling + CloudWatch."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - inspect service-selection matrix",
+          "language": "text",
+          "content": "python3 -m json.tool service-selection.json"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "service-selection.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"Amazon ECS and AWS Fargate Follow Along\",\n  \"resourcePrefix\": \"fa-ecs-fargate-eks\",\n  \"serviceSelection\": [\n    {\n      \"service\": \"Amazon ECS\",\n      \"orchestrationModel\": \"AWS-native container orchestration\",\n      \"bestFit\": \"Containerized services when Kubernetes APIs/ecosystem compatibility are not a requirement and tight AWS integration plus operational simplicity are priorities.\",\n      \"computeChoices\": [\n        \"AWS Fargate\",\n        \"Amazon EC2\",\n        \"Amazon ECS Managed Instances\"\n      ]\n    },\n    {\n      \"service\": \"Amazon EKS\",\n      \"orchestrationModel\": \"Managed Kubernetes control plane\",\n      \"bestFit\": \"Workloads that require Kubernetes APIs, Kubernetes portability, Kubernetes-specific tooling/operators, or an existing Kubernetes operating model.\",\n      \"computeChoices\": [\n        \"AWS Fargate\",\n        \"Amazon EC2\",\n        \"Amazon EKS Auto Mode and supported Kubernetes compute options\"\n      ]\n    },\n    {\n      \"service\": \"AWS Lambda\",\n      \"orchestrationModel\": \"Event-driven serverless functions\",\n      \"bestFit\": \"Short-lived event-driven function execution where the application fits the Lambda execution model rather than a continuously running container service.\"\n    }\n  ],\n  \"fargateReminder\": \"AWS Fargate is a serverless compute engine for containers used with orchestration services such as Amazon ECS; Fargate is not itself a container orchestrator.\",\n  \"examDecisionRule\": \"Choose by execution model and orchestration requirement first: AWS-native containers -> ECS, Kubernetes requirement -> EKS, event-driven functions -> Lambda.\"\n}"
+        }
+      ],
+      "expectedResults": [
+        "The learner can explain ECS versus EKS versus Lambda without calling Fargate an orchestrator.",
+        "The live architecture maps clearly to ECS + Fargate."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-ecs-eks-lambda-verify-01",
+          "text": "The learner can identify Kubernetes as the key EKS requirement trigger rather than choosing EKS merely because the workload is containerized."
+        }
+      ]
+    },
+    {
+      "id": "task-15-exam-review",
+      "phaseId": "phase-06-selection",
+      "title": "Review the full SAA-C03 ECS/Fargate architecture",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Turn the hands-on implementation into a concise container architecture model before teardown.",
+      "whyItMatters": "The exam tests selection and architecture relationships: image registry, task blueprint, service desired count, IAM boundary, networking, load balancing, logs and scaling.",
+      "examRelevance": "Understanding component responsibility prevents selecting the wrong service or IAM role.",
+      "prerequisites": [
+        "task-14-ecs-eks-lambda"
+      ],
+      "sourceIds": [
+        "src-ecr-what",
+        "src-ecs-taskdef",
+        "src-ecs-services",
+        "src-ecs-task-role",
+        "src-ecs-exec-role",
+        "src-ecs-alb",
+        "src-ecs-autoscaling",
+        "src-ecs-logs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "ECR stores private container images."
+        },
+        {
+          "sequence": 2,
+          "instruction": "ECS cluster is the orchestration grouping/boundary."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Task definition is a versioned blueprint for containers, resources, roles, networking/logging configuration."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Task is one running instantiation of a task definition."
+        },
+        {
+          "sequence": 5,
+          "instruction": "ECS service maintains desired task count and deployments."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Fargate supplies the managed compute for tasks; there are no customer-managed ECS container EC2 hosts in this lab."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Task execution role: ECS/Fargate infrastructure actions such as ECR image pull and awslogs delivery."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Task role: application container's AWS API permissions; this lab proves it with SSM GetParameter."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Fargate uses awsvpc; each task gets an ENI."
+        },
+        {
+          "sequence": 10,
+          "instruction": "ALB target group uses target type IP for Fargate/awsvpc."
+        },
+        {
+          "sequence": 11,
+          "instruction": "CloudWatch Logs receives stdout/stderr through awslogs."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Application Auto Scaling changes ECS service desired count between configured minimum and maximum."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Exam trigger: no Kubernetes requirement + containers -> ECS is often simpler."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Exam trigger: Kubernetes API/ecosystem requirement -> EKS."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Exam trigger: event-driven function execution -> Lambda."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Exam trigger: serverless containers without managing EC2 hosts -> Fargate as the compute option."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - final service summary",
+          "language": "text",
+          "content": "aws ecs describe-services --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --query \"services[0].{Desired:desiredCount,Running:runningCount,LaunchType:launchType,TaskDefinition:taskDefinition}\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - final target health",
+          "language": "text",
+          "content": "TG_ARN=\"$(aws elbv2 describe-target-groups --names fa-ecs-fargate-eks-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2)\"; aws elbv2 describe-target-health --target-group-arn \"$TG_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - final logs",
+          "language": "text",
+          "content": "aws logs tail /ecs/fa-ecs-fargate-eks --since 10m --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can describe the complete ECR -> task definition -> service -> Fargate -> ALB path.",
+        "The learner can distinguish task role from execution role and ECS from EKS/Lambda."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-exam-review-verify-01",
+          "text": "The active service uses the expected task family and Fargate launch type."
+        }
+      ]
+    },
+    {
+      "id": "task-16-stop-scaling-service",
+      "phaseId": "phase-07-cleanup",
+      "title": "Stop Service Auto Scaling and delete the ECS service",
+      "feature": "Scaling and service cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete the target tracking policy/deregister the scalable target, set desired count to zero, then delete the ECS service.",
+      "whyItMatters": "Autoscaling must be disabled before teardown so it cannot add tasks while dependent ALB/network resources are being removed.",
+      "examRelevance": "Reverse dependency starts with automation and running workloads, not the underlying network.",
+      "prerequisites": [
+        "task-15-exam-review"
+      ],
+      "sourceIds": [
+        "src-ecs-autoscaling",
+        "src-ecs-services"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm generate-load.sh is no longer running."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open ECS > service Auto Scaling and delete fa-ecs-fargate-eks-cpu-scaling."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set service desired tasks to 0."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Wait until Running tasks is 0."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-ecs-fargate-eks-service."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm no task remains in the service."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - delete scaling policy",
+          "language": "text",
+          "content": "aws application-autoscaling delete-scaling-policy --service-namespace ecs --resource-id service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --scalable-dimension ecs:service:DesiredCount --policy-name fa-ecs-fargate-eks-cpu-scaling --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - deregister scalable target",
+          "language": "text",
+          "content": "aws application-autoscaling deregister-scalable-target --service-namespace ecs --resource-id service/fa-ecs-fargate-eks-cluster/fa-ecs-fargate-eks-service --scalable-dimension ecs:service:DesiredCount --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - scale service to zero",
+          "language": "text",
+          "content": "aws ecs update-service --cluster fa-ecs-fargate-eks-cluster --service fa-ecs-fargate-eks-service --desired-count 0 --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - wait service stable",
+          "language": "text",
+          "content": "aws ecs wait services-stable --cluster fa-ecs-fargate-eks-cluster --services fa-ecs-fargate-eks-service --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete service",
+          "language": "text",
+          "content": "aws ecs delete-service --cluster fa-ecs-fargate-eks-cluster --service fa-ecs-fargate-eks-service --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The scaling policy/scalable target are removed.",
+        "No Fargate task remains.",
+        "The ECS service enters inactive/deleted state."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-stop-scaling-service-verify-01",
+          "text": "No automation can launch a replacement task during further cleanup."
+        }
+      ]
+    },
+    {
+      "id": "task-17-cloud-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete ALB, ECS/ECR/log/IAM application resources and the VPC",
+      "feature": "Cloud cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete load-balancing dependencies, task definition/cluster, ECR repository, SSM parameter, log group, ECS roles, security groups and network in reverse dependency order.",
+      "whyItMatters": "The target group cannot be removed while a listener references it, and security groups/subnets cannot be deleted while ALB/task ENIs still depend on them.",
+      "examRelevance": "Container cleanup must include the image registry and log/role resources, not just the running tasks.",
+      "prerequisites": [
+        "task-16-stop-scaling-service"
+      ],
+      "sourceIds": [
+        "src-ecs-alb",
+        "src-ecs-taskdef",
+        "src-ecr-push",
+        "src-ecs-logs",
+        "src-vpc-igw"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "If security-group deletion reports a dependency, wait for ALB/task ENIs to disappear and retry only the exact fa-ecs-fargate-eks security group."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Delete the HTTP listener from fa-ecs-fargate-eks-alb."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete fa-ecs-fargate-eks-alb and wait until its ENIs are gone."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete fa-ecs-fargate-eks-tg."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Deregister every ACTIVE revision of fa-ecs-fargate-eks-task."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-ecs-fargate-eks-cluster."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete the ECR repository with force so image v1 is removed."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete /fa-ecs-fargate-eks/message from Parameter Store."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete /ecs/fa-ecs-fargate-eks from CloudWatch Logs."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete fa-ecs-fargate-eks-task-ssm inline policy and fa-ecs-fargate-eks-task-role."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Detach AmazonECSTaskExecutionRolePolicy and delete fa-ecs-fargate-eks-execution-role."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete fa-ecs-fargate-eks-task-sg, then fa-ecs-fargate-eks-alb-sg."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Remove the two explicit route-table associations and delete fa-ecs-fargate-eks-public-rt."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Detach/delete fa-ecs-fargate-eks-igw."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Delete both public subnets."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Delete fa-ecs-fargate-eks-vpc."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Verify no chargeable ALB or Fargate task remains."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - rebuild ALB dependencies",
+          "language": "text",
+          "content": "ALB_ARN=\"$(aws elbv2 describe-load-balancers --names fa-ecs-fargate-eks-alb --query \"LoadBalancers[0].LoadBalancerArn\" --output text --region eu-west-2)\"; LISTENER_ARN=\"$(aws elbv2 describe-listeners --load-balancer-arn \"$ALB_ARN\" --query \"Listeners[0].ListenerArn\" --output text --region eu-west-2)\"; TG_ARN=\"$(aws elbv2 describe-target-groups --names fa-ecs-fargate-eks-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - delete listener",
+          "language": "text",
+          "content": "aws elbv2 delete-listener --listener-arn \"$LISTENER_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete ALB",
+          "language": "text",
+          "content": "aws elbv2 delete-load-balancer --load-balancer-arn \"$ALB_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - wait ALB deleted",
+          "language": "text",
+          "content": "aws elbv2 wait load-balancers-deleted --load-balancer-arns \"$ALB_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete target group",
+          "language": "text",
+          "content": "aws elbv2 delete-target-group --target-group-arn \"$TG_ARN\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - deregister active task definitions",
+          "language": "text",
+          "content": "for ARN in $(aws ecs list-task-definitions --family-prefix fa-ecs-fargate-eks-task --status ACTIVE --query \"taskDefinitionArns[]\" --output text --region eu-west-2); do aws ecs deregister-task-definition --task-definition \"$ARN\" --region eu-west-2 >/dev/null; done"
+        },
+        {
+          "title": "CloudShell - delete ECS cluster",
+          "language": "text",
+          "content": "aws ecs delete-cluster --cluster fa-ecs-fargate-eks-cluster --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete ECR repository/image",
+          "language": "text",
+          "content": "aws ecr delete-repository --repository-name fa-ecs-fargate-eks-app --force --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete SSM parameter",
+          "language": "text",
+          "content": "aws ssm delete-parameter --name /fa-ecs-fargate-eks/message --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete log group",
+          "language": "text",
+          "content": "aws logs delete-log-group --log-group-name /ecs/fa-ecs-fargate-eks --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete task inline policy",
+          "language": "text",
+          "content": "aws iam delete-role-policy --role-name fa-ecs-fargate-eks-task-role --policy-name fa-ecs-fargate-eks-task-ssm"
+        },
+        {
+          "title": "CloudShell - delete task role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-ecs-fargate-eks-task-role"
+        },
+        {
+          "title": "CloudShell - detach execution policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name fa-ecs-fargate-eks-execution-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+        },
+        {
+          "title": "CloudShell - delete execution role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-ecs-fargate-eks-execution-role"
+        },
+        {
+          "title": "CloudShell - rebuild network IDs",
+          "language": "text",
+          "content": "VPC_ID=\"$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-ecs-fargate-eks-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2)\"; TASK_SG_ID=\"$(aws ec2 describe-security-groups --filters Name=group-name,Values=fa-ecs-fargate-eks-task-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2)\"; ALB_SG_ID=\"$(aws ec2 describe-security-groups --filters Name=group-name,Values=fa-ecs-fargate-eks-alb-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2)\"; RT_ID=\"$(aws ec2 describe-route-tables --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-rt --query \"RouteTables[0].RouteTableId\" --output text --region eu-west-2)\"; IGW_ID=\"$(aws ec2 describe-internet-gateways --filters Name=tag:Name,Values=fa-ecs-fargate-eks-igw --query \"InternetGateways[0].InternetGatewayId\" --output text --region eu-west-2)\"; SUBNET_A_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\"; SUBNET_B_ID=\"$(aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-ecs-fargate-eks-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - delete task SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id \"$TASK_SG_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete ALB SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id \"$ALB_SG_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - route associations",
+          "language": "text",
+          "content": "ASSOCS=\"$(aws ec2 describe-route-tables --route-table-ids \"$RT_ID\" --query \"RouteTables[0].Associations[?Main==\\`false\\`].RouteTableAssociationId\" --output text --region eu-west-2)\""
+        },
+        {
+          "title": "CloudShell - remove route associations",
+          "language": "text",
+          "content": "for ASSOC in $ASSOCS; do aws ec2 disassociate-route-table --association-id \"$ASSOC\" --region eu-west-2; done"
+        },
+        {
+          "title": "CloudShell - delete route table",
+          "language": "text",
+          "content": "aws ec2 delete-route-table --route-table-id \"$RT_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - detach IGW",
+          "language": "text",
+          "content": "aws ec2 detach-internet-gateway --internet-gateway-id \"$IGW_ID\" --vpc-id \"$VPC_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete IGW",
+          "language": "text",
+          "content": "aws ec2 delete-internet-gateway --internet-gateway-id \"$IGW_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete subnet A",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id \"$SUBNET_A_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete subnet B",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id \"$SUBNET_B_ID\" --region eu-west-2"
+        },
+        {
+          "title": "CloudShell - delete VPC",
+          "language": "text",
+          "content": "aws ec2 delete-vpc --vpc-id \"$VPC_ID\" --region eu-west-2"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "No ECS service/task/cluster remains.",
+        "No ALB/listener/target group remains.",
+        "No ECR repository, training log group, parameter or ECS task roles remain.",
+        "No fa-ecs-fargate-eks VPC resource remains."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-cloud-cleanup-verify-01",
+          "text": "No chargeable Fargate task or ALB remains."
+        },
+        {
+          "id": "task-17-cloud-cleanup-verify-02",
+          "text": "The existing administrator account remains unchanged."
+        }
+      ]
+    },
+    {
+      "id": "task-18-cloudshell-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete the CloudShell application files and finish the cleanup acknowledgement",
+      "feature": "Local cleanup",
+      "difficulty": "Easy",
+      "goal": "Remove the CloudShell lab folder after all cloud resources are verified absent.",
+      "whyItMatters": "Local image/source artifacts are the final dependency layer and do not need to be kept after the cloud resources are gone.",
+      "examRelevance": "The existing administrator account is intentionally retained; this Follow Along created no human IAM user or long-lived credential.",
+      "prerequisites": [
+        "task-17-cloud-cleanup"
+      ],
+      "sourceIds": [
+        "src-cloudshell-docker"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm Task 17 removed every fa-ecs-fargate-eks cloud resource."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Return to CloudShell."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Change to the home directory."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Delete ~/fa-ecs-fargate-eks."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Optionally remove the local Docker image fa-ecs-fargate-eks-app:v1 from the CloudShell Docker cache."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not modify or delete the administrator account used for the lab."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Read and affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "CloudShell - leave lab folder",
+          "language": "text",
+          "content": "cd ~"
+        },
+        {
+          "title": "CloudShell - delete lab folder",
+          "language": "text",
+          "content": "rm -rf ~/fa-ecs-fargate-eks"
+        },
+        {
+          "title": "CloudShell - remove local Docker image",
+          "language": "text",
+          "content": "docker image rm fa-ecs-fargate-eks-app:v1 || true"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The CloudShell lab folder is absent.",
+        "The existing AWS administrator account is unchanged."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-cloudshell-cleanup-verify-01",
+          "text": "No fa-ecs-fargate-eks local source file remains."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-ecr",
+      "label": "Private ECR repository and v1 image",
+      "exactName": "fa-ecs-fargate-eks-app",
+      "generatedValue": "Repository URI/image digest",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-03-ecr-repository",
+      "dependsOn": []
+    },
+    {
+      "id": "res-vpc",
+      "label": "ECS/Fargate VPC",
+      "exactName": "fa-ecs-fargate-eks-vpc",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-network",
+      "dependsOn": []
+    },
+    {
+      "id": "res-subnets",
+      "label": "Two public subnets",
+      "exactName": "fa-ecs-fargate-eks-public-a, fa-ecs-fargate-eks-public-b",
+      "generatedValue": "Subnet IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-igw",
+      "label": "Internet gateway",
+      "exactName": "fa-ecs-fargate-eks-igw",
+      "generatedValue": "Internet gateway ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-rt",
+      "label": "Public route table",
+      "exactName": "fa-ecs-fargate-eks-public-rt",
+      "generatedValue": "Route table ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-network",
+      "dependsOn": [
+        "res-subnets",
+        "res-igw"
+      ]
+    },
+    {
+      "id": "res-alb-sg",
+      "label": "ALB security group",
+      "exactName": "fa-ecs-fargate-eks-alb-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-alb-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-task-sg",
+      "label": "Fargate task security group",
+      "exactName": "fa-ecs-fargate-eks-task-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-alb-network",
+      "dependsOn": [
+        "res-alb-sg",
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-tg",
+      "label": "ALB IP target group",
+      "exactName": "fa-ecs-fargate-eks-tg",
+      "generatedValue": "Target group ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-alb-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-alb",
+      "label": "Application Load Balancer",
+      "exactName": "fa-ecs-fargate-eks-alb",
+      "generatedValue": "ALB ARN/DNS name",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-06-alb-network",
+      "dependsOn": [
+        "res-subnets",
+        "res-alb-sg",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-listener",
+      "label": "HTTP listener",
+      "exactName": "HTTP:80 on fa-ecs-fargate-eks-alb",
+      "generatedValue": "Listener ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-alb-network",
+      "dependsOn": [
+        "res-alb",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-exec-role",
+      "label": "ECS task execution role",
+      "exactName": "fa-ecs-fargate-eks-execution-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-roles-logs-parameter",
+      "dependsOn": []
+    },
+    {
+      "id": "res-task-role",
+      "label": "ECS application task role",
+      "exactName": "fa-ecs-fargate-eks-task-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-roles-logs-parameter",
+      "dependsOn": []
+    },
+    {
+      "id": "res-log-group",
+      "label": "CloudWatch log group",
+      "exactName": "/ecs/fa-ecs-fargate-eks",
+      "generatedValue": "Log streams",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-07-roles-logs-parameter",
+      "dependsOn": []
+    },
+    {
+      "id": "res-parameter",
+      "label": "Task-role SSM parameter",
+      "exactName": "/fa-ecs-fargate-eks/message",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-roles-logs-parameter",
+      "dependsOn": []
+    },
+    {
+      "id": "res-cluster",
+      "label": "ECS cluster",
+      "exactName": "fa-ecs-fargate-eks-cluster",
+      "generatedValue": "Cluster ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-cluster-taskdef",
+      "dependsOn": []
+    },
+    {
+      "id": "res-taskdef",
+      "label": "Fargate task definition revisions",
+      "exactName": "fa-ecs-fargate-eks-task",
+      "generatedValue": "Task definition ARN/revision",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-cluster-taskdef",
+      "dependsOn": [
+        "res-ecr",
+        "res-exec-role",
+        "res-task-role",
+        "res-log-group",
+        "res-parameter"
+      ]
+    },
+    {
+      "id": "res-service",
+      "label": "ECS Fargate service and tasks",
+      "exactName": "fa-ecs-fargate-eks-service",
+      "generatedValue": "Service ARN/task ARNs/task ENIs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-09-create-service",
+      "dependsOn": [
+        "res-cluster",
+        "res-taskdef",
+        "res-subnets",
+        "res-task-sg",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-scaling",
+      "label": "ECS Service Auto Scaling policy",
+      "exactName": "fa-ecs-fargate-eks-cpu-scaling",
+      "generatedValue": "Scaling policy ARN/managed alarms",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-service-autoscaling",
+      "dependsOn": [
+        "res-service"
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "Docker build fails in CloudShell",
+      "likelyCause": "Docker engine is not ready, the Dockerfile/app files are incomplete, or a package download failed.",
+      "fix": "Run docker info, confirm all files exist in ~/fa-ecs-fargate-eks, rerun python3 -m py_compile app.py, then rebuild."
+    },
+    {
+      "id": "trouble-02",
+      "title": "ECR push says no basic auth credentials",
+      "likelyCause": "Docker has not authenticated to the account's eu-west-2 ECR registry or the login token expired.",
+      "fix": "Rebuild ECR_REGISTRY from get-caller-identity and rerun get-login-password piped to docker login before pushing."
+    },
+    {
+      "id": "trouble-03",
+      "title": "Fargate task stops with CannotPullContainerError",
+      "likelyCause": "Task public IP/route is missing or the execution role/ECR image URI is wrong.",
+      "fix": "Verify assignPublicIp=ENABLED, both subnets route 0.0.0.0/0 to the IGW, v1 exists in ECR, and the execution role has AmazonECSTaskExecutionRolePolicy."
+    },
+    {
+      "id": "trouble-04",
+      "title": "Target group health stays unhealthy",
+      "likelyCause": "The task SG doesn't permit ALB SG -> TCP 8080, the app failed to start, or /health is not returning 200.",
+      "fix": "Inspect ECS service events and CloudWatch logs, verify the task SG source is fa-ecs-fargate-eks-alb-sg and target-group health path is /health."
+    },
+    {
+      "id": "trouble-05",
+      "title": "/config returns AccessDenied",
+      "likelyCause": "The task definition uses the wrong task role or its inline SSM policy does not contain the current account ID.",
+      "fix": "Describe the task definition, verify taskRoleArn is fa-ecs-fargate-eks-task-role, and inspect fa-ecs-fargate-eks-task-ssm."
+    },
+    {
+      "id": "trouble-06",
+      "title": "No container logs appear",
+      "likelyCause": "The awslogs configuration/log group or execution-role permissions are wrong.",
+      "fix": "Verify log group /ecs/fa-ecs-fargate-eks exists, the task definition uses awslogs, and the execution role has AmazonECSTaskExecutionRolePolicy."
+    },
+    {
+      "id": "trouble-07",
+      "title": "Service Auto Scaling does not scale out",
+      "likelyCause": "CPU has not remained above the target long enough, the load script stopped early, or the scalable target/policy is misconfigured.",
+      "fix": "Verify min=2/max=4, target=30, run the fixed five-minute four-worker load once, and review ECS service events/CloudWatch CPU before changing the policy."
+    },
+    {
+      "id": "trouble-08",
+      "title": "Target group deletion fails during cleanup",
+      "likelyCause": "The ALB listener or ECS service still references the target group.",
+      "fix": "Confirm the ECS service is deleted, delete the listener and ALB, then retry the exact target group."
+    },
+    {
+      "id": "trouble-09",
+      "title": "Security group or subnet deletion fails",
+      "likelyCause": "ALB or Fargate ENIs have not been released yet.",
+      "fix": "Wait after ALB/service deletion, verify no fa-ecs-fargate-eks ENI remains in the VPC, then retry only the exact lab resource."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-ecs-fargate-eks-cpu-scaling and ECS scalable target",
+      "action": "Delete the target tracking policy and deregister the scalable target.",
+      "verification": "Application Auto Scaling no longer lists the ECS service target/policy.",
+      "taskId": "task-16-stop-scaling-service"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-ecs-fargate-eks-service and its Fargate tasks",
+      "action": "Set desired count to zero, wait for zero running tasks, then delete the service.",
+      "verification": "No service task remains.",
+      "taskId": "task-16-stop-scaling-service"
+    },
+    {
+      "sequence": 3,
+      "resource": "HTTP:80 listener and fa-ecs-fargate-eks-alb",
+      "action": "Delete the listener, then the ALB and wait for deletion.",
+      "verification": "The ALB and ALB ENIs are absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-ecs-fargate-eks-tg",
+      "action": "Delete the target group after service/listener dependencies are gone.",
+      "verification": "The target group is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "fa-ecs-fargate-eks-task ACTIVE revisions",
+      "action": "Deregister all active task-definition revisions.",
+      "verification": "No ACTIVE revision remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "fa-ecs-fargate-eks-cluster",
+      "action": "Delete the empty ECS cluster.",
+      "verification": "The cluster is inactive/deleted.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-ecs-fargate-eks-app ECR repository and image v1",
+      "action": "Force-delete the private repository after no task uses its image.",
+      "verification": "The repository is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "/fa-ecs-fargate-eks/message and /ecs/fa-ecs-fargate-eks",
+      "action": "Delete the SSM parameter and CloudWatch log group.",
+      "verification": "Neither resource remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-ecs-fargate-eks-task-role and fa-ecs-fargate-eks-execution-role",
+      "action": "Delete task inline policy/role and detach managed execution policy before deleting execution role.",
+      "verification": "Both ECS task roles are absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 10,
+      "resource": "fa-ecs-fargate-eks-task-sg and fa-ecs-fargate-eks-alb-sg",
+      "action": "Delete task SG first and then ALB SG after dependent ENIs are gone.",
+      "verification": "Neither security group remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 11,
+      "resource": "fa-ecs-fargate-eks-public-rt, fa-ecs-fargate-eks-igw, both subnets and fa-ecs-fargate-eks-vpc",
+      "action": "Remove route-table associations and delete VPC resources in reverse dependency order.",
+      "verification": "No fa-ecs-fargate-eks VPC resource remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 12,
+      "resource": "~/fa-ecs-fargate-eks and local Docker image",
+      "action": "Delete CloudShell source files and local image cache last.",
+      "verification": "No lab source folder remains; the administrator account is unchanged.",
+      "taskId": "task-18-cloudshell-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that fa-ecs-fargate-eks-cpu-scaling and the ECS scalable target are removed; fa-ecs-fargate-eks-service has zero tasks and is deleted; the HTTP listener, fa-ecs-fargate-eks-alb and fa-ecs-fargate-eks-tg are deleted; all active fa-ecs-fargate-eks-task revisions are deregistered and fa-ecs-fargate-eks-cluster is deleted; fa-ecs-fargate-eks-app and image v1 are deleted from ECR; /fa-ecs-fargate-eks/message and /ecs/fa-ecs-fargate-eks are deleted; fa-ecs-fargate-eks-task-role and fa-ecs-fargate-eks-execution-role are deleted; both lab security groups and every fa-ecs-fargate-eks VPC resource are deleted; the CloudShell lab folder/local image is removed; no separate human IAM user or static access key was created; the existing AWS administrator account is unchanged; and no unrelated AWS resource was deleted.",
+  "warnings": {
+    "cost": "This lab creates an Application Load Balancer, at least two AWS Fargate tasks and public IPv4 addresses for the tasks, plus ECR and CloudWatch Logs usage. These can incur charges. The public-subnet task design intentionally avoids a NAT gateway for training cost control.",
+    "safety": "Use only the existing disposable AWS administrator training account and exact fa-ecs-fargate-eks resource names/derived IDs. Do not run the controlled CPU generator for more than its fixed five minutes, and never delete unrelated account roles, service-linked roles, networks or repositories.",
+    "credentials": "This Follow Along creates no separate human IAM user or static access key. CloudShell uses the current administrator session. Do not put credentials, ECR authorization passwords or temporary container credentials into source files, task definitions, screenshots, chat or Study Tracker.",
+    "region": "Every lab cloud resource is created in eu-west-2. The two public subnets use eu-west-2a and eu-west-2b."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 18,
+    "checkboxCount": 221,
+    "cliCommandCount": 112,
+    "editableBlockCount": 11,
+    "verificationCount": 33,
+    "cleanupItemCount": 12,
+    "officialSourceCount": 32,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and JSON manuscript are offline educational authoring artifacts only. They have not been locally validated by Study Tracker, imported, accepted, approved, published or fingerprinted."
+  }
+}

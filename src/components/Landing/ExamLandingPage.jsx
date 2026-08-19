@@ -26,7 +26,7 @@ const TOOL_CARDS = [
   }
 ];
 
-export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => {} }) => {
+export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => {}, isDemoAccount = false }) => {
   if (!exam) return null;
   const details = getExamLandingDetails(exam);
   const topics = getExamTopics(exam);
@@ -38,7 +38,9 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
         {
           id: 'knowledge-guide',
           title: 'Knowledge Guide',
-          description: exam.id === 'terraform-associate-004'
+          description: isDemoAccount
+            ? 'Study the selected Knowledge Guide lessons included in the Demo preview.'
+            : exam.id === 'terraform-associate-004'
             ? 'Start here. Study all 37 Terraform lessons in checklist order with Previous and Next controls.'
             : 'Start here. Study AWS lessons in checklist order with Previous and Next controls.',
           icon: BookOpenCheck,
@@ -71,8 +73,8 @@ export const ExamLandingPage = ({ exam, onBack = () => {}, onSelectTool = () => 
           <p className="mt-3 text-xs font-semibold text-cyan-300">{details.audience}</p>
 
           <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-slate-300">
-            <span className="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-1.5">{topics.length} topics</span>
-            <span className="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-1.5">{checklistItems} checklist items</span>
+            <span className="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-1.5">{isDemoAccount ? 'Selected Demo topics' : `${topics.length} topics`}</span>
+            <span className="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-1.5">{isDemoAccount ? 'Curated checklist preview' : `${checklistItems} checklist items`}</span>
             <span className="rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-1.5">Target score: {exam.passingScore}%</span>
           </div>
         </div>

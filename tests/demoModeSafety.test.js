@@ -129,6 +129,8 @@ test('the app enforces demo isolation and Admin-only content controls', () => {
   const examSetup = read('src/components/PrepExam/ExamSetup.jsx');
   const followAlongs = read('src/components/FollowAlongs/FollowAlongLandingPage.jsx');
   const troubleshooting = read('src/components/Troubleshooting/TroubleshootingView.jsx');
+  const promotion = read('src/features/demo/DemoAnnualAccessPromotion.jsx');
+  const accessGate = read('src/features/demo/DemoAccessGate.jsx');
 
   assert.match(app, /if \(!isDemoAccount\)[\s\S]*saveAttemptToSupabase/);
   assert.doesNotMatch(app, /AwsConnectionProvider|AwsSetupGuide|useAwsConnection/);
@@ -142,4 +144,10 @@ test('the app enforces demo isolation and Admin-only content controls', () => {
   assert.match(followAlongs, /demoAccount \? demoProgrammes/);
   assert.match(troubleshooting, /isDemoAccount \? limitDemoTroubleshootingChallenges/);
   assert.match(checklist, /isDemoAccount[\s\S]*getDemoChecklistTopics/);
+  assert.match(app, /isDemoAccount && viewMode !== 'app-home'[\s\S]*DemoAnnualAccessBanner/);
+  assert.match(landing, /isDemoAccount && <DemoAnnualAccessAdvert/);
+  assert.match(accessGate, /<DemoAnnualAccessAdvert \/>/);
+  assert.match(promotion, /100\+ questions/);
+  assert.match(promotion, /twelve months of access/);
+  assert.doesNotMatch(promotion, /href=|onClick=|Purchase now|Buy now/);
 });

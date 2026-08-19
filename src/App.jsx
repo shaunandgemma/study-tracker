@@ -3,6 +3,7 @@ import { ExamProvider, useExam } from './context/ExamContext';
 import { AuthProvider } from './features/auth/AuthContext';
 import { useAuth } from './features/auth/useAuth.js';
 import { DemoAccessGate } from './features/demo/DemoAccessGate.jsx';
+import { DemoAnnualAccessBanner } from './features/demo/DemoAnnualAccessPromotion.jsx';
 import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
 import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
 import { Navbar } from './components/Navbar';
@@ -278,12 +279,15 @@ const MainContent = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
         <>
+            {isDemoAccount && viewMode !== 'app-home' && <DemoAnnualAccessBanner />}
+
             {viewMode === 'app-home' && (
               <AppLandingPage
                 exams={exams}
                 onSelectExam={handleSelectExam}
                 onAddExam={() => setIsAddModalOpen(true)}
                 canManageContent={canManageContent}
+                isDemoAccount={isDemoAccount}
               />
             )}
 
@@ -292,6 +296,7 @@ const MainContent = () => {
                 exam={activeExam}
                 onBack={() => setViewMode('app-home')}
                 onSelectTool={handleSelectExamTool}
+                isDemoAccount={isDemoAccount}
               />
             )}
 

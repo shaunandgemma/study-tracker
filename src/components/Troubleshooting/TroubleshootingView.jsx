@@ -58,7 +58,7 @@ const ChallengeList = ({ challenges, progress, examCode, onOpen, demoAccount }) 
 
       {demoAccount && (
         <DemoContentNotice>
-          Two Troubleshooting Challenges are included in this exam workspace. The full incident library is reserved for signed-in learner accounts.
+          Two Troubleshooting Challenges are included in this exam workspace. The paid exam workspace unlocks the complete incident library.
         </DemoContentNotice>
       )}
 
