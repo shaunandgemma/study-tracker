@@ -1,0 +1,36 @@
+218 - AWS CONNECTION TOOL RETIREMENT
+====================================
+
+1. PURPOSE
+----------
+Remove the unused AWS account-connection tool from the Study Tracker application.
+
+2. REMOVED FROM THE LOCAL APP
+-----------------------------
+1. The AWS connection provider and hook.
+2. The AWS setup screen.
+3. The browser service that saved and tested AWS role connections.
+4. The unused Follow Along live AWS validation panel.
+5. Its validation registry and CloudFormation setup template.
+6. Its two Supabase Edge Function source folders and shared validators.
+7. Tests that existed only for the removed feature.
+
+3. PRESERVED
+------------
+1. Follow Along learner content and progress.
+2. Author drafts and the trusted Approver workflow.
+3. Controlled publishing and published programmes.
+4. Authentication and safe demo mode.
+5. Supabase migration 20260802_user_aws_connections.sql as immutable database history.
+
+4. DATABASE AND AWS BOUNDARY
+----------------------------
+No Supabase migration was created or deployed.
+No live Supabase table, row, function or role was changed.
+No AWS resource, Amplify setting or production deployment was changed.
+
+Removing an Edge Function source folder from the repository does not itself delete a previously deployed remote Edge Function. The application no longer imports or calls either retired function.
+
+5. RESULT
+---------
+The normal application no longer loads, displays or calls the AWS connection tool. The rest of the Study Tracker remains independent of it.

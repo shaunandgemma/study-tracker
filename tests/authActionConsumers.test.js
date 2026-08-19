@@ -7,7 +7,7 @@ const read = file => readFileSync(file, 'utf8');
 test('Shared authentication action consumers', async (t) => {
   const modalSource = read('src/components/Modals/AuthModal.jsx');
   const navbarSource = read('src/components/Navbar.jsx');
-  const setupSource = read('src/features/awsConnection/AwsSetupGuide.jsx');
+  const appSource = read('src/App.jsx');
 
   await t.test('1. AuthModal uses the independent authentication context', () => {
     assert.match(modalSource, /features\/auth\/useAuth\.js/);
@@ -41,18 +41,12 @@ test('Shared authentication action consumers', async (t) => {
     assert.match(navbarSource, /Sign Out/);
   });
 
-  await t.test('5. AWS setup gets authentication and all AWS feature values from their independent owners', () => {
-    assert.match(setupSource, /const \{ currentUser, openAuthModal \} = useAuth\(\)/);
-    assert.match(setupSource, /\} = useAwsConnection\(\)/);
-    assert.match(setupSource, /saveConnection: saveAwsConnection/);
-    assert.match(setupSource, /regenerateExternalId: regenerateAwsExternalId/);
-    assert.match(setupSource, /closeSetup/);
-    assert.doesNotMatch(setupSource, /useTask|TaskContext|closeAwsSetup/);
+  await t.test('5. authentication remains independent after AWS connection retirement', () => {
+    assert.match(appSource, /<AuthProvider>[\s\S]*<AuthenticatedApplication \/>/);
+    assert.doesNotMatch(appSource, /AwsConnectionProvider|AwsSetupGuide|useAwsConnection/);
   });
 
-  await t.test('6. AWS setup remains selected while the shared modal opens', () => {
-    assert.match(setupSource, /openAuthModal\('aws-setup'\)/);
-    assert.doesNotMatch(setupSource, /setSubView/);
+  await t.test('6. the shared authentication modal remains available', () => {
     const authContextSource = read('src/features/auth/AuthContext.jsx');
     assert.match(authContextSource, /const openAuthModal = useCallback\(\(\) => setIsAuthModalOpen\(true\)/);
   });

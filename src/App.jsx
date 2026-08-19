@@ -5,14 +5,11 @@ import { useAuth } from './features/auth/useAuth.js';
 import { DemoAccessGate } from './features/demo/DemoAccessGate.jsx';
 import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
 import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
-import { AwsConnectionProvider } from './features/awsConnection/AwsConnectionContext';
-import { useAwsConnection } from './features/awsConnection/useAwsConnection.js';
 import { Navbar } from './components/Navbar';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
 import { QuizEngine } from './components/PrepExam/QuizEngine';
 import { ExamResults } from './components/PrepExam/ExamResults';
-import { AwsSetupGuide } from './features/awsConnection/AwsSetupGuide.jsx';
 import { FollowAlongsView } from './components/FollowAlongs/FollowAlongsView';
 import { TroubleshootingView } from './components/Troubleshooting/TroubleshootingView.jsx';
 import { AppLandingPage } from './components/Landing/AppLandingPage.jsx';
@@ -33,13 +30,6 @@ import { getDomainForQuestion } from './data/saaC03DomainMapping';
 const MainContent = () => {
   const { exams, viewMode, setViewMode, activeExam, activeExamId, setActiveExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
   const { isDemoAccount, canManageContent } = useAuth();
-  const { isSetupOpen, closeSetup } = useAwsConnection();
-
-  // Main navigation remains usable while the shared AWS setup screen is open.
-  useEffect(() => {
-    closeSetup();
-  }, [viewMode, closeSetup]);
-
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
@@ -285,10 +275,7 @@ const MainContent = () => {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
-        {isSetupOpen ? (
-          <AwsSetupGuide />
-        ) : (
-          <>
+        <>
             {viewMode === 'app-home' && (
               <AppLandingPage
                 exams={exams}
@@ -373,8 +360,7 @@ const MainContent = () => {
                 )}
               </div>
             )}
-          </>
-        )}
+        </>
       </main>
 
       {/* Footer */}
@@ -402,7 +388,7 @@ const MainContent = () => {
 
 const AuthenticatedApplication = () => {
   const [authorRequested, setAuthorRequested] = useState(() => isAuthorEntryRequested());
-  const { currentUser, loadingAuth, demoModeEnabled, signInAsDemo, openAuthModal, isDemoAccount } = useAuth();
+  const { currentUser, loadingAuth, demoModeEnabled, signInAsDemo, openAuthModal } = useAuth();
 
   useEffect(() => {
     const updateEntry = () => setAuthorRequested(isAuthorEntryRequested());
@@ -421,11 +407,9 @@ const AuthenticatedApplication = () => {
   }
 
   return (
-    <AwsConnectionProvider enabled={!isDemoAccount}>
-      <ExamProvider key={currentUser?.id || 'guest'}>
-        <MainContent />
-      </ExamProvider>
-    </AwsConnectionProvider>
+    <ExamProvider key={currentUser?.id || 'guest'}>
+      <MainContent />
+    </ExamProvider>
   );
 };
 

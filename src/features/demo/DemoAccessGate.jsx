@@ -40,7 +40,7 @@ export const DemoAccessGate = ({ onSignIn = () => {}, onEnterDemo = () => {}, en
           </button>
         </div>
         <p className="mt-5 rounded-xl border border-amber-800/50 bg-amber-950/20 p-3 text-[11px] leading-5 text-amber-200">
-          Demo access cannot open Author, Approvals or AWS account-connection tools.
+          Demo access cannot open Author or Approvals, and it cannot change live application data.
         </p>
       </aside>
     </div>

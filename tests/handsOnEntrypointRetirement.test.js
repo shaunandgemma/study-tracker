@@ -9,9 +9,7 @@ test('Step 58 Hands On entry-point retirement', async (t) => {
   const navbarSource = read('src/components/Navbar.jsx');
   const mobileSource = read('src/components/MobileBottomNav.jsx');
   const examContextSource = read('src/context/ExamContext.jsx');
-  const setupSource = read('src/features/awsConnection/AwsSetupGuide.jsx');
   const landingSource = read('src/components/FollowAlongs/FollowAlongLandingPage.jsx');
-  const templateSource = read('src/data/cloudFormationTemplate.js');
 
   await t.test('1. the retired Hands On page is no longer imported or rendered', () => {
     assert.doesNotMatch(appSource, /HandsOnTasksView|viewMode === 'hands-on-tasks'/);
@@ -38,16 +36,14 @@ test('Step 58 Hands On entry-point retirement', async (t) => {
 
   await t.test('5. user-facing wording describes Follow Alongs', () => {
     assert.match(appSource, /Interactive Study & AWS Follow Alongs/);
-    assert.match(setupSource, /Back to Follow Alongs/);
-    assert.match(setupSource, /Follow Along Verification/);
     assert.match(landingSource, /multiple guided tasks/);
-    assert.doesNotMatch(`${appSource}\n${setupSource}\n${landingSource}`, /Hands-On Labs|hands-on labs|Back to All Labs/);
+    assert.doesNotMatch(`${appSource}\n${landingSource}`, /Hands-On Labs|hands-on labs|Back to All Labs/);
   });
 
-  await t.test('6. the established AWS role identifiers remain compatible', () => {
-    assert.match(setupSource, /StudyTrackerHandsOnRole/);
-    assert.match(templateSource, /RoleName: StudyTrackerHandsOnRole/);
-    assert.match(templateSource, /StudyTrackerHandsOnRole\.Arn/);
+  await t.test('6. the unused AWS connection entry point is retired', () => {
+    assert.doesNotMatch(appSource, /AwsConnectionProvider|AwsSetupGuide|useAwsConnection/);
+    assert.equal(existsSync('src/features/awsConnection'), false);
+    assert.equal(existsSync('src/services/awsConnectionService.js'), false);
   });
 
   await t.test('7. retired runtime, local catalogue and importer are absent', () => {

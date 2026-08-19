@@ -67,14 +67,17 @@ test('Step 62 legacy Hands On content and tooling retirement', async (t) => {
     ]) assert.equal(existsSync(retainedPath), true, `${retainedPath} must remain`);
   });
 
-  await t.test('6. Follow Along ownership and AWS validation safeguards remain', () => {
+  await t.test('6. Follow Along ownership remains while the unused AWS connection feature is retired', () => {
     for (const retainedPath of [
       'src/features/followAlongs/catalogues/vpcFollowAlongTasks.js',
       'src/features/followAlongAuthor',
-      'src/services/awsConnectionService.js',
-      'tests/awsConnectionValidation.test.js',
       'tests/followAlongCatalogueOwnership.test.js'
     ]) assert.equal(existsSync(retainedPath), true, `${retainedPath} must remain`);
+    for (const retiredPath of [
+      'src/features/awsConnection',
+      'src/services/awsConnectionService.js',
+      'src/features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx'
+    ]) assert.equal(existsSync(retiredPath), false, `${retiredPath} must be retired`);
   });
 
   await t.test('7. exam-question tools remain outside the cleanup boundary', () => {

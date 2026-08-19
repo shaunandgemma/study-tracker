@@ -79,7 +79,7 @@ test('the app enforces demo isolation and Admin-only content controls', () => {
   const navbar = read('src/components/Navbar.jsx');
 
   assert.match(app, /if \(!isDemoAccount\)[\s\S]*saveAttemptToSupabase/);
-  assert.match(app, /<AwsConnectionProvider enabled=\{!isDemoAccount\}>/);
+  assert.doesNotMatch(app, /AwsConnectionProvider|AwsSetupGuide|useAwsConnection/);
   assert.match(context, /if \(!canManageContent\) return \{ success: false/);
   assert.match(context, /isDemoAccount[\s\S]*buildDemoAttempts/);
   assert.match(landing, /canManageContent && <button[\s\S]*Add Custom Exam/);

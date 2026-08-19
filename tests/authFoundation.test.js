@@ -121,7 +121,7 @@ test('Independent authentication foundation', async (t) => {
   await t.test('8. AuthProvider owns the user above the existing feature providers', () => {
     const appSource = readFileSync('src/App.jsx', 'utf8');
     assert.match(appSource, /<AuthProvider>[\s\S]*<AuthenticatedApplication \/>/);
-    assert.match(appSource, /<AwsConnectionProvider enabled=\{!isDemoAccount\}>[\s\S]*<ExamProvider[^>]*>[\s\S]*<MainContent \/>/);
+    assert.match(appSource, /<ExamProvider[^>]*>[\s\S]*<MainContent \/>/);
     assert.doesNotMatch(appSource, /TaskProvider|TaskContext/);
   });
 });

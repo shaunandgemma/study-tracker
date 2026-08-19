@@ -45,12 +45,14 @@ test('Step 60 Hands On runtime retirement', async (t) => {
     }
   });
 
-  await t.test('6. authentication, AWS connection, and Follow Along owners remain', () => {
+  await t.test('6. authentication and Follow Along owners remain', () => {
     for (const path of [
       'src/features/auth/AuthContext.jsx',
-      'src/features/awsConnection/AwsConnectionContext.jsx',
-      'src/features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx',
       'src/features/followAlongAuthor'
     ]) assert.equal(existsSync(path), true, `${path} must remain`);
+    for (const path of [
+      'src/features/awsConnection',
+      'src/features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx'
+    ]) assert.equal(existsSync(path), false, `${path} must be retired`);
   });
 });
