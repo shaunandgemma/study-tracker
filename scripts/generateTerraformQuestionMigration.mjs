@@ -8,7 +8,7 @@ const outputPath = path.join(
   projectRoot,
   'supabase',
   'migrations',
-  '20260828_publish_terraform_004_exam_questions.sql'
+  '20260829_expand_terraform_004_exam_questions.sql'
 );
 
 function sqlText(value) {
@@ -27,8 +27,8 @@ function sqlNullableText(value) {
 const questions = TERRAFORM_ASSOCIATE_EXAM.questions;
 const topicIds = new Set(TERRAFORM_ASSOCIATE_EXAM.topics.map(topic => topic.id));
 
-if (questions.length !== 30) {
-  throw new Error(`Expected exactly 30 Terraform questions, found ${questions.length}.`);
+if (questions.length !== 50) {
+  throw new Error(`Expected exactly 50 Terraform questions, found ${questions.length}.`);
 }
 
 const ids = new Set();
@@ -62,8 +62,8 @@ const values = questions.map(question => {
   ].join(', ')})`;
 }).join(',\n');
 
-const sql = `-- Publish the 30 locally reviewed Terraform Associate (004) questions.
--- Scope: Terraform questions q-tf004-1 through q-tf004-30 and their topic links only.
+const sql = `-- Publish the 50 locally reviewed Terraform Associate (004) questions.
+-- Scope: Terraform questions q-tf004-1 through q-tf004-50 and their topic links only.
 -- AWS questions, exam attempts, Follow Alongs, drafts and approvals are not changed.
 
 BEGIN;
@@ -95,8 +95,8 @@ ${values};
 
 DO $migration_guard$
 BEGIN
-  IF (SELECT COUNT(*) FROM terraform_004_question_seed) <> 30 THEN
-    RAISE EXCEPTION 'Terraform question publication stopped: expected 30 seed questions.';
+  IF (SELECT COUNT(*) FROM terraform_004_question_seed) <> 50 THEN
+    RAISE EXCEPTION 'Terraform question publication stopped: expected 50 seed questions.';
   END IF;
 
   IF EXISTS (
@@ -151,8 +151,8 @@ BEGIN
     FROM public.exam_questions questions
     JOIN terraform_004_question_seed seed ON seed.id = questions.id
     WHERE questions.exam_code = 'terraform-associate-004'
-  ) <> 30 THEN
-    RAISE EXCEPTION 'Terraform question publication failed verification: question count is not 30.';
+  ) <> 50 THEN
+    RAISE EXCEPTION 'Terraform question publication failed verification: question count is not 50.';
   END IF;
 
   IF (
@@ -161,8 +161,8 @@ BEGIN
     JOIN terraform_004_question_seed seed
       ON seed.id = mappings.question_id
      AND seed.topic_id = mappings.topic_id
-  ) <> 30 THEN
-    RAISE EXCEPTION 'Terraform question publication failed verification: topic mapping count is not 30.';
+  ) <> 50 THEN
+    RAISE EXCEPTION 'Terraform question publication failed verification: topic mapping count is not 50.';
   END IF;
 END
 $publication_check$;

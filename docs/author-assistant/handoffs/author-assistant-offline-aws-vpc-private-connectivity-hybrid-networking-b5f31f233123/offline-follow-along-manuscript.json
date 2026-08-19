@@ -1,0 +1,2615 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "VPC, Private Connectivity and Hybrid Networking Follow Along",
+    "suggestedProgrammeId": "aws-vpc-private-connectivity-hybrid-networking-learning-path",
+    "topic": "Amazon VPC, Private Connectivity and Hybrid Networking",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Intermediate",
+    "outcome": "Build a two-AZ VPC with public, private and isolated subnet tiers; configure route tables, security groups, a network ACL, a public NAT gateway, S3 gateway and SSM interface VPC endpoints; connect a second VPC first with peering and then Transit Gateway; design PrivateLink, Site-to-Site VPN and Direct Connect architectures; enable VPC Flow Logs; and safely remove only the resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-vpc",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "completionDefinition": [
+      "fa-vpc-core contains public, private and isolated subnet tiers across eu-west-2a and eu-west-2b.",
+      "Only public subnets route directly to the internet gateway; private subnets use fa-vpc-nat-a; isolated subnets have no default internet route.",
+      "Stateful security groups and a stateless isolated-subnet NACL are configured and compared.",
+      "An S3 gateway endpoint modifies selected route tables while an SSM interface endpoint creates private ENIs in isolated subnets.",
+      "fa-vpc-peer is first connected through direct VPC peering, then that path is replaced by Transit Gateway routing.",
+      "Complete PrivateLink, Site-to-Site VPN and Direct Connect architecture plans are produced without creating unnecessary NLB/VPN/Direct Connect costs.",
+      "VPC Flow Logs are Active and target the private account-derived S3 bucket.",
+      "All chargeable NAT, interface-endpoint and Transit Gateway resources are deleted before the temporary IAM identity and local files."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-vpc-create",
+      "title": "Create a VPC",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html",
+      "purpose": "VPC/subnet creation.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-bootstrap-user",
+        "task-04-core-vpc",
+        "task-18-identity-cleanup"
+      ]
+    },
+    {
+      "id": "src-routes",
+      "title": "Configure route tables",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html",
+      "purpose": "Route destinations and targets.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-03-cli-design",
+        "task-05-route-tables",
+        "task-08-s3-endpoint",
+        "task-16-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-igw",
+      "title": "Connect your VPC to the internet using an internet gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html",
+      "purpose": "Internet-gateway routing.",
+      "taskIds": [
+        "task-05-route-tables"
+      ]
+    },
+    {
+      "id": "src-nat",
+      "title": "NAT gateway basics",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-basics.html",
+      "purpose": "NAT gateway behavior.",
+      "taskIds": [
+        "task-06-nat",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-nat-work",
+      "title": "Work with NAT gateways",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-working-with.html",
+      "purpose": "NAT creation/deletion.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-06-nat",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-sg",
+      "title": "Control traffic to your AWS resources using security groups",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html",
+      "purpose": "Stateful security groups.",
+      "taskIds": [
+        "task-07-security",
+        "task-09-interface-endpoint",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-nacl",
+      "title": "Control subnet traffic with network access control lists",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html",
+      "purpose": "Stateless subnet filtering.",
+      "taskIds": [
+        "task-07-security",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-gw-endpoint",
+      "title": "Gateway endpoints",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html",
+      "purpose": "Gateway endpoint routing.",
+      "taskIds": [
+        "task-08-s3-endpoint",
+        "task-16-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-s3-endpoint",
+      "title": "Gateway endpoints for Amazon S3",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html",
+      "purpose": "S3 endpoint route tables.",
+      "taskIds": [
+        "task-08-s3-endpoint"
+      ]
+    },
+    {
+      "id": "src-if-endpoint",
+      "title": "Access an AWS service using an interface VPC endpoint",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-interface-endpoint.html",
+      "purpose": "Interface endpoint ENIs/SGs.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-09-interface-endpoint",
+        "task-12-privatelink",
+        "task-16-exam-review",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-peering",
+      "title": "Create a VPC peering connection",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/peering/create-vpc-peering-connection.html",
+      "purpose": "Peering creation.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-10-peering"
+      ]
+    },
+    {
+      "id": "src-peering-routes",
+      "title": "Update your route tables for a VPC peering connection",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html",
+      "purpose": "Peering routes.",
+      "taskIds": [
+        "task-10-peering"
+      ]
+    },
+    {
+      "id": "src-peering-basics",
+      "title": "How VPC peering connections work",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html",
+      "purpose": "Peering non-transitivity.",
+      "taskIds": [
+        "task-10-peering",
+        "task-11-tgw",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-tgw",
+      "title": "Create a transit gateway in AWS Transit Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/tgw/create-tgw.html",
+      "purpose": "Transit Gateway creation.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-11-tgw"
+      ]
+    },
+    {
+      "id": "src-tgw-attach",
+      "title": "Create a VPC attachment in AWS Transit Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/tgw/create-vpc-attachment.html",
+      "purpose": "VPC attachments.",
+      "taskIds": [
+        "task-11-tgw",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-tgw-how",
+      "title": "How AWS Transit Gateway works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html",
+      "purpose": "VPC routes to TGW.",
+      "taskIds": [
+        "task-11-tgw",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-tgw-routes",
+      "title": "Transit gateway route tables in AWS Transit Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html",
+      "purpose": "TGW association/propagation.",
+      "taskIds": [
+        "task-11-tgw"
+      ]
+    },
+    {
+      "id": "src-privatelink",
+      "title": "What is AWS PrivateLink?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html",
+      "purpose": "Private service access.",
+      "taskIds": [
+        "task-03-cli-design",
+        "task-12-privatelink",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-pl-service",
+      "title": "Create a service powered by AWS PrivateLink",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html",
+      "purpose": "Endpoint service with NLB.",
+      "taskIds": [
+        "task-12-privatelink"
+      ]
+    },
+    {
+      "id": "src-vpn",
+      "title": "What is AWS Site-to-Site VPN?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html",
+      "purpose": "Customer/VGW concepts.",
+      "taskIds": [
+        "task-03-cli-design",
+        "task-13-vpn",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-vpn-how",
+      "title": "How AWS Site-to-Site VPN works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpn/latest/s2svpn/how_it_works.html",
+      "purpose": "VPN routing/device responsibilities.",
+      "taskIds": [
+        "task-13-vpn"
+      ]
+    },
+    {
+      "id": "src-vpn-tunnels",
+      "title": "Tunnel options for your AWS Site-to-Site VPN connection",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNTunnels.html",
+      "purpose": "Two tunnels.",
+      "taskIds": [
+        "task-13-vpn"
+      ]
+    },
+    {
+      "id": "src-dx-vif",
+      "title": "Direct Connect virtual interfaces and hosted virtual interfaces",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/directconnect/latest/UserGuide/WorkingWithVirtualInterfaces.html",
+      "purpose": "Private/transit VIFs.",
+      "taskIds": [
+        "task-14-dx"
+      ]
+    },
+    {
+      "id": "src-dx-gw",
+      "title": "Direct Connect gateways",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/directconnect/latest/UserGuide/direct-connect-gateways.html",
+      "purpose": "DX gateway to VGW/TGW.",
+      "taskIds": [
+        "task-03-cli-design",
+        "task-14-dx",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-flow",
+      "title": "Logging IP traffic using VPC Flow Logs",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
+      "purpose": "Flow log destinations.",
+      "taskIds": [
+        "task-15-flow-logs",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-flow-s3",
+      "title": "Create a flow log that publishes to Amazon S3",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/en_en/vpc/latest/userguide/flow-logs-s3-create-flow-log.html",
+      "purpose": "S3 flow log.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-15-flow-logs",
+        "task-17-cloud-cleanup"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01",
+      "sequence": 1,
+      "title": "Prepare the networking lab",
+      "goal": "Create identity, CLI profile and exact architecture files."
+    },
+    {
+      "id": "phase-02",
+      "sequence": 2,
+      "title": "Build public, private and isolated subnet tiers",
+      "goal": "Create VPC, six subnets, route tables, IGW, NAT, SGs and NACL."
+    },
+    {
+      "id": "phase-03",
+      "sequence": 3,
+      "title": "Add private AWS-service connectivity",
+      "goal": "Create S3 gateway and SSM interface endpoints."
+    },
+    {
+      "id": "phase-04",
+      "sequence": 4,
+      "title": "Connect VPCs with peering then Transit Gateway",
+      "goal": "Create peer VPC, peering, then transition to TGW."
+    },
+    {
+      "id": "phase-05",
+      "sequence": 5,
+      "title": "Design PrivateLink and hybrid connectivity",
+      "goal": "Complete PrivateLink, VPN and Direct Connect plans without unnecessary billed infrastructure."
+    },
+    {
+      "id": "phase-06",
+      "sequence": 6,
+      "title": "Enable Flow Logs and review exam decisions",
+      "goal": "Publish Flow Logs to S3 and consolidate SAA-C03 decisions."
+    },
+    {
+      "id": "phase-07",
+      "sequence": 7,
+      "title": "Reverse-dependency cleanup",
+      "goal": "Remove chargeable networking, VPC resources, credentials and local files safely."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01",
+      "title": "Verify account, Region and networking scope",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm a clean training account, AWS CLI and eu-west-2 before any resource exists.",
+      "whyItMatters": "Known identity and Region reduce false troubleshooting signals.",
+      "examRelevance": "Networking questions combine routing, isolation, endpoints and hybrid patterns.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-vpc-create",
+        "src-routes"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the disposable AWS training account."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm no resource beginning fa-vpc already exists."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell and run aws --version."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm the console Region is Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not create or use root access keys; root is used only for Task 2 bootstrap and Task 18 final IAM-user deletion."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify CLI",
+          "language": "text",
+          "content": "aws --version"
+        },
+        {
+          "title": "Bash - verify CLI",
+          "language": "text",
+          "content": "aws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "AWS CLI prints a version.",
+        "No fa-vpc resource exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "The CLI works."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "The console Region is eu-west-2."
+        }
+      ]
+    },
+    {
+      "id": "task-02-bootstrap-user",
+      "phaseId": "phase-01",
+      "title": "Create the temporary VPC networking IAM user",
+      "feature": "IAM bootstrap",
+      "difficulty": "Hard",
+      "goal": "Use root only to create fa-vpc-admin, one temporary access key and the complete lab policy.",
+      "whyItMatters": "The lab needs controlled rights for VPC, NAT, endpoints, peering, TGW, Flow Logs and one S3 bucket.",
+      "examRelevance": "Least-privilege still matters in networking labs.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-vpc-create",
+        "src-nat-work",
+        "src-if-endpoint",
+        "src-peering",
+        "src-tgw",
+        "src-flow-s3"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in as root only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Users > Create user."
+        },
+        {
+          "sequence": 3,
+          "instruction": "User name: fa-vpc-admin; enable console access."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create the user."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open IAM > Policies > Create policy > JSON."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Paste the complete fa-vpc-admin-policy block below."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create policy fa-vpc-admin-policy and attach it directly to fa-vpc-admin."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Open Security credentials and create exactly one access key for CLI use."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Copy the access key only to a temporary secure location."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Sign out of root and sign in as fa-vpc-admin."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI command",
+          "language": "text",
+          "content": "# Complete this one-time bootstrap in the IAM console. Do not create root access keys."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "fa-vpc-admin-policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadNetworkState\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"sts:GetCallerIdentity\",\n        \"ec2:Describe*\",\n        \"s3:ListAllMyBuckets\",\n        \"s3:GetBucketLocation\",\n        \"s3:GetBucketPolicy\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageVpcCore\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpc\",\n        \"ec2:DeleteVpc\",\n        \"ec2:ModifyVpcAttribute\",\n        \"ec2:CreateSubnet\",\n        \"ec2:DeleteSubnet\",\n        \"ec2:ModifySubnetAttribute\",\n        \"ec2:CreateInternetGateway\",\n        \"ec2:AttachInternetGateway\",\n        \"ec2:DetachInternetGateway\",\n        \"ec2:DeleteInternetGateway\",\n        \"ec2:CreateRouteTable\",\n        \"ec2:DeleteRouteTable\",\n        \"ec2:AssociateRouteTable\",\n        \"ec2:DisassociateRouteTable\",\n        \"ec2:CreateRoute\",\n        \"ec2:ReplaceRoute\",\n        \"ec2:DeleteRoute\",\n        \"ec2:CreateTags\",\n        \"ec2:DeleteTags\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageSecurity\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateSecurityGroup\",\n        \"ec2:DeleteSecurityGroup\",\n        \"ec2:AuthorizeSecurityGroupIngress\",\n        \"ec2:AuthorizeSecurityGroupEgress\",\n        \"ec2:RevokeSecurityGroupIngress\",\n        \"ec2:RevokeSecurityGroupEgress\",\n        \"ec2:CreateNetworkAcl\",\n        \"ec2:DeleteNetworkAcl\",\n        \"ec2:CreateNetworkAclEntry\",\n        \"ec2:DeleteNetworkAclEntry\",\n        \"ec2:ReplaceNetworkAclAssociation\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageNat\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:AllocateAddress\",\n        \"ec2:ReleaseAddress\",\n        \"ec2:CreateNatGateway\",\n        \"ec2:DeleteNatGateway\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageEndpoints\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpcEndpoint\",\n        \"ec2:DeleteVpcEndpoints\",\n        \"ec2:ModifyVpcEndpoint\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManagePeering\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpcPeeringConnection\",\n        \"ec2:AcceptVpcPeeringConnection\",\n        \"ec2:DeleteVpcPeeringConnection\",\n        \"ec2:ModifyVpcPeeringConnectionOptions\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTransitGateway\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateTransitGateway\",\n        \"ec2:DeleteTransitGateway\",\n        \"ec2:CreateTransitGatewayVpcAttachment\",\n        \"ec2:DeleteTransitGatewayVpcAttachment\",\n        \"ec2:ModifyTransitGatewayVpcAttachment\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageFlowLogs\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateFlowLogs\",\n        \"ec2:DeleteFlowLogs\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageFlowBucket\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:CreateBucket\",\n        \"s3:DeleteBucket\",\n        \"s3:ListBucket\",\n        \"s3:GetBucketLocation\",\n        \"s3:GetBucketPolicy\",\n        \"s3:PutBucketPolicy\",\n        \"s3:DeleteBucketPolicy\"\n      ],\n      \"Resource\": \"arn:aws:s3:::fa-vpc-flow-*\"\n    },\n    {\n      \"Sid\": \"ManageFlowObjects\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:GetObject\",\n        \"s3:DeleteObject\"\n      ],\n      \"Resource\": \"arn:aws:s3:::fa-vpc-flow-*/*\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "fa-vpc-admin exists.",
+        "fa-vpc-admin-policy is attached.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-bootstrap-user-verify-01",
+          "text": "The current browser session is fa-vpc-admin."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-02",
+          "text": "AdministratorAccess is not attached."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-design",
+      "phaseId": "phase-01",
+      "title": "Configure the CLI profile and create architecture files",
+      "feature": "CLI and planning files",
+      "difficulty": "Medium",
+      "goal": "Configure fa-vpc-admin and save the exact core, PrivateLink and hybrid network designs.",
+      "whyItMatters": "The design files keep CIDRs and non-deployed expensive services explicit.",
+      "examRelevance": "Intermediate network design should start with CIDR/routing intent.",
+      "prerequisites": [
+        "task-02-bootstrap-user"
+      ],
+      "sourceIds": [
+        "src-routes",
+        "src-privatelink",
+        "src-vpn",
+        "src-dx-gw"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open PowerShell."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-vpc-admin."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the temporary key only in protected prompts; set Region eu-west-2 and output json."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run get-caller-identity."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create C:\\aws-labs\\fa-vpc."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create network-design.json, privatelink-plan.json and hybrid-connectivity-plan.json."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Paste the complete blocks below and verify the 10.80.0.0/16 and 10.90.0.0/16 CIDRs do not overlap."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - configure profile",
+          "language": "text",
+          "content": "aws configure --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - verify identity",
+          "language": "text",
+          "content": "aws sts get-caller-identity --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - capture account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-vpc-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - derive flow bucket",
+          "language": "text",
+          "content": "$FLOW_BUCKET = \"fa-vpc-flow-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - create/enter folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force \"C:\\aws-labs\\fa-vpc\"\nSet-Location \"C:\\aws-labs\\fa-vpc\""
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "network-design.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"VPC, Private Connectivity and Hybrid Networking Follow Along\",\n  \"region\": \"eu-west-2\",\n  \"resourcePrefix\": \"fa-vpc\",\n  \"primaryVpc\": {\n    \"name\": \"fa-vpc-core\",\n    \"cidr\": \"10.80.0.0/16\",\n    \"subnets\": [\n      {\n        \"name\": \"fa-vpc-public-a\",\n        \"az\": \"eu-west-2a\",\n        \"cidr\": \"10.80.0.0/24\",\n        \"class\": \"public\"\n      },\n      {\n        \"name\": \"fa-vpc-public-b\",\n        \"az\": \"eu-west-2b\",\n        \"cidr\": \"10.80.1.0/24\",\n        \"class\": \"public\"\n      },\n      {\n        \"name\": \"fa-vpc-private-a\",\n        \"az\": \"eu-west-2a\",\n        \"cidr\": \"10.80.10.0/24\",\n        \"class\": \"private\"\n      },\n      {\n        \"name\": \"fa-vpc-private-b\",\n        \"az\": \"eu-west-2b\",\n        \"cidr\": \"10.80.11.0/24\",\n        \"class\": \"private\"\n      },\n      {\n        \"name\": \"fa-vpc-isolated-a\",\n        \"az\": \"eu-west-2a\",\n        \"cidr\": \"10.80.20.0/24\",\n        \"class\": \"isolated\"\n      },\n      {\n        \"name\": \"fa-vpc-isolated-b\",\n        \"az\": \"eu-west-2b\",\n        \"cidr\": \"10.80.21.0/24\",\n        \"class\": \"isolated\"\n      }\n    ]\n  },\n  \"peerVpc\": {\n    \"name\": \"fa-vpc-peer\",\n    \"cidr\": \"10.90.0.0/16\",\n    \"subnets\": [\n      {\n        \"name\": \"fa-vpc-peer-a\",\n        \"az\": \"eu-west-2a\",\n        \"cidr\": \"10.90.10.0/24\"\n      },\n      {\n        \"name\": \"fa-vpc-peer-b\",\n        \"az\": \"eu-west-2b\",\n        \"cidr\": \"10.90.11.0/24\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "title": "privatelink-plan.json",
+          "language": "json",
+          "content": "{\n  \"pattern\": \"AWS PrivateLink endpoint service\",\n  \"providerVpc\": \"fa-vpc-peer\",\n  \"consumerVpc\": \"fa-vpc-core\",\n  \"providerSequence\": [\n    \"Deploy private service targets\",\n    \"Create internal NLB fa-vpc-privatelink-nlb\",\n    \"Create endpoint service fa-vpc-privatelink-service\",\n    \"Allow only intended consumer principals\",\n    \"Keep acceptance required when explicit approval is wanted\"\n  ],\n  \"consumerSequence\": [\n    \"Create interface endpoint in fa-vpc-private-a and fa-vpc-private-b\",\n    \"Attach fa-vpc-endpoint-sg\",\n    \"Allow service port only from intended client SG\",\n    \"Enable private DNS only after provider DNS requirements are satisfied\"\n  ],\n  \"examDecision\": \"Use PrivateLink for private access to one service without broad routed VPC-to-VPC connectivity.\",\n  \"notCreatedInThisLab\": [\n    \"Network Load Balancer\",\n    \"Endpoint service\",\n    \"Custom-service consumer endpoint\"\n  ]\n}"
+        },
+        {
+          "title": "hybrid-connectivity-plan.json",
+          "language": "json",
+          "content": "{\n  \"onPremises\": {\n    \"networkCidr\": \"192.168.100.0/24\",\n    \"documentationOnlyPublicIp\": \"198.51.100.10\",\n    \"customerBgpAsn\": 65010\n  },\n  \"siteToSiteVpn\": {\n    \"singleVpcPattern\": \"Customer gateway -> two IPsec tunnels -> virtual private gateway -> VPC route tables\",\n    \"multiVpcPattern\": \"Customer gateway -> two IPsec tunnels -> Transit Gateway VPN attachment -> TGW route table -> VPC attachments\",\n    \"routing\": \"Use BGP when dynamic routing is supported; configure both AWS tunnels on the customer gateway device.\",\n    \"labDecision\": \"Architecture-only: no real customer gateway device and an idle VPN connection would incur charges.\"\n  },\n  \"directConnect\": {\n    \"smallVpcPattern\": \"Direct Connect connection -> private VIF -> Direct Connect gateway -> virtual private gateway -> VPC\",\n    \"multiVpcPattern\": \"Direct Connect connection -> transit VIF -> Direct Connect gateway -> Transit Gateway -> VPC attachments\",\n    \"routing\": \"BGP exchanges prefixes between customer router and AWS.\",\n    \"resilience\": \"Use redundant connections/locations and consider Site-to-Site VPN backup.\",\n    \"labDecision\": \"Architecture-only: requires physical/partner connectivity.\"\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "The CLI identity is fa-vpc-admin.",
+        "All three design files exist.",
+        "The VPC CIDRs do not overlap."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-design-verify-01",
+          "text": "FLOW_BUCKET begins fa-vpc-flow-."
+        },
+        {
+          "id": "task-03-cli-design-verify-02",
+          "text": "No design file contains credentials."
+        }
+      ]
+    },
+    {
+      "id": "task-04-core-vpc",
+      "phaseId": "phase-02",
+      "title": "Create fa-vpc-core and six subnet tiers",
+      "feature": "VPC and subnets",
+      "difficulty": "Hard",
+      "goal": "Create public, private and isolated subnets across eu-west-2a and eu-west-2b.",
+      "whyItMatters": "Equivalent subnet tiers across AZs make resilience and routing boundaries visible.",
+      "examRelevance": "Subnet purpose is ultimately determined by routes and addressing, not the subnet name.",
+      "prerequisites": [
+        "task-03-cli-design"
+      ],
+      "sourceIds": [
+        "src-vpc-create"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC in eu-west-2 and create VPC only named fa-vpc-core with CIDR 10.80.0.0/16."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Enable DNS hostnames on fa-vpc-core."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create fa-vpc-public-a in eu-west-2a: 10.80.0.0/24."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-vpc-public-b in eu-west-2b: 10.80.1.0/24."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create fa-vpc-private-a in eu-west-2a: 10.80.10.0/24."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create fa-vpc-private-b in eu-west-2b: 10.80.11.0/24."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create fa-vpc-isolated-a in eu-west-2a: 10.80.20.0/24."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create fa-vpc-isolated-b in eu-west-2b: 10.80.21.0/24."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Do not enable public IPv4 auto-assignment on private or isolated subnets."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create core VPC",
+          "language": "text",
+          "content": "$CORE_VPC_ID = aws ec2 create-vpc --cidr-block 10.80.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-vpc-core}]\" --query Vpc.VpcId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - DNS hostnames",
+          "language": "text",
+          "content": "aws ec2 modify-vpc-attribute --vpc-id $CORE_VPC_ID --enable-dns-hostnames \"{\\\"Value\\\":true}\" --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - create six subnets",
+          "language": "text",
+          "content": "$PUBLIC_A_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2a --cidr-block 10.80.0.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-public-a}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$PUBLIC_B_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2b --cidr-block 10.80.1.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-public-b}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$PRIVATE_A_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2a --cidr-block 10.80.10.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-private-a}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$PRIVATE_B_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2b --cidr-block 10.80.11.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-private-b}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$ISOLATED_A_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2a --cidr-block 10.80.20.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-isolated-a}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$ISOLATED_B_ID = aws ec2 create-subnet --vpc-id $CORE_VPC_ID --availability-zone eu-west-2b --cidr-block 10.80.21.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-isolated-b}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-vpc-core has six /24 subnets across two AZs.",
+        "Private/isolated subnets do not auto-assign public IPv4."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-core-vpc-verify-01",
+          "text": "All CIDRs match network-design.json."
+        },
+        {
+          "id": "task-04-core-vpc-verify-02",
+          "text": "Three subnet tiers exist in each AZ."
+        }
+      ]
+    },
+    {
+      "id": "task-05-route-tables",
+      "phaseId": "phase-02",
+      "title": "Create tier-specific route tables and internet gateway",
+      "feature": "Route tables",
+      "difficulty": "Hard",
+      "goal": "Give only public subnets an IGW default route and give each private/isolated subnet an explicit route-table association.",
+      "whyItMatters": "Routing is what makes a subnet public, private or isolated.",
+      "examRelevance": "Route destination/target matching is a core SAA-C03 networking skill.",
+      "prerequisites": [
+        "task-04-core-vpc"
+      ],
+      "sourceIds": [
+        "src-routes",
+        "src-igw"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create internet gateway fa-vpc-igw and attach it to fa-vpc-core."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-vpc-public-rt, fa-vpc-private-a-rt, fa-vpc-private-b-rt, fa-vpc-isolated-a-rt and fa-vpc-isolated-b-rt."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Add 0.0.0.0/0 -> fa-vpc-igw only to fa-vpc-public-rt."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Associate both public subnets with fa-vpc-public-rt."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Associate each private subnet with its matching private route table."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Associate each isolated subnet with its matching isolated route table."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Verify neither isolated route table contains 0.0.0.0/0."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - IGW",
+          "language": "text",
+          "content": "$IGW_ID = aws ec2 create-internet-gateway --tag-specifications \"ResourceType=internet-gateway,Tags=[{Key=Name,Value=fa-vpc-igw}]\" --query InternetGateway.InternetGatewayId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $CORE_VPC_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - create route tables",
+          "language": "text",
+          "content": "$PUBLIC_RT_ID = aws ec2 create-route-table --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-public-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin\n$PRIVATE_A_RT_ID = aws ec2 create-route-table --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-private-a-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin\n$PRIVATE_B_RT_ID = aws ec2 create-route-table --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-private-b-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin\n$ISOLATED_A_RT_ID = aws ec2 create-route-table --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-isolated-a-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin\n$ISOLATED_B_RT_ID = aws ec2 create-route-table --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-isolated-b-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - route/associate",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $PUBLIC_RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $PUBLIC_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $PUBLIC_B_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PRIVATE_A_RT_ID --subnet-id $PRIVATE_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PRIVATE_B_RT_ID --subnet-id $PRIVATE_B_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $ISOLATED_A_RT_ID --subnet-id $ISOLATED_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $ISOLATED_B_RT_ID --subnet-id $ISOLATED_B_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Only fa-vpc-public-rt has the IGW default route.",
+        "Every non-public subnet has an explicit route-table association."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-route-tables-verify-01",
+          "text": "Both isolated route tables lack 0.0.0.0/0."
+        },
+        {
+          "id": "task-05-route-tables-verify-02",
+          "text": "Public route target is fa-vpc-igw."
+        }
+      ]
+    },
+    {
+      "id": "task-06-nat",
+      "phaseId": "phase-02",
+      "title": "Create a public NAT gateway and private egress routes",
+      "feature": "NAT gateway",
+      "difficulty": "Hard",
+      "goal": "Create fa-vpc-nat-a in public-a and route both private subnets to it.",
+      "whyItMatters": "NAT provides outbound IPv4 egress while private subnets avoid direct IGW routing.",
+      "examRelevance": "NAT is egress, not transitive inter-VPC routing.",
+      "prerequisites": [
+        "task-05-route-tables"
+      ],
+      "sourceIds": [
+        "src-nat",
+        "src-nat-work"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "NAT Gateway and Elastic IP incur charges while present."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Allocate Elastic IP fa-vpc-nat-eip."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create public NAT gateway fa-vpc-nat-a in fa-vpc-public-a using that EIP."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Wait for Available."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Add 0.0.0.0/0 -> fa-vpc-nat-a to fa-vpc-private-a-rt and fa-vpc-private-b-rt."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not add a NAT route to isolated route tables."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Record the training compromise: private-b depends on a zonal NAT in eu-west-2a; production designs should address cross-AZ/failure requirements."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - EIP/NAT",
+          "language": "text",
+          "content": "$EIP_ALLOC_ID = aws ec2 allocate-address --domain vpc --tag-specifications \"ResourceType=elastic-ip,Tags=[{Key=Name,Value=fa-vpc-nat-eip}]\" --query AllocationId --output text --region eu-west-2 --profile fa-vpc-admin\n$NAT_ID = aws ec2 create-nat-gateway --subnet-id $PUBLIC_A_ID --allocation-id $EIP_ALLOC_ID --tag-specifications \"ResourceType=natgateway,Tags=[{Key=Name,Value=fa-vpc-nat-a}]\" --query NatGateway.NatGatewayId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 wait nat-gateway-available --nat-gateway-ids $NAT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - private NAT routes",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $PRIVATE_A_RT_ID --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PRIVATE_B_RT_ID --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "NAT is Available.",
+        "Both private RTs use NAT for 0.0.0.0/0.",
+        "Isolated RTs remain without default routes."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-nat-verify-01",
+          "text": "NAT is in public-a and has the EIP."
+        },
+        {
+          "id": "task-06-nat-verify-02",
+          "text": "No isolated route targets NAT."
+        }
+      ]
+    },
+    {
+      "id": "task-07-security",
+      "phaseId": "phase-02",
+      "title": "Create endpoint security groups and an isolated-subnet NACL",
+      "feature": "Security groups and NACLs",
+      "difficulty": "Hard",
+      "goal": "Create SG reference rules and a stateless NACL for isolated subnets.",
+      "whyItMatters": "SGs are stateful ENI controls; NACLs are stateless subnet controls.",
+      "examRelevance": "Stateful versus stateless is a frequent exam distinction.",
+      "prerequisites": [
+        "task-06-nat"
+      ],
+      "sourceIds": [
+        "src-sg",
+        "src-nacl"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create fa-vpc-client-sg in fa-vpc-core with no inbound rules."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-vpc-endpoint-sg in fa-vpc-core."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Allow inbound TCP 443 to fa-vpc-endpoint-sg only from fa-vpc-client-sg."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-vpc-isolated-nacl."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Add inbound rule 100 Allow ALL from 10.80.0.0/16."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Add outbound rule 100 Allow ALL to 10.80.0.0/16."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Leave implicit deny for other traffic."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Associate both isolated subnets with fa-vpc-isolated-nacl."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Explain that the symmetric NACL rules are needed because NACLs are stateless."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - SGs",
+          "language": "text",
+          "content": "$CLIENT_SG_ID = aws ec2 create-security-group --group-name fa-vpc-client-sg --description \"Training clients\" --vpc-id $CORE_VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-vpc-admin\n$ENDPOINT_SG_ID = aws ec2 create-security-group --group-name fa-vpc-endpoint-sg --description \"Endpoint HTTPS\" --vpc-id $CORE_VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 authorize-security-group-ingress --group-id $ENDPOINT_SG_ID --protocol tcp --port 443 --source-group $CLIENT_SG_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - NACL",
+          "language": "text",
+          "content": "$NACL_ID = aws ec2 create-network-acl --vpc-id $CORE_VPC_ID --tag-specifications \"ResourceType=network-acl,Tags=[{Key=Name,Value=fa-vpc-isolated-nacl}]\" --query NetworkAcl.NetworkAclId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-network-acl-entry --network-acl-id $NACL_ID --ingress --rule-number 100 --protocol -1 --cidr-block 10.80.0.0/16 --rule-action allow --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-network-acl-entry --network-acl-id $NACL_ID --egress --rule-number 100 --protocol -1 --cidr-block 10.80.0.0/16 --rule-action allow --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - NACL associations",
+          "language": "text",
+          "content": "$A1 = aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$ISOLATED_A_ID --query \"NetworkAcls[0].Associations[0].NetworkAclAssociationId\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 replace-network-acl-association --association-id $A1 --network-acl-id $NACL_ID --region eu-west-2 --profile fa-vpc-admin\n$A2 = aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$ISOLATED_B_ID --query \"NetworkAcls[0].Associations[0].NetworkAclAssociationId\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 replace-network-acl-association --association-id $A2 --network-acl-id $NACL_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Endpoint SG accepts 443 only from client SG.",
+        "Isolated NACL permits VPC-local traffic both directions and denies other traffic."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-security-verify-01",
+          "text": "Both isolated subnets use the custom NACL."
+        },
+        {
+          "id": "task-07-security-verify-02",
+          "text": "The learner can state SG=stateful, NACL=stateless."
+        }
+      ]
+    },
+    {
+      "id": "task-08-s3-endpoint",
+      "phaseId": "phase-03",
+      "title": "Create the Flow Logs bucket and S3 gateway endpoint",
+      "feature": "Gateway VPC endpoint",
+      "difficulty": "Hard",
+      "goal": "Create a private S3 bucket and associate an S3 gateway endpoint with private and isolated route tables.",
+      "whyItMatters": "Gateway endpoints are route-table based and do not create endpoint ENIs.",
+      "examRelevance": "Gateway endpoints are the low-cost private path for supported services such as S3/DynamoDB.",
+      "prerequisites": [
+        "task-07-security"
+      ],
+      "sourceIds": [
+        "src-gw-endpoint",
+        "src-s3-endpoint",
+        "src-routes"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open S3 and create fa-vpc-flow-<account-id> in eu-west-2 with Block Public Access enabled."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open VPC > Endpoints > Create endpoint."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Name: fa-vpc-s3-gateway-endpoint."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Service: com.amazonaws.eu-west-2.s3, Type Gateway."
+        },
+        {
+          "sequence": 5,
+          "instruction": "VPC: fa-vpc-core."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Select fa-vpc-private-a-rt, fa-vpc-private-b-rt, fa-vpc-isolated-a-rt and fa-vpc-isolated-b-rt."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Use a custom endpoint policy limited to the training flow-log bucket; the CLI route replaces FLOW_LOG_BUCKET_ARN with the exact derived ARN."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create the endpoint and wait for Available."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Inspect the four route tables and identify the S3 managed-prefix-list route."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Confirm no endpoint ENI/security group exists for the gateway endpoint."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create Flow Logs bucket",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-vpc-admin --query Account --output text\n$FLOW_BUCKET = \"fa-vpc-flow-$AWS_ACCOUNT_ID\"\naws s3api create-bucket --bucket $FLOW_BUCKET --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - build endpoint policy",
+          "language": "text",
+          "content": "$POLICY = (Get-Content .\\s3-endpoint-policy-template.json -Raw).Replace(\"FLOW_LOG_BUCKET_ARN\",\"arn:aws:s3:::$FLOW_BUCKET\")\n$POLICY | Set-Content -Encoding utf8 .\\s3-endpoint-policy.json"
+        },
+        {
+          "title": "PowerShell - create gateway endpoint",
+          "language": "text",
+          "content": "$S3_ENDPOINT_ID = aws ec2 create-vpc-endpoint --vpc-id $CORE_VPC_ID --service-name com.amazonaws.eu-west-2.s3 --vpc-endpoint-type Gateway --route-table-ids $PRIVATE_A_RT_ID $PRIVATE_B_RT_ID $ISOLATED_A_RT_ID $ISOLATED_B_RT_ID --policy-document file://s3-endpoint-policy.json --tag-specifications \"ResourceType=vpc-endpoint,Tags=[{Key=Name,Value=fa-vpc-s3-gateway-endpoint}]\" --query VpcEndpoint.VpcEndpointId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - inspect endpoint",
+          "language": "text",
+          "content": "aws ec2 describe-vpc-endpoints --vpc-endpoint-ids $S3_ENDPOINT_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "s3-endpoint-policy-template.json",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowTrainingBucketList\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": [\n        \"s3:GetBucketLocation\",\n        \"s3:ListBucket\"\n      ],\n      \"Resource\": \"FLOW_LOG_BUCKET_ARN\"\n    },\n    {\n      \"Sid\": \"AllowTrainingObjectsRead\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": [\n        \"s3:GetObject\"\n      ],\n      \"Resource\": \"FLOW_LOG_BUCKET_ARN/*\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "S3 gateway endpoint is Available.",
+        "Selected RTs contain S3 prefix-list routes.",
+        "The S3 bucket remains private."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-s3-endpoint-verify-01",
+          "text": "No endpoint ENI exists."
+        },
+        {
+          "id": "task-08-s3-endpoint-verify-02",
+          "text": "Policy scope is limited to the flow-log bucket."
+        }
+      ]
+    },
+    {
+      "id": "task-09-interface-endpoint",
+      "phaseId": "phase-03",
+      "title": "Create an SSM interface endpoint in isolated subnets",
+      "feature": "Interface VPC endpoint",
+      "difficulty": "Hard",
+      "goal": "Create an interface VPC endpoint with private DNS and one ENI in each isolated subnet.",
+      "whyItMatters": "Interface endpoints use PrivateLink, subnet ENIs and security groups instead of gateway routes.",
+      "examRelevance": "Use interface endpoints when isolated/private workloads need supported AWS APIs without internet/NAT.",
+      "prerequisites": [
+        "task-08-s3-endpoint"
+      ],
+      "sourceIds": [
+        "src-if-endpoint",
+        "src-sg"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Interface endpoints incur hourly/data-processing charges until deleted."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC > Endpoints > Create endpoint."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Name: fa-vpc-ssm-interface-endpoint."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Service: com.amazonaws.eu-west-2.ssm."
+        },
+        {
+          "sequence": 4,
+          "instruction": "VPC: fa-vpc-core."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Enable private DNS."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Select fa-vpc-isolated-a and fa-vpc-isolated-b."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Security group: fa-vpc-endpoint-sg."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create and wait for Available."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Inspect Subnets and Network interfaces; confirm one endpoint ENI per selected subnet."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Compare with the S3 gateway endpoint: interface endpoint has ENIs/SG/private DNS; gateway endpoint has route-table entries."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create SSM endpoint",
+          "language": "text",
+          "content": "$SSM_ENDPOINT_ID = aws ec2 create-vpc-endpoint --vpc-id $CORE_VPC_ID --vpc-endpoint-type Interface --service-name com.amazonaws.eu-west-2.ssm --subnet-ids $ISOLATED_A_ID $ISOLATED_B_ID --security-group-ids $ENDPOINT_SG_ID --private-dns-enabled --tag-specifications \"ResourceType=vpc-endpoint,Tags=[{Key=Name,Value=fa-vpc-ssm-interface-endpoint}]\" --query VpcEndpoint.VpcEndpointId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - inspect endpoint",
+          "language": "text",
+          "content": "aws ec2 describe-vpc-endpoints --vpc-endpoint-ids $SSM_ENDPOINT_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "SSM endpoint reaches Available.",
+        "It has ENIs in isolated-a and isolated-b.",
+        "PrivateDnsEnabled is true."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-interface-endpoint-verify-01",
+          "text": "Endpoint uses fa-vpc-endpoint-sg."
+        },
+        {
+          "id": "task-09-interface-endpoint-verify-02",
+          "text": "Isolated RTs still have no default internet route."
+        }
+      ]
+    },
+    {
+      "id": "task-10-peering",
+      "phaseId": "phase-04",
+      "title": "Create fa-vpc-peer and connect it with VPC peering",
+      "feature": "VPC peering",
+      "difficulty": "Hard",
+      "goal": "Create a second non-overlapping VPC and explicit bidirectional private routes through a peering connection.",
+      "whyItMatters": "Peering is direct one-to-one connectivity and is not transitive.",
+      "examRelevance": "Peering fits simple VPC pairs; TGW fits larger hub-and-spoke designs.",
+      "prerequisites": [
+        "task-09-interface-endpoint"
+      ],
+      "sourceIds": [
+        "src-peering",
+        "src-peering-routes",
+        "src-peering-basics"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Create VPC fa-vpc-peer with CIDR 10.90.0.0/16."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-vpc-peer-a 10.90.10.0/24 in eu-west-2a and fa-vpc-peer-b 10.90.11.0/24 in eu-west-2b."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create fa-vpc-peer-rt and associate both peer subnets."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create peering connection fa-vpc-peering from fa-vpc-core to fa-vpc-peer."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Accept the same-account request."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Add 10.90.0.0/16 -> fa-vpc-peering to fa-vpc-private-a-rt and fa-vpc-private-b-rt."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Add 10.80.0.0/16 -> fa-vpc-peering to fa-vpc-peer-rt."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not add peer routes to isolated route tables."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create peer VPC/subnets",
+          "language": "text",
+          "content": "$PEER_VPC_ID = aws ec2 create-vpc --cidr-block 10.90.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-vpc-peer}]\" --query Vpc.VpcId --output text --region eu-west-2 --profile fa-vpc-admin\n$PEER_A_ID = aws ec2 create-subnet --vpc-id $PEER_VPC_ID --availability-zone eu-west-2a --cidr-block 10.90.10.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-peer-a}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin\n$PEER_B_ID = aws ec2 create-subnet --vpc-id $PEER_VPC_ID --availability-zone eu-west-2b --cidr-block 10.90.11.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-vpc-peer-b}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - peer RT",
+          "language": "text",
+          "content": "$PEER_RT_ID = aws ec2 create-route-table --vpc-id $PEER_VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-vpc-peer-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PEER_RT_ID --subnet-id $PEER_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 associate-route-table --route-table-id $PEER_RT_ID --subnet-id $PEER_B_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - peering and routes",
+          "language": "text",
+          "content": "$PCX_ID = aws ec2 create-vpc-peering-connection --vpc-id $CORE_VPC_ID --peer-vpc-id $PEER_VPC_ID --tag-specifications \"ResourceType=vpc-peering-connection,Tags=[{Key=Name,Value=fa-vpc-peering}]\" --query VpcPeeringConnection.VpcPeeringConnectionId --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 accept-vpc-peering-connection --vpc-peering-connection-id $PCX_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PRIVATE_A_RT_ID --destination-cidr-block 10.90.0.0/16 --vpc-peering-connection-id $PCX_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PRIVATE_B_RT_ID --destination-cidr-block 10.90.0.0/16 --vpc-peering-connection-id $PCX_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PEER_RT_ID --destination-cidr-block 10.80.0.0/16 --vpc-peering-connection-id $PCX_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Peering status is Active.",
+        "Private core RTs route 10.90.0.0/16 via peering.",
+        "Peer RT returns 10.80.0.0/16 via peering."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-peering-verify-01",
+          "text": "Isolated RTs have no peering route."
+        },
+        {
+          "id": "task-10-peering-verify-02",
+          "text": "Learner can explain non-transitive peering."
+        }
+      ]
+    },
+    {
+      "id": "task-11-tgw",
+      "phaseId": "phase-04",
+      "title": "Replace peering with Transit Gateway routing",
+      "feature": "Transit Gateway",
+      "difficulty": "Hard",
+      "goal": "Remove peering routes/connection, create fa-vpc-tgw, attach both VPCs and route private tiers through it.",
+      "whyItMatters": "The transition demonstrates mesh versus hub-and-spoke routing.",
+      "examRelevance": "TGW scales connectivity across many VPC/VPN attachments and route tables.",
+      "prerequisites": [
+        "task-10-peering"
+      ],
+      "sourceIds": [
+        "src-tgw",
+        "src-tgw-attach",
+        "src-tgw-how",
+        "src-tgw-routes",
+        "src-peering-basics"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Transit Gateway and VPC attachments incur hourly charges until cleanup."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Delete the peering routes from both core private RTs and fa-vpc-peer-rt."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete fa-vpc-peering."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create Transit Gateway fa-vpc-tgw with default association and propagation enabled."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Wait for Available."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create attachment fa-vpc-tgw-core-attachment using fa-vpc-private-a and fa-vpc-private-b."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create attachment fa-vpc-tgw-peer-attachment using fa-vpc-peer-a and fa-vpc-peer-b."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Wait for both attachments Available."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Inspect the default TGW route table and confirm both VPC CIDRs are propagated."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Add 10.90.0.0/16 -> fa-vpc-tgw to both core private RTs."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Add 10.80.0.0/16 -> fa-vpc-tgw to fa-vpc-peer-rt."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Do not add TGW routes to isolated RTs."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - remove peering path",
+          "language": "text",
+          "content": "aws ec2 delete-route --route-table-id $PRIVATE_A_RT_ID --destination-cidr-block 10.90.0.0/16 --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route --route-table-id $PRIVATE_B_RT_ID --destination-cidr-block 10.90.0.0/16 --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route --route-table-id $PEER_RT_ID --destination-cidr-block 10.80.0.0/16 --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-vpc-peering-connection --vpc-peering-connection-id $PCX_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - create TGW",
+          "language": "text",
+          "content": "$TGW_ID = aws ec2 create-transit-gateway --description \"fa-vpc training transit gateway\" --tag-specifications \"ResourceType=transit-gateway,Tags=[{Key=Name,Value=fa-vpc-tgw}]\" --query TransitGateway.TransitGatewayId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - wait TGW",
+          "language": "text",
+          "content": "do { Start-Sleep 10; $S = aws ec2 describe-transit-gateways --transit-gateway-ids $TGW_ID --query \"TransitGateways[0].State\" --output text --region eu-west-2 --profile fa-vpc-admin } until ($S -eq \"available\")"
+        },
+        {
+          "title": "PowerShell - create attachments",
+          "language": "text",
+          "content": "$CORE_TGW_ATTACH_ID = aws ec2 create-transit-gateway-vpc-attachment --transit-gateway-id $TGW_ID --vpc-id $CORE_VPC_ID --subnet-ids $PRIVATE_A_ID $PRIVATE_B_ID --tag-specifications \"ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=fa-vpc-tgw-core-attachment}]\" --query TransitGatewayVpcAttachment.TransitGatewayAttachmentId --output text --region eu-west-2 --profile fa-vpc-admin\n$PEER_TGW_ATTACH_ID = aws ec2 create-transit-gateway-vpc-attachment --transit-gateway-id $TGW_ID --vpc-id $PEER_VPC_ID --subnet-ids $PEER_A_ID $PEER_B_ID --tag-specifications \"ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=fa-vpc-tgw-peer-attachment}]\" --query TransitGatewayVpcAttachment.TransitGatewayAttachmentId --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - add TGW routes",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $PRIVATE_A_RT_ID --destination-cidr-block 10.90.0.0/16 --transit-gateway-id $TGW_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PRIVATE_B_RT_ID --destination-cidr-block 10.90.0.0/16 --transit-gateway-id $TGW_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 create-route --route-table-id $PEER_RT_ID --destination-cidr-block 10.80.0.0/16 --transit-gateway-id $TGW_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Peering path is removed.",
+        "TGW and both attachments become Available.",
+        "VPC RTs use TGW for remote VPC CIDRs."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-tgw-verify-01",
+          "text": "TGW route table propagates both CIDRs."
+        },
+        {
+          "id": "task-11-tgw-verify-02",
+          "text": "Isolated RTs remain outside the TGW path."
+        }
+      ]
+    },
+    {
+      "id": "task-12-privatelink",
+      "phaseId": "phase-05",
+      "title": "Complete the PrivateLink provider/consumer plan",
+      "feature": "PrivateLink",
+      "difficulty": "Medium",
+      "goal": "Define service-level private access from fa-vpc-core to a service in fa-vpc-peer without routed whole-VPC connectivity.",
+      "whyItMatters": "PrivateLink narrows connectivity to a service boundary instead of exchanging VPC CIDR routes.",
+      "examRelevance": "Choose PrivateLink when consumers should reach a service, not the provider network.",
+      "prerequisites": [
+        "task-11-tgw"
+      ],
+      "sourceIds": [
+        "src-privatelink",
+        "src-pl-service",
+        "src-if-endpoint"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open privatelink-plan.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Review provider sequence: private targets -> internal NLB -> endpoint service -> allowed principals."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review consumer sequence: interface endpoint in private subnets -> endpoint SG -> private DNS when appropriate."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open VPC > Endpoint services > Create endpoint service and inspect the current NLB requirement."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not create the NLB or custom endpoint service in this lab."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open VPC > Endpoints and inspect Other endpoint services for consumer connections."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Close the wizard without creating resources."
+        },
+        {
+          "sequence": 8,
+          "instruction": "State the distinction: PrivateLink is service-level private access; peering/TGW are routed network connectivity."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect plan",
+          "language": "text",
+          "content": "Get-Content .\\privatelink-plan.json -Raw | ConvertFrom-Json | Format-List"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "privatelink-plan.json",
+          "language": "json",
+          "content": "{\n  \"pattern\": \"AWS PrivateLink endpoint service\",\n  \"providerVpc\": \"fa-vpc-peer\",\n  \"consumerVpc\": \"fa-vpc-core\",\n  \"providerSequence\": [\n    \"Deploy private service targets\",\n    \"Create internal NLB fa-vpc-privatelink-nlb\",\n    \"Create endpoint service fa-vpc-privatelink-service\",\n    \"Allow only intended consumer principals\",\n    \"Keep acceptance required when explicit approval is wanted\"\n  ],\n  \"consumerSequence\": [\n    \"Create interface endpoint in fa-vpc-private-a and fa-vpc-private-b\",\n    \"Attach fa-vpc-endpoint-sg\",\n    \"Allow service port only from intended client SG\",\n    \"Enable private DNS only after provider DNS requirements are satisfied\"\n  ],\n  \"examDecision\": \"Use PrivateLink for private access to one service without broad routed VPC-to-VPC connectivity.\",\n  \"notCreatedInThisLab\": [\n    \"Network Load Balancer\",\n    \"Endpoint service\",\n    \"Custom-service consumer endpoint\"\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "PrivateLink provider/consumer sequence is complete.",
+        "No NLB/custom endpoint-service charge is created."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-privatelink-verify-01",
+          "text": "Learner can explain PrivateLink versus peering/TGW."
+        }
+      ]
+    },
+    {
+      "id": "task-13-vpn",
+      "phaseId": "phase-05",
+      "title": "Complete the Site-to-Site VPN architecture plan",
+      "feature": "Site-to-Site VPN",
+      "difficulty": "Medium",
+      "goal": "Plan both VGW and TGW VPN patterns using two IPsec tunnels and BGP-capable routing.",
+      "whyItMatters": "A software-only lab cannot establish a real tunnel without a customer gateway device.",
+      "examRelevance": "VPN is the encrypted internet-based hybrid path; TGW is the scalable AWS routing hub option.",
+      "prerequisites": [
+        "task-12-privatelink"
+      ],
+      "sourceIds": [
+        "src-vpn",
+        "src-vpn-how",
+        "src-vpn-tunnels"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open hybrid-connectivity-plan.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Review on-premises CIDR 192.168.100.0/24, documentation-only public IP 198.51.100.10 and ASN 65010."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review single-VPC path: customer gateway -> two tunnels -> VGW -> VPC routes."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review multi-VPC path: customer gateway -> two tunnels -> TGW VPN attachment -> TGW/VPC routes."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open VPC > Customer gateways and inspect IP/ASN fields."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open Site-to-Site VPN connections and inspect target gateway choices."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not create a billed VPN connection because no real customer device exists."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Confirm AWS provides two tunnels and the customer device must use the downloaded configuration."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect VPN plan",
+          "language": "text",
+          "content": "(Get-Content .\\hybrid-connectivity-plan.json -Raw | ConvertFrom-Json).siteToSiteVpn | Format-List"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "hybrid-connectivity-plan.json",
+          "language": "json",
+          "content": "{\n  \"onPremises\": {\n    \"networkCidr\": \"192.168.100.0/24\",\n    \"documentationOnlyPublicIp\": \"198.51.100.10\",\n    \"customerBgpAsn\": 65010\n  },\n  \"siteToSiteVpn\": {\n    \"singleVpcPattern\": \"Customer gateway -> two IPsec tunnels -> virtual private gateway -> VPC route tables\",\n    \"multiVpcPattern\": \"Customer gateway -> two IPsec tunnels -> Transit Gateway VPN attachment -> TGW route table -> VPC attachments\",\n    \"routing\": \"Use BGP when dynamic routing is supported; configure both AWS tunnels on the customer gateway device.\",\n    \"labDecision\": \"Architecture-only: no real customer gateway device and an idle VPN connection would incur charges.\"\n  },\n  \"directConnect\": {\n    \"smallVpcPattern\": \"Direct Connect connection -> private VIF -> Direct Connect gateway -> virtual private gateway -> VPC\",\n    \"multiVpcPattern\": \"Direct Connect connection -> transit VIF -> Direct Connect gateway -> Transit Gateway -> VPC attachments\",\n    \"routing\": \"BGP exchanges prefixes between customer router and AWS.\",\n    \"resilience\": \"Use redundant connections/locations and consider Site-to-Site VPN backup.\",\n    \"labDecision\": \"Architecture-only: requires physical/partner connectivity.\"\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "VPN plan contains VGW and TGW patterns.",
+        "No billed VPN connection is created."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-vpn-verify-01",
+          "text": "Learner can explain customer gateway versus AWS-side gateway."
+        },
+        {
+          "id": "task-13-vpn-verify-02",
+          "text": "Plan contains two tunnels."
+        }
+      ]
+    },
+    {
+      "id": "task-14-dx",
+      "phaseId": "phase-05",
+      "title": "Complete the Direct Connect architecture plan",
+      "feature": "AWS Direct Connect",
+      "difficulty": "Medium",
+      "goal": "Plan private-VIF/VGW and transit-VIF/TGW Direct Connect patterns.",
+      "whyItMatters": "Direct Connect depends on physical/partner connectivity; architecture selection is the meaningful disposable-lab outcome.",
+      "examRelevance": "Use private VIF for private VPC access and transit VIF with DX gateway/TGW for scalable multi-VPC connectivity.",
+      "prerequisites": [
+        "task-13-vpn"
+      ],
+      "sourceIds": [
+        "src-dx-vif",
+        "src-dx-gw"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open hybrid-connectivity-plan.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Review small-VPC path: connection -> private VIF -> DX gateway -> VGW -> VPC."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review multi-VPC path: connection -> transit VIF -> DX gateway -> TGW -> VPC attachments."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open Direct Connect console and inspect Connections and Virtual interfaces."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not order/create a connection."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm BGP is used to exchange prefixes."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Record resilience: remove single connection/location dependencies and consider VPN backup."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect DX plan",
+          "language": "text",
+          "content": "(Get-Content .\\hybrid-connectivity-plan.json -Raw | ConvertFrom-Json).directConnect | Format-List"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Direct Connect plan distinguishes private VIF and transit VIF patterns.",
+        "No physical/partner connection is ordered."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-dx-verify-01",
+          "text": "Learner can explain DX gateway and transit VIF roles."
+        }
+      ]
+    },
+    {
+      "id": "task-15-flow-logs",
+      "phaseId": "phase-06",
+      "title": "Enable VPC Flow Logs to the private S3 bucket",
+      "feature": "VPC Flow Logs",
+      "difficulty": "Hard",
+      "goal": "Create an ALL-traffic VPC Flow Log targeting the private account-derived S3 bucket.",
+      "whyItMatters": "Flow Logs provide IP-flow metadata for routing/SG/NACL troubleshooting.",
+      "examRelevance": "ACCEPT/REJECT records are a common evidence source for network troubleshooting.",
+      "prerequisites": [
+        "task-14-dx"
+      ],
+      "sourceIds": [
+        "src-flow",
+        "src-flow-s3"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC > Your VPCs > fa-vpc-core > Flow logs."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create flow log."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Name: fa-vpc-flow-log."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Filter: All."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Aggregation interval: 10 minutes."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Destination: S3."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Bucket ARN: arn:aws:s3:::fa-vpc-flow-<account-id>."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create and wait for Active."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Open the S3 bucket and inspect its delivery prefix/policy."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Log files can take several minutes and require traffic; Active status is the required immediate success condition."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create Flow Log",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-vpc-admin --query Account --output text\n$FLOW_BUCKET = \"fa-vpc-flow-$AWS_ACCOUNT_ID\"\n$FLOW_LOG_ID = aws ec2 create-flow-logs --resource-type VPC --resource-ids $CORE_VPC_ID --traffic-type ALL --log-destination-type s3 --log-destination \"arn:aws:s3:::$FLOW_BUCKET\" --max-aggregation-interval 600 --tag-specifications \"ResourceType=vpc-flow-log,Tags=[{Key=Name,Value=fa-vpc-flow-log}]\" --query FlowLogIds[0] --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - inspect Flow Log",
+          "language": "text",
+          "content": "aws ec2 describe-flow-logs --flow-log-ids $FLOW_LOG_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - inspect S3",
+          "language": "text",
+          "content": "aws s3 ls \"s3://$FLOW_BUCKET/\" --recursive --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Flow Log is Active and captures ALL traffic.",
+        "Destination is the private training bucket."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-flow-logs-verify-01",
+          "text": "Flow Log references fa-vpc-core."
+        },
+        {
+          "id": "task-15-flow-logs-verify-02",
+          "text": "Learner can explain ACCEPT/REJECT metadata versus packet payload."
+        }
+      ]
+    },
+    {
+      "id": "task-16-exam-review",
+      "phaseId": "phase-06",
+      "title": "Review SAA-C03 VPC and hybrid-networking decisions",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Consolidate subnet routing, SG/NACL, endpoints, peering, TGW, PrivateLink, VPN, Direct Connect and Flow Logs.",
+      "whyItMatters": "The exam is about selecting the correct connectivity boundary and routing model.",
+      "examRelevance": "Each networking service solves a different scope: subnet, ENI, service, VPC mesh/hub or hybrid edge.",
+      "prerequisites": [
+        "task-15-flow-logs"
+      ],
+      "sourceIds": [
+        "src-routes",
+        "src-sg",
+        "src-nacl",
+        "src-nat",
+        "src-gw-endpoint",
+        "src-if-endpoint",
+        "src-peering-basics",
+        "src-tgw-how",
+        "src-privatelink",
+        "src-vpn",
+        "src-dx-gw",
+        "src-flow"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Public subnet: route to IGW plus suitable resource addressing/security."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Private subnet: no direct inbound internet; this lab uses NAT for outbound IPv4."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Isolated subnet: no default internet/NAT route; explicit endpoints/private routes can still exist."
+        },
+        {
+          "sequence": 4,
+          "instruction": "SG: stateful ENI allow rules."
+        },
+        {
+          "sequence": 5,
+          "instruction": "NACL: stateless subnet allow/deny rules."
+        },
+        {
+          "sequence": 6,
+          "instruction": "NAT gateway: private IPv4 egress, not transitive peering."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Gateway endpoint: route-table path for supported services such as S3/DynamoDB."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Interface endpoint: PrivateLink ENIs, SGs and private DNS."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Peering: direct one-to-one, non-transitive."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Transit Gateway: hub-and-spoke many-VPC/VPN routing."
+        },
+        {
+          "sequence": 11,
+          "instruction": "PrivateLink: private access to a service without broad provider-VPC routing."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Site-to-Site VPN: two IPsec tunnels to a customer gateway device."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Direct Connect: physical/partner connectivity using private/transit VIFs and a DX gateway."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Flow Logs: network-flow metadata for ACCEPT/REJECT evidence."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Current AWS also offers Regional NAT gateways; this lab deliberately uses a zonal public NAT to keep classic subnet-route/AZ trade-offs visible."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - route summary",
+          "language": "text",
+          "content": "aws ec2 describe-route-tables --filters Name=vpc-id,Values=$CORE_VPC_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - endpoint summary",
+          "language": "text",
+          "content": "aws ec2 describe-vpc-endpoints --filters Name=vpc-id,Values=$CORE_VPC_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - TGW attachments",
+          "language": "text",
+          "content": "aws ec2 describe-transit-gateway-vpc-attachments --filters Name=transit-gateway-id,Values=$TGW_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Learner can distinguish subnet class from filtering controls.",
+        "Learner can select the correct endpoint/inter-VPC/hybrid option from a requirement."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-exam-review-verify-01",
+          "text": "Core private RTs contain NAT default route plus TGW route to 10.90.0.0/16."
+        },
+        {
+          "id": "task-16-exam-review-verify-02",
+          "text": "Isolated RTs contain no default internet route."
+        }
+      ]
+    },
+    {
+      "id": "task-17-cloud-cleanup",
+      "phaseId": "phase-07",
+      "title": "Delete endpoints, TGW, NAT and VPC resources",
+      "feature": "Cloud cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete every active cloud resource in reverse dependency order before removing credentials.",
+      "whyItMatters": "Network ENIs/attachments/routes block VPC deletion if removed out of order.",
+      "examRelevance": "Safe teardown follows the same dependency graph as design.",
+      "prerequisites": [
+        "task-16-exam-review"
+      ],
+      "sourceIds": [
+        "src-flow-s3",
+        "src-if-endpoint",
+        "src-gw-endpoint",
+        "src-tgw-attach",
+        "src-nat-work",
+        "src-routes"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Use console or describe commands to rebuild exact fa-vpc IDs before any omitted repetitive route-table/subnet delete command; never broaden deletion to unrelated resources."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Delete fa-vpc-flow-log."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete fa-vpc-ssm-interface-endpoint and wait for endpoint ENIs to disappear."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete fa-vpc-s3-gateway-endpoint."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Delete TGW routes from both core private RTs and fa-vpc-peer-rt."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete both TGW VPC attachments and wait for deletion."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-vpc-tgw."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Disassociate and delete fa-vpc-peer-rt; delete peer-a, peer-b and fa-vpc-peer."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete fa-vpc-nat-a, wait for Deleted, then release fa-vpc-nat-eip."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete fa-vpc-endpoint-sg then fa-vpc-client-sg."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Move both isolated subnets back to the default NACL, then delete fa-vpc-isolated-nacl."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Disassociate/delete all five custom core route tables."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Detach/delete fa-vpc-igw."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Delete all six core subnets, then fa-vpc-core."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Empty/delete fa-vpc-flow-<account-id>."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Verify no NAT, interface endpoint or TGW remains."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - delete Flow/endpoints",
+          "language": "text",
+          "content": "aws ec2 delete-flow-logs --flow-log-ids $FLOW_LOG_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-vpc-endpoints --vpc-endpoint-ids $SSM_ENDPOINT_ID $S3_ENDPOINT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - remove TGW routes",
+          "language": "text",
+          "content": "aws ec2 delete-route --route-table-id $PRIVATE_A_RT_ID --destination-cidr-block 10.90.0.0/16 --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route --route-table-id $PRIVATE_B_RT_ID --destination-cidr-block 10.90.0.0/16 --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route --route-table-id $PEER_RT_ID --destination-cidr-block 10.80.0.0/16 --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete TGW attachments/TGW",
+          "language": "text",
+          "content": "aws ec2 delete-transit-gateway-vpc-attachment --transit-gateway-attachment-id $CORE_TGW_ATTACH_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-transit-gateway-vpc-attachment --transit-gateway-attachment-id $PEER_TGW_ATTACH_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete NAT/EIP",
+          "language": "text",
+          "content": "aws ec2 delete-nat-gateway --nat-gateway-id $NAT_ID --region eu-west-2 --profile fa-vpc-admin\ndo { Start-Sleep 10; $N = aws ec2 describe-nat-gateways --nat-gateway-ids $NAT_ID --query \"NatGateways[0].State\" --output text --region eu-west-2 --profile fa-vpc-admin } until ($N -eq \"deleted\")\naws ec2 release-address --allocation-id $EIP_ALLOC_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - empty/delete Flow bucket",
+          "language": "text",
+          "content": "aws s3 rm \"s3://$FLOW_BUCKET\" --recursive --region eu-west-2 --profile fa-vpc-admin\naws s3api delete-bucket --bucket $FLOW_BUCKET --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - wait for endpoint deletion",
+          "language": "text",
+          "content": "do { Start-Sleep 10; $E = aws ec2 describe-vpc-endpoints --vpc-endpoint-ids $SSM_ENDPOINT_ID --query \"VpcEndpoints[0].State\" --output text --region eu-west-2 --profile fa-vpc-admin 2>$null } until (-not $E -or $E -eq \"deleted\")"
+        },
+        {
+          "title": "PowerShell - wait/delete TGW",
+          "language": "text",
+          "content": "do { Start-Sleep 10; $LEFT = aws ec2 describe-transit-gateway-vpc-attachments --filters Name=transit-gateway-id,Values=$TGW_ID --query \"TransitGatewayVpcAttachments[?State!='deleted']\" --output json --region eu-west-2 --profile fa-vpc-admin } until ($LEFT -eq \"[]\")\naws ec2 delete-transit-gateway --transit-gateway-id $TGW_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - rebuild peer RT associations",
+          "language": "text",
+          "content": "$PEER_ASSOCS = aws ec2 describe-route-tables --route-table-ids $PEER_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId\" --output text --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate peer RT",
+          "language": "text",
+          "content": "foreach ($ID in ($PEER_ASSOCS -split \"\\s+\")) { if ($ID) { aws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin } }"
+        },
+        {
+          "title": "PowerShell - delete peer RT/subnets/VPC",
+          "language": "text",
+          "content": "aws ec2 delete-route-table --route-table-id $PEER_RT_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $PEER_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $PEER_B_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-vpc --vpc-id $PEER_VPC_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete SGs",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $ENDPOINT_SG_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-security-group --group-id $CLIENT_SG_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - restore isolated A default NACL",
+          "language": "text",
+          "content": "$DEFAULT_NACL_ID = aws ec2 describe-network-acls --filters Name=vpc-id,Values=$CORE_VPC_ID Name=default,Values=true --query \"NetworkAcls[0].NetworkAclId\" --output text --region eu-west-2 --profile fa-vpc-admin\n$ISO_A_ASSOC = aws ec2 describe-network-acls --network-acl-ids $NACL_ID --query \"NetworkAcls[0].Associations[?SubnetId=='$ISOLATED_A_ID'].NetworkAclAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 replace-network-acl-association --association-id $ISO_A_ASSOC --network-acl-id $DEFAULT_NACL_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - restore isolated B default NACL",
+          "language": "text",
+          "content": "$ISO_B_ASSOC = aws ec2 describe-network-acls --network-acl-ids $NACL_ID --query \"NetworkAcls[0].Associations[?SubnetId=='$ISOLATED_B_ID'].NetworkAclAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 replace-network-acl-association --association-id $ISO_B_ASSOC --network-acl-id $DEFAULT_NACL_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-network-acl --network-acl-id $NACL_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate/delete public RT",
+          "language": "text",
+          "content": "$IDS = aws ec2 describe-route-tables --route-table-ids $PUBLIC_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId\" --output text --region eu-west-2 --profile fa-vpc-admin\nforeach ($ID in ($IDS -split \"\\s+\")) { if ($ID) { aws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin } }\naws ec2 delete-route-table --route-table-id $PUBLIC_RT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate/delete private A RT",
+          "language": "text",
+          "content": "$ID = aws ec2 describe-route-tables --route-table-ids $PRIVATE_A_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route-table --route-table-id $PRIVATE_A_RT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate/delete private B RT",
+          "language": "text",
+          "content": "$ID = aws ec2 describe-route-tables --route-table-ids $PRIVATE_B_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route-table --route-table-id $PRIVATE_B_RT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate/delete isolated A RT",
+          "language": "text",
+          "content": "$ID = aws ec2 describe-route-tables --route-table-ids $ISOLATED_A_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route-table --route-table-id $ISOLATED_A_RT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - disassociate/delete isolated B RT",
+          "language": "text",
+          "content": "$ID = aws ec2 describe-route-tables --route-table-ids $ISOLATED_B_RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId | [0]\" --output text --region eu-west-2 --profile fa-vpc-admin\naws ec2 disassociate-route-table --association-id $ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-route-table --route-table-id $ISOLATED_B_RT_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - detach/delete IGW",
+          "language": "text",
+          "content": "aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $CORE_VPC_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete six core subnets",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $PUBLIC_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $PUBLIC_B_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $PRIVATE_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $PRIVATE_B_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $ISOLATED_A_ID --region eu-west-2 --profile fa-vpc-admin\naws ec2 delete-subnet --subnet-id $ISOLATED_B_ID --region eu-west-2 --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete core VPC",
+          "language": "text",
+          "content": "aws ec2 delete-vpc --vpc-id $CORE_VPC_ID --region eu-west-2 --profile fa-vpc-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "No Flow Log, VPC endpoint, TGW attachment/TGW, NAT gateway or EIP remains.",
+        "Both VPCs and all subnets/routes/security resources are deleted.",
+        "Flow bucket is deleted."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-cloud-cleanup-verify-01",
+          "text": "No chargeable fa-vpc networking resource remains."
+        },
+        {
+          "id": "task-17-cloud-cleanup-verify-02",
+          "text": "Cloud cleanup finishes before IAM cleanup."
+        }
+      ]
+    },
+    {
+      "id": "task-18-identity-cleanup",
+      "phaseId": "phase-07",
+      "title": "Delete the temporary IAM identity and local files",
+      "feature": "Identity and local cleanup",
+      "difficulty": "Medium",
+      "goal": "Remove fa-vpc-admin credentials/policy/profile and local architecture files last.",
+      "whyItMatters": "The training identity must stay functional until cloud absence is verified.",
+      "examRelevance": "Credentials/local files are the final reverse-dependency layer.",
+      "prerequisites": [
+        "task-17-cloud-cleanup"
+      ],
+      "sourceIds": [
+        "src-vpc-create"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm Task 17 has removed every fa-vpc cloud resource."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Sign in as root only now."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete fa-vpc-admin's access key."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Detach and delete fa-vpc-admin-policy."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-vpc-admin and sign out of root."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Remove only the fa-vpc-admin AWS CLI profile."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete C:\\aws-labs\\fa-vpc last."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - clear profile",
+          "language": "text",
+          "content": "aws configure set aws_access_key_id \"\" --profile fa-vpc-admin\naws configure set aws_secret_access_key \"\" --profile fa-vpc-admin\naws configure set region \"\" --profile fa-vpc-admin"
+        },
+        {
+          "title": "PowerShell - delete local folder",
+          "language": "text",
+          "content": "Set-Location C:\\\nRemove-Item \"C:\\aws-labs\\fa-vpc\" -Recurse -Force"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Temporary IAM user/access key/policy/profile are removed.",
+        "Local folder is deleted last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-identity-cleanup-verify-01",
+          "text": "Unrelated identities/profiles are unchanged."
+        },
+        {
+          "id": "task-18-identity-cleanup-verify-02",
+          "text": "No fa-vpc local file remains."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-admin",
+      "label": "Temporary IAM user",
+      "exactName": "fa-vpc-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-core-vpc",
+      "label": "Core VPC",
+      "exactName": "fa-vpc-core",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-core-vpc",
+      "dependsOn": []
+    },
+    {
+      "id": "res-core-subnets",
+      "label": "Six core subnets",
+      "exactName": "fa-vpc-public-a/b, private-a/b, isolated-a/b",
+      "generatedValue": "Subnet IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-core-vpc",
+      "dependsOn": [
+        "res-core-vpc"
+      ]
+    },
+    {
+      "id": "res-igw",
+      "label": "Internet gateway",
+      "exactName": "fa-vpc-igw",
+      "generatedValue": "IGW ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-route-tables",
+      "dependsOn": [
+        "res-core-vpc"
+      ]
+    },
+    {
+      "id": "res-route-tables",
+      "label": "Five custom core route tables",
+      "exactName": "fa-vpc-public-rt, private-a-rt, private-b-rt, isolated-a-rt, isolated-b-rt",
+      "generatedValue": "Route table IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-route-tables",
+      "dependsOn": [
+        "res-core-subnets",
+        "res-igw"
+      ]
+    },
+    {
+      "id": "res-nat",
+      "label": "Public NAT gateway",
+      "exactName": "fa-vpc-nat-a",
+      "generatedValue": "NAT ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-06-nat",
+      "dependsOn": [
+        "res-route-tables"
+      ]
+    },
+    {
+      "id": "res-eip",
+      "label": "NAT Elastic IP",
+      "exactName": "fa-vpc-nat-eip",
+      "generatedValue": "Allocation ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-06-nat",
+      "dependsOn": []
+    },
+    {
+      "id": "res-sgs",
+      "label": "Training SGs",
+      "exactName": "fa-vpc-client-sg, fa-vpc-endpoint-sg",
+      "generatedValue": "SG IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-security",
+      "dependsOn": [
+        "res-core-vpc"
+      ]
+    },
+    {
+      "id": "res-nacl",
+      "label": "Isolated NACL",
+      "exactName": "fa-vpc-isolated-nacl",
+      "generatedValue": "NACL ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-security",
+      "dependsOn": [
+        "res-core-subnets"
+      ]
+    },
+    {
+      "id": "res-flow-bucket",
+      "label": "Flow Logs S3 bucket",
+      "exactName": "fa-vpc-flow-<AWS account ID>",
+      "generatedValue": "Account-derived bucket name",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-08-s3-endpoint",
+      "dependsOn": []
+    },
+    {
+      "id": "res-s3-endpoint",
+      "label": "S3 gateway endpoint",
+      "exactName": "fa-vpc-s3-gateway-endpoint",
+      "generatedValue": "Endpoint ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-s3-endpoint",
+      "dependsOn": [
+        "res-route-tables",
+        "res-flow-bucket"
+      ]
+    },
+    {
+      "id": "res-ssm-endpoint",
+      "label": "SSM interface endpoint",
+      "exactName": "fa-vpc-ssm-interface-endpoint",
+      "generatedValue": "Endpoint/ENI IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-09-interface-endpoint",
+      "dependsOn": [
+        "res-sgs",
+        "res-core-subnets"
+      ]
+    },
+    {
+      "id": "res-peer-vpc",
+      "label": "Peer VPC",
+      "exactName": "fa-vpc-peer",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-peering",
+      "dependsOn": []
+    },
+    {
+      "id": "res-peer-subnets",
+      "label": "Peer subnets",
+      "exactName": "fa-vpc-peer-a, fa-vpc-peer-b",
+      "generatedValue": "Subnet IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-peering",
+      "dependsOn": [
+        "res-peer-vpc"
+      ]
+    },
+    {
+      "id": "res-peering",
+      "label": "Temporary peering connection",
+      "exactName": "fa-vpc-peering",
+      "generatedValue": "Peering ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-peering",
+      "dependsOn": [
+        "res-core-vpc",
+        "res-peer-vpc"
+      ]
+    },
+    {
+      "id": "res-tgw",
+      "label": "Transit Gateway",
+      "exactName": "fa-vpc-tgw",
+      "generatedValue": "TGW ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-11-tgw",
+      "dependsOn": []
+    },
+    {
+      "id": "res-tgw-attachments",
+      "label": "TGW attachments",
+      "exactName": "fa-vpc-tgw-core-attachment, fa-vpc-tgw-peer-attachment",
+      "generatedValue": "Attachment IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-11-tgw",
+      "dependsOn": [
+        "res-tgw",
+        "res-core-vpc",
+        "res-peer-vpc"
+      ]
+    },
+    {
+      "id": "res-flow-log",
+      "label": "VPC Flow Log",
+      "exactName": "fa-vpc-flow-log",
+      "generatedValue": "Flow Log ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-15-flow-logs",
+      "dependsOn": [
+        "res-core-vpc",
+        "res-flow-bucket"
+      ]
+    },
+    {
+      "id": "res-private-plan",
+      "label": "PrivateLink plan",
+      "exactName": "C:\\aws-labs\\fa-vpc\\privatelink-plan.json",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-design",
+      "dependsOn": []
+    },
+    {
+      "id": "res-hybrid-plan",
+      "label": "VPN/DX plan",
+      "exactName": "C:\\aws-labs\\fa-vpc\\hybrid-connectivity-plan.json",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-design",
+      "dependsOn": []
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "Private subnet has no NAT default route",
+      "likelyCause": "NAT not Available or route added to wrong table.",
+      "fix": "Verify fa-vpc-nat-a is Available and 0.0.0.0/0 exists in both private route tables."
+    },
+    {
+      "id": "trouble-02",
+      "title": "Isolated subnet unexpectedly has internet route",
+      "likelyCause": "Wrong RT association or default route was added.",
+      "fix": "Verify isolated subnet associations and remove any 0.0.0.0/0 from isolated route tables."
+    },
+    {
+      "id": "trouble-03",
+      "title": "SSM interface endpoint remains Pending",
+      "likelyCause": "Endpoint ENI/DNS/security configuration is invalid or still provisioning.",
+      "fix": "Confirm DNS hostnames are enabled, both isolated subnet IDs are correct, and endpoint SG belongs to fa-vpc-core."
+    },
+    {
+      "id": "trouble-04",
+      "title": "S3 gateway endpoint route missing",
+      "likelyCause": "Route table was not associated with endpoint.",
+      "fix": "Use the endpoint Route tables tab or modify-vpc-endpoint to add the exact private/isolated RT IDs."
+    },
+    {
+      "id": "trouble-05",
+      "title": "Peering stays Pending Acceptance",
+      "likelyCause": "Same-account request was not accepted.",
+      "fix": "Accept fa-vpc-peering and wait for Active before routing."
+    },
+    {
+      "id": "trouble-06",
+      "title": "TGW attachment is Available but VPC path is incomplete",
+      "likelyCause": "VPC route to TGW is missing even if TGW propagation exists.",
+      "fix": "Check both VPC route tables and the TGW default route table propagation."
+    },
+    {
+      "id": "trouble-07",
+      "title": "Security group cannot be deleted",
+      "likelyCause": "Interface endpoint ENI still uses fa-vpc-endpoint-sg.",
+      "fix": "Delete the interface endpoint and wait for ENI removal before deleting SG."
+    },
+    {
+      "id": "trouble-08",
+      "title": "VPC cannot be deleted",
+      "likelyCause": "Endpoint, NAT, TGW attachment, subnet, custom RT or IGW remains.",
+      "fix": "Follow reverse-dependency cleanup; do not broaden deletion."
+    },
+    {
+      "id": "trouble-09",
+      "title": "Flow Log bucket has no files yet",
+      "likelyCause": "Delivery is asynchronous or little traffic occurred.",
+      "fix": "Verify Flow Log status Active and correct S3 destination; wait several minutes."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-vpc-flow-log",
+      "action": "Delete Flow Log.",
+      "verification": "No fa-vpc Flow Log remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-vpc-ssm-interface-endpoint",
+      "action": "Delete interface endpoint and wait for ENIs.",
+      "verification": "Endpoint/ENIs absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 3,
+      "resource": "fa-vpc-s3-gateway-endpoint",
+      "action": "Delete gateway endpoint.",
+      "verification": "S3 prefix-list routes disappear.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "TGW VPC routes",
+      "action": "Delete core/peer routes targeting fa-vpc-tgw.",
+      "verification": "No VPC RT references TGW.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "fa-vpc-tgw-core-attachment and fa-vpc-tgw-peer-attachment",
+      "action": "Delete attachments and wait.",
+      "verification": "No TGW VPC attachment remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "fa-vpc-tgw",
+      "action": "Delete TGW.",
+      "verification": "TGW absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-vpc-peer resources",
+      "action": "Delete peer RT associations/RT, peer subnets and peer VPC.",
+      "verification": "No fa-vpc-peer resource remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "fa-vpc-nat-a and fa-vpc-nat-eip",
+      "action": "Delete NAT, wait, then release EIP.",
+      "verification": "No NAT/EIP remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-vpc-endpoint-sg and fa-vpc-client-sg",
+      "action": "Delete both SGs after endpoint is gone.",
+      "verification": "Neither SG remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 10,
+      "resource": "fa-vpc-isolated-nacl",
+      "action": "Restore default NACL associations, then delete custom NACL.",
+      "verification": "Custom NACL absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 11,
+      "resource": "Five custom core route tables",
+      "action": "Remove explicit associations and delete RTs.",
+      "verification": "Only main RT remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 12,
+      "resource": "fa-vpc-igw",
+      "action": "Detach and delete IGW.",
+      "verification": "IGW absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 13,
+      "resource": "Six core subnets and fa-vpc-core",
+      "action": "Delete subnets, then VPC.",
+      "verification": "No core VPC resource remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 14,
+      "resource": "fa-vpc-flow-<account-id>",
+      "action": "Empty and delete S3 bucket.",
+      "verification": "Bucket absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 15,
+      "resource": "fa-vpc-admin access key/policy/user",
+      "action": "Use root only after cloud verification to remove identity.",
+      "verification": "Identity absent.",
+      "taskId": "task-18-identity-cleanup"
+    },
+    {
+      "sequence": 16,
+      "resource": "AWS CLI profile fa-vpc-admin",
+      "action": "Remove only training profile.",
+      "verification": "Unrelated profiles unchanged.",
+      "taskId": "task-18-identity-cleanup"
+    },
+    {
+      "sequence": 17,
+      "resource": "C:\\aws-labs\\fa-vpc",
+      "action": "Delete exact local folder last.",
+      "verification": "Folder absent.",
+      "taskId": "task-18-identity-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that fa-vpc-flow-log, fa-vpc-ssm-interface-endpoint and fa-vpc-s3-gateway-endpoint are deleted; all routes to fa-vpc-tgw, both Transit Gateway VPC attachments and fa-vpc-tgw are deleted; the earlier fa-vpc-peering connection was removed before Transit Gateway routing was introduced; fa-vpc-peer and its route table/subnets are deleted; fa-vpc-nat-a and fa-vpc-nat-eip are deleted; fa-vpc-endpoint-sg, fa-vpc-client-sg and fa-vpc-isolated-nacl are deleted; all five custom core route tables, fa-vpc-igw, all six core subnets and fa-vpc-core are deleted; the fa-vpc-flow-<account-id> bucket is empty and deleted; no custom PrivateLink service, Site-to-Site VPN connection or Direct Connect connection was created; the temporary fa-vpc-admin access key, fa-vpc-admin-policy, IAM user and CLI profile are removed; unrelated resources and profiles are unchanged; and only then was C:\\aws-labs\\fa-vpc deleted.",
+  "warnings": {
+    "cost": "This lab creates a public NAT gateway, Elastic IP, an SSM interface endpoint, a Transit Gateway with two VPC attachments and S3/Flow Logs storage. These can incur charges. PrivateLink custom service, Site-to-Site VPN and Direct Connect remain architecture-only specifically to avoid unnecessary NLB, VPN and physical-connectivity cost.",
+    "safety": "Delete only exact fa-vpc resources and generated IDs rebuilt from those names. Never force VPC deletion or delete unrelated default/main resources.",
+    "credentials": "Never create root access keys and never put fa-vpc-admin access-key values in architecture files, screenshots, chat or Study Tracker. Enter them only through protected aws configure prompts.",
+    "region": "Every hands-on cloud resource is created in eu-west-2. Core and peer subnet pairs use eu-west-2a and eu-west-2b."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 18,
+    "checkboxCount": 197,
+    "cliCommandCount": 65,
+    "editableBlockCount": 7,
+    "verificationCount": 34,
+    "cleanupItemCount": 17,
+    "officialSourceCount": 26,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and JSON manuscript are offline educational authoring artifacts only. They have not been locally validated by Study Tracker, imported, accepted, approved, published or fingerprinted."
+  }
+}
