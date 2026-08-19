@@ -23,13 +23,17 @@ import {
   loadTroubleshootingProgress,
   saveTroubleshootingProgress
 } from '../../features/troubleshooting/troubleshootingProgress.js';
+import { useExam } from '../../context/ExamContext.jsx';
+import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
+import { limitDemoTroubleshootingChallenges } from '../../features/demo/demoContentPolicy.js';
+import { demoProgressStorage } from '../../features/demo/demoMode.js';
 
 const getProgress = (allProgress, challengeId) => ({
   ...createEmptyTroubleshootingProgress(),
   ...(allProgress[challengeId] || {})
 });
 
-const ChallengeList = ({ challenges, progress, examCode, onOpen }) => {
+const ChallengeList = ({ challenges, progress, examCode, onOpen, demoAccount }) => {
   const completed = challenges.filter(challenge => getProgress(progress, challenge.id).completed).length;
 
   return (
@@ -51,6 +55,12 @@ const ChallengeList = ({ challenges, progress, examCode, onOpen }) => {
           </div>
         </div>
       </section>
+
+      {demoAccount && (
+        <DemoContentNotice>
+          Two Troubleshooting Challenges are included in this exam workspace. The full incident library is reserved for signed-in learner accounts.
+        </DemoContentNotice>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-3">
         {challenges.map((challenge, index) => {
@@ -306,14 +316,19 @@ const ChallengeRunner = ({ challenge, saved, updateSaved, onBack, onReset }) => 
 };
 
 export const TroubleshootingView = ({ examId, examCode }) => {
-  const challenges = useMemo(() => getTroubleshootingChallengesForExam(examId), [examId]);
+  const { isDemoAccount } = useExam();
+  const progressStorage = isDemoAccount ? demoProgressStorage : null;
+  const challenges = useMemo(() => {
+    const available = getTroubleshootingChallengesForExam(examId);
+    return isDemoAccount ? limitDemoTroubleshootingChallenges(available) : available;
+  }, [examId, isDemoAccount]);
   const [selectedChallengeId, setSelectedChallengeId] = useState(null);
-  const [allProgress, setAllProgress] = useState(() => loadTroubleshootingProgress());
+  const [allProgress, setAllProgress] = useState(() => loadTroubleshootingProgress(progressStorage));
   const selectedChallenge = challenges.find(challenge => challenge.id === selectedChallengeId) || null;
 
   useEffect(() => {
-    saveTroubleshootingProgress(allProgress);
-  }, [allProgress]);
+    saveTroubleshootingProgress(allProgress, progressStorage);
+  }, [allProgress, progressStorage]);
 
   const updateSelected = changes => {
     if (!selectedChallenge) return;
@@ -344,5 +359,5 @@ export const TroubleshootingView = ({ examId, examCode }) => {
     return <ChallengeRunner challenge={selectedChallenge} saved={getProgress(allProgress, selectedChallenge.id)} updateSaved={updateSelected} onBack={() => setSelectedChallengeId(null)} onReset={resetSelected} />;
   }
 
-  return <ChallengeList challenges={challenges} progress={allProgress} examCode={examCode} onOpen={setSelectedChallengeId} />;
+  return <ChallengeList challenges={challenges} progress={allProgress} examCode={examCode} onOpen={setSelectedChallengeId} demoAccount={isDemoAccount} />;
 };

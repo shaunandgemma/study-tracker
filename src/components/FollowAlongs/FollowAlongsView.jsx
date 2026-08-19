@@ -6,14 +6,16 @@ import { PublishedFollowAlongView } from './PublishedFollowAlongView.jsx';
 
 export const FollowAlongsView = ({ initialProgrammeId = null, examId = 'aws-saa-c03', examCode = 'AWS SAA-C03' }) => {
   const { currentUser, isDemoAccount } = useAuth();
-  const [selectedProgrammeId, setSelectedProgrammeId] = useState(initialProgrammeId);
+  const [selectedProgrammeId, setSelectedProgrammeId] = useState(isDemoAccount ? null : initialProgrammeId);
 
   // Sync state if initialProgrammeId prop changes
   useEffect(() => {
-    if (initialProgrammeId) {
+    if (isDemoAccount) {
+      setSelectedProgrammeId(null);
+    } else if (initialProgrammeId) {
       setSelectedProgrammeId(initialProgrammeId);
     }
-  }, [initialProgrammeId]);
+  }, [initialProgrammeId, isDemoAccount]);
 
   // If VPC topic selected, open VpcLearningPathView with Back button
   if (selectedProgrammeId === 'vpc-learning-path') {

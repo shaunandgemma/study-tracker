@@ -1,5 +1,15 @@
 const STORAGE_KEY = 'exampulse_troubleshooting_progress_v1';
 
+function resolveStorage(storage) {
+  if (storage) return storage;
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage || null;
+  } catch {
+    return null;
+  }
+}
+
 export const createEmptyTroubleshootingProgress = () => ({
   observations: '',
   hypothesis: '',
@@ -13,19 +23,21 @@ export const createEmptyTroubleshootingProgress = () => ({
   updatedAt: null
 });
 
-export function loadTroubleshootingProgress() {
-  if (typeof window === 'undefined' || !window.localStorage) return {};
+export function loadTroubleshootingProgress(storage = null) {
+  const selectedStorage = resolveStorage(storage);
+  if (!selectedStorage) return {};
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}');
+    const parsed = JSON.parse(selectedStorage.getItem(STORAGE_KEY) || '{}');
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
   } catch {
     return {};
   }
 }
 
-export function saveTroubleshootingProgress(progress) {
-  if (typeof window === 'undefined' || !window.localStorage) return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+export function saveTroubleshootingProgress(progress, storage = null) {
+  const selectedStorage = resolveStorage(storage);
+  if (!selectedStorage) return;
+  selectedStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
 }
 
 export function calculateTroubleshootingScore(revealedHints = 0, solutionRevealed = false) {

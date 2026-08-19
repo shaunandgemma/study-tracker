@@ -86,7 +86,9 @@ const MainContent = () => {
         const pool = activeQuizConfig.fullPool || activeQuizConfig.questions;
         let preparedQuestions = [];
         if (activeQuizConfig.mode === 'full') {
-          preparedQuestions = prepareFullMockForExam(activeExamId, pool);
+          preparedQuestions = isDemoAccount
+            ? prepareExamQuestions(pool)
+            : prepareFullMockForExam(activeExamId, pool);
         } else if (activeQuizConfig.mode === 'custom' && activeQuizConfig.fullPool) {
           const res = prepareCustomExamQuestions(activeQuizConfig.fullPool, {
             count: activeQuizConfig.requestedQuestionCount || activeQuizConfig.questions.length,

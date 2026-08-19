@@ -14,6 +14,18 @@ import {
   isDemoUser,
   storeDemoSession
 } from '../src/features/demo/demoMode.js';
+import {
+  DEMO_CONTENT_LIMITS,
+  getDemoChecklistTopics,
+  getDemoKnowledgeGuideOrder,
+  limitDemoExamQuestions,
+  limitDemoFollowAlongs,
+  limitDemoTroubleshootingChallenges
+} from '../src/features/demo/demoContentPolicy.js';
+import {
+  loadTroubleshootingProgress,
+  saveTroubleshootingProgress
+} from '../src/features/troubleshooting/troubleshootingProgress.js';
 
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -70,6 +82,43 @@ test('demo session marker and fake attempt builder use no credentials', () => {
   assert.deepEqual(attempts[0].answers, { q1: [0] });
 });
 
+test('demo content policy exposes fixed small previews without mutating source arrays', () => {
+  const questions = Array.from({ length: 15 }, (_, index) => ({ id: `q${index + 1}` }));
+  const followAlongs = Array.from({ length: 4 }, (_, index) => ({ id: `fa${index + 1}` }));
+  const challenges = Array.from({ length: 4 }, (_, index) => ({ id: `challenge${index + 1}` }));
+
+  assert.equal(DEMO_CONTENT_LIMITS.examQuestions, 10);
+  assert.deepEqual(limitDemoExamQuestions(questions).map(item => item.id), questions.slice(0, 10).map(item => item.id));
+  assert.deepEqual(limitDemoFollowAlongs(followAlongs).map(item => item.id), ['fa1', 'fa2']);
+  assert.deepEqual(limitDemoTroubleshootingChallenges(challenges).map(item => item.id), ['challenge1', 'challenge2']);
+  assert.equal(questions.length, 15);
+});
+
+test('demo checklist and Knowledge Guide share the same first ten objective IDs', () => {
+  const exam = {
+    topics: [
+      { id: 'topic-1', items: Array.from({ length: 7 }, (_, index) => ({ id: `item-${index + 1}` })) },
+      { id: 'topic-2', items: Array.from({ length: 7 }, (_, index) => ({ id: `item-${index + 8}` })) }
+    ]
+  };
+  const topics = getDemoChecklistTopics(exam);
+  const checklistIds = topics.flatMap(topic => topic.items.map(item => item.id));
+
+  assert.deepEqual(checklistIds, Array.from({ length: 10 }, (_, index) => `item-${index + 1}`));
+  assert.deepEqual(getDemoKnowledgeGuideOrder(exam), checklistIds);
+  assert.equal(exam.topics[1].items.length, 7);
+});
+
+test('demo Troubleshooting progress uses temporary memory storage', () => {
+  demoProgressStorage.clear();
+  saveTroubleshootingProgress({ challenge1: { completed: true } }, demoProgressStorage);
+  assert.deepEqual(loadTroubleshootingProgress(demoProgressStorage), {
+    challenge1: { completed: true }
+  });
+  demoProgressStorage.clear();
+  assert.deepEqual(loadTroubleshootingProgress(demoProgressStorage), {});
+});
+
 test('the app enforces demo isolation and Admin-only content controls', () => {
   const app = read('src/App.jsx');
   const context = read('src/context/ExamContext.jsx');
@@ -77,6 +126,9 @@ test('the app enforces demo isolation and Admin-only content controls', () => {
   const checklist = read('src/components/StudyChecklist/ChecklistView.jsx');
   const topic = read('src/components/StudyChecklist/TopicCard.jsx');
   const navbar = read('src/components/Navbar.jsx');
+  const examSetup = read('src/components/PrepExam/ExamSetup.jsx');
+  const followAlongs = read('src/components/FollowAlongs/FollowAlongLandingPage.jsx');
+  const troubleshooting = read('src/components/Troubleshooting/TroubleshootingView.jsx');
 
   assert.match(app, /if \(!isDemoAccount\)[\s\S]*saveAttemptToSupabase/);
   assert.doesNotMatch(app, /AwsConnectionProvider|AwsSetupGuide|useAwsConnection/);
@@ -86,4 +138,8 @@ test('the app enforces demo isolation and Admin-only content controls', () => {
   assert.match(checklist, /canManageContent && <button[\s\S]*Add New Topic/);
   assert.match(topic, /canManageContent && <div[\s\S]*Delete Topic/);
   assert.match(navbar, /isDemoAccount[\s\S]*Safe Demo/);
+  assert.match(examSetup, /isDemoAccount \? limitDemoExamQuestions/);
+  assert.match(followAlongs, /demoAccount \? demoProgrammes/);
+  assert.match(troubleshooting, /isDemoAccount \? limitDemoTroubleshootingChallenges/);
+  assert.match(checklist, /isDemoAccount[\s\S]*getDemoChecklistTopics/);
 });

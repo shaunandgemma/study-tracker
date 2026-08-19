@@ -8,6 +8,8 @@ import { ALL_FOLLOW_ALONG_CATEGORIES, getSortedFollowAlongCategories } from '../
 import { getTerraformFollowAlongNumber, sortTerraformFollowAlongs } from '../../features/followAlongs/published/terraformFollowAlongOrder.js';
 import { createFollowAlongPersistence } from '../../services/followAlongPersistenceService.js';
 import { demoProgressStorage, isDemoUser } from '../../features/demo/demoMode.js';
+import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
+import { limitDemoFollowAlongs } from '../../features/demo/demoContentPolicy.js';
 
 export const FollowAlongLandingPage = ({
   currentUser = null,
@@ -45,11 +47,19 @@ export const FollowAlongLandingPage = ({
     return () => { active = false; };
   }, [currentUser?.id, demoAccount, examId]);
 
-  // Extract unique categories
-  const categories = getSortedFollowAlongCategories(programmes);
+  const orderedProgrammes = examId === 'terraform-associate-004'
+    ? sortTerraformFollowAlongs(programmes)
+    : programmes;
+  const demoProgrammes = limitDemoFollowAlongs(
+    orderedProgrammes.filter(programme => programme.status === 'available')
+  );
+  const displayedProgrammes = demoAccount ? demoProgrammes : orderedProgrammes;
+
+  // Extract unique categories from only the content this account can open.
+  const categories = getSortedFollowAlongCategories(displayedProgrammes);
 
   // Filter programmes
-  const filteredProgrammes = programmes.filter(p => {
+  const filteredProgrammes = displayedProgrammes.filter(p => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -105,6 +115,12 @@ export const FollowAlongLandingPage = ({
         {/* Ambient Glow Graphic */}
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-cyan-600/10 via-cyan-500/5 to-transparent pointer-events-none" />
       </div>
+
+      {demoAccount && (
+        <DemoContentNotice>
+          Two Follow Alongs are available in this exam workspace. The full Follow Along library is reserved for signed-in learner accounts.
+        </DemoContentNotice>
+      )}
 
       {/* Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-xl">

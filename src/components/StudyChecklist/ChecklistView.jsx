@@ -7,6 +7,12 @@ import {
   getTerraformKnowledgeGuide
 } from '../../data/terraformKnowledgeGuide.js';
 import { getAwsKnowledgeGuide } from '../../data/awsKnowledgeGuide.js';
+import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
+import {
+  DEMO_CONTENT_LIMITS,
+  getDemoChecklistTopics,
+  getDemoKnowledgeGuideOrder
+} from '../../features/demo/demoContentPolicy.js';
 import { 
   Search, 
   RotateCcw, 
@@ -27,11 +33,13 @@ import {
 } from 'lucide-react';
 
 export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, onExitKnowledgeGuide = () => {} }) => {
-  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic, canManageContent } = useExam();
+  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic, canManageContent, isDemoAccount } = useExam();
   const isAwsGuide = activeExamId === 'aws-saa-c03';
-  const knowledgeGuideOrder = isAwsGuide
-    ? (activeExam?.topics || []).flatMap(topic => (topic.items || []).map(item => item.id))
-    : TERRAFORM_KNOWLEDGE_GUIDE_ORDER;
+  const knowledgeGuideOrder = isDemoAccount
+    ? getDemoKnowledgeGuideOrder(activeExam)
+    : isAwsGuide
+      ? (activeExam?.topics || []).flatMap(topic => (topic.items || []).map(item => item.id))
+      : TERRAFORM_KNOWLEDGE_GUIDE_ORDER;
   
   const [searchQuery, setSearchQuery] = useState('');
   const [allCollapsed, setAllCollapsed] = useState(false);
@@ -71,7 +79,9 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
     );
   }
 
-  const topicsList = activeExam.topics || activeExam.domains || [];
+  const topicsList = isDemoAccount
+    ? getDemoChecklistTopics(activeExam)
+    : activeExam.topics || activeExam.domains || [];
 
   // Calculate statistics across active exam
   let totalTasks = 0;
@@ -184,7 +194,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
               </div>
               <div className="flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-pink-400" />
-                <span>{activeExam.id === 'aws-saa-c03' ? 20 : (activeExam.questions?.length || 0)} Practice Questions</span>
+                <span>{isDemoAccount ? DEMO_CONTENT_LIMITS.examQuestions : (activeExam.id === 'aws-saa-c03' ? 20 : (activeExam.questions?.length || 0))} Practice Questions</span>
               </div>
             </div>
           </div>
@@ -209,6 +219,12 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
           </div>
         </div>
       </div>
+
+      {isDemoAccount && (
+        <DemoContentNotice>
+          The first {DEMO_CONTENT_LIMITS.checklistItems} checklist rows and their matching Knowledge Guide pages are available for this exam. Later objectives are reserved for signed-in learner accounts.
+        </DemoContentNotice>
+      )}
 
       {/* Filter Toolbar & Actions */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
