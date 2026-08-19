@@ -1,183 +1,134 @@
-Create the Follow Along using this exact controlled process.
+EXTERNAL AI - OFFLINE FOLLOW ALONG CREATION STEPS
+=================================================
 
-1. Work only inside:
+PURPOSE
+-------
+Create portable Follow Along source files without requiring access to the Study Tracker repository, its builder, validators or fingerprint helper.
 
-E:\code\study-tracker
+The external AI authors the learning content only. The local Study Tracker import command performs conversion, validation, fingerprinting and acceptance later.
 
-2. Do not change an existing handoff package or builder.
+1. REQUIRED REFERENCE
+---------------------
+Read the complete attached file:
 
-3. Create a new uniquely named folder under:
+STUDY_TRACKER_OFFLINE_FOLLOW_ALONG_AUTHORING_STANDARD.pdf
 
-E:\code\study-tracker\docs\author-assistant\handoffs\
+Treat that document as the governing content and schema contract.
 
-Use this naming format:
+2. REQUIRED OUTPUT
+------------------
+Return exactly these two complete downloadable files:
 
-author-assistant-[service-or-topic]-codex-[date]-001
+1. offline-follow-along-manuscript.json
+2. offline-follow-along-preview.md
 
-4. Use this verified builder only as the structural reference:
+Do not return a handoff package, session file, acceptance audit, builder or fingerprint.
 
-E:\code\study-tracker\docs\author-assistant\handoffs\author-assistant-terraform-variables-validation-codex-20260815-001\build-terraform-variables-validation-handoff.mjs
+3. IMPORTANT LOCAL-TOOL BOUNDARY
+--------------------------------
+You do not need access to:
 
-Copy its structure, but create completely new IDs, content, filenames and fingerprints.
+1. E:\code\study-tracker
+2. A local builder
+3. Study Tracker validators
+4. A fingerprint helper
+5. Author or Approver
+6. Supabase or AWS accounts
 
-5. Do not invent a simplified JSON schema. Preserve the complete structures for:
+Never stop or refuse because those tools are unavailable.
 
-- schema
-- programme
-- sources
-- presentation
-- storage
-- progress
-- capabilities
-- phases
-- tasks
-- resources
-- warnings
-- cleanup
-- extensions
-- review
-- publication
-- identityBinding
-- summary
-- handoffBoundary
+Never say that the controlled handoff cannot be generated. You are not being asked to generate the controlled handoff. You are being asked to create the two portable offline source files that the local tool will convert afterward.
 
-6. Give the programme a unique ID ending with:
+4. MANUSCRIPT IDENTITY
+----------------------
+The JSON must use:
 
--learning-path
+1. artifactType: offline-follow-along-manuscript
+2. artifactVersion: 1.0
+3. One unique programme ID ending in -learning-path
+4. One fixed harmless training resource prefix
+5. Unique stable phase, task, step, check and cleanup IDs
 
-7. Every phase and task must have a unique stable ID.
+5. COMPLETE BEGINNER CONTENT
+----------------------------
+Assume the learner starts with no infrastructure and may not know how to create a folder or file.
 
-8. Write complete beginner instructions. Assume:
+For every task include:
 
-- No infrastructure already exists.
-- The learner may not know how to create folders or files.
-- Every important click, field, value and command must be explained.
-- Explain what is happening and why it matters.
-- Never use placeholder, deferred or “add later” content.
+1. What the learner will do.
+2. Why they are doing it.
+3. Every important click, field, value and choice.
+4. Complete graphical or Console instructions where relevant.
+5. Complete CLI, PowerShell, CloudShell, Terraform or other required route.
+6. Every required editable file, JSON policy, YAML document, script or configuration block.
+7. Expected visible results.
+8. Short verification checks.
+9. Relevant official primary documentation sources.
 
-9. Include complete learning routes:
+Do not use placeholder, deferred, shortened, future-work or add-later content.
 
-- AWS Management Console or graphical verification where relevant
-- Terraform and AWS CLI commands
-- Visible expected results
-- Verification checks
-- Supplied configuration or JSON blocks where required
+Do not refer to a supplied file or supplied configuration unless its complete content is included in the manuscript.
 
-10. Use only official documentation:
+6. CLEANUP
+----------
+Include complete manual cleanup in reverse-dependency order.
 
-- AWS documentation from docs.aws.amazon.com
-- Terraform documentation from developer.hashicorp.com
+Cleanup must:
 
-Every source must link both ways:
+1. Name every exact resource created by the Follow Along.
+2. Remove dependent resources before their parents.
+3. Include visible verification.
+4. Include both graphical and command-line cleanup where those routes were taught.
+5. End with a final programme-cleanup acknowledgement.
+6. Never perform cleanup automatically.
 
-- Source lists the tasks using it.
-- Each task lists its source IDs.
+7. SOURCES
+----------
+Prefer official primary HTTPS documentation.
 
-11. Keep configuration code in separately visible editable blocks. Use:
+Every source ID used by a task must exist in the manuscript source list. Every source should identify the tasks that use it.
 
-- `language: "json"` only for valid JSON
-- `language: "text"` for Terraform, YAML, shell scripts and other non-JSON content
+8. PREVIEW MATCHING
+-------------------
+The Markdown preview must:
 
-12. Every task must include:
+1. Use the exact programme title as its first H1 heading.
+2. Include the exact training resource prefix.
+3. Include every task ID from the manuscript.
+4. Present the complete phase and task order clearly.
+5. Accurately summarise the manuscript without inventing different content.
 
-- Title
-- Feature
-- Goal
-- Why it matters
-- Difficulty of Easy, Medium or Hard
-- Phase ID
-- Prerequisites
-- Mode availability
-- Source IDs
-- Complete Console instructions
-- Complete CLI commands
-- Expected results
-- At least one verification check
+9. FORBIDDEN CLAIMS AND ACTIONS
+-------------------------------
+Do not:
 
-13. Cleanup must:
+1. Claim app validation was completed.
+2. Calculate or invent a SHA-256 handoff fingerprint.
+3. Create author-local-handoff-package.json.
+4. Create author-local-handoff-acceptance-90a.json.
+5. Create session.json.
+6. Import into Author.
+7. Bind an Author identity.
+8. Create a candidate.
+9. Approve or publish anything.
+10. Connect to AWS or Supabase.
+11. Modify the Study Tracker repository.
 
-- Be manual
-- Use reverse-dependency order
-- Name every exact resource
-- Destroy cloud resources before credentials, state or local files
-- Include visible verification
-- Finish with a complete programme-cleanup acknowledgement
+10. FINAL RESPONSE
+------------------
+Provide the two downloadable files and a short confirmation containing:
 
-Use:
+1. Programme name.
+2. Phase count.
+3. Task count.
+4. The two exact filenames.
 
-- `completionGate: "acknowledgement"`
-- `manualOnly: true`
-- `ordering: "reverse_dependency"`
+Do not request fingerprint approval. The local offline-import command handles that later.
 
-14. Warnings must be an object containing:
+11. LOCAL STEP PERFORMED BY THE USER LATER
+------------------------------------------
+After both files are downloaded into the same unique manuscript folder, the user will run:
 
-- cost
-- safety
-- credentials
-- region
+npm run author-assistant:import-offline -- "<full path to offline-follow-along-manuscript.json>"
 
-15. Publication must remain:
-
-- `publishStatus: "not_published"`
-- No candidate
-- No approval
-- No publication
-
-16. Preserve these boundaries:
-
-- No Author identity binding
-- No Author write
-- No Supabase write
-- No AWS connection
-- No release candidate
-- No approval
-- No publishing
-- Stage 12 not started
-
-17. Validate the finished content with:
-
-- `validateAuthorPlanning`
-- `validateAuthorContent`
-- `validateAuthorReview`
-
-Do not continue if any validator reports an error.
-
-18. Generate these files first:
-
-- author-local-handoff-package.json
-- session.json
-- complete-follow-along-preview.txt
-
-19. Calculate the handoff fingerprint using the existing app fingerprint helper. Do not manually invent the hash.
-
-20. Show the user:
-
-- Programme name
-- Phase count
-- Task count
-- Checkbox count
-- CLI command count
-- Verification count
-- Cleanup count
-- Source count
-- Exact SHA-256 handoff fingerprint
-- Full folder location
-
-21. Stop and request exact human approval of that fingerprint.
-
-22. Only after the user approves the exact fingerprint, create:
-
-author-local-handoff-acceptance-90a.json
-
-Use:
-
-buildStage90ALocalAcceptance({ session, handoffPackage })
-
-23. Verify the package and acceptance together using:
-
-- `verifyStage90AAcceptance`
-- `validateAuthorHandoffImportPreview`
-
-24. Stop again. Do not import the package into Author unless the user separately approves the import.
-
-25. Never commit, push, import, create a candidate, approve or publish without the user explicitly requesting that separate action.
+That local command—not the external AI—creates and verifies the controlled handoff and fingerprint.

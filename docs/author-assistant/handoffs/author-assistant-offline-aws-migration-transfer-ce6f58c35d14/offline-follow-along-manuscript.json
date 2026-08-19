@@ -1,0 +1,3496 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "Migration & Transfer Follow Along",
+    "suggestedProgrammeId": "aws-migration-transfer-learning-path",
+    "topic": "AWS Migration and Transfer",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Intermediate",
+    "outcome": "Plan and perform a small database full-load migration with AWS DMS, transfer the resulting objects with AWS DataSync, and build a concrete Storage Gateway Volume Gateway cached-versus-stored configuration plan; verify each outcome and safely remove only the resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-migration",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "completionDefinition": [
+      "A self-managed MariaDB source is launched with no inbound SSH and a runtime-generated Secrets Manager password.",
+      "DMS uses a two-AZ replication subnet group, a small replication instance, a Secrets Manager-authenticated source endpoint and an S3 target endpoint.",
+      "A full-load DMS task migrates three known rows into a private S3 bucket.",
+      "A DataSync task copies the migrated objects into a second private S3 bucket.",
+      "The learner creates a complete cached-versus-stored Volume Gateway design with cache, upload-buffer and iSCSI volume sizing.",
+      "The learner can explain when DMS, DataSync and Storage Gateway are appropriate for SAA-C03 architecture scenarios.",
+      "All chargeable migration compute and dependent cloud resources are removed before service roles, human credentials and local files."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-saa-scope",
+      "title": "In-Scope AWS Services - AWS Certified Solutions Architect - Associate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/saa-03-in-scope-services.html",
+      "purpose": "Confirms AWS DMS, DataSync and Storage Gateway are in scope for SAA-C03.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-dms-instance",
+      "title": "Working with an AWS DMS replication instance",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.html",
+      "purpose": "Explains the replication instance role in reading, processing and loading migration data.",
+      "taskIds": [
+        "task-08-dms-replication",
+        "task-15-cleanup-cloud"
+      ]
+    },
+    {
+      "id": "src-dms-create-instance",
+      "title": "Creating a replication instance",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.Creating.html",
+      "purpose": "Console settings for a DMS replication instance.",
+      "taskIds": [
+        "task-08-dms-replication"
+      ]
+    },
+    {
+      "id": "src-dms-subnet",
+      "title": "Setting up a network for a replication instance",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_ReplicationInstance.VPC.html",
+      "purpose": "Replication subnet groups and the requirement for subnets in at least two Availability Zones.",
+      "taskIds": [
+        "task-04-network",
+        "task-08-dms-replication"
+      ]
+    },
+    {
+      "id": "src-dms-security",
+      "title": "Security in AWS Database Migration Service",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html",
+      "purpose": "Network connectivity and security-group requirements between DMS and database endpoints.",
+      "taskIds": [
+        "task-04-network"
+      ]
+    },
+    {
+      "id": "src-dms-iam",
+      "title": "Identity and access management for AWS Database Migration Service",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/security-iam.html",
+      "purpose": "Required dms-vpc-role and dms-cloudwatch-logs-role role names and managed policies.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-05-dms-iam",
+        "task-15-cleanup-cloud",
+        "task-16-cleanup-identity-local"
+      ]
+    },
+    {
+      "id": "src-dms-secrets",
+      "title": "Using secrets to access AWS DMS endpoints",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/security_iam_secretsmanager.html",
+      "purpose": "Secrets Manager authentication for DMS endpoints without embedding database credentials in the manuscript.",
+      "taskIds": [
+        "task-03-cli-local-files",
+        "task-05-dms-iam",
+        "task-06-source-database",
+        "task-09-dms-endpoints-task"
+      ]
+    },
+    {
+      "id": "src-dms-mysql",
+      "title": "Using a MySQL-compatible database as a source for AWS DMS",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Source.MySQL.html",
+      "purpose": "MySQL/MariaDB source permissions and full-load versus CDC differences.",
+      "taskIds": [
+        "task-06-source-database",
+        "task-09-dms-endpoints-task",
+        "task-10-verify-dms-plan"
+      ]
+    },
+    {
+      "id": "src-dms-s3-target",
+      "title": "Using Amazon S3 as a target for AWS DMS",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html",
+      "purpose": "S3 target endpoint permissions and behavior.",
+      "taskIds": [
+        "task-05-dms-iam",
+        "task-07-dms-target-and-roles",
+        "task-09-dms-endpoints-task"
+      ]
+    },
+    {
+      "id": "src-dms-endpoints",
+      "title": "Creating source and target endpoints",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Endpoints.Creating.html",
+      "purpose": "DMS source and target endpoint creation.",
+      "taskIds": [
+        "task-09-dms-endpoints-task"
+      ]
+    },
+    {
+      "id": "src-dms-task-settings",
+      "title": "Specifying task settings for AWS DMS tasks",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TaskSettings.html",
+      "purpose": "Task settings, migration behavior and validation concepts.",
+      "taskIds": [
+        "task-09-dms-endpoints-task"
+      ]
+    },
+    {
+      "id": "src-dms-full-load",
+      "title": "Full-load task settings",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TaskSettings.FullLoad.html",
+      "purpose": "Full-load settings and parallelism.",
+      "taskIds": [
+        "task-09-dms-endpoints-task",
+        "task-10-verify-dms-plan"
+      ]
+    },
+    {
+      "id": "src-dms-best",
+      "title": "Best practices for AWS Database Migration Service",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html",
+      "purpose": "Planning replication capacity and full-load/CDC considerations.",
+      "taskIds": [
+        "task-08-dms-replication",
+        "task-10-verify-dms-plan",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-datasync-s3",
+      "title": "Configuring AWS DataSync transfers with Amazon S3",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-s3-location.html",
+      "purpose": "S3 DataSync locations and access roles.",
+      "taskIds": [
+        "task-11-datasync-role-bucket",
+        "task-12-datasync-task"
+      ]
+    },
+    {
+      "id": "src-datasync-task",
+      "title": "Creating a task for transferring your data",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/datasync/latest/userguide/create-task-how-to.html",
+      "purpose": "Source location, destination location and task settings.",
+      "taskIds": [
+        "task-12-datasync-task",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-datasync-run",
+      "title": "Starting a task to transfer your data",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/datasync/latest/userguide/run-task.html",
+      "purpose": "Task execution and statuses.",
+      "taskIds": [
+        "task-12-datasync-task",
+        "task-15-cleanup-cloud"
+      ]
+    },
+    {
+      "id": "src-datasync-mode",
+      "title": "Choosing a task mode for your data transfer",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/datasync/latest/userguide/choosing-task-mode.html",
+      "purpose": "Enhanced versus Basic mode planning.",
+      "taskIds": [
+        "task-12-datasync-task"
+      ]
+    },
+    {
+      "id": "src-datasync-access",
+      "title": "IAM customer managed policies for AWS DataSync",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/datasync/latest/userguide/using-identity-based-policies.html",
+      "purpose": "IAM role/trust patterns for DataSync access.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-11-datasync-role-bucket",
+        "task-16-cleanup-identity-local"
+      ]
+    },
+    {
+      "id": "src-sgw-what",
+      "title": "What is Volume Gateway?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/WhatIsStorageGateway.html",
+      "purpose": "Volume Gateway and iSCSI use cases.",
+      "taskIds": [
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-sgw-concepts",
+      "title": "How Volume Gateway works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/StorageGatewayConcepts.html",
+      "purpose": "Cached versus stored volume data placement.",
+      "taskIds": [
+        "task-13-volume-gateway-plan",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-sgw-create",
+      "title": "Creating a Volume Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/create-volume-gateway.html",
+      "purpose": "Gateway type, cached/stored options and host platform limits.",
+      "taskIds": [
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-sgw-ec2",
+      "title": "Deploy a customized Amazon EC2 instance for Volume Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/ec2-gateway-common.html",
+      "purpose": "Amazon EC2 supports cached Volume Gateway, not stored Volume Gateway.",
+      "taskIds": [
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-sgw-quicklaunch",
+      "title": "Deploy a default Amazon EC2 host for Volume Gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/ec2-quicklaunch-settings.html",
+      "purpose": "Reference EC2 host configuration including m5.xlarge default instance type.",
+      "taskIds": [
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-sgw-disk-sizing",
+      "title": "Deciding the amount of local disk storage",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/decide-local-disks-and-sizes.html",
+      "purpose": "Cached-gateway cache/upload-buffer disk requirements and sizing guidelines.",
+      "taskIds": [
+        "task-03-cli-local-files",
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-sgw-volume",
+      "title": "Creating a storage volume",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/GettingStartedCreateVolumes.html",
+      "purpose": "Cached volume capacity and iSCSI volume creation.",
+      "taskIds": [
+        "task-13-volume-gateway-plan"
+      ]
+    },
+    {
+      "id": "src-ssm-agent",
+      "title": "Find AMIs with the SSM Agent preinstalled",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html",
+      "purpose": "Amazon Linux 2023 normally includes SSM Agent for keyless management.",
+      "taskIds": [
+        "task-05-dms-iam",
+        "task-06-source-database"
+      ]
+    },
+    {
+      "id": "src-al2023-mariadb",
+      "title": "AL2023 upgrades from AL2",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/linux/al2023/release-notes/vercmp-AL2-AL2023.12.html",
+      "purpose": "Confirms the mariadb105-server package name on Amazon Linux 2023.",
+      "taskIds": [
+        "task-06-source-database"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare",
+      "sequence": 1,
+      "title": "Prepare identity, tools and migration plan",
+      "goal": "Create the training identity, CLI profile, local files and a clear service-selection model."
+    },
+    {
+      "id": "phase-02-dms-source",
+      "sequence": 2,
+      "title": "Build the DMS source environment",
+      "goal": "Create a dedicated network, secure MariaDB source, Secrets Manager credential and exact AWS DMS IAM roles."
+    },
+    {
+      "id": "phase-03-dms-migrate",
+      "sequence": 3,
+      "title": "Run the DMS full-load migration",
+      "goal": "Create the DMS replication infrastructure, endpoints and full-load task, then verify database rows arrive in Amazon S3."
+    },
+    {
+      "id": "phase-04-datasync",
+      "sequence": 4,
+      "title": "Transfer DMS objects with DataSync",
+      "goal": "Create S3 DataSync locations and transfer the migrated objects to a second training bucket."
+    },
+    {
+      "id": "phase-05-storage-gateway",
+      "sequence": 5,
+      "title": "Plan Volume Gateway configurations",
+      "goal": "Compare cached and stored volumes, create a concrete cached-volume sizing plan and identify when each design fits."
+    },
+    {
+      "id": "phase-06-exam-review",
+      "sequence": 6,
+      "title": "Review SAA-C03 migration decisions",
+      "goal": "Distinguish DMS, DataSync and Storage Gateway by data type, transfer pattern, cutover and ongoing-access requirements."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Reverse-dependency cleanup",
+      "goal": "Delete DMS, DataSync, S3, EC2, IAM, Secrets Manager, networking and local resources in verified safe order."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare",
+      "title": "Verify the training account and migration tools",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm a disposable AWS account, AWS CLI and eu-west-2 before creating migration resources.",
+      "whyItMatters": "DMS, DataSync and Storage Gateway solve different migration problems, so the lab begins with an explicit clean account and service-selection boundary.",
+      "examRelevance": "AWS DMS, DataSync and Storage Gateway are all in-scope SAA-C03 services.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-saa-scope"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the disposable AWS training account."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm no fa-migration resources already exist."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run aws --version."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm the intended Region for every cloud resource in this lab is Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not create or use root access keys."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Root is used only for the one-time IAM bootstrap in Task 2 and final removal of the temporary IAM user in Task 16."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        },
+        {
+          "title": "Bash - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "AWS CLI prints a version.",
+        "The training account is accessible.",
+        "No lab resource exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "AWS CLI runs successfully."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No fa-migration resource has been created."
+        }
+      ]
+    },
+    {
+      "id": "task-02-bootstrap-user",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the temporary migration IAM training user",
+      "feature": "IAM bootstrap",
+      "difficulty": "Hard",
+      "goal": "Use root only to create fa-migration-admin, one temporary access key and the complete migration lab policy.",
+      "whyItMatters": "The training user needs permissions for network setup, DMS, DataSync, S3, Secrets Manager, SSM and a controlled set of service roles without using AdministratorAccess.",
+      "examRelevance": "Migration design still depends on secure identities and service roles.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-dms-iam",
+        "src-datasync-access"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "AWS DMS requires two fixed role names, dms-vpc-role and dms-cloudwatch-logs-role. Those names are service requirements and are the only intentional exceptions to the fa-migration naming prefix."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in as the AWS root user only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Users."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Choose Create user."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Set User name to fa-migration-admin."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Enable AWS Management Console access."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create the user."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Choose Policies."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Choose Create policy."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Choose JSON."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Replace the editor contents with the complete fa-migration-admin-policy JSON below."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Choose Next."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Set Policy name to fa-migration-admin-policy."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Create the policy."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Open fa-migration-admin."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Choose Add permissions."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Choose Attach policies directly."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Select fa-migration-admin-policy."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Attach it."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Open Security credentials."
+        },
+        {
+          "sequence": 21,
+          "instruction": "Create exactly one access key for CLI use."
+        },
+        {
+          "sequence": 22,
+          "instruction": "Copy the access key only to a temporary secure location."
+        },
+        {
+          "sequence": 23,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 24,
+          "instruction": "Sign in as fa-migration-admin for routine browser work."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI command",
+          "language": "text",
+          "content": "# Complete this one-time bootstrap in IAM. Do not create root access keys."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "fa-migration-admin-policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadIdentityAndRegionalState\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"sts:GetCallerIdentity\",\n        \"ec2:Describe*\",\n        \"iam:GetRole\",\n        \"iam:GetPolicy\",\n        \"iam:GetPolicyVersion\",\n        \"iam:ListAttachedRolePolicies\",\n        \"iam:ListRolePolicies\",\n        \"secretsmanager:DescribeSecret\",\n        \"secretsmanager:ListSecrets\",\n        \"s3:ListAllMyBuckets\",\n        \"s3:GetBucketLocation\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingNetworkAndSourceInstance\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpc\",\n        \"ec2:DeleteVpc\",\n        \"ec2:ModifyVpcAttribute\",\n        \"ec2:CreateSubnet\",\n        \"ec2:DeleteSubnet\",\n        \"ec2:ModifySubnetAttribute\",\n        \"ec2:CreateInternetGateway\",\n        \"ec2:AttachInternetGateway\",\n        \"ec2:DetachInternetGateway\",\n        \"ec2:DeleteInternetGateway\",\n        \"ec2:CreateRouteTable\",\n        \"ec2:DeleteRouteTable\",\n        \"ec2:AssociateRouteTable\",\n        \"ec2:DisassociateRouteTable\",\n        \"ec2:CreateRoute\",\n        \"ec2:DeleteRoute\",\n        \"ec2:CreateSecurityGroup\",\n        \"ec2:DeleteSecurityGroup\",\n        \"ec2:AuthorizeSecurityGroupIngress\",\n        \"ec2:AuthorizeSecurityGroupEgress\",\n        \"ec2:RevokeSecurityGroupIngress\",\n        \"ec2:RevokeSecurityGroupEgress\",\n        \"ec2:RunInstances\",\n        \"ec2:TerminateInstances\",\n        \"ec2:CreateTags\",\n        \"ec2:DeleteTags\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ReadAmazonLinuxAmiParameterAndUseSessionManager\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:GetParameter\",\n        \"ssm:DescribeInstanceInformation\",\n        \"ssm:SendCommand\",\n        \"ssm:GetCommandInvocation\",\n        \"ssm:ListCommandInvocations\",\n        \"ssm:StartSession\",\n        \"ssm:TerminateSession\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingSecrets\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"secretsmanager:CreateSecret\",\n        \"secretsmanager:UpdateSecret\",\n        \"secretsmanager:GetRandomPassword\",\n        \"secretsmanager:GetSecretValue\",\n        \"secretsmanager:DeleteSecret\",\n        \"secretsmanager:TagResource\"\n      ],\n      \"Resource\": \"arn:aws:secretsmanager:eu-west-2:*:secret:fa-migration/*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingBuckets\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:CreateBucket\",\n        \"s3:DeleteBucket\",\n        \"s3:ListBucket\",\n        \"s3:ListBucketMultipartUploads\"\n      ],\n      \"Resource\": [\n        \"arn:aws:s3:::fa-migration-dms-*\",\n        \"arn:aws:s3:::fa-migration-archive-*\"\n      ]\n    },\n    {\n      \"Sid\": \"ManageTrainingBucketObjects\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:PutObject\",\n        \"s3:GetObject\",\n        \"s3:GetObjectTagging\",\n        \"s3:PutObjectTagging\",\n        \"s3:DeleteObject\",\n        \"s3:AbortMultipartUpload\"\n      ],\n      \"Resource\": [\n        \"arn:aws:s3:::fa-migration-dms-*/*\",\n        \"arn:aws:s3:::fa-migration-archive-*/*\"\n      ]\n    },\n    {\n      \"Sid\": \"ManageDmsResources\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"dms:CreateReplicationSubnetGroup\",\n        \"dms:DeleteReplicationSubnetGroup\",\n        \"dms:DescribeReplicationSubnetGroups\",\n        \"dms:CreateReplicationInstance\",\n        \"dms:DeleteReplicationInstance\",\n        \"dms:DescribeReplicationInstances\",\n        \"dms:CreateEndpoint\",\n        \"dms:DeleteEndpoint\",\n        \"dms:DescribeEndpoints\",\n        \"dms:TestConnection\",\n        \"dms:DescribeConnections\",\n        \"dms:CreateReplicationTask\",\n        \"dms:DeleteReplicationTask\",\n        \"dms:DescribeReplicationTasks\",\n        \"dms:StartReplicationTask\",\n        \"dms:StopReplicationTask\",\n        \"dms:DescribeTableStatistics\",\n        \"dms:AddTagsToResource\",\n        \"dms:RemoveTagsFromResource\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageDataSyncResources\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"datasync:CreateLocationS3\",\n        \"datasync:DeleteLocation\",\n        \"datasync:DescribeLocationS3\",\n        \"datasync:ListLocations\",\n        \"datasync:CreateTask\",\n        \"datasync:DeleteTask\",\n        \"datasync:DescribeTask\",\n        \"datasync:ListTasks\",\n        \"datasync:StartTaskExecution\",\n        \"datasync:DescribeTaskExecution\",\n        \"datasync:ListTaskExecutions\",\n        \"datasync:TagResource\",\n        \"datasync:UntagResource\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyLabAndRequiredDmsRoles\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateRole\",\n        \"iam:DeleteRole\",\n        \"iam:GetRole\",\n        \"iam:UpdateAssumeRolePolicy\",\n        \"iam:PutRolePolicy\",\n        \"iam:GetRolePolicy\",\n        \"iam:DeleteRolePolicy\",\n        \"iam:AttachRolePolicy\",\n        \"iam:DetachRolePolicy\",\n        \"iam:TagRole\",\n        \"iam:UntagRole\",\n        \"iam:CreateInstanceProfile\",\n        \"iam:DeleteInstanceProfile\",\n        \"iam:AddRoleToInstanceProfile\",\n        \"iam:RemoveRoleFromInstanceProfile\",\n        \"iam:GetInstanceProfile\",\n        \"iam:PassRole\"\n      ],\n      \"Resource\": [\n        \"arn:aws:iam::*:role/fa-migration-*\",\n        \"arn:aws:iam::*:instance-profile/fa-migration-*\",\n        \"arn:aws:iam::*:role/dms-vpc-role\",\n        \"arn:aws:iam::*:role/dms-cloudwatch-logs-role\"\n      ]\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "fa-migration-admin exists.",
+        "fa-migration-admin-policy is attached.",
+        "Exactly one temporary access key exists.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-bootstrap-user-verify-01",
+          "text": "The current browser session is fa-migration-admin."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-02",
+          "text": "AdministratorAccess is not attached."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-local-files",
+      "phaseId": "phase-01-prepare",
+      "title": "Configure the CLI profile and create the migration files",
+      "feature": "CLI and local files",
+      "difficulty": "Medium",
+      "goal": "Create fa-migration-admin, derive the AWS account ID and prepare every local script/JSON document used by DMS and Storage Gateway planning.",
+      "whyItMatters": "The lab never stores a database password in a manuscript file; Secrets Manager generates it at runtime.",
+      "examRelevance": "Secure migration automation separates configuration files from runtime credentials.",
+      "prerequisites": [
+        "task-02-bootstrap-user"
+      ],
+      "sourceIds": [
+        "src-dms-secrets",
+        "src-sgw-disk-sizing"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-migration-admin."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the temporary access key only in the protected prompts."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Enter eu-west-2 for the default Region."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Enter json for output format."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Run get-caller-identity and record the 12-digit account ID."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create C:\\aws-labs\\fa-migration."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create source-user-data.sh, configure-source.sh, dms-table-mappings.json, dms-task-settings.json and volume-gateway-plan.json."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Paste each complete editable block below into its matching file."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Do not add any password or access key to these files."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - configure profile",
+          "language": "text",
+          "content": "aws configure --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - verify identity",
+          "language": "text",
+          "content": "aws sts get-caller-identity --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - capture account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-migration-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - derive DMS bucket",
+          "language": "text",
+          "content": "$DMS_BUCKET = \"fa-migration-dms-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - derive archive bucket",
+          "language": "text",
+          "content": "$ARCHIVE_BUCKET = \"fa-migration-archive-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - create local folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force \"C:\\aws-labs\\fa-migration\""
+        },
+        {
+          "title": "PowerShell - enter local folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\aws-labs\\fa-migration\""
+        },
+        {
+          "title": "Bash - capture account ID",
+          "language": "text",
+          "content": "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --profile fa-migration-admin --query Account --output text)"
+        },
+        {
+          "title": "Bash - derive DMS bucket",
+          "language": "text",
+          "content": "DMS_BUCKET=\"fa-migration-dms-${AWS_ACCOUNT_ID}\""
+        },
+        {
+          "title": "Bash - derive archive bucket",
+          "language": "text",
+          "content": "ARCHIVE_BUCKET=\"fa-migration-archive-${AWS_ACCOUNT_ID}\""
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "source-user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\ndnf install -y mariadb105-server\nsystemctl enable mariadb\nsystemctl start mariadb"
+        },
+        {
+          "title": "configure-source.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nSECRET_JSON=$(aws secretsmanager get-secret-value \\\n  --secret-id fa-migration/mysql-source \\\n  --region eu-west-2 \\\n  --query SecretString \\\n  --output text)\n\nDB_PASSWORD=$(printf '%s' \"$SECRET_JSON\" | python3 -c 'import json,sys; print(json.load(sys.stdin)[\"password\"])')\n\nsudo mariadb <<SQL\nCREATE DATABASE IF NOT EXISTS migrationdb;\n\nCREATE USER IF NOT EXISTS 'migration_user'@'%' IDENTIFIED BY '${DB_PASSWORD}';\n\nGRANT SELECT, RELOAD, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER\nON migrationdb.* TO 'migration_user'@'%';\n\nCREATE TABLE IF NOT EXISTS migrationdb.customers (\n  customer_id INT NOT NULL PRIMARY KEY,\n  customer_name VARCHAR(100) NOT NULL,\n  migration_note VARCHAR(100) NOT NULL\n);\n\nTRUNCATE TABLE migrationdb.customers;\n\nINSERT INTO migrationdb.customers (customer_id, customer_name, migration_note) VALUES\n  (1, 'Alpha Training', 'DMS full load row 1'),\n  (2, 'Bravo Training', 'DMS full load row 2'),\n  (3, 'Charlie Training', 'DMS full load row 3');\n\nFLUSH PRIVILEGES;\nSQL"
+        },
+        {
+          "title": "dms-table-mappings.json",
+          "language": "json",
+          "content": "{\n  \"rules\": [\n    {\n      \"rule-type\": \"selection\",\n      \"rule-id\": \"1\",\n      \"rule-name\": \"include-migrationdb\",\n      \"object-locator\": {\n        \"schema-name\": \"migrationdb\",\n        \"table-name\": \"%\"\n      },\n      \"rule-action\": \"include\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "dms-task-settings.json",
+          "language": "json",
+          "content": "{\n  \"Logging\": {\n    \"EnableLogging\": true\n  },\n  \"FullLoadSettings\": {\n    \"TargetTablePrepMode\": \"DROP_AND_CREATE\",\n    \"StopTaskCachedChangesApplied\": false,\n    \"StopTaskCachedChangesNotApplied\": false,\n    \"MaxFullLoadSubTasks\": 4\n  }\n}"
+        },
+        {
+          "title": "volume-gateway-plan.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"Migration & Transfer Follow Along\",\n  \"resourcePrefix\": \"fa-migration\",\n  \"region\": \"eu-west-2\",\n  \"volumeGatewayDecision\": {\n    \"selectedForAwsHostedProofOfConcept\": \"cached\",\n    \"why\": \"Amazon EC2 can host cached Volume Gateway, while stored Volume Gateway cannot be deployed on Amazon EC2.\",\n    \"productionDecisionReminder\": \"Choose cached or stored based on where the primary dataset must live, latency requirements, and recovery design.\"\n  },\n  \"cachedVolumeConfiguration\": {\n    \"gatewayName\": \"fa-migration-volume-gateway\",\n    \"hostPlatform\": \"Amazon EC2\",\n    \"recommendedReferenceInstanceType\": \"m5.xlarge\",\n    \"uploadBufferGiB\": 150,\n    \"cacheGiB\": 165,\n    \"iscsiVolumeGiB\": 100,\n    \"iscsiTargetName\": \"fa-migration-volume\",\n    \"clientProtocol\": \"iSCSI\",\n    \"dataPlacement\": \"Primary data in Amazon S3 with frequently accessed data cached locally\"\n  },\n  \"storedVolumeConfiguration\": {\n    \"gatewayName\": \"fa-migration-stored-volume-gateway\",\n    \"hostPlatform\": \"On-premises supported hypervisor, not Amazon EC2\",\n    \"uploadBufferRequired\": true,\n    \"clientProtocol\": \"iSCSI\",\n    \"dataPlacement\": \"Primary data remains local and is asynchronously backed up to AWS\"\n  },\n  \"sizingNotes\": {\n    \"uploadBuffer\": \"Use workload throughput calculations; AWS strongly recommends at least 150 GiB when the formula returns less than that or incoming throughput exceeds outgoing throughput.\",\n    \"cache\": \"A practical starting guideline is approximately 1.1 times the upload buffer and it should be larger than the upload buffer.\"\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "The caller is fa-migration-admin.",
+        "DMS_BUCKET and ARCHIVE_BUCKET contain the account ID.",
+        "All five local files exist.",
+        "No file contains a database password or AWS credential."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-local-files-verify-01",
+          "text": "The local folder is C:\\aws-labs\\fa-migration."
+        },
+        {
+          "id": "task-03-cli-local-files-verify-02",
+          "text": "Both bucket names begin fa-migration-."
+        }
+      ]
+    },
+    {
+      "id": "task-04-network",
+      "phaseId": "phase-02-dms-source",
+      "title": "Create the DMS training VPC, two subnets and security groups",
+      "feature": "DMS networking",
+      "difficulty": "Hard",
+      "goal": "Create a dedicated two-AZ VPC with public routing, a source-database security group and a DMS replication security group.",
+      "whyItMatters": "A DMS replication subnet group needs subnets in at least two Availability Zones, while the replication instance must be able to reach the source endpoint.",
+      "examRelevance": "DMS networking is part of migration planning: source/target reachability can be as important as the migration task itself.",
+      "prerequisites": [
+        "task-03-cli-local-files"
+      ],
+      "sourceIds": [
+        "src-dms-subnet",
+        "src-dms-security"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The public subnets are used to keep this disposable lab self-contained without NAT Gateway cost; production database migrations commonly use private connectivity and stricter routing."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create VPC fa-migration-vpc with IPv4 CIDR 10.70.0.0/16."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create fa-migration-public-a in eu-west-2a with CIDR 10.70.1.0/24."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-migration-public-b in eu-west-2b with CIDR 10.70.2.0/24."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Enable auto-assign public IPv4 on both training subnets."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create internet gateway fa-migration-igw and attach it to fa-migration-vpc."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create route table fa-migration-public-rt."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Add 0.0.0.0/0 to fa-migration-igw."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Associate both public subnets with fa-migration-public-rt."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create fa-migration-dms-sg in fa-migration-vpc with no inbound rules and default outbound allowed."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Create fa-migration-source-db-sg in fa-migration-vpc."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Add inbound MySQL/Aurora TCP 3306 to fa-migration-source-db-sg with source fa-migration-dms-sg."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Do not add SSH or internet-wide MySQL access."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create VPC",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 create-vpc --cidr-block 10.70.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-migration-vpc},{Key=FollowAlong,Value=fa-migration}]\" --query Vpc.VpcId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create subnet A",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2a --cidr-block 10.70.1.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-migration-public-a},{Key=FollowAlong,Value=fa-migration}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create subnet B",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2b --cidr-block 10.70.2.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-migration-public-b},{Key=FollowAlong,Value=fa-migration}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - enable public IP A",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_A_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - enable public IP B",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_B_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create IGW",
+          "language": "text",
+          "content": "$IGW_ID = aws ec2 create-internet-gateway --tag-specifications \"ResourceType=internet-gateway,Tags=[{Key=Name,Value=fa-migration-igw},{Key=FollowAlong,Value=fa-migration}]\" --query InternetGateway.InternetGatewayId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - attach IGW",
+          "language": "text",
+          "content": "aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create route table",
+          "language": "text",
+          "content": "$RT_ID = aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-migration-public-rt},{Key=FollowAlong,Value=fa-migration}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - add internet route",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - associate A",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - associate B",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS SG",
+          "language": "text",
+          "content": "$DMS_SG_ID = aws ec2 create-security-group --group-name fa-migration-dms-sg --description \"DMS replication instance\" --vpc-id $VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create source DB SG",
+          "language": "text",
+          "content": "$SOURCE_SG_ID = aws ec2 create-security-group --group-name fa-migration-source-db-sg --description \"MariaDB source reachable only from DMS\" --vpc-id $VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - allow DMS to MariaDB",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id $SOURCE_SG_ID --protocol tcp --port 3306 --source-group $DMS_SG_ID --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The VPC spans eu-west-2a and eu-west-2b.",
+        "Both subnets have internet routing.",
+        "Only fa-migration-dms-sg can reach source TCP 3306."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-network-verify-01",
+          "text": "No SSH ingress exists."
+        },
+        {
+          "id": "task-04-network-verify-02",
+          "text": "The source DB SG does not allow 3306 from 0.0.0.0/0."
+        }
+      ]
+    },
+    {
+      "id": "task-05-dms-iam",
+      "phaseId": "phase-02-dms-source",
+      "title": "Create the required DMS and source-instance IAM roles",
+      "feature": "Migration service roles",
+      "difficulty": "Hard",
+      "goal": "Create dms-vpc-role, dms-cloudwatch-logs-role and fa-migration roles for the source EC2 instance, Secrets Manager endpoint authentication and S3 target access.",
+      "whyItMatters": "AWS DMS requires exact built-in role names for VPC and CloudWatch integration, while custom lab roles isolate secret and target-bucket permissions.",
+      "examRelevance": "Migration services often assume service roles to reach VPC, logging, secrets and storage resources.",
+      "prerequisites": [
+        "task-04-network"
+      ],
+      "sourceIds": [
+        "src-dms-iam",
+        "src-dms-secrets",
+        "src-dms-s3-target",
+        "src-ssm-agent"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open IAM."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create dms-vpc-role with trusted service dms.amazonaws.com."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Attach AWS managed policy AmazonDMSVPCManagementRole."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create dms-cloudwatch-logs-role with trusted service dms.amazonaws.com."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Attach AWS managed policy AmazonDMSCloudWatchLogsRole."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create fa-migration-source-instance-role with trusted service ec2.amazonaws.com."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Attach AWS managed policy AmazonSSMManagedInstanceCore."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Add an inline policy named fa-migration-source-secret-read allowing secretsmanager:GetSecretValue only for arn:aws:secretsmanager:eu-west-2:<account>:secret:fa-migration/*."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create instance profile fa-migration-source-instance-profile and add fa-migration-source-instance-role."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create fa-migration-dms-secret-role with trust principal dms.eu-west-2.amazonaws.com."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Add an inline policy allowing secretsmanager:GetSecretValue on the fa-migration/mysql-source secret path."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Create fa-migration-dms-s3-role with trust principal dms.amazonaws.com."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Add S3 permissions for the derived DMS bucket and dms-output/*."
+        },
+        {
+          "sequence": 14,
+          "instruction": "The complete trust and permission JSON used by CLI is supplied below."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - save generic DMS trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"dms.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\dms-trust.json"
+        },
+        {
+          "title": "PowerShell - create dms-vpc-role",
+          "language": "text",
+          "content": "aws iam create-role --role-name dms-vpc-role --assume-role-policy-document file://dms-trust.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - attach DMS VPC managed policy",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name dms-vpc-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS logs role",
+          "language": "text",
+          "content": "aws iam create-role --role-name dms-cloudwatch-logs-role --assume-role-policy-document file://dms-trust.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - attach DMS logs policy",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name dms-cloudwatch-logs-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - save EC2 trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\ec2-trust.json"
+        },
+        {
+          "title": "PowerShell - create source role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-migration-source-instance-role --assume-role-policy-document file://ec2-trust.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - attach SSM core",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name fa-migration-source-instance-role --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create source instance profile",
+          "language": "text",
+          "content": "aws iam create-instance-profile --instance-profile-name fa-migration-source-instance-profile --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - add source role to profile",
+          "language": "text",
+          "content": "aws iam add-role-to-instance-profile --instance-profile-name fa-migration-source-instance-profile --role-name fa-migration-source-instance-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - save regional DMS secret trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"dms.eu-west-2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\dms-secret-trust.json"
+        },
+        {
+          "title": "PowerShell - create DMS secret role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-migration-dms-secret-role --assume-role-policy-document file://dms-secret-trust.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS S3 role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-migration-dms-s3-role --assume-role-policy-document file://dms-trust.json --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "DMS service trust",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"dms.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "DMS regional Secrets Manager trust",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"dms.eu-west-2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "EC2 source trust",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "Both exact AWS DMS required roles exist.",
+        "The source EC2 role can use SSM and read only the lab secret path.",
+        "The DMS secret role and DMS S3 role exist."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-dms-iam-verify-01",
+          "text": "dms-vpc-role has AmazonDMSVPCManagementRole."
+        },
+        {
+          "id": "task-05-dms-iam-verify-02",
+          "text": "dms-cloudwatch-logs-role has AmazonDMSCloudWatchLogsRole."
+        },
+        {
+          "id": "task-05-dms-iam-verify-03",
+          "text": "The source role is in fa-migration-source-instance-profile."
+        }
+      ]
+    },
+    {
+      "id": "task-06-source-database",
+      "phaseId": "phase-02-dms-source",
+      "title": "Launch and seed the self-managed MariaDB source without exposing its password",
+      "feature": "DMS source database",
+      "difficulty": "Hard",
+      "goal": "Launch one Amazon Linux 2023 source instance, generate a Secrets Manager credential and seed three rows through Systems Manager.",
+      "whyItMatters": "The source database demonstrates a real database endpoint while the credential remains generated and stored in Secrets Manager rather than in the manuscript.",
+      "examRelevance": "A full-load-only MySQL-compatible source needs read privileges; CDC requires additional source configuration and replication privileges.",
+      "prerequisites": [
+        "task-05-dms-iam"
+      ],
+      "sourceIds": [
+        "src-dms-mysql",
+        "src-dms-secrets",
+        "src-ssm-agent",
+        "src-al2023-mariadb"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The EC2 source instance and its public IPv4 address can incur charges. Keep it only for the duration of the lab."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Launch one Amazon Linux 2023 instance named fa-migration-mysql-source."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Instance type: t3.micro."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Subnet: fa-migration-public-a."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Auto-assign public IP: enabled."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Security group: fa-migration-source-db-sg."
+        },
+        {
+          "sequence": 7,
+          "instruction": "IAM instance profile: fa-migration-source-instance-profile."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not create or select a key pair."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Under Advanced details paste source-user-data.sh from Task 3."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Launch the instance."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Wait for EC2 status checks to pass and for the instance to appear in Systems Manager Managed nodes."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Record its private IPv4 address."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Open Secrets Manager."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Create Other type of secret named fa-migration/mysql-source."
+        },
+        {
+          "sequence": 15,
+          "instruction": "The CLI route below shows how to generate an alphanumeric runtime password and store username, password, port and host without printing the password."
+        },
+        {
+          "sequence": 16,
+          "instruction": "After the secret exists, use Systems Manager Run Command with configure-source.sh to create migrationdb.customers and three harmless rows."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Do not display the secret value in the console after creation."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - resolve latest AL2023 AMI",
+          "language": "text",
+          "content": "$AMI_ID = aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet A",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-migration-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild source SG",
+          "language": "text",
+          "content": "$SOURCE_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-migration-source-db-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - encode source user data",
+          "language": "text",
+          "content": "$SOURCE_USER_DATA = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\source-user-data.sh\")))"
+        },
+        {
+          "title": "PowerShell - launch source EC2",
+          "language": "text",
+          "content": "$SOURCE_INSTANCE_ID = aws ec2 run-instances --image-id $AMI_ID --instance-type t3.micro --subnet-id $SUBNET_A_ID --security-group-ids $SOURCE_SG_ID --iam-instance-profile Name=fa-migration-source-instance-profile --associate-public-ip-address --user-data $SOURCE_USER_DATA --tag-specifications \"ResourceType=instance,Tags=[{Key=Name,Value=fa-migration-mysql-source},{Key=FollowAlong,Value=fa-migration}]\" --query \"Instances[0].InstanceId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - wait for source running",
+          "language": "text",
+          "content": "aws ec2 wait instance-status-ok --instance-ids $SOURCE_INSTANCE_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - get source private IP",
+          "language": "text",
+          "content": "$SOURCE_PRIVATE_IP = aws ec2 describe-instances --instance-ids $SOURCE_INSTANCE_ID --query \"Reservations[0].Instances[0].PrivateIpAddress\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - generate runtime DB password",
+          "language": "text",
+          "content": "$DB_PASSWORD = aws secretsmanager get-random-password --password-length 24 --exclude-punctuation --query RandomPassword --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - build secret JSON",
+          "language": "text",
+          "content": "$SECRET_STRING = @{username=\"migration_user\";password=$DB_PASSWORD;port=3306;host=$SOURCE_PRIVATE_IP} | ConvertTo-Json -Compress"
+        },
+        {
+          "title": "PowerShell - create secret",
+          "language": "text",
+          "content": "$DMS_SECRET_ARN = aws secretsmanager create-secret --name fa-migration/mysql-source --secret-string $SECRET_STRING --tags Key=FollowAlong,Value=fa-migration --query ARN --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - clear local password variable",
+          "language": "text",
+          "content": "Remove-Variable DB_PASSWORD"
+        },
+        {
+          "title": "PowerShell - build source secret policy",
+          "language": "text",
+          "content": "$SOURCE_SECRET_POLICY = @{Version=\"2012-10-17\";Statement=@(@{Effect=\"Allow\";Action=\"secretsmanager:GetSecretValue\";Resource=$DMS_SECRET_ARN})} | ConvertTo-Json -Depth 6"
+        },
+        {
+          "title": "PowerShell - save source secret policy",
+          "language": "text",
+          "content": "$SOURCE_SECRET_POLICY | Set-Content -Encoding utf8 .\\source-secret-policy.json"
+        },
+        {
+          "title": "PowerShell - attach source secret policy",
+          "language": "text",
+          "content": "aws iam put-role-policy --role-name fa-migration-source-instance-role --policy-name fa-migration-source-secret-read --policy-document file://source-secret-policy.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - attach DMS secret policy",
+          "language": "text",
+          "content": "aws iam put-role-policy --role-name fa-migration-dms-secret-role --policy-name fa-migration-dms-secret-read --policy-document file://source-secret-policy.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - encode source configuration script",
+          "language": "text",
+          "content": "$CONFIG_B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\configure-source.sh\")))"
+        },
+        {
+          "title": "PowerShell - build remote command",
+          "language": "text",
+          "content": "$REMOTE_COMMAND = \"echo $CONFIG_B64 | base64 -d > /tmp/configure-source.sh; chmod +x /tmp/configure-source.sh; /tmp/configure-source.sh\""
+        },
+        {
+          "title": "PowerShell - send source configuration",
+          "language": "text",
+          "content": "$COMMAND_ID = aws ssm send-command --instance-ids $SOURCE_INSTANCE_ID --document-name AWS-RunShellScript --parameters commands=\"$REMOTE_COMMAND\" --query Command.CommandId --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - verify command invocation",
+          "language": "text",
+          "content": "aws ssm get-command-invocation --command-id $COMMAND_ID --instance-id $SOURCE_INSTANCE_ID --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "source-user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\ndnf install -y mariadb105-server\nsystemctl enable mariadb\nsystemctl start mariadb"
+        },
+        {
+          "title": "configure-source.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nSECRET_JSON=$(aws secretsmanager get-secret-value \\\n  --secret-id fa-migration/mysql-source \\\n  --region eu-west-2 \\\n  --query SecretString \\\n  --output text)\n\nDB_PASSWORD=$(printf '%s' \"$SECRET_JSON\" | python3 -c 'import json,sys; print(json.load(sys.stdin)[\"password\"])')\n\nsudo mariadb <<SQL\nCREATE DATABASE IF NOT EXISTS migrationdb;\n\nCREATE USER IF NOT EXISTS 'migration_user'@'%' IDENTIFIED BY '${DB_PASSWORD}';\n\nGRANT SELECT, RELOAD, LOCK TABLES, SHOW VIEW, EVENT, TRIGGER\nON migrationdb.* TO 'migration_user'@'%';\n\nCREATE TABLE IF NOT EXISTS migrationdb.customers (\n  customer_id INT NOT NULL PRIMARY KEY,\n  customer_name VARCHAR(100) NOT NULL,\n  migration_note VARCHAR(100) NOT NULL\n);\n\nTRUNCATE TABLE migrationdb.customers;\n\nINSERT INTO migrationdb.customers (customer_id, customer_name, migration_note) VALUES\n  (1, 'Alpha Training', 'DMS full load row 1'),\n  (2, 'Bravo Training', 'DMS full load row 2'),\n  (3, 'Charlie Training', 'DMS full load row 3');\n\nFLUSH PRIVILEGES;\nSQL"
+        }
+      ],
+      "expectedResults": [
+        "fa-migration-mysql-source is running and managed by Systems Manager.",
+        "fa-migration/mysql-source exists in Secrets Manager.",
+        "The source password was generated at runtime and never appears in a manuscript file.",
+        "configure-source.sh completes successfully."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-source-database-verify-01",
+          "text": "The source instance has no SSH ingress."
+        },
+        {
+          "id": "task-06-source-database-verify-02",
+          "text": "The secret host equals the source private IP."
+        },
+        {
+          "id": "task-06-source-database-verify-03",
+          "text": "The SSM command status is Success."
+        }
+      ]
+    },
+    {
+      "id": "task-07-dms-target-and-roles",
+      "phaseId": "phase-03-dms-migrate",
+      "title": "Create the DMS S3 target bucket and finish the DMS S3 role",
+      "feature": "DMS S3 target",
+      "difficulty": "Medium",
+      "goal": "Create the deterministic S3 target bucket and grant fa-migration-dms-s3-role access only to that bucket.",
+      "whyItMatters": "Using S3 as the DMS target keeps the database exercise small while still demonstrating endpoint roles and full-load output.",
+      "examRelevance": "DMS supports Amazon S3 targets and requires a service access role with bucket permissions.",
+      "prerequisites": [
+        "task-06-source-database"
+      ],
+      "sourceIds": [
+        "src-dms-s3-target"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open S3."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create the bucket fa-migration-dms-<your recorded AWS account ID> in eu-west-2."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Keep Block Public Access enabled."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Do not enable public ACLs."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Return to IAM."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open fa-migration-dms-s3-role."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Add the inline S3 policy generated by the CLI route below."
+        },
+        {
+          "sequence": 8,
+          "instruction": "The policy grants bucket listing/location plus object read/write/delete only in the DMS bucket."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild account and DMS bucket",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-migration-admin --query Account --output text; $DMS_BUCKET = \"fa-migration-dms-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - create DMS bucket",
+          "language": "text",
+          "content": "aws s3api create-bucket --bucket $DMS_BUCKET --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - build DMS S3 policy",
+          "language": "text",
+          "content": "$DMS_S3_POLICY = @{Version=\"2012-10-17\";Statement=@(@{Effect=\"Allow\";Action=@(\"s3:GetBucketLocation\",\"s3:ListBucket\",\"s3:ListBucketMultipartUploads\");Resource=\"arn:aws:s3:::$DMS_BUCKET\"},@{Effect=\"Allow\";Action=@(\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\",\"s3:AbortMultipartUpload\");Resource=\"arn:aws:s3:::$DMS_BUCKET/*\"})} | ConvertTo-Json -Depth 8"
+        },
+        {
+          "title": "PowerShell - save DMS S3 policy",
+          "language": "text",
+          "content": "$DMS_S3_POLICY | Set-Content -Encoding utf8 .\\dms-s3-policy.json"
+        },
+        {
+          "title": "PowerShell - attach DMS S3 policy",
+          "language": "text",
+          "content": "aws iam put-role-policy --role-name fa-migration-dms-s3-role --policy-name fa-migration-dms-s3-access --policy-document file://dms-s3-policy.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - capture DMS S3 role ARN",
+          "language": "text",
+          "content": "$DMS_S3_ROLE_ARN = aws iam get-role --role-name fa-migration-dms-s3-role --query Role.Arn --output text --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The DMS target bucket exists and remains private.",
+        "The DMS S3 role has access only to the derived training bucket."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-dms-target-and-roles-verify-01",
+          "text": "The bucket Region is eu-west-2."
+        },
+        {
+          "id": "task-07-dms-target-and-roles-verify-02",
+          "text": "No unrelated S3 bucket ARN appears in the DMS role policy."
+        }
+      ]
+    },
+    {
+      "id": "task-08-dms-replication",
+      "phaseId": "phase-03-dms-migrate",
+      "title": "Create the DMS subnet group and replication instance",
+      "feature": "DMS replication infrastructure",
+      "difficulty": "Hard",
+      "goal": "Create a two-AZ replication subnet group and one small Single-AZ DMS replication instance for the temporary full-load task.",
+      "whyItMatters": "DMS processing is performed by the replication instance, and the subnet group controls where it can place network interfaces.",
+      "examRelevance": "For production ongoing replication, Multi-AZ can improve availability; this short full-load lab uses Single-AZ to reduce temporary cost.",
+      "prerequisites": [
+        "task-07-dms-target-and-roles"
+      ],
+      "sourceIds": [
+        "src-dms-instance",
+        "src-dms-create-instance",
+        "src-dms-subnet",
+        "src-dms-best"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "DMS replication instances incur charges while running; delete the instance as soon as the DMS and DataSync phases are complete."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open AWS DMS in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Subnet groups."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Create subnet group."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Name: fa-migration-dms-subnets."
+        },
+        {
+          "sequence": 5,
+          "instruction": "VPC: fa-migration-vpc."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Add fa-migration-public-a and fa-migration-public-b."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create the subnet group."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Choose Replication instances."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Choose Create replication instance."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Name: fa-migration-replication."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Instance class: dms.t3.micro."
+        },
+        {
+          "sequence": 12,
+          "instruction": "High availability / Multi-AZ: disabled for this short full-load lab."
+        },
+        {
+          "sequence": 13,
+          "instruction": "VPC: fa-migration-vpc."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Replication subnet group: fa-migration-dms-subnets."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Publicly accessible: enabled for this disposable public-subnet lab."
+        },
+        {
+          "sequence": 16,
+          "instruction": "VPC security group: fa-migration-dms-sg."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Create the replication instance."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Wait until Status is Available."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild subnet IDs",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-migration-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-migration-admin; $SUBNET_B_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-migration-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS subnet group",
+          "language": "text",
+          "content": "aws dms create-replication-subnet-group --replication-subnet-group-identifier fa-migration-dms-subnets --replication-subnet-group-description \"fa-migration two-AZ DMS subnets\" --subnet-ids $SUBNET_A_ID $SUBNET_B_ID --tags Key=FollowAlong,Value=fa-migration --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild DMS SG",
+          "language": "text",
+          "content": "$DMS_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-migration-dms-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS replication instance",
+          "language": "text",
+          "content": "aws dms create-replication-instance --replication-instance-identifier fa-migration-replication --replication-instance-class dms.t3.micro --allocated-storage 20 --no-multi-az --publicly-accessible --vpc-security-group-ids $DMS_SG_ID --replication-subnet-group-identifier fa-migration-dms-subnets --tags Key=FollowAlong,Value=fa-migration --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - wait for DMS available",
+          "language": "text",
+          "content": "aws dms wait replication-instance-available --filters Name=replication-instance-id,Values=fa-migration-replication --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - capture replication ARN",
+          "language": "text",
+          "content": "$REPL_ARN = aws dms describe-replication-instances --filters Name=replication-instance-id,Values=fa-migration-replication --query \"ReplicationInstances[0].ReplicationInstanceArn\" --output text --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-migration-dms-subnets contains subnets in eu-west-2a and eu-west-2b.",
+        "fa-migration-replication reaches Available.",
+        "The replication instance uses fa-migration-dms-sg."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-dms-replication-verify-01",
+          "text": "The replication subnet group contains two Availability Zones."
+        },
+        {
+          "id": "task-08-dms-replication-verify-02",
+          "text": "The DMS instance is Single-AZ only for this temporary full-load exercise."
+        }
+      ]
+    },
+    {
+      "id": "task-09-dms-endpoints-task",
+      "phaseId": "phase-03-dms-migrate",
+      "title": "Create DMS endpoints, test connectivity and run the full-load task",
+      "feature": "DMS migration task",
+      "difficulty": "Hard",
+      "goal": "Create the Secrets Manager-authenticated MariaDB source endpoint, S3 target endpoint and full-load task for migrationdb.",
+      "whyItMatters": "Endpoints describe connectivity; the task describes what tables move and whether the migration is full load, CDC or both.",
+      "examRelevance": "SAA-C03 scenarios often distinguish one-time database migration from ongoing replication and low-downtime cutover.",
+      "prerequisites": [
+        "task-08-dms-replication"
+      ],
+      "sourceIds": [
+        "src-dms-endpoints",
+        "src-dms-secrets",
+        "src-dms-mysql",
+        "src-dms-s3-target",
+        "src-dms-task-settings",
+        "src-dms-full-load"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open DMS > Endpoints."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create endpoint."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Endpoint type: Source endpoint."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Endpoint identifier: fa-migration-source-endpoint."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Source engine: MySQL."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Use AWS Secrets Manager for credentials."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Secret: fa-migration/mysql-source."
+        },
+        {
+          "sequence": 8,
+          "instruction": "IAM role: fa-migration-dms-secret-role."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Database name: migrationdb if the console provides a separate database field."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create the endpoint."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Create target endpoint fa-migration-s3-target using engine Amazon S3."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Bucket: the derived fa-migration-dms-<account-id> bucket."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Bucket folder: dms-output."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Service access role: fa-migration-dms-s3-role."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Create the target endpoint."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Test the source connection using fa-migration-replication and wait for Successful."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Test the target connection and wait for Successful."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Open Database migration tasks."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Choose Create task."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Task identifier: fa-migration-full-load."
+        },
+        {
+          "sequence": 21,
+          "instruction": "Replication instance: fa-migration-replication."
+        },
+        {
+          "sequence": 22,
+          "instruction": "Source: fa-migration-source-endpoint."
+        },
+        {
+          "sequence": 23,
+          "instruction": "Target: fa-migration-s3-target."
+        },
+        {
+          "sequence": 24,
+          "instruction": "Migration type: Migrate existing data."
+        },
+        {
+          "sequence": 25,
+          "instruction": "Table mappings: include schema migrationdb and all tables."
+        },
+        {
+          "sequence": 26,
+          "instruction": "Create and start the task."
+        },
+        {
+          "sequence": 27,
+          "instruction": "Wait for Load complete / Stopped after the full load finishes."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild role and secret ARNs",
+          "language": "text",
+          "content": "$DMS_SECRET_ARN = aws secretsmanager describe-secret --secret-id fa-migration/mysql-source --query ARN --output text --region eu-west-2 --profile fa-migration-admin; $DMS_SECRET_ROLE_ARN = aws iam get-role --role-name fa-migration-dms-secret-role --query Role.Arn --output text --profile fa-migration-admin; $DMS_S3_ROLE_ARN = aws iam get-role --role-name fa-migration-dms-s3-role --query Role.Arn --output text --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create source endpoint",
+          "language": "text",
+          "content": "aws dms create-endpoint --endpoint-identifier fa-migration-source-endpoint --endpoint-type source --engine-name mysql --database-name migrationdb --my-sql-settings SecretsManagerAccessRoleArn=$DMS_SECRET_ROLE_ARN,SecretsManagerSecretId=$DMS_SECRET_ARN --tags Key=FollowAlong,Value=fa-migration --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild DMS bucket",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-migration-admin --query Account --output text; $DMS_BUCKET = \"fa-migration-dms-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - create S3 target endpoint",
+          "language": "text",
+          "content": "aws dms create-endpoint --endpoint-identifier fa-migration-s3-target --endpoint-type target --engine-name s3 --s3-settings ServiceAccessRoleArn=$DMS_S3_ROLE_ARN,BucketFolder=dms-output,BucketName=$DMS_BUCKET,CompressionType=NONE --tags Key=FollowAlong,Value=fa-migration --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - capture endpoint ARNs",
+          "language": "text",
+          "content": "$SOURCE_ENDPOINT_ARN = aws dms describe-endpoints --filters Name=endpoint-id,Values=fa-migration-source-endpoint --query \"Endpoints[0].EndpointArn\" --output text --region eu-west-2 --profile fa-migration-admin; $TARGET_ENDPOINT_ARN = aws dms describe-endpoints --filters Name=endpoint-id,Values=fa-migration-s3-target --query \"Endpoints[0].EndpointArn\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - test source connection",
+          "language": "text",
+          "content": "aws dms test-connection --replication-instance-arn $REPL_ARN --endpoint-arn $SOURCE_ENDPOINT_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - test target connection",
+          "language": "text",
+          "content": "aws dms test-connection --replication-instance-arn $REPL_ARN --endpoint-arn $TARGET_ENDPOINT_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - review connection status",
+          "language": "text",
+          "content": "aws dms describe-connections --filters Name=replication-instance-arn,Values=$REPL_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DMS task",
+          "language": "text",
+          "content": "$TASK_ARN = aws dms create-replication-task --replication-task-identifier fa-migration-full-load --source-endpoint-arn $SOURCE_ENDPOINT_ARN --target-endpoint-arn $TARGET_ENDPOINT_ARN --replication-instance-arn $REPL_ARN --migration-type full-load --table-mappings file://dms-table-mappings.json --replication-task-settings file://dms-task-settings.json --tags Key=FollowAlong,Value=fa-migration --query ReplicationTask.ReplicationTaskArn --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - start DMS task",
+          "language": "text",
+          "content": "aws dms start-replication-task --replication-task-arn $TASK_ARN --start-replication-task-type start-replication --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - describe DMS task",
+          "language": "text",
+          "content": "aws dms describe-replication-tasks --filters Name=replication-task-id,Values=fa-migration-full-load --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - inspect table statistics",
+          "language": "text",
+          "content": "aws dms describe-table-statistics --replication-task-arn $TASK_ARN --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "dms-table-mappings.json",
+          "language": "json",
+          "content": "{\n  \"rules\": [\n    {\n      \"rule-type\": \"selection\",\n      \"rule-id\": \"1\",\n      \"rule-name\": \"include-migrationdb\",\n      \"object-locator\": {\n        \"schema-name\": \"migrationdb\",\n        \"table-name\": \"%\"\n      },\n      \"rule-action\": \"include\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "dms-task-settings.json",
+          "language": "json",
+          "content": "{\n  \"Logging\": {\n    \"EnableLogging\": true\n  },\n  \"FullLoadSettings\": {\n    \"TargetTablePrepMode\": \"DROP_AND_CREATE\",\n    \"StopTaskCachedChangesApplied\": false,\n    \"StopTaskCachedChangesNotApplied\": false,\n    \"MaxFullLoadSubTasks\": 4\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "Both endpoint connection tests become successful.",
+        "fa-migration-full-load completes its initial load.",
+        "Table statistics show the customers table was loaded.",
+        "Objects appear under s3://fa-migration-dms-<account-id>/dms-output/."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-dms-endpoints-task-verify-01",
+          "text": "The source endpoint uses Secrets Manager rather than clear-text endpoint credentials."
+        },
+        {
+          "id": "task-09-dms-endpoints-task-verify-02",
+          "text": "The task migration type is full-load."
+        },
+        {
+          "id": "task-09-dms-endpoints-task-verify-03",
+          "text": "At least three source rows are reported for migrationdb.customers."
+        }
+      ]
+    },
+    {
+      "id": "task-10-verify-dms-plan",
+      "phaseId": "phase-03-dms-migrate",
+      "title": "Verify the migrated objects and compare full load with CDC",
+      "feature": "DMS verification and planning",
+      "difficulty": "Medium",
+      "goal": "Prove the three training rows reached S3 and explain when a production database migration would add CDC and Multi-AZ.",
+      "whyItMatters": "A successful task is not enough; migration planning includes validating migrated data and deciding how to handle changes made during the migration window.",
+      "examRelevance": "Full load moves existing data; full load plus CDC is the low-downtime pattern when ongoing source changes must be captured.",
+      "prerequisites": [
+        "task-09-dms-endpoints-task"
+      ],
+      "sourceIds": [
+        "src-dms-mysql",
+        "src-dms-best",
+        "src-dms-full-load"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open S3."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open the derived fa-migration-dms-<account-id> bucket."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open dms-output."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Find the migrationdb/customers output created by DMS."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Download or inspect the small CSV object and confirm Alpha Training, Bravo Training and Charlie Training are present."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Return to DMS and open fa-migration-full-load."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open Table statistics and confirm migrationdb.customers completed."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Review the planning distinction: this lab uses full load because the source is static after seeding."
+        },
+        {
+          "sequence": 9,
+          "instruction": "For a live production source that continues changing during migration, plan full load plus CDC and configure the source's change logs/permissions before cutover."
+        },
+        {
+          "sequence": 10,
+          "instruction": "For long-running/ongoing replication, consider Multi-AZ for the DMS replication instance."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - list DMS output",
+          "language": "text",
+          "content": "aws s3 ls \"s3://$DMS_BUCKET/dms-output/\" --recursive --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - download DMS output folder",
+          "language": "text",
+          "content": "aws s3 cp \"s3://$DMS_BUCKET/dms-output/\" .\\dms-output\\ --recursive --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - inspect downloaded text",
+          "language": "text",
+          "content": "Get-ChildItem .\\dms-output\\ -Recurse -File | ForEach-Object { Get-Content $_.FullName }"
+        },
+        {
+          "title": "PowerShell - table statistics",
+          "language": "text",
+          "content": "aws dms describe-table-statistics --replication-task-arn $TASK_ARN --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The DMS S3 output contains the three seeded customer rows.",
+        "Table statistics show the customers table completed.",
+        "The learner can explain why CDC is not enabled in this fixed-data lab."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-verify-dms-plan-verify-01",
+          "text": "The S3 output contains Alpha Training, Bravo Training and Charlie Training."
+        },
+        {
+          "id": "task-10-verify-dms-plan-verify-02",
+          "text": "No secret or database password appears in the S3 output."
+        }
+      ]
+    },
+    {
+      "id": "task-11-datasync-role-bucket",
+      "phaseId": "phase-04-datasync",
+      "title": "Create the DataSync archive bucket and S3 access role",
+      "feature": "DataSync locations",
+      "difficulty": "Hard",
+      "goal": "Create a second S3 bucket and a dedicated DataSync role that can read the DMS bucket and write the archive bucket.",
+      "whyItMatters": "DataSync separates transfer locations from the task that controls how and when objects move.",
+      "examRelevance": "Use DataSync for managed high-speed data transfer between supported storage systems and AWS storage services.",
+      "prerequisites": [
+        "task-10-verify-dms-plan"
+      ],
+      "sourceIds": [
+        "src-datasync-s3",
+        "src-datasync-access"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open S3."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-migration-archive-<account-id> in eu-west-2 with Block Public Access enabled."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open IAM."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create role fa-migration-datasync-role trusted by datasync.amazonaws.com."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Add an inline policy that can list/read the DMS bucket and list/write/delete the archive bucket."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not give the role access to unrelated buckets."
+        },
+        {
+          "sequence": 7,
+          "instruction": "The CLI route below builds the exact bucket ARNs from your verified account ID."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild bucket names",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-migration-admin --query Account --output text; $DMS_BUCKET = \"fa-migration-dms-$AWS_ACCOUNT_ID\"; $ARCHIVE_BUCKET = \"fa-migration-archive-$AWS_ACCOUNT_ID\""
+        },
+        {
+          "title": "PowerShell - create archive bucket",
+          "language": "text",
+          "content": "aws s3api create-bucket --bucket $ARCHIVE_BUCKET --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - save DataSync trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"datasync.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\datasync-trust.json"
+        },
+        {
+          "title": "PowerShell - create DataSync role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-migration-datasync-role --assume-role-policy-document file://datasync-trust.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - build DataSync policy",
+          "language": "text",
+          "content": "$DATASYNC_POLICY = @{Version=\"2012-10-17\";Statement=@(@{Effect=\"Allow\";Action=@(\"s3:GetBucketLocation\",\"s3:ListBucket\",\"s3:ListBucketMultipartUploads\");Resource=@(\"arn:aws:s3:::$DMS_BUCKET\",\"arn:aws:s3:::$ARCHIVE_BUCKET\")},@{Effect=\"Allow\";Action=@(\"s3:GetObject\",\"s3:GetObjectTagging\");Resource=\"arn:aws:s3:::$DMS_BUCKET/*\"},@{Effect=\"Allow\";Action=@(\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\",\"s3:AbortMultipartUpload\",\"s3:GetObjectTagging\",\"s3:PutObjectTagging\");Resource=\"arn:aws:s3:::$ARCHIVE_BUCKET/*\"})} | ConvertTo-Json -Depth 8"
+        },
+        {
+          "title": "PowerShell - save DataSync policy",
+          "language": "text",
+          "content": "$DATASYNC_POLICY | Set-Content -Encoding utf8 .\\datasync-s3-policy.json"
+        },
+        {
+          "title": "PowerShell - attach DataSync policy",
+          "language": "text",
+          "content": "aws iam put-role-policy --role-name fa-migration-datasync-role --policy-name fa-migration-datasync-s3-access --policy-document file://datasync-s3-policy.json --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - capture DataSync role ARN",
+          "language": "text",
+          "content": "$DATASYNC_ROLE_ARN = aws iam get-role --role-name fa-migration-datasync-role --query Role.Arn --output text --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "DataSync trust policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"datasync.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The archive bucket exists and is private.",
+        "fa-migration-datasync-role can read only the DMS bucket and write only the archive bucket."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-datasync-role-bucket-verify-01",
+          "text": "The DataSync role trust principal is datasync.amazonaws.com."
+        },
+        {
+          "id": "task-11-datasync-role-bucket-verify-02",
+          "text": "No unrelated bucket ARN appears in the policy."
+        }
+      ]
+    },
+    {
+      "id": "task-12-datasync-task",
+      "phaseId": "phase-04-datasync",
+      "title": "Create DataSync locations, run the object transfer and verify it",
+      "feature": "DataSync task execution",
+      "difficulty": "Hard",
+      "goal": "Create source/destination S3 locations, execute fa-migration-datasync-task and verify the DMS output is copied to the archive bucket.",
+      "whyItMatters": "The task defines source, destination and transfer behavior independently from the buckets themselves.",
+      "examRelevance": "DataSync is a managed transfer service; it is not a database change-capture engine and it does not replace DMS for transactional replication.",
+      "prerequisites": [
+        "task-11-datasync-role-bucket"
+      ],
+      "sourceIds": [
+        "src-datasync-s3",
+        "src-datasync-task",
+        "src-datasync-run",
+        "src-datasync-mode"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "DataSync can incur transfer and S3 request charges; this lab transfers only a few tiny objects."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open DataSync in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Locations."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Create location."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Location type: Amazon S3."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Bucket: fa-migration-dms-<account-id>."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Subdirectory: /dms-output."
+        },
+        {
+          "sequence": 7,
+          "instruction": "IAM role: fa-migration-datasync-role."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create the source location."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create a second Amazon S3 location for fa-migration-archive-<account-id> with subdirectory /dms-copy and the same role."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Choose Tasks."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Choose Create task."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Choose the DMS S3 location as source."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Choose the archive S3 location as destination."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Task name: fa-migration-datasync-task."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Task mode: Enhanced if available; Basic is also valid for supported S3-to-S3 transfers, but use the mode displayed as recommended by the current console."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Keep verification enabled so DataSync verifies transferred data."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Create the task."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Choose Start."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Wait until task execution Status is Success."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Open the archive bucket and verify the copied objects exist under dms-copy/."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create source DataSync location",
+          "language": "text",
+          "content": "$DS_SOURCE_ARN = aws datasync create-location-s3 --s3-bucket-arn \"arn:aws:s3:::$DMS_BUCKET\" --subdirectory /dms-output --s3-config BucketAccessRoleArn=$DATASYNC_ROLE_ARN --tags Key=FollowAlong,Value=fa-migration --query LocationArn --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create destination DataSync location",
+          "language": "text",
+          "content": "$DS_DEST_ARN = aws datasync create-location-s3 --s3-bucket-arn \"arn:aws:s3:::$ARCHIVE_BUCKET\" --subdirectory /dms-copy --s3-config BucketAccessRoleArn=$DATASYNC_ROLE_ARN --tags Key=FollowAlong,Value=fa-migration --query LocationArn --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - create DataSync task",
+          "language": "text",
+          "content": "$DS_TASK_ARN = aws datasync create-task --source-location-arn $DS_SOURCE_ARN --destination-location-arn $DS_DEST_ARN --name fa-migration-datasync-task --options VerifyMode=ONLY_FILES_TRANSFERRED,OverwriteMode=ALWAYS,PreserveDeletedFiles=PRESERVE --tags Key=FollowAlong,Value=fa-migration --query TaskArn --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - start DataSync task",
+          "language": "text",
+          "content": "$DS_EXEC_ARN = aws datasync start-task-execution --task-arn $DS_TASK_ARN --query TaskExecutionArn --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - inspect DataSync execution",
+          "language": "text",
+          "content": "aws datasync describe-task-execution --task-execution-arn $DS_EXEC_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - list copied objects",
+          "language": "text",
+          "content": "aws s3 ls \"s3://$ARCHIVE_BUCKET/dms-copy/\" --recursive --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Both S3 locations exist.",
+        "fa-migration-datasync-task has a successful execution.",
+        "The archive bucket contains copies of the DMS output."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-datasync-task-verify-01",
+          "text": "DataSync execution status is SUCCESS."
+        },
+        {
+          "id": "task-12-datasync-task-verify-02",
+          "text": "The destination contains migrated customer data."
+        },
+        {
+          "id": "task-12-datasync-task-verify-03",
+          "text": "The original DMS bucket remains unchanged."
+        }
+      ]
+    },
+    {
+      "id": "task-13-volume-gateway-plan",
+      "phaseId": "phase-05-storage-gateway",
+      "title": "Build a cached-versus-stored Volume Gateway configuration plan",
+      "feature": "Storage Gateway Volume Gateway",
+      "difficulty": "Hard",
+      "goal": "Use the official Volume Gateway constraints and sizing guidance to complete the supplied configuration plan without launching an expensive gateway appliance.",
+      "whyItMatters": "Storage Gateway solves hybrid storage access, not bulk database or object-copy migration; understanding the data-placement model is the important architecture decision.",
+      "examRelevance": "Cached volumes keep primary data in Amazon S3 with hot data cached locally; stored volumes keep primary data local and asynchronously back it up to AWS.",
+      "prerequisites": [
+        "task-12-datasync-task"
+      ],
+      "sourceIds": [
+        "src-sgw-what",
+        "src-sgw-concepts",
+        "src-sgw-create",
+        "src-sgw-ec2",
+        "src-sgw-quicklaunch",
+        "src-sgw-disk-sizing",
+        "src-sgw-volume"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "A real EC2-hosted Volume Gateway normally requires an m5.xlarge-class host plus cache/upload-buffer EBS storage; this Follow Along deliberately plans that configuration instead of creating those chargeable resources."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Storage Gateway in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create gateway."
+        },
+        {
+          "sequence": 3,
+          "instruction": "For Gateway type choose Volume Gateway."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review Cached volumes and Stored volumes."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Select Cached volumes for the planning exercise."
+        },
+        {
+          "sequence": 6,
+          "instruction": "For Host platform choose Amazon EC2 and observe that this platform is available for cached volumes."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not launch the gateway instance in this lab; the production-style reference host is intentionally documented rather than provisioned to avoid m5.xlarge and large EBS lab charges."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Review the supplied volume-gateway-plan.json."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Confirm the reference EC2 host is m5.xlarge based on the default EC2 Volume Gateway configuration."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Confirm a cached gateway needs separate cache and upload-buffer disks."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Confirm the plan uses 150 GiB upload buffer and 165 GiB cache."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Confirm the planned iSCSI cached volume is 100 GiB with target name fa-migration-volume."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Switch the wizard selection to Stored volumes and confirm Amazon EC2 is not an available stored-volume host platform."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Do not activate a gateway; close the wizard after comparing the choices."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Record the exam decision: cached volumes are appropriate when S3 is the primary store and frequently accessed blocks need local cache; stored volumes are appropriate when the full primary dataset must remain local while AWS receives asynchronous backups."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - display the volume plan",
+          "language": "text",
+          "content": "Get-Content .\\volume-gateway-plan.json"
+        },
+        {
+          "title": "PowerShell - validate plan JSON",
+          "language": "text",
+          "content": "Get-Content .\\volume-gateway-plan.json -Raw | ConvertFrom-Json | Format-List"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "volume-gateway-plan.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"Migration & Transfer Follow Along\",\n  \"resourcePrefix\": \"fa-migration\",\n  \"region\": \"eu-west-2\",\n  \"volumeGatewayDecision\": {\n    \"selectedForAwsHostedProofOfConcept\": \"cached\",\n    \"why\": \"Amazon EC2 can host cached Volume Gateway, while stored Volume Gateway cannot be deployed on Amazon EC2.\",\n    \"productionDecisionReminder\": \"Choose cached or stored based on where the primary dataset must live, latency requirements, and recovery design.\"\n  },\n  \"cachedVolumeConfiguration\": {\n    \"gatewayName\": \"fa-migration-volume-gateway\",\n    \"hostPlatform\": \"Amazon EC2\",\n    \"recommendedReferenceInstanceType\": \"m5.xlarge\",\n    \"uploadBufferGiB\": 150,\n    \"cacheGiB\": 165,\n    \"iscsiVolumeGiB\": 100,\n    \"iscsiTargetName\": \"fa-migration-volume\",\n    \"clientProtocol\": \"iSCSI\",\n    \"dataPlacement\": \"Primary data in Amazon S3 with frequently accessed data cached locally\"\n  },\n  \"storedVolumeConfiguration\": {\n    \"gatewayName\": \"fa-migration-stored-volume-gateway\",\n    \"hostPlatform\": \"On-premises supported hypervisor, not Amazon EC2\",\n    \"uploadBufferRequired\": true,\n    \"clientProtocol\": \"iSCSI\",\n    \"dataPlacement\": \"Primary data remains local and is asynchronously backed up to AWS\"\n  },\n  \"sizingNotes\": {\n    \"uploadBuffer\": \"Use workload throughput calculations; AWS strongly recommends at least 150 GiB when the formula returns less than that or incoming throughput exceeds outgoing throughput.\",\n    \"cache\": \"A practical starting guideline is approximately 1.1 times the upload buffer and it should be larger than the upload buffer.\"\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "The plan selects cached Volume Gateway for an EC2-hosted proof-of-concept.",
+        "The plan records 150 GiB upload buffer, 165 GiB cache and a 100 GiB iSCSI cached volume.",
+        "The learner can explain why a stored Volume Gateway cannot be hosted on Amazon EC2."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-volume-gateway-plan-verify-01",
+          "text": "No Storage Gateway appliance or EBS cache/buffer resource was created."
+        },
+        {
+          "id": "task-13-volume-gateway-plan-verify-02",
+          "text": "The volume plan is complete and contains no unresolved values."
+        }
+      ]
+    },
+    {
+      "id": "task-14-exam-review",
+      "phaseId": "phase-06-exam-review",
+      "title": "Review the SAA-C03 migration and transfer decision points",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Turn the three service exercises into clear selection rules for database migration, data movement and hybrid storage.",
+      "whyItMatters": "The exam commonly tests which migration service matches the data type and whether the requirement is one-time transfer, ongoing replication or ongoing hybrid access.",
+      "examRelevance": "DMS, DataSync and Storage Gateway overlap around migration but solve different layers of the problem.",
+      "prerequisites": [
+        "task-13-volume-gateway-plan"
+      ],
+      "sourceIds": [
+        "src-saa-scope",
+        "src-dms-best",
+        "src-datasync-task",
+        "src-sgw-concepts"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "AWS DMS: choose it for database migration and replication between supported database endpoints."
+        },
+        {
+          "sequence": 2,
+          "instruction": "DMS full load: moves the existing source data once."
+        },
+        {
+          "sequence": 3,
+          "instruction": "DMS full load plus CDC: use it when source changes continue during migration and low-downtime cutover is required."
+        },
+        {
+          "sequence": 4,
+          "instruction": "DMS replication instance: provides the compute that connects to source/target endpoints and performs replication work."
+        },
+        {
+          "sequence": 5,
+          "instruction": "DMS endpoints: define connection details; this lab uses Secrets Manager for source authentication."
+        },
+        {
+          "sequence": 6,
+          "instruction": "DataSync: choose it for managed high-speed transfer of files/objects between supported storage systems and AWS storage."
+        },
+        {
+          "sequence": 7,
+          "instruction": "DataSync locations define source and destination; a DataSync task defines how the transfer runs."
+        },
+        {
+          "sequence": 8,
+          "instruction": "DataSync is not a transactional database CDC engine."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Volume Gateway: choose it when applications need ongoing iSCSI block-storage access integrated with AWS, rather than a one-time copy."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Cached Volume Gateway: primary data lives in Amazon S3 and frequently accessed data is cached locally."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Stored Volume Gateway: primary data remains local and is asynchronously backed up to AWS."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Stored Volume Gateway cannot be deployed on Amazon EC2."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Exam trigger: migrate a live relational database with minimal downtime -> DMS with CDC where supported."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Exam trigger: move large file/object datasets to AWS repeatedly or on schedule -> DataSync."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Exam trigger: keep existing block-storage applications using iSCSI while integrating storage with AWS -> Volume Gateway."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Exam trap: Storage Gateway provides ongoing hybrid access; it is not simply a faster substitute for DataSync."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - DMS status",
+          "language": "text",
+          "content": "aws dms describe-replication-tasks --filters Name=replication-task-id,Values=fa-migration-full-load --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - DataSync status",
+          "language": "text",
+          "content": "aws datasync describe-task --task-arn $DS_TASK_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - display gateway plan",
+          "language": "text",
+          "content": "Get-Content .\\volume-gateway-plan.json"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can distinguish database replication, object/file transfer and hybrid block storage.",
+        "The DMS and DataSync exercises have visible successful outcomes.",
+        "The Volume Gateway plan is complete without a chargeable gateway appliance."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-exam-review-verify-01",
+          "text": "The learner can choose DMS, DataSync or Volume Gateway from a requirement without relying on service-name clues."
+        }
+      ]
+    },
+    {
+      "id": "task-15-cleanup-cloud",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete DMS, DataSync, S3 and source compute in reverse dependency order",
+      "feature": "Cloud cleanup",
+      "difficulty": "Hard",
+      "goal": "Remove migration tasks and endpoints before their roles, then delete copied objects, buckets, source EC2 and network dependencies.",
+      "whyItMatters": "Credentials and service roles must remain available until cloud absence is verified.",
+      "examRelevance": "Migration labs can leave costly replication compute or source instances running; cloud resources must be removed before identity cleanup.",
+      "prerequisites": [
+        "task-14-exam-review"
+      ],
+      "sourceIds": [
+        "src-dms-instance",
+        "src-datasync-run",
+        "src-dms-iam"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm no DataSync execution is running."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete fa-migration-datasync-task."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete both DataSync S3 locations."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open DMS and stop fa-migration-full-load only if it is still running."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-migration-full-load."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-migration-source-endpoint."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete fa-migration-s3-target."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete fa-migration-replication and wait until it disappears."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete fa-migration-dms-subnets."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open S3."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete all objects from the archive bucket, then delete the archive bucket."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Delete all objects from the DMS target bucket, then delete the DMS target bucket."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Terminate fa-migration-mysql-source and wait for Terminated."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Delete fa-migration/mysql-source from Secrets Manager using immediate deletion for this disposable lab only after DMS is gone."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Delete fa-migration-source-db-sg and fa-migration-dms-sg."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Remove the explicit subnet associations from fa-migration-public-rt and delete the route table."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Detach and delete fa-migration-igw."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Delete fa-migration-public-a and fa-migration-public-b."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Delete fa-migration-vpc."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Verify no cloud resource from the lab remains before Task 16."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - delete DataSync task",
+          "language": "text",
+          "content": "aws datasync delete-task --task-arn $DS_TASK_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DataSync source location",
+          "language": "text",
+          "content": "aws datasync delete-location --location-arn $DS_SOURCE_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DataSync destination location",
+          "language": "text",
+          "content": "aws datasync delete-location --location-arn $DS_DEST_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS task",
+          "language": "text",
+          "content": "aws dms delete-replication-task --replication-task-arn $TASK_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS source endpoint",
+          "language": "text",
+          "content": "aws dms delete-endpoint --endpoint-arn $SOURCE_ENDPOINT_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS target endpoint",
+          "language": "text",
+          "content": "aws dms delete-endpoint --endpoint-arn $TARGET_ENDPOINT_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS replication instance",
+          "language": "text",
+          "content": "aws dms delete-replication-instance --replication-instance-arn $REPL_ARN --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - wait for DMS deletion",
+          "language": "text",
+          "content": "aws dms wait replication-instance-deleted --filters Name=replication-instance-id,Values=fa-migration-replication --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS subnet group",
+          "language": "text",
+          "content": "aws dms delete-replication-subnet-group --replication-subnet-group-identifier fa-migration-dms-subnets --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - empty archive bucket",
+          "language": "text",
+          "content": "aws s3 rm \"s3://$ARCHIVE_BUCKET\" --recursive --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete archive bucket",
+          "language": "text",
+          "content": "aws s3api delete-bucket --bucket $ARCHIVE_BUCKET --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - empty DMS bucket",
+          "language": "text",
+          "content": "aws s3 rm \"s3://$DMS_BUCKET\" --recursive --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS bucket",
+          "language": "text",
+          "content": "aws s3api delete-bucket --bucket $DMS_BUCKET --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - terminate source",
+          "language": "text",
+          "content": "aws ec2 terminate-instances --instance-ids $SOURCE_INSTANCE_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - wait for source termination",
+          "language": "text",
+          "content": "aws ec2 wait instance-terminated --instance-ids $SOURCE_INSTANCE_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete secret immediately",
+          "language": "text",
+          "content": "aws secretsmanager delete-secret --secret-id fa-migration/mysql-source --force-delete-without-recovery --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild SG IDs",
+          "language": "text",
+          "content": "$SOURCE_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-migration-source-db-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-migration-admin; $DMS_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-migration-dms-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete source SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $SOURCE_SG_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $DMS_SG_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild route/VPC IDs",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-migration-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2 --profile fa-migration-admin; $RT_ID = aws ec2 describe-route-tables --filters Name=tag:Name,Values=fa-migration-public-rt --query \"RouteTables[0].RouteTableId\" --output text --region eu-west-2 --profile fa-migration-admin; $IGW_ID = aws ec2 describe-internet-gateways --filters Name=tag:Name,Values=fa-migration-igw --query \"InternetGateways[0].InternetGatewayId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - list route associations",
+          "language": "text",
+          "content": "$ASSOC_IDS = aws ec2 describe-route-tables --route-table-ids $RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - remove associations",
+          "language": "text",
+          "content": "foreach ($A in ($ASSOC_IDS -split \"\\s+\")) { if ($A) { aws ec2 disassociate-route-table --association-id $A --region eu-west-2 --profile fa-migration-admin } }"
+        },
+        {
+          "title": "PowerShell - delete route table",
+          "language": "text",
+          "content": "aws ec2 delete-route-table --route-table-id $RT_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - detach IGW",
+          "language": "text",
+          "content": "aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete IGW",
+          "language": "text",
+          "content": "aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet IDs",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-migration-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-migration-admin; $SUBNET_B_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-migration-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet A",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet B",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete VPC",
+          "language": "text",
+          "content": "aws ec2 delete-vpc --vpc-id $VPC_ID --region eu-west-2 --profile fa-migration-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "No DMS replication instance, task, endpoint or subnet group remains.",
+        "No DataSync task or location remains.",
+        "Both S3 training buckets are deleted.",
+        "The MariaDB source instance and secret are deleted.",
+        "The fa-migration VPC and dependent network resources are deleted."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-cleanup-cloud-verify-01",
+          "text": "No chargeable DMS replication instance or EC2 source remains."
+        },
+        {
+          "id": "task-15-cleanup-cloud-verify-02",
+          "text": "Cloud cleanup completes before IAM credentials are removed."
+        }
+      ]
+    },
+    {
+      "id": "task-16-cleanup-identity-local",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete migration service roles, temporary credentials and local files",
+      "feature": "Identity and local cleanup",
+      "difficulty": "Hard",
+      "goal": "Remove all lab-created IAM roles/policies and the CLI profile only after cloud verification, then delete the local lab folder last.",
+      "whyItMatters": "Deleting service roles before DMS/DataSync resources are gone can block cleanup or leave resources stranded.",
+      "examRelevance": "Reverse dependency includes identities: workload first, service access next, human credentials and local files last.",
+      "prerequisites": [
+        "task-15-cleanup-cloud"
+      ],
+      "sourceIds": [
+        "src-dms-iam",
+        "src-datasync-access"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open IAM."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete inline policies from fa-migration-datasync-role, fa-migration-dms-s3-role, fa-migration-dms-secret-role and fa-migration-source-instance-role."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Detach AmazonSSMManagedInstanceCore from fa-migration-source-instance-role."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Remove fa-migration-source-instance-role from fa-migration-source-instance-profile."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-migration-source-instance-profile."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-migration-source-instance-role."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete fa-migration-datasync-role."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete fa-migration-dms-s3-role."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete fa-migration-dms-secret-role."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Detach AmazonDMSVPCManagementRole from dms-vpc-role and delete dms-vpc-role."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Detach AmazonDMSCloudWatchLogsRole from dms-cloudwatch-logs-role and delete dms-cloudwatch-logs-role."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Sign in as root only now."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Delete the temporary fa-migration-admin access key."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Detach and delete fa-migration-admin-policy."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Delete fa-migration-admin."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Remove only the fa-migration-admin AWS CLI profile; leave unrelated profiles unchanged."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Delete C:\\aws-labs\\fa-migration last."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Read and affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - remove source inline policy",
+          "language": "text",
+          "content": "aws iam delete-role-policy --role-name fa-migration-source-instance-role --policy-name fa-migration-source-secret-read --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - detach SSM managed policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name fa-migration-source-instance-role --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - remove role from instance profile",
+          "language": "text",
+          "content": "aws iam remove-role-from-instance-profile --instance-profile-name fa-migration-source-instance-profile --role-name fa-migration-source-instance-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete instance profile",
+          "language": "text",
+          "content": "aws iam delete-instance-profile --instance-profile-name fa-migration-source-instance-profile --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete source role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-migration-source-instance-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DataSync inline policy",
+          "language": "text",
+          "content": "aws iam delete-role-policy --role-name fa-migration-datasync-role --policy-name fa-migration-datasync-s3-access --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DataSync role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-migration-datasync-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS S3 inline policy",
+          "language": "text",
+          "content": "aws iam delete-role-policy --role-name fa-migration-dms-s3-role --policy-name fa-migration-dms-s3-access --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS S3 role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-migration-dms-s3-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS secret inline policy",
+          "language": "text",
+          "content": "aws iam delete-role-policy --role-name fa-migration-dms-secret-role --policy-name fa-migration-dms-secret-read --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS secret role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-migration-dms-secret-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - detach DMS VPC policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name dms-vpc-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS VPC role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name dms-vpc-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - detach DMS logs policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name dms-cloudwatch-logs-role --policy-arn arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - delete DMS logs role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name dms-cloudwatch-logs-role --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI access key",
+          "language": "text",
+          "content": "aws configure set aws_access_key_id \"\" --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI secret key",
+          "language": "text",
+          "content": "aws configure set aws_secret_access_key \"\" --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI region",
+          "language": "text",
+          "content": "aws configure set region \"\" --profile fa-migration-admin"
+        },
+        {
+          "title": "PowerShell - leave lab folder",
+          "language": "text",
+          "content": "Set-Location C:\\"
+        },
+        {
+          "title": "PowerShell - delete local lab folder",
+          "language": "text",
+          "content": "Remove-Item \"C:\\aws-labs\\fa-migration\" -Recurse -Force"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "All fa-migration service roles are deleted.",
+        "The two exact DMS required roles created by this lab are deleted.",
+        "fa-migration-admin and its access key/policy are deleted.",
+        "The fa-migration-admin CLI profile is removed.",
+        "The local lab folder is removed last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-cleanup-identity-local-verify-01",
+          "text": "No unrelated IAM role or CLI profile was deleted."
+        },
+        {
+          "id": "task-16-cleanup-identity-local-verify-02",
+          "text": "No lab credential or local migration file remains."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-admin-user",
+      "label": "Temporary IAM training user",
+      "exactName": "fa-migration-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-admin-policy",
+      "label": "Training user policy",
+      "exactName": "fa-migration-admin-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-cli-profile",
+      "label": "AWS CLI profile",
+      "exactName": "fa-migration-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-local-files",
+      "dependsOn": [
+        "res-admin-user"
+      ]
+    },
+    {
+      "id": "res-vpc",
+      "label": "Migration VPC",
+      "exactName": "fa-migration-vpc",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": []
+    },
+    {
+      "id": "res-subnet-a",
+      "label": "Public subnet A",
+      "exactName": "fa-migration-public-a",
+      "generatedValue": "Subnet ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-subnet-b",
+      "label": "Public subnet B",
+      "exactName": "fa-migration-public-b",
+      "generatedValue": "Subnet ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-igw",
+      "label": "Internet gateway",
+      "exactName": "fa-migration-igw",
+      "generatedValue": "IGW ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-rt",
+      "label": "Public route table",
+      "exactName": "fa-migration-public-rt",
+      "generatedValue": "Route table ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-subnet-a",
+        "res-subnet-b",
+        "res-igw"
+      ]
+    },
+    {
+      "id": "res-dms-sg",
+      "label": "DMS security group",
+      "exactName": "fa-migration-dms-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-source-sg",
+      "label": "Source DB security group",
+      "exactName": "fa-migration-source-db-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network",
+      "dependsOn": [
+        "res-dms-sg",
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-dms-vpc-role",
+      "label": "Required DMS VPC role",
+      "exactName": "dms-vpc-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": []
+    },
+    {
+      "id": "res-dms-logs-role",
+      "label": "Required DMS logs role",
+      "exactName": "dms-cloudwatch-logs-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": []
+    },
+    {
+      "id": "res-source-role",
+      "label": "Source EC2 role",
+      "exactName": "fa-migration-source-instance-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": []
+    },
+    {
+      "id": "res-source-profile",
+      "label": "Source EC2 instance profile",
+      "exactName": "fa-migration-source-instance-profile",
+      "generatedValue": "Instance profile ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": [
+        "res-source-role"
+      ]
+    },
+    {
+      "id": "res-dms-secret-role",
+      "label": "DMS secret access role",
+      "exactName": "fa-migration-dms-secret-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": []
+    },
+    {
+      "id": "res-dms-s3-role",
+      "label": "DMS S3 target role",
+      "exactName": "fa-migration-dms-s3-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-dms-iam",
+      "dependsOn": []
+    },
+    {
+      "id": "res-source-instance",
+      "label": "Self-managed MariaDB source",
+      "exactName": "fa-migration-mysql-source",
+      "generatedValue": "EC2 instance ID and private IP",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-06-source-database",
+      "dependsOn": [
+        "res-source-profile",
+        "res-source-sg",
+        "res-subnet-a"
+      ]
+    },
+    {
+      "id": "res-db-secret",
+      "label": "MariaDB DMS credential secret",
+      "exactName": "fa-migration/mysql-source",
+      "generatedValue": "Secret ARN and generated password",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": true,
+      "createdByTaskId": "task-06-source-database",
+      "dependsOn": [
+        "res-source-instance"
+      ]
+    },
+    {
+      "id": "res-dms-bucket",
+      "label": "DMS S3 target bucket",
+      "exactName": "fa-migration-dms-<AWS account ID>",
+      "generatedValue": "Account-ID-derived bucket name",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-07-dms-target-and-roles",
+      "dependsOn": []
+    },
+    {
+      "id": "res-dms-subnet-group",
+      "label": "DMS replication subnet group",
+      "exactName": "fa-migration-dms-subnets",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-dms-replication",
+      "dependsOn": [
+        "res-subnet-a",
+        "res-subnet-b"
+      ]
+    },
+    {
+      "id": "res-dms-repl",
+      "label": "DMS replication instance",
+      "exactName": "fa-migration-replication",
+      "generatedValue": "Replication instance ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-08-dms-replication",
+      "dependsOn": [
+        "res-dms-subnet-group",
+        "res-dms-sg",
+        "res-dms-vpc-role"
+      ]
+    },
+    {
+      "id": "res-source-endpoint",
+      "label": "DMS source endpoint",
+      "exactName": "fa-migration-source-endpoint",
+      "generatedValue": "Endpoint ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-dms-endpoints-task",
+      "dependsOn": [
+        "res-db-secret",
+        "res-dms-secret-role",
+        "res-source-instance"
+      ]
+    },
+    {
+      "id": "res-target-endpoint",
+      "label": "DMS S3 target endpoint",
+      "exactName": "fa-migration-s3-target",
+      "generatedValue": "Endpoint ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-dms-endpoints-task",
+      "dependsOn": [
+        "res-dms-bucket",
+        "res-dms-s3-role"
+      ]
+    },
+    {
+      "id": "res-dms-task",
+      "label": "DMS full-load task",
+      "exactName": "fa-migration-full-load",
+      "generatedValue": "Replication task ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-dms-endpoints-task",
+      "dependsOn": [
+        "res-source-endpoint",
+        "res-target-endpoint",
+        "res-dms-repl"
+      ]
+    },
+    {
+      "id": "res-archive-bucket",
+      "label": "DataSync archive bucket",
+      "exactName": "fa-migration-archive-<AWS account ID>",
+      "generatedValue": "Account-ID-derived bucket name",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-11-datasync-role-bucket",
+      "dependsOn": []
+    },
+    {
+      "id": "res-datasync-role",
+      "label": "DataSync S3 access role",
+      "exactName": "fa-migration-datasync-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-11-datasync-role-bucket",
+      "dependsOn": [
+        "res-dms-bucket",
+        "res-archive-bucket"
+      ]
+    },
+    {
+      "id": "res-ds-source",
+      "label": "DataSync source location",
+      "exactName": "DMS bucket /dms-output",
+      "generatedValue": "Location ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-datasync-task",
+      "dependsOn": [
+        "res-datasync-role",
+        "res-dms-bucket"
+      ]
+    },
+    {
+      "id": "res-ds-dest",
+      "label": "DataSync destination location",
+      "exactName": "Archive bucket /dms-copy",
+      "generatedValue": "Location ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-datasync-task",
+      "dependsOn": [
+        "res-datasync-role",
+        "res-archive-bucket"
+      ]
+    },
+    {
+      "id": "res-ds-task",
+      "label": "DataSync task",
+      "exactName": "fa-migration-datasync-task",
+      "generatedValue": "Task ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-datasync-task",
+      "dependsOn": [
+        "res-ds-source",
+        "res-ds-dest"
+      ]
+    },
+    {
+      "id": "res-volume-plan",
+      "label": "Local Volume Gateway configuration plan",
+      "exactName": "C:\\aws-labs\\fa-migration\\volume-gateway-plan.json",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-local-files",
+      "dependsOn": []
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "Source EC2 never appears in Systems Manager",
+      "likelyCause": "The instance role, internet route, public IP or SSM Agent connectivity is missing.",
+      "fix": "Verify fa-migration-source-instance-profile contains the source role, the subnet has 0.0.0.0/0 to fa-migration-igw, and the instance has a public IPv4 address."
+    },
+    {
+      "id": "trouble-02",
+      "title": "MariaDB source setup command fails",
+      "likelyCause": "mariadb105-server is not installed yet, the secret is unreadable, or the source role lacks GetSecretValue.",
+      "fix": "Check the SSM command output, confirm user-data completed, and verify fa-migration-source-secret-read references the exact secret ARN."
+    },
+    {
+      "id": "trouble-03",
+      "title": "DMS source endpoint connection test fails",
+      "likelyCause": "TCP 3306 is blocked, the secret host is wrong, MariaDB is not running, or the DMS user was not created.",
+      "fix": "Verify the source secret host matches the source private IP, fa-migration-source-db-sg allows 3306 from fa-migration-dms-sg, and the SSM setup command succeeded."
+    },
+    {
+      "id": "trouble-04",
+      "title": "DMS target endpoint connection test fails",
+      "likelyCause": "fa-migration-dms-s3-role cannot access the derived bucket or the target endpoint uses the wrong bucket name.",
+      "fix": "Compare the role's inline bucket ARN with DMS_BUCKET and verify the bucket exists in eu-west-2."
+    },
+    {
+      "id": "trouble-05",
+      "title": "DMS full load has zero rows",
+      "likelyCause": "The table mapping does not match migrationdb/customers or the source setup did not seed the table.",
+      "fix": "Confirm dms-table-mappings.json selects schema migrationdb and table %, then inspect the source setup SSM command output."
+    },
+    {
+      "id": "trouble-06",
+      "title": "DataSync location creation is denied",
+      "likelyCause": "The DataSync role trust or S3 policy does not permit the requested bucket.",
+      "fix": "Confirm the role trusts datasync.amazonaws.com and contains the exact derived DMS and archive bucket ARNs."
+    },
+    {
+      "id": "trouble-07",
+      "title": "DataSync task finishes but destination is empty",
+      "likelyCause": "The source subdirectory does not match the DMS output prefix.",
+      "fix": "List the DMS bucket recursively and confirm the source location points to /dms-output."
+    },
+    {
+      "id": "trouble-08",
+      "title": "DMS replication instance cannot be deleted",
+      "likelyCause": "A replication task or endpoint connection still references it.",
+      "fix": "Delete the DMS task first, then the endpoints, then retry replication-instance deletion."
+    },
+    {
+      "id": "trouble-09",
+      "title": "VPC security group cannot be deleted",
+      "likelyCause": "A DMS or EC2 network interface is still present.",
+      "fix": "Wait until the replication instance and source EC2 instance are fully deleted before retrying only the exact fa-migration security group."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-migration-datasync-task",
+      "action": "Delete the DataSync task after its execution is complete.",
+      "verification": "The task no longer appears.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 2,
+      "resource": "DataSync DMS-source and archive-destination locations",
+      "action": "Delete both S3 locations.",
+      "verification": "No fa-migration DataSync locations remain.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 3,
+      "resource": "fa-migration-full-load",
+      "action": "Stop it if necessary, then delete the DMS task.",
+      "verification": "The task no longer appears in DMS.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-migration-source-endpoint and fa-migration-s3-target",
+      "action": "Delete both DMS endpoints.",
+      "verification": "No fa-migration endpoint remains.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 5,
+      "resource": "fa-migration-replication",
+      "action": "Delete the DMS replication instance and wait for deletion.",
+      "verification": "No replication instance remains and DMS ENIs are gone.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 6,
+      "resource": "fa-migration-dms-subnets",
+      "action": "Delete the replication subnet group.",
+      "verification": "The subnet group is absent.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-migration-archive-<account-id> and fa-migration-dms-<account-id>",
+      "action": "Empty and delete both training buckets.",
+      "verification": "Neither bucket remains.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 8,
+      "resource": "fa-migration-mysql-source and fa-migration/mysql-source",
+      "action": "Terminate the source EC2 instance and delete its Secrets Manager secret.",
+      "verification": "No source instance or lab secret remains.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-migration-source-db-sg and fa-migration-dms-sg",
+      "action": "Delete both security groups after DMS/EC2 ENIs are gone.",
+      "verification": "Neither security group remains.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 10,
+      "resource": "fa-migration-public-rt, fa-migration-igw, fa-migration-public-a, fa-migration-public-b, fa-migration-vpc",
+      "action": "Remove route-table associations and delete the network in dependency order.",
+      "verification": "No fa-migration VPC resource remains.",
+      "taskId": "task-15-cleanup-cloud"
+    },
+    {
+      "sequence": 11,
+      "resource": "fa-migration service roles and dms-vpc-role/dms-cloudwatch-logs-role",
+      "action": "Remove inline/managed policies and delete roles/instance profile.",
+      "verification": "No lab-created service role remains.",
+      "taskId": "task-16-cleanup-identity-local"
+    },
+    {
+      "sequence": 12,
+      "resource": "fa-migration-admin access key, policy and user",
+      "action": "Use root only after cloud verification to remove the temporary human identity.",
+      "verification": "The user, access key and policy are absent.",
+      "taskId": "task-16-cleanup-identity-local"
+    },
+    {
+      "sequence": 13,
+      "resource": "AWS CLI profile fa-migration-admin",
+      "action": "Remove only the training profile.",
+      "verification": "Unrelated profiles remain unchanged.",
+      "taskId": "task-16-cleanup-identity-local"
+    },
+    {
+      "sequence": 14,
+      "resource": "C:\\aws-labs\\fa-migration",
+      "action": "Delete the exact local lab folder last.",
+      "verification": "The local lab folder is absent.",
+      "taskId": "task-16-cleanup-identity-local"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that fa-migration-datasync-task and both DataSync locations are deleted; fa-migration-full-load, both DMS endpoints, fa-migration-replication and fa-migration-dms-subnets are deleted; both fa-migration S3 buckets are empty and deleted; fa-migration-mysql-source and fa-migration/mysql-source are deleted; both migration security groups and every fa-migration VPC resource are deleted; all fa-migration service roles plus the lab-created dms-vpc-role and dms-cloudwatch-logs-role are deleted; the temporary fa-migration-admin access key, policy, IAM user and CLI profile are removed; no Storage Gateway appliance was created; unrelated resources and profiles are unchanged; and only then was C:\\aws-labs\\fa-migration deleted.",
+  "warnings": {
+    "cost": "This lab creates a DMS replication instance, one t3.micro EC2 source instance, Secrets Manager secret, S3 objects and a DataSync task; these can incur charges. The Volume Gateway portion is deliberately planning-only because a real EC2-hosted cached gateway normally uses a larger instance and substantial cache/upload-buffer EBS storage.",
+    "safety": "Delete only exact fa-migration resources and the two exact DMS service roles created by this lab. Do not delete a DMS role if it existed before the lab or is used by unrelated DMS workloads.",
+    "credentials": "Never create root access keys and never place the MariaDB password, AWS access key or secret key in the manuscript, local scripts, screenshots or Study Tracker. The database password is generated at runtime and stored in Secrets Manager.",
+    "region": "Every cloud resource in the active lab is created in eu-west-2. The two DMS subnets use eu-west-2a and eu-west-2b."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 16,
+    "checkboxCount": 280,
+    "cliCommandCount": 155,
+    "editableBlockCount": 15,
+    "verificationCount": 35,
+    "cleanupItemCount": 14,
+    "officialSourceCount": 27,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and JSON manuscript are offline educational authoring artifacts only. They have not been locally validated by Study Tracker, imported, accepted, approved, published or fingerprinted."
+  }
+}

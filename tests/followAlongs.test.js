@@ -35,9 +35,14 @@ test('Follow Alongs - Programme Catalogue Integrity', async (t) => {
     assert.equal(getFollowAlongProgramme('iam-learning-path'), null);
   });
 
-  await t.test('3. The catalogue contains exactly 9 Coming Soon programmes', () => {
+  await t.test('3. The catalogue contains exactly 4 Coming Soon programmes', () => {
     const comingSoon = FOLLOW_ALONG_PROGRAMMES.filter(p => p.status === 'coming-soon');
-    assert.equal(comingSoon.length, 9, 'Must have exactly 9 coming-soon programmes');
+    assert.equal(comingSoon.length, 4, 'Must have exactly 4 coming-soon programmes');
+    assert.equal(getFollowAlongProgramme('cloudformation-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('autoscaling-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('monitoring-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('security-learning-path'), null);
+    assert.equal(getFollowAlongProgramme('migration-learning-path'), null);
   });
 
   await t.test('4. All programme IDs and slugs are unique', () => {

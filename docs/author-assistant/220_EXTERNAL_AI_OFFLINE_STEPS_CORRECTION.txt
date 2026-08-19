@@ -1,0 +1,35 @@
+220 - EXTERNAL AI OFFLINE STEPS CORRECTION
+==========================================
+
+1. PROBLEM
+----------
+AI_Follow_Along_Steps.txt still described the older repository-connected process.
+
+It told an external AI to locate a verified builder, run local validators, calculate a handoff fingerprint and create Step 90 files. An AI without access to E:\code\study-tracker could therefore refuse even after it had authored the complete Follow Along.
+
+2. CORRECTION
+-------------
+The instructions now require the external AI to create only:
+
+1. offline-follow-along-manuscript.json
+2. offline-follow-along-preview.md
+
+The instructions explicitly say that the AI must not require or attempt to use:
+
+1. The Study Tracker repository.
+2. A local builder.
+3. Local validators.
+4. The fingerprint helper.
+5. Author, Approver, Supabase or AWS accounts.
+
+3. LOCAL RESPONSIBILITY
+-----------------------
+The existing no-credit command remains responsible for validation, conversion, deterministic handoff creation, fingerprinting and optional local Step 90A acceptance:
+
+npm run author-assistant:import-offline -- "<full manuscript path>"
+
+4. RESULT
+---------
+An external AI must no longer stop with a message saying that a controlled handoff cannot be created without the local builder or fingerprint helper. It should finish and return the two portable files instead.
+
+No Author, Supabase, AWS, candidate, approval or publishing action was performed.

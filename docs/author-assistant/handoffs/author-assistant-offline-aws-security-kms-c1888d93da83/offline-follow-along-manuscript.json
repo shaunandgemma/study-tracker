@@ -1,0 +1,2522 @@
+{
+  "artifactType": "offline-follow-along-manuscript",
+  "artifactVersion": "1.0",
+  "status": {
+    "state": "offline_unvalidated",
+    "localStudyTrackerValidationPerformed": false,
+    "imported": false,
+    "approved": false,
+    "published": false,
+    "handoffPackageCreated": false,
+    "acceptanceAuditCreated": false,
+    "sha256FingerprintCreated": false,
+    "note": "Portable offline authoring content only. Local Study Tracker import performs conversion, validation, fingerprinting and acceptance later."
+  },
+  "programme": {
+    "id": "aws-security-kms-learning-path",
+    "name": "Security & KMS Follow Along",
+    "learnerLevel": "Intermediate",
+    "examWorkspace": "AWS SAA-C03",
+    "requiredOutcome": "Implement a customer managed AWS KMS key with automatic rotation; encrypt and rotate a training-only Secrets Manager secret with a custom Lambda rotation function; create and inspect AWS WAF web ACL rules; enable GuardDuty and safely inspect sample threat findings; then remove all training resources, with the KMS key scheduled for deletion through AWS's required waiting period.",
+    "regions": {
+      "aws": "eu-west-2"
+    },
+    "trainingResourcePrefix": "fa-kms",
+    "estimatedLearnerFlow": "Complete tasks in order. Infrastructure creation routes provide AWS Console steps and separate CLI verification/creation routes. When a task says a Console and CLI creation route are alternatives, create the resource once, not twice.",
+    "completionDefinition": [
+      "fa-kms-admin is created for normal lab work and root is not used for day-to-day tasks.",
+      "One symmetric customer managed KMS key exists under alias/fa-kms-security-key with automatic 365-day rotation enabled.",
+      "fa-kms-rotating-demo-secret is encrypted by the customer managed KMS key.",
+      "fa-kms-rotation-function completes a training-only four-stage Secrets Manager rotation and AWSCURRENT moves to a new version.",
+      "fa-kms-web-acl contains a source-IP rate-based blocking rule plus AWSManagedRulesCommonRuleSet.",
+      "One GuardDuty detector is enabled in eu-west-2 and sample finding data is inspected without malicious activity.",
+      "All deletable training resources are removed in reverse dependency order.",
+      "The KMS alias is removed and the underlying customer managed key is PendingDeletion for the AWS-enforced 7-day waiting period.",
+      "Temporary IAM credentials, the CLI profile and C:\\aws-labs\\fa-kms are removed last."
+    ]
+  },
+  "authoringBasis": {
+    "uploadedStandard": "AI_Follow_Along_Steps(1).txt offline creation workflow plus the established portable offline manuscript structure used by prior Study Tracker Follow Along source files.",
+    "rulesApplied": [
+      "Portable offline files only; no handoff package, session, acceptance audit or fingerprint.",
+      "Complete Console/browser and command-line routes are included where relevant.",
+      "No pre-existing infrastructure is assumed.",
+      "Every important resource has an exact fa-kms name or a generated ID recorded by the learner.",
+      "All editable JSON is valid JSON; Python and shell/PowerShell content uses language text.",
+      "Only official AWS documentation is used for technical source entries.",
+      "Cleanup is manual, reverse-dependency ordered and leaves the KMS key only in AWS-required PendingDeletion."
+    ]
+  },
+  "boundaries": {
+    "doNotClaim": [
+      "Study Tracker local validation",
+      "handoff acceptance",
+      "SHA-256 fingerprint",
+      "import",
+      "Author identity binding",
+      "candidate creation",
+      "approval",
+      "publication",
+      "AWS or Supabase connection by the external authoring process"
+    ],
+    "destructiveSafety": "Delete only exact fa-kms resources and the GuardDuty detector created by this lab. Never broaden a destructive command to unrelated resources."
+  },
+  "warnings": {
+    "cost": "AWS KMS customer managed keys, AWS Secrets Manager secrets/rotation, Lambda invocations/log storage, AWS WAF web ACL/rules and GuardDuty can incur charges. Review current pricing and complete cleanup promptly. The KMS key is scheduled for deletion rather than immediately removed because AWS enforces a waiting period.",
+    "safety": "Use a disposable personal training account and exact fa-kms names. The WAF web ACL is intentionally left unassociated so the lab cannot block a real application. GuardDuty uses sample findings only.",
+    "credentials": "Never create root access keys. The temporary fa-kms-admin IAM-user access key is entered only through aws configure and removed after cloud cleanup. All secret values in this Follow Along are fake training values.",
+    "region": "All regional resources are created in AWS eu-west-2. GuardDuty is enabled only in eu-west-2 for this lab; KMS keys and Secrets Manager secrets are Region-scoped."
+  },
+  "phases": [
+    {
+      "id": "phase-01-preparation",
+      "sequence": 1,
+      "title": "Prepare the secure training account",
+      "goal": "Verify tools, bootstrap a temporary IAM identity and create a known-good CLI profile."
+    },
+    {
+      "id": "phase-02-kms",
+      "sequence": 2,
+      "title": "Build and manage the customer managed KMS key",
+      "goal": "Create the key, alias, policy access path and automatic rotation configuration."
+    },
+    {
+      "id": "phase-03-secrets",
+      "sequence": 3,
+      "title": "Encrypt and rotate a Secrets Manager secret",
+      "goal": "Store a training secret under the KMS key and implement a custom Lambda rotation workflow."
+    },
+    {
+      "id": "phase-04-waf",
+      "sequence": 4,
+      "title": "Create and review AWS WAF protections",
+      "goal": "Build a regional web ACL with managed protections and rate limiting."
+    },
+    {
+      "id": "phase-05-guardduty",
+      "sequence": 5,
+      "title": "Enable GuardDuty and inspect threat findings",
+      "goal": "Enable one regional detector and safely generate sample finding data."
+    },
+    {
+      "id": "phase-06-review-cleanup",
+      "sequence": 6,
+      "title": "Review security choices and clean up",
+      "goal": "Consolidate SAA-C03 service boundaries and remove every training resource in reverse dependency order."
+    }
+  ],
+  "resourceInventory": [
+    {
+      "id": "res-iam-user",
+      "platform": "AWS IAM",
+      "type": "IAM user",
+      "name": "fa-kms-admin",
+      "createdByTaskId": "task-02-iam-bootstrap",
+      "cleanupTaskId": "task-16-identity-local-cleanup",
+      "ownershipCheck": "Delete only this temporary training user."
+    },
+    {
+      "id": "res-iam-policy",
+      "platform": "AWS IAM",
+      "type": "customer managed policy",
+      "name": "fa-kms-admin-policy",
+      "createdByTaskId": "task-02-iam-bootstrap",
+      "cleanupTaskId": "task-16-identity-local-cleanup",
+      "ownershipCheck": "Delete only this policy after the training user is removed."
+    },
+    {
+      "id": "res-access-key",
+      "platform": "AWS IAM",
+      "type": "IAM user access key",
+      "name": "temporary key for fa-kms-admin",
+      "createdByTaskId": "task-03-cli-profile",
+      "cleanupTaskId": "task-16-identity-local-cleanup",
+      "ownershipCheck": "Delete only the access key belonging to fa-kms-admin."
+    },
+    {
+      "id": "res-cli-profile",
+      "platform": "Local workstation",
+      "type": "AWS CLI named profile",
+      "name": "fa-kms-admin",
+      "createdByTaskId": "task-03-cli-profile",
+      "cleanupTaskId": "task-16-identity-local-cleanup",
+      "ownershipCheck": "Remove only this named profile configuration."
+    },
+    {
+      "id": "res-local-folder",
+      "platform": "Local workstation",
+      "type": "lab folder",
+      "name": "C:\\aws-labs\\fa-kms",
+      "createdByTaskId": "task-03-cli-profile",
+      "cleanupTaskId": "task-16-identity-local-cleanup",
+      "ownershipCheck": "Delete the exact folder only after cloud cleanup."
+    },
+    {
+      "id": "res-kms-key",
+      "platform": "AWS KMS",
+      "type": "customer managed symmetric key",
+      "name": "alias/fa-kms-security-key",
+      "createdByTaskId": "task-04-create-kms-key",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete alias then schedule only its underlying lab key for 7-day deletion."
+    },
+    {
+      "id": "res-secret",
+      "platform": "AWS Secrets Manager",
+      "type": "secret",
+      "name": "fa-kms-rotating-demo-secret",
+      "createdByTaskId": "task-06-create-secret",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete only the exact fake training secret."
+    },
+    {
+      "id": "res-rotation-role",
+      "platform": "AWS IAM",
+      "type": "Lambda execution role",
+      "name": "fa-kms-rotation-role",
+      "createdByTaskId": "task-07-rotation-role-code",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Detach the managed logging policy and delete the inline policy before deleting the role."
+    },
+    {
+      "id": "res-rotation-function",
+      "platform": "AWS Lambda",
+      "type": "rotation function",
+      "name": "fa-kms-rotation-function",
+      "createdByTaskId": "task-08-create-rotation-lambda",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete only the exact training rotation function."
+    },
+    {
+      "id": "res-rotation-logs",
+      "platform": "Amazon CloudWatch Logs",
+      "type": "log group",
+      "name": "/aws/lambda/fa-kms-rotation-function",
+      "createdByTaskId": "task-09-enable-test-secret-rotation",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete only this Lambda log group if it exists."
+    },
+    {
+      "id": "res-waf",
+      "platform": "AWS WAF",
+      "type": "regional web ACL",
+      "name": "fa-kms-web-acl",
+      "createdByTaskId": "task-10-create-waf",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete only the unassociated training web ACL."
+    },
+    {
+      "id": "res-guardduty",
+      "platform": "Amazon GuardDuty",
+      "type": "regional detector",
+      "nameRule": "generated detector ID in eu-west-2 tagged TrainingPrefix=fa-kms when created by CLI",
+      "createdByTaskId": "task-12-enable-guardduty",
+      "cleanupTaskId": "task-15-cloud-cleanup",
+      "ownershipCheck": "Delete/disable only the detector created by this lab."
+    }
+  ],
+  "sources": [
+    {
+      "id": "src-saa-domain1",
+      "title": "Content Domain 1: Design Secure Architectures",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03-domain1.html",
+      "purpose": "Maps KMS, key policies, WAF, GuardDuty and Secrets Manager to SAA-C03 secure architecture objectives.",
+      "usedByTaskIds": [
+        "task-01-prerequisites",
+        "task-02-iam-bootstrap",
+        "task-04-create-kms-key",
+        "task-05-kms-policy-rotation",
+        "task-06-create-secret",
+        "task-10-create-waf",
+        "task-12-enable-guardduty",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-saa-inscope",
+      "title": "In-Scope AWS Services - AWS Certified Solutions Architect - Associate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/saa-03-in-scope-services.html",
+      "purpose": "Confirms AWS KMS, Amazon GuardDuty, AWS Secrets Manager, AWS WAF, IAM and Lambda are in scope.",
+      "usedByTaskIds": [
+        "task-01-prerequisites",
+        "task-12-enable-guardduty",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-root-best",
+      "title": "Root user best practices for your AWS account",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/root-user-best-practices.html",
+      "purpose": "Root-user safety, MFA and the rule not to create root access keys.",
+      "usedByTaskIds": [
+        "task-01-prerequisites",
+        "task-02-iam-bootstrap",
+        "task-16-identity-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-iam-best",
+      "title": "Security best practices in IAM",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+      "purpose": "Least privilege, MFA and removal of unused credentials.",
+      "usedByTaskIds": [
+        "task-02-iam-bootstrap",
+        "task-03-cli-profile",
+        "task-16-identity-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-cli-profile",
+      "title": "Configuration and credential file settings in the AWS CLI",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html",
+      "purpose": "Named AWS CLI profile configuration and credential storage.",
+      "usedByTaskIds": [
+        "task-01-prerequisites",
+        "task-03-cli-profile",
+        "task-16-identity-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-kms-create",
+      "title": "Create a KMS key",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html",
+      "purpose": "Customer managed KMS key creation, permissions and key type choices.",
+      "usedByTaskIds": [
+        "task-04-create-kms-key",
+        "task-06-create-secret",
+        "task-15-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-kms-alias",
+      "title": "Create aliases",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/alias-create.html",
+      "purpose": "KMS alias creation and alias naming rules.",
+      "usedByTaskIds": [
+        "task-04-create-kms-key"
+      ]
+    },
+    {
+      "id": "src-kms-policy",
+      "title": "Creating a key policy",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-overview.html",
+      "purpose": "Explains KMS key policies and how they differ from normal IAM permissions.",
+      "usedByTaskIds": [
+        "task-04-create-kms-key",
+        "task-05-kms-policy-rotation",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-kms-rotation",
+      "title": "Rotate AWS KMS keys",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html",
+      "purpose": "Automatic and on-demand key material rotation behavior.",
+      "usedByTaskIds": [
+        "task-05-kms-policy-rotation",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-secret-create",
+      "title": "Create an AWS Secrets Manager secret",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html",
+      "purpose": "Creating a secret and selecting a customer managed KMS key.",
+      "usedByTaskIds": [
+        "task-06-create-secret"
+      ]
+    },
+    {
+      "id": "src-secret-encryption",
+      "title": "Secret encryption and decryption in AWS Secrets Manager",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/security-encryption.html",
+      "purpose": "How Secrets Manager uses KMS to encrypt secret values.",
+      "usedByTaskIds": [
+        "task-06-create-secret"
+      ]
+    },
+    {
+      "id": "src-secret-rotation",
+      "title": "Rotation by Lambda function",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_lambda.html",
+      "purpose": "The Lambda-based Secrets Manager rotation workflow.",
+      "usedByTaskIds": [
+        "task-07-rotation-role-code",
+        "task-09-enable-test-secret-rotation",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-secret-rotation-steps",
+      "title": "Lambda rotation functions",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_lambda-functions.html",
+      "purpose": "createSecret, setSecret, testSecret and finishSecret rotation stages.",
+      "usedByTaskIds": [
+        "task-07-rotation-role-code",
+        "task-09-enable-test-secret-rotation"
+      ]
+    },
+    {
+      "id": "src-secret-rotation-perms",
+      "title": "Lambda rotation function execution role permissions for AWS Secrets Manager",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-required-permissions-function.html",
+      "purpose": "Required Secrets Manager and KMS permissions for a rotation Lambda role.",
+      "usedByTaskIds": [
+        "task-07-rotation-role-code",
+        "task-08-create-rotation-lambda"
+      ]
+    },
+    {
+      "id": "src-secret-rotation-setup",
+      "title": "Set up automatic rotation for non-database AWS Secrets Manager secrets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_turn-on-for-other.html",
+      "purpose": "Configuring a custom Lambda rotation function and invocation permission.",
+      "usedByTaskIds": [
+        "task-08-create-rotation-lambda",
+        "task-09-enable-test-secret-rotation",
+        "task-15-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-secret-schedule",
+      "title": "Rotation schedules",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotate-secrets_schedule.html",
+      "purpose": "Rotation schedule and rotation window behavior.",
+      "usedByTaskIds": [
+        "task-09-enable-test-secret-rotation"
+      ]
+    },
+    {
+      "id": "src-lambda-role",
+      "title": "Defining Lambda function permissions with an execution role",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+      "purpose": "Lambda execution role and least-privilege permissions.",
+      "usedByTaskIds": [
+        "task-07-rotation-role-code",
+        "task-08-create-rotation-lambda"
+      ]
+    },
+    {
+      "id": "src-waf-create",
+      "title": "CreateWebACL - AWS WAFV2",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/waf/latest/APIReference/API_CreateWebACL.html",
+      "purpose": "Regional web ACL creation, default action and rule ordering.",
+      "usedByTaskIds": [
+        "task-10-create-waf",
+        "task-11-review-waf",
+        "task-15-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-waf-rate",
+      "title": "Aggregating rate-based rules in AWS WAF",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-statement-type-rate-based-aggregation-options.html",
+      "purpose": "Rate-based rules and IP aggregation.",
+      "usedByTaskIds": [
+        "task-10-create-waf",
+        "task-11-review-waf",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-waf-managed",
+      "title": "Using managed rule groups in AWS WAF",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/waf/latest/developerguide/waf-managed-rule-groups.html",
+      "purpose": "AWS Managed Rules behavior and pricing distinctions.",
+      "usedByTaskIds": [
+        "task-10-create-waf",
+        "task-11-review-waf"
+      ]
+    },
+    {
+      "id": "src-guardduty-start",
+      "title": "Getting started with GuardDuty",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_settingup.html",
+      "purpose": "Enabling GuardDuty and understanding findings.",
+      "usedByTaskIds": [
+        "task-12-enable-guardduty",
+        "task-13-guardduty-sample",
+        "task-14-exam-review"
+      ]
+    },
+    {
+      "id": "src-guardduty-samples",
+      "title": "Generating sample findings in GuardDuty",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html",
+      "purpose": "Safe sample finding generation for learning and testing.",
+      "usedByTaskIds": [
+        "task-13-guardduty-sample"
+      ]
+    },
+    {
+      "id": "src-guardduty-disable",
+      "title": "Suspending or disabling GuardDuty",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_suspend-disable.html",
+      "purpose": "Disabling GuardDuty in one Region and the effect on findings/configuration.",
+      "usedByTaskIds": [
+        "task-15-cloud-cleanup"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-preparation",
+      "title": "Verify the training account, Region and local tools",
+      "feature": "Account safety and prerequisites",
+      "goal": "Confirm a disposable personal training account, eu-west-2, AWS CLI v2 and root-account safety before creating anything.",
+      "whyItMatters": "Security labs can change account-wide controls, so a clean training account and known Region prevent accidental changes to unrelated resources.",
+      "difficulty": "Easy",
+      "prerequisites": [],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-saa-domain1",
+        "src-saa-inscope",
+        "src-root-best",
+        "src-cli-profile"
+      ],
+      "examRelevance": "SAA-C03 Domain 1 covers secure workloads, security services, encryption and key management.",
+      "warnings": [
+        "Do not create root access keys. Root is used only for the IAM bootstrap and final training-user removal."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Sign in to the disposable AWS training account as the root user only long enough to confirm the account is the intended lab account.",
+          "id": "task-01-prerequisites-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Open the account menu and confirm the account ID is the personal training account you intend to use.",
+          "id": "task-01-prerequisites-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Confirm MFA is enabled for the root user. If it is not, secure the root user before continuing.",
+          "id": "task-01-prerequisites-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Use the Region selector and choose Europe (London), eu-west-2.",
+          "id": "task-01-prerequisites-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Do not create any KMS, WAF, GuardDuty, Secrets Manager or Lambda resource yet.",
+          "id": "task-01-prerequisites-browser-05",
+          "sequence": 5
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-01-prerequisites-cli-01",
+          "title": "Verify local AWS CLI installation",
+          "language": "text",
+          "content": "aws --version",
+          "note": "No root credentials are required for this command."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The intended disposable training account is identified.",
+        "The working Region is eu-west-2.",
+        "AWS CLI v2 is installed locally.",
+        "No root access key exists or is created."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Root MFA is enabled.",
+          "id": "task-01-prerequisites-verify-01"
+        },
+        {
+          "check": "The Region selector shows Europe (London) eu-west-2.",
+          "id": "task-01-prerequisites-verify-02"
+        },
+        {
+          "check": "aws --version returns an AWS CLI version.",
+          "id": "task-01-prerequisites-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "AWS CLI is not found",
+          "fix": "Install AWS CLI v2 from the official AWS CLI documentation, reopen PowerShell, and rerun aws --version."
+        }
+      ]
+    },
+    {
+      "id": "task-02-iam-bootstrap",
+      "phaseId": "phase-01-preparation",
+      "title": "Create the dedicated fa-kms IAM training user and permissions",
+      "feature": "IAM bootstrap",
+      "goal": "Use root only to create fa-kms-admin, attach one lab-specific customer managed policy, give it Console access, then sign out of root.",
+      "whyItMatters": "Normal lab work should not run as root, and the permissions should be limited to the services and fa-kms IAM/Lambda resources used by this Follow Along.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli-verification-after-bootstrap"
+      ],
+      "sourceIds": [
+        "src-root-best",
+        "src-iam-best",
+        "src-saa-domain1"
+      ],
+      "examRelevance": "IAM least privilege and separating root from normal administration are core secure-access design principles.",
+      "warnings": [
+        "The policy can create IAM roles for fa-kms Lambda only; iam:PassRole is restricted to fa-kms-* roles. Never broaden it to iam:* on all resources."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "While signed in as root, open IAM > Policies > Create policy.",
+          "id": "task-02-iam-bootstrap-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Choose JSON and replace the editor contents with the complete fa-kms-admin-policy.json block supplied in this task.",
+          "id": "task-02-iam-bootstrap-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Choose Next, name the policy fa-kms-admin-policy, add description Temporary permissions for the fa-kms Security and KMS Follow Along, then create the policy.",
+          "id": "task-02-iam-bootstrap-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Open IAM > Users > Create user.",
+          "id": "task-02-iam-bootstrap-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "User name: fa-kms-admin.",
+          "id": "task-02-iam-bootstrap-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Enable AWS Management Console access for this IAM user. Use an autogenerated or strong temporary password and record it outside the lab files.",
+          "id": "task-02-iam-bootstrap-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "On permissions, choose Attach policies directly and select only fa-kms-admin-policy.",
+          "id": "task-02-iam-bootstrap-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Create the user.",
+          "id": "task-02-iam-bootstrap-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Open the user and verify the Permissions tab lists fa-kms-admin-policy.",
+          "id": "task-02-iam-bootstrap-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Copy the IAM sign-in URL for the account.",
+          "id": "task-02-iam-bootstrap-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "Sign out of root completely.",
+          "id": "task-02-iam-bootstrap-browser-11",
+          "sequence": 11
+        },
+        {
+          "instruction": "Sign in through the IAM-user sign-in URL as fa-kms-admin and confirm the console opens.",
+          "id": "task-02-iam-bootstrap-browser-12",
+          "sequence": 12
+        },
+        {
+          "instruction": "Keep the console Region set to eu-west-2.",
+          "id": "task-02-iam-bootstrap-browser-13",
+          "sequence": 13
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-02-iam-bootstrap-cli-01",
+          "title": "Later verification command - do not run with root credentials",
+          "language": "text",
+          "content": "aws iam get-user --user-name fa-kms-admin --profile fa-kms-admin\naws iam list-attached-user-policies --user-name fa-kms-admin --profile fa-kms-admin",
+          "note": "Run these only after Task 3 creates the fa-kms-admin CLI profile. A CLI creation route is intentionally not provided because it would require programmatic root credentials."
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "task-02-iam-bootstrap-code-01",
+          "title": "fa-kms-admin-policy.json",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"VerifyIdentity\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"sts:GetCallerIdentity\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOwnTrainingAccessKey\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:GetUser\",\n        \"iam:CreateAccessKey\",\n        \"iam:ListAccessKeys\",\n        \"iam:DeleteAccessKey\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:user/fa-kms-admin\"\n    },\n    {\n      \"Sid\": \"ReadIamForConsole\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:ListRoles\",\n        \"iam:ListPolicies\",\n        \"iam:GetPolicy\",\n        \"iam:GetPolicyVersion\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyFaKmsLambdaRole\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateRole\",\n        \"iam:DeleteRole\",\n        \"iam:GetRole\",\n        \"iam:TagRole\",\n        \"iam:PutRolePolicy\",\n        \"iam:GetRolePolicy\",\n        \"iam:DeleteRolePolicy\",\n        \"iam:ListRolePolicies\",\n        \"iam:AttachRolePolicy\",\n        \"iam:DetachRolePolicy\",\n        \"iam:ListAttachedRolePolicies\",\n        \"iam:PassRole\"\n      ],\n      \"Resource\": \"arn:aws:iam::*:role/fa-kms-*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingKms\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"kms:CreateKey\",\n        \"kms:CreateAlias\",\n        \"kms:DeleteAlias\",\n        \"kms:DescribeKey\",\n        \"kms:GetKeyPolicy\",\n        \"kms:ListAliases\",\n        \"kms:ListKeys\",\n        \"kms:ListResourceTags\",\n        \"kms:TagResource\",\n        \"kms:UntagResource\",\n        \"kms:EnableKeyRotation\",\n        \"kms:DisableKeyRotation\",\n        \"kms:GetKeyRotationStatus\",\n        \"kms:PutKeyPolicy\",\n        \"kms:Encrypt\",\n        \"kms:Decrypt\",\n        \"kms:GenerateDataKey\",\n        \"kms:ScheduleKeyDeletion\",\n        \"kms:CancelKeyDeletion\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingSecrets\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"secretsmanager:CreateSecret\",\n        \"secretsmanager:DescribeSecret\",\n        \"secretsmanager:GetSecretValue\",\n        \"secretsmanager:PutSecretValue\",\n        \"secretsmanager:UpdateSecret\",\n        \"secretsmanager:UpdateSecretVersionStage\",\n        \"secretsmanager:RotateSecret\",\n        \"secretsmanager:DeleteSecret\",\n        \"secretsmanager:RestoreSecret\",\n        \"secretsmanager:TagResource\"\n      ],\n      \"Resource\": \"arn:aws:secretsmanager:eu-west-2:*:secret:fa-kms-*\"\n    },\n    {\n      \"Sid\": \"SecretsManagerListAndRandomPassword\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"secretsmanager:ListSecrets\",\n        \"secretsmanager:GetRandomPassword\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingLambda\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"lambda:CreateFunction\",\n        \"lambda:GetFunction\",\n        \"lambda:GetFunctionConfiguration\",\n        \"lambda:UpdateFunctionCode\",\n        \"lambda:UpdateFunctionConfiguration\",\n        \"lambda:AddPermission\",\n        \"lambda:RemovePermission\",\n        \"lambda:GetPolicy\",\n        \"lambda:InvokeFunction\",\n        \"lambda:DeleteFunction\"\n      ],\n      \"Resource\": \"arn:aws:lambda:eu-west-2:*:function:fa-kms-*\"\n    },\n    {\n      \"Sid\": \"ListLambda\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"lambda:ListFunctions\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageRegionalWafLab\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"wafv2:*\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageGuardDutyLabDetector\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"guardduty:*\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"InspectAndDeleteTrainingLambdaLogs\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"logs:DescribeLogGroups\",\n        \"logs:DescribeLogStreams\",\n        \"logs:GetLogEvents\",\n        \"logs:DeleteLogGroup\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+          "filename": "fa-kms-admin-policy.json"
+        }
+      ],
+      "expectedResults": [
+        "IAM user fa-kms-admin exists with Console access.",
+        "Customer managed policy fa-kms-admin-policy is attached.",
+        "Root is signed out before normal lab work begins."
+      ],
+      "verificationChecks": [
+        {
+          "check": "The Console identity is fa-kms-admin, not root.",
+          "id": "task-02-iam-bootstrap-verify-01"
+        },
+        {
+          "check": "fa-kms-admin has exactly the intended lab policy attached.",
+          "id": "task-02-iam-bootstrap-verify-02"
+        },
+        {
+          "check": "No root access key was created.",
+          "id": "task-02-iam-bootstrap-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Policy validation reports an action error",
+          "fix": "Compare the JSON with the supplied block exactly and ensure no service action name was edited."
+        },
+        {
+          "symptom": "IAM user cannot sign in",
+          "fix": "Return to root only long enough to reset the fa-kms-admin console password or login profile, then sign out root again."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-profile",
+      "phaseId": "phase-01-preparation",
+      "title": "Create and verify the fa-kms-admin AWS CLI profile",
+      "feature": "AWS CLI authentication",
+      "goal": "Create one temporary IAM-user access key, configure the named fa-kms-admin profile and create the dedicated local lab folder.",
+      "whyItMatters": "A named profile prevents commands from silently using another account or identity and keeps all helper files inside one removable training folder.",
+      "difficulty": "Easy",
+      "prerequisites": [
+        "task-02-iam-bootstrap"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-cli-profile",
+        "src-iam-best"
+      ],
+      "examRelevance": "Operational verification of identity and Region supports safe security administration.",
+      "warnings": [
+        "Never paste the secret access key into chat, source control, JSON policies, scripts or the Follow Along files."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "As fa-kms-admin, open IAM > Users > fa-kms-admin > Security credentials.",
+          "id": "task-03-cli-profile-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Under Access keys choose Create access key.",
+          "id": "task-03-cli-profile-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Choose Command Line Interface (CLI) as the use case, acknowledge the recommendation notice, and continue.",
+          "id": "task-03-cli-profile-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Create the access key and keep the access key ID and secret access key visible only long enough to enter them into aws configure.",
+          "id": "task-03-cli-profile-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Do not download or store the key inside C:\\aws-labs\\fa-kms.",
+          "id": "task-03-cli-profile-browser-05",
+          "sequence": 5
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-03-cli-profile-cli-01",
+          "title": "Configure and verify the profile",
+          "language": "text",
+          "content": "aws configure --profile fa-kms-admin\n# Enter the temporary IAM-user access key when prompted.\n# Default region name: eu-west-2\n# Default output format: json\n\naws sts get-caller-identity --profile fa-kms-admin\naws configure get region --profile fa-kms-admin\n\nNew-Item -ItemType Directory -Path C:\\aws-labs\\fa-kms -Force | Out-Null\nSet-Location C:\\aws-labs\\fa-kms\nGet-Location"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "get-caller-identity identifies the fa-kms-admin IAM user in the intended account.",
+        "The named profile region is eu-west-2.",
+        "C:\\aws-labs\\fa-kms exists and is the working directory."
+      ],
+      "verificationChecks": [
+        {
+          "check": "The returned ARN contains user/fa-kms-admin.",
+          "id": "task-03-cli-profile-verify-01"
+        },
+        {
+          "check": "aws configure get region prints eu-west-2.",
+          "id": "task-03-cli-profile-verify-02"
+        },
+        {
+          "check": "The current PowerShell path is C:\\aws-labs\\fa-kms.",
+          "id": "task-03-cli-profile-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "InvalidClientTokenId or SignatureDoesNotMatch",
+          "fix": "Delete the bad access key in IAM, create a new fa-kms-admin key, rerun aws configure --profile fa-kms-admin, and retest STS."
+        }
+      ]
+    },
+    {
+      "id": "task-04-create-kms-key",
+      "phaseId": "phase-02-kms",
+      "title": "Create the customer managed KMS key and alias",
+      "feature": "AWS KMS customer managed key",
+      "goal": "Create one symmetric encryption customer managed KMS key named by alias alias/fa-kms-security-key in eu-west-2.",
+      "whyItMatters": "A customer managed key gives you control over its policy, lifecycle, aliases and rotation rather than relying only on an AWS managed key.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-03-cli-profile"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-kms-create",
+        "src-kms-alias",
+        "src-kms-policy",
+        "src-saa-domain1"
+      ],
+      "examRelevance": "SAA-C03 expects you to choose KMS for encryption at rest and understand customer managed key control and key policies.",
+      "warnings": [
+        "KMS customer managed keys can incur monthly and request charges while active."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open AWS KMS in eu-west-2.",
+          "id": "task-04-create-kms-key-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Choose Customer managed keys > Create key.",
+          "id": "task-04-create-kms-key-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Key type: Symmetric.",
+          "id": "task-04-create-kms-key-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Key usage: Encrypt and decrypt.",
+          "id": "task-04-create-kms-key-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Key material origin: KMS.",
+          "id": "task-04-create-kms-key-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Choose Next.",
+          "id": "task-04-create-kms-key-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Alias: fa-kms-security-key. The console automatically displays it as alias/fa-kms-security-key.",
+          "id": "task-04-create-kms-key-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Description: Security & KMS Follow Along training key.",
+          "id": "task-04-create-kms-key-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Add tag TrainingPrefix = fa-kms.",
+          "id": "task-04-create-kms-key-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Choose Next.",
+          "id": "task-04-create-kms-key-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "For key administrators choose fa-kms-admin.",
+          "id": "task-04-create-kms-key-browser-11",
+          "sequence": 11
+        },
+        {
+          "instruction": "Keep the option that allows selected key administrators to delete the key enabled for this disposable lab.",
+          "id": "task-04-create-kms-key-browser-12",
+          "sequence": 12
+        },
+        {
+          "instruction": "Choose Next.",
+          "id": "task-04-create-kms-key-browser-13",
+          "sequence": 13
+        },
+        {
+          "instruction": "For key users choose fa-kms-admin.",
+          "id": "task-04-create-kms-key-browser-14",
+          "sequence": 14
+        },
+        {
+          "instruction": "Review the generated key policy, then finish key creation.",
+          "id": "task-04-create-kms-key-browser-15",
+          "sequence": 15
+        },
+        {
+          "instruction": "Open the new key and record its Key ID in your notes; do not treat the key ID as secret.",
+          "id": "task-04-create-kms-key-browser-16",
+          "sequence": 16
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-04-create-kms-key-cli-01",
+          "title": "CLI alternative - use instead of Console creation, not as well as it",
+          "language": "text",
+          "content": "$KeyId = aws kms create-key --description \"Security & KMS Follow Along training key\" --key-usage ENCRYPT_DECRYPT --origin AWS_KMS --tags TagKey=TrainingPrefix,TagValue=fa-kms --region eu-west-2 --profile fa-kms-admin --query \"KeyMetadata.KeyId\" --output text\naws kms create-alias --alias-name alias/fa-kms-security-key --target-key-id $KeyId --region eu-west-2 --profile fa-kms-admin\naws kms describe-key --key-id alias/fa-kms-security-key --region eu-west-2 --profile fa-kms-admin\naws kms list-aliases --region eu-west-2 --profile fa-kms-admin --query \"Aliases[?AliasName=='alias/fa-kms-security-key']\""
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "One enabled symmetric customer managed KMS key exists in eu-west-2.",
+        "alias/fa-kms-security-key resolves to that key.",
+        "The key is tagged TrainingPrefix=fa-kms."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Key state is Enabled.",
+          "id": "task-04-create-kms-key-verify-01"
+        },
+        {
+          "check": "Key usage is ENCRYPT_DECRYPT and key spec is SYMMETRIC_DEFAULT.",
+          "id": "task-04-create-kms-key-verify-02"
+        },
+        {
+          "check": "The alias is exactly alias/fa-kms-security-key.",
+          "id": "task-04-create-kms-key-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "AccessDenied on CreateKey or CreateAlias",
+          "fix": "Confirm fa-kms-admin-policy is attached and the Console/CLI identity is fa-kms-admin."
+        },
+        {
+          "symptom": "Alias already exists",
+          "fix": "Stop and confirm it is an exact resource from this lab. Do not reuse an unrelated alias."
+        }
+      ]
+    },
+    {
+      "id": "task-05-kms-policy-rotation",
+      "phaseId": "phase-02-kms",
+      "title": "Inspect the key policy and enable automatic key rotation",
+      "feature": "KMS policy and rotation",
+      "goal": "Review how the key policy authorizes account/IAM use, then enable 365-day automatic key material rotation.",
+      "whyItMatters": "KMS permissions depend on key policy as well as IAM, and key rotation changes cryptographic material without changing the key ID or alias.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-04-create-kms-key"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-kms-policy",
+        "src-kms-rotation",
+        "src-saa-domain1"
+      ],
+      "examRelevance": "Key policy versus IAM policy and transparent KMS key rotation are common encryption design concepts.",
+      "warnings": [
+        "Do not use the bypass lockout safety option when editing a key policy."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open KMS > Customer managed keys > alias/fa-kms-security-key.",
+          "id": "task-05-kms-policy-rotation-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Open the Key policy tab.",
+          "id": "task-05-kms-policy-rotation-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Identify the statement that permits the AWS account to use IAM policies for key access and the statements that identify the selected key administrator/key user.",
+          "id": "task-05-kms-policy-rotation-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Do not remove the account-management statement or lock yourself out.",
+          "id": "task-05-kms-policy-rotation-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Open the Key rotation tab.",
+          "id": "task-05-kms-policy-rotation-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Enable automatic key rotation.",
+          "id": "task-05-kms-policy-rotation-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Set the rotation period to 365 days and save.",
+          "id": "task-05-kms-policy-rotation-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Confirm the key details still show the same key ID and alias.",
+          "id": "task-05-kms-policy-rotation-browser-08",
+          "sequence": 8
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-05-kms-policy-rotation-cli-01",
+          "title": "Inspect policy and enable rotation",
+          "language": "text",
+          "content": "aws kms get-key-policy --key-id alias/fa-kms-security-key --policy-name default --region eu-west-2 --profile fa-kms-admin\naws kms enable-key-rotation --key-id alias/fa-kms-security-key --rotation-period-in-days 365 --region eu-west-2 --profile fa-kms-admin\naws kms get-key-rotation-status --key-id alias/fa-kms-security-key --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The default key policy is visible and remains manageable.",
+        "KeyRotationEnabled is true.",
+        "RotationPeriodInDays is 365.",
+        "The key ID and alias are unchanged."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Automatic rotation is enabled.",
+          "id": "task-05-kms-policy-rotation-verify-01"
+        },
+        {
+          "check": "The period is 365 days.",
+          "id": "task-05-kms-policy-rotation-verify-02"
+        },
+        {
+          "check": "The key policy still allows authorized account administration.",
+          "id": "task-05-kms-policy-rotation-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "EnableKeyRotation is denied",
+          "fix": "Confirm the key policy and fa-kms-admin IAM policy both allow the required management operation."
+        }
+      ]
+    },
+    {
+      "id": "task-06-create-secret",
+      "phaseId": "phase-03-secrets",
+      "title": "Create the KMS-encrypted Secrets Manager training secret",
+      "feature": "AWS Secrets Manager with customer managed KMS key",
+      "goal": "Create fa-kms-rotating-demo-secret using alias/fa-kms-security-key and a harmless training-only username/password value.",
+      "whyItMatters": "Secrets Manager stores sensitive configuration separately from application code and can encrypt it with a customer managed KMS key.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-05-kms-policy-rotation"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-secret-create",
+        "src-secret-encryption",
+        "src-kms-create",
+        "src-saa-domain1"
+      ],
+      "examRelevance": "SAA-C03 expects Secrets Manager for protected secret storage and rotation, with KMS controlling encryption at rest.",
+      "warnings": [
+        "The value is fake training data. Never replace it with a real password or production secret."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open Secrets Manager in eu-west-2.",
+          "id": "task-06-create-secret-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Choose Store a new secret.",
+          "id": "task-06-create-secret-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Secret type: Other type of secret.",
+          "id": "task-06-create-secret-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Add key/value pair username = training-user.",
+          "id": "task-06-create-secret-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Add key/value pair password = training-secret-v1.",
+          "id": "task-06-create-secret-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Under Encryption key choose alias/fa-kms-security-key.",
+          "id": "task-06-create-secret-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Choose Next.",
+          "id": "task-06-create-secret-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Secret name: fa-kms-rotating-demo-secret.",
+          "id": "task-06-create-secret-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Description: Training-only rotating secret for Security & KMS Follow Along.",
+          "id": "task-06-create-secret-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Add tag TrainingPrefix = fa-kms.",
+          "id": "task-06-create-secret-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "Choose Next.",
+          "id": "task-06-create-secret-browser-11",
+          "sequence": 11
+        },
+        {
+          "instruction": "Leave automatic rotation disabled for now; it is configured after the Lambda function exists.",
+          "id": "task-06-create-secret-browser-12",
+          "sequence": 12
+        },
+        {
+          "instruction": "Finish storing the secret.",
+          "id": "task-06-create-secret-browser-13",
+          "sequence": 13
+        },
+        {
+          "instruction": "Open the secret details and confirm the Encryption key points to the fa-kms KMS key.",
+          "id": "task-06-create-secret-browser-14",
+          "sequence": 14
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-06-create-secret-cli-01",
+          "title": "Create the secret from a local JSON file",
+          "language": "text",
+          "content": "Set-Location C:\\aws-labs\\fa-kms\n@'\n{\n  \"username\": \"training-user\",\n  \"password\": \"training-secret-v1\"\n}\n'@ | Set-Content -Encoding utf8 .\\fa-kms-initial-secret.json\n\naws secretsmanager create-secret --name fa-kms-rotating-demo-secret --description \"Training-only rotating secret for Security & KMS Follow Along\" --kms-key-id alias/fa-kms-security-key --secret-string file://fa-kms-initial-secret.json --tags Key=TrainingPrefix,Value=fa-kms --region eu-west-2 --profile fa-kms-admin\naws secretsmanager describe-secret --secret-id fa-kms-rotating-demo-secret --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "task-06-create-secret-code-01",
+          "title": "fa-kms-initial-secret.json",
+          "language": "json",
+          "content": "{\n  \"username\": \"training-user\",\n  \"password\": \"training-secret-v1\"\n}",
+          "filename": "fa-kms-initial-secret.json"
+        }
+      ],
+      "expectedResults": [
+        "fa-kms-rotating-demo-secret exists in eu-west-2.",
+        "Its KmsKeyId identifies the customer managed fa-kms key.",
+        "Rotation is not yet enabled."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Secret name is exactly fa-kms-rotating-demo-secret.",
+          "id": "task-06-create-secret-verify-01"
+        },
+        {
+          "check": "Encryption key is the customer managed fa-kms key.",
+          "id": "task-06-create-secret-verify-02"
+        },
+        {
+          "check": "RotationEnabled is false before the Lambda rotation setup.",
+          "id": "task-06-create-secret-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Secrets Manager cannot use the KMS key",
+          "fix": "Confirm the key is Enabled and fa-kms-admin is authorized by both the KMS key policy and IAM policy."
+        }
+      ]
+    },
+    {
+      "id": "task-07-rotation-role-code",
+      "phaseId": "phase-03-secrets",
+      "title": "Create the rotation Lambda role and complete rotation code",
+      "feature": "Secrets Manager rotation permissions",
+      "goal": "Create fa-kms-rotation-role with limited secret/KMS access and prepare the full Python rotation function.",
+      "whyItMatters": "A rotation Lambda is privileged: it must access only the intended secret and KMS key and must implement the four Secrets Manager rotation stages.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-06-create-secret"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-secret-rotation",
+        "src-secret-rotation-steps",
+        "src-secret-rotation-perms",
+        "src-lambda-role"
+      ],
+      "examRelevance": "The exam focuses on using managed secret rotation and least privilege rather than hard-coded credentials.",
+      "warnings": [
+        "This lab's setSecret and testSecret steps validate a standalone training secret only. Production rotation must update and authenticate against the real target database or service.",
+        "Never log secret values from a rotation function."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open IAM > Roles > Create role.",
+          "id": "task-07-rotation-role-code-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Trusted entity type: AWS service.",
+          "id": "task-07-rotation-role-code-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Use case: Lambda.",
+          "id": "task-07-rotation-role-code-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Attach AWSLambdaBasicExecutionRole so the function can write operational logs.",
+          "id": "task-07-rotation-role-code-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Role name: fa-kms-rotation-role.",
+          "id": "task-07-rotation-role-code-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Create the role.",
+          "id": "task-07-rotation-role-code-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Open fa-kms-rotation-role > Permissions > Add permissions > Create inline policy.",
+          "id": "task-07-rotation-role-code-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Choose JSON and paste the complete fa-kms-rotation-role-policy.json block.",
+          "id": "task-07-rotation-role-code-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Name the inline policy fa-kms-rotation-role-policy and create it.",
+          "id": "task-07-rotation-role-code-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Confirm the role has AWSLambdaBasicExecutionRole plus fa-kms-rotation-role-policy and no AdministratorAccess.",
+          "id": "task-07-rotation-role-code-browser-10",
+          "sequence": 10
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-07-rotation-role-code-cli-01",
+          "title": "Create helper files and the rotation role",
+          "language": "text",
+          "content": "Set-Location C:\\aws-labs\\fa-kms\n# Save the supplied trust JSON as fa-kms-lambda-trust.json.\n# Save the supplied permissions JSON as fa-kms-rotation-role-policy.json.\n# Save the supplied Python as lambda_function.py.\n\naws iam create-role --role-name fa-kms-rotation-role --assume-role-policy-document file://fa-kms-lambda-trust.json --tags Key=TrainingPrefix,Value=fa-kms --profile fa-kms-admin\naws iam attach-role-policy --role-name fa-kms-rotation-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --profile fa-kms-admin\naws iam put-role-policy --role-name fa-kms-rotation-role --policy-name fa-kms-rotation-role-policy --policy-document file://fa-kms-rotation-role-policy.json --profile fa-kms-admin\naws iam get-role --role-name fa-kms-rotation-role --profile fa-kms-admin\naws iam list-attached-role-policies --role-name fa-kms-rotation-role --profile fa-kms-admin\naws iam list-role-policies --role-name fa-kms-rotation-role --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "task-07-rotation-role-code-code-01",
+          "title": "fa-kms-lambda-trust.json",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"lambda.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}",
+          "filename": "fa-kms-lambda-trust.json"
+        },
+        {
+          "id": "task-07-rotation-role-code-code-02",
+          "title": "fa-kms-rotation-role-policy.json",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"RotateOnlyFaKmsSecret\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"secretsmanager:DescribeSecret\",\n        \"secretsmanager:GetSecretValue\",\n        \"secretsmanager:PutSecretValue\",\n        \"secretsmanager:UpdateSecretVersionStage\"\n      ],\n      \"Resource\": \"arn:aws:secretsmanager:eu-west-2:*:secret:fa-kms-rotating-demo-secret-*\"\n    },\n    {\n      \"Sid\": \"GenerateTrainingPassword\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"secretsmanager:GetRandomPassword\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"UseOnlyAliasedTrainingKmsKey\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"kms:Decrypt\",\n        \"kms:Encrypt\",\n        \"kms:GenerateDataKey\"\n      ],\n      \"Resource\": \"arn:aws:kms:eu-west-2:*:key/*\",\n      \"Condition\": {\n        \"ForAnyValue:StringLike\": {\n          \"kms:ResourceAliases\": \"alias/fa-kms-security-key\"\n        }\n      }\n    }\n  ]\n}",
+          "filename": "fa-kms-rotation-role-policy.json"
+        },
+        {
+          "id": "task-07-rotation-role-code-code-03",
+          "title": "lambda_function.py",
+          "language": "text",
+          "content": "import boto3\nimport json\nimport logging\n\nlogger = logging.getLogger()\nlogger.setLevel(logging.INFO)\nclient = boto3.client(\"secretsmanager\")\n\ndef lambda_handler(event, context):\n    secret_id = event[\"SecretId\"]\n    token = event[\"ClientRequestToken\"]\n    step = event[\"Step\"]\n\n    metadata = client.describe_secret(SecretId=secret_id)\n    if not metadata.get(\"RotationEnabled\"):\n        raise ValueError(\"Rotation is not enabled for this secret.\")\n\n    versions = metadata.get(\"VersionIdsToStages\", {})\n    if token not in versions:\n        raise ValueError(\"Rotation token has no staged secret version.\")\n    if \"AWSCURRENT\" in versions[token]:\n        logger.info(\"Rotation token is already AWSCURRENT.\")\n        return\n    if \"AWSPENDING\" not in versions[token]:\n        raise ValueError(\"Rotation token is not staged as AWSPENDING.\")\n\n    if step == \"createSecret\":\n        create_secret(secret_id, token)\n    elif step == \"setSecret\":\n        set_secret(secret_id, token)\n    elif step == \"testSecret\":\n        test_secret(secret_id, token)\n    elif step == \"finishSecret\":\n        finish_secret(secret_id, token)\n    else:\n        raise ValueError(\"Unsupported rotation step.\")\n\ndef create_secret(secret_id, token):\n    current = json.loads(\n        client.get_secret_value(\n            SecretId=secret_id,\n            VersionStage=\"AWSCURRENT\"\n        )[\"SecretString\"]\n    )\n\n    try:\n        client.get_secret_value(\n            SecretId=secret_id,\n            VersionId=token,\n            VersionStage=\"AWSPENDING\"\n        )\n        logger.info(\"AWSPENDING version already exists.\")\n        return\n    except client.exceptions.ResourceNotFoundException:\n        pass\n\n    new_password = client.get_random_password(\n        PasswordLength=32,\n        ExcludePunctuation=True\n    )[\"RandomPassword\"]\n\n    pending = {\n        \"username\": current[\"username\"],\n        \"password\": new_password\n    }\n\n    client.put_secret_value(\n        SecretId=secret_id,\n        ClientRequestToken=token,\n        SecretString=json.dumps(pending),\n        VersionStages=[\"AWSPENDING\"]\n    )\n    logger.info(\"Created a new AWSPENDING version.\")\n\ndef set_secret(secret_id, token):\n    current = json.loads(\n        client.get_secret_value(\n            SecretId=secret_id,\n            VersionStage=\"AWSCURRENT\"\n        )[\"SecretString\"]\n    )\n    pending = json.loads(\n        client.get_secret_value(\n            SecretId=secret_id,\n            VersionId=token,\n            VersionStage=\"AWSPENDING\"\n        )[\"SecretString\"]\n    )\n\n    if current.get(\"username\") != pending.get(\"username\"):\n        raise ValueError(\"AWSCURRENT and AWSPENDING usernames differ.\")\n\n    # Training-only design:\n    # There is no database or external credential store in this lab.\n    # A production rotation function must update the real target service here.\n    logger.info(\"Training setSecret validation completed.\")\n\ndef test_secret(secret_id, token):\n    pending = json.loads(\n        client.get_secret_value(\n            SecretId=secret_id,\n            VersionId=token,\n            VersionStage=\"AWSPENDING\"\n        )[\"SecretString\"]\n    )\n\n    if pending.get(\"username\") != \"training-user\":\n        raise ValueError(\"Unexpected training username.\")\n    if len(pending.get(\"password\", \"\")) < 20:\n        raise ValueError(\"Generated password is shorter than expected.\")\n\n    # A production rotation function must authenticate to the target service here.\n    logger.info(\"Training testSecret validation completed.\")\n\ndef finish_secret(secret_id, token):\n    metadata = client.describe_secret(SecretId=secret_id)\n    current_version = None\n\n    for version_id, stages in metadata[\"VersionIdsToStages\"].items():\n        if \"AWSCURRENT\" in stages:\n            if version_id == token:\n                logger.info(\"Token is already AWSCURRENT.\")\n                return\n            current_version = version_id\n            break\n\n    if current_version is None:\n        raise ValueError(\"No AWSCURRENT version was found.\")\n\n    client.update_secret_version_stage(\n        SecretId=secret_id,\n        VersionStage=\"AWSCURRENT\",\n        MoveToVersionId=token,\n        RemoveFromVersionId=current_version\n    )\n    logger.info(\"Promoted AWSPENDING to AWSCURRENT.\")\n",
+          "filename": "lambda_function.py"
+        }
+      ],
+      "expectedResults": [
+        "fa-kms-rotation-role trusts only Lambda.",
+        "The role has basic logging and the supplied narrow secret/KMS permissions.",
+        "lambda_function.py implements createSecret, setSecret, testSecret and finishSecret."
+      ],
+      "verificationChecks": [
+        {
+          "check": "The role trust principal is lambda.amazonaws.com.",
+          "id": "task-07-rotation-role-code-verify-01"
+        },
+        {
+          "check": "No AdministratorAccess policy is attached.",
+          "id": "task-07-rotation-role-code-verify-02"
+        },
+        {
+          "check": "The inline policy secret ARN pattern is limited to fa-kms-rotating-demo-secret.",
+          "id": "task-07-rotation-role-code-verify-03"
+        },
+        {
+          "check": "The KMS permission is constrained to alias/fa-kms-security-key.",
+          "id": "task-07-rotation-role-code-verify-04"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "iam:PassRole warning appears in policy review",
+          "fix": "Confirm fa-kms-admin-policy limits PassRole to arn:aws:iam::*:role/fa-kms-* and do not broaden it."
+        }
+      ]
+    },
+    {
+      "id": "task-08-create-rotation-lambda",
+      "phaseId": "phase-03-secrets",
+      "title": "Create the rotation Lambda and allow Secrets Manager to invoke it",
+      "feature": "AWS Lambda rotation function",
+      "goal": "Deploy fa-kms-rotation-function, then add a resource-based permission limited to the training secret and account.",
+      "whyItMatters": "Secrets Manager needs explicit permission to invoke the function, while the function separately needs an execution role for its outbound AWS API calls.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-07-rotation-role-code"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-secret-rotation-setup",
+        "src-secret-rotation-perms",
+        "src-lambda-role"
+      ],
+      "examRelevance": "This separates identity-based execution-role permissions from Lambda resource-based invocation permissions.",
+      "warnings": [
+        "Do not place the training secret value in Lambda environment variables or source code."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open Lambda in eu-west-2 > Create function > Author from scratch.",
+          "id": "task-08-create-rotation-lambda-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Function name: fa-kms-rotation-function.",
+          "id": "task-08-create-rotation-lambda-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Runtime: Python 3.12.",
+          "id": "task-08-create-rotation-lambda-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Architecture: x86_64.",
+          "id": "task-08-create-rotation-lambda-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Under Change default execution role choose Use an existing role and select fa-kms-rotation-role.",
+          "id": "task-08-create-rotation-lambda-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Create the function.",
+          "id": "task-08-create-rotation-lambda-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Replace the default source with the complete lambda_function.py supplied in Task 7 and choose Deploy.",
+          "id": "task-08-create-rotation-lambda-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Open Configuration > General configuration > Edit.",
+          "id": "task-08-create-rotation-lambda-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Set Timeout to 30 seconds and Memory to 128 MB, then save.",
+          "id": "task-08-create-rotation-lambda-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Do not add VPC networking for this lab; the function uses the regional public Secrets Manager endpoint.",
+          "id": "task-08-create-rotation-lambda-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "The Secrets Manager invocation permission is added with the CLI command below because it allows the exact source ARN and source account to be shown clearly.",
+          "id": "task-08-create-rotation-lambda-browser-11",
+          "sequence": 11
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-08-create-rotation-lambda-cli-01",
+          "title": "Package and deploy the function",
+          "language": "text",
+          "content": "Set-Location C:\\aws-labs\\fa-kms\nCompress-Archive -Path .\\lambda_function.py -DestinationPath .\\fa-kms-rotation-function.zip -Force\n$RoleArn = aws iam get-role --role-name fa-kms-rotation-role --profile fa-kms-admin --query \"Role.Arn\" --output text\nStart-Sleep -Seconds 10\naws lambda create-function --function-name fa-kms-rotation-function --runtime python3.12 --handler lambda_function.lambda_handler --role $RoleArn --zip-file fileb://fa-kms-rotation-function.zip --timeout 30 --memory-size 128 --region eu-west-2 --profile fa-kms-admin\n\n$AccountId = aws sts get-caller-identity --profile fa-kms-admin --query Account --output text\n$SecretArn = aws secretsmanager describe-secret --secret-id fa-kms-rotating-demo-secret --region eu-west-2 --profile fa-kms-admin --query ARN --output text\naws lambda add-permission --function-name fa-kms-rotation-function --statement-id AllowSecretsManagerInvokeFaKmsSecret --action lambda:InvokeFunction --principal secretsmanager.amazonaws.com --source-account $AccountId --source-arn $SecretArn --region eu-west-2 --profile fa-kms-admin\naws lambda get-function-configuration --function-name fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin\naws lambda get-policy --function-name fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "fa-kms-rotation-function is Active and uses fa-kms-rotation-role.",
+        "The function timeout is 30 seconds.",
+        "Its resource policy permits secretsmanager.amazonaws.com only for the lab secret/account condition."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Function state is Active.",
+          "id": "task-08-create-rotation-lambda-verify-01"
+        },
+        {
+          "check": "Role ARN ends with role/fa-kms-rotation-role.",
+          "id": "task-08-create-rotation-lambda-verify-02"
+        },
+        {
+          "check": "Lambda resource policy includes AllowSecretsManagerInvokeFaKmsSecret.",
+          "id": "task-08-create-rotation-lambda-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "CreateFunction says the role cannot be assumed",
+          "fix": "Wait for IAM propagation, confirm the trust principal is lambda.amazonaws.com, then retry."
+        },
+        {
+          "symptom": "add-permission reports ResourceConflictException",
+          "fix": "Check get-policy. If the exact statement already exists, do not add a duplicate."
+        }
+      ]
+    },
+    {
+      "id": "task-09-enable-test-secret-rotation",
+      "phaseId": "phase-03-secrets",
+      "title": "Enable rotation, rotate immediately and inspect version stages",
+      "feature": "Secrets Manager automatic rotation",
+      "goal": "Attach fa-kms-rotation-function to the secret, set a 30-day schedule, rotate immediately and verify AWSCURRENT/AWSPREVIOUS staging without printing the password.",
+      "whyItMatters": "Secrets Manager rotation creates staged versions and promotes the tested pending value to AWSCURRENT; applications should retrieve the current secret rather than hard-code a value.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-08-create-rotation-lambda"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-secret-rotation",
+        "src-secret-rotation-steps",
+        "src-secret-rotation-setup",
+        "src-secret-schedule"
+      ],
+      "examRelevance": "Automated rotation reduces long-lived credentials and is a key Secrets Manager design benefit.",
+      "warnings": [
+        "Do not use GetSecretValue to print the generated password. Verify rotation through metadata and version stages."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open Secrets Manager > fa-kms-rotating-demo-secret > Rotation configuration > Edit rotation.",
+          "id": "task-09-enable-test-secret-rotation-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Enable Automatic rotation.",
+          "id": "task-09-enable-test-secret-rotation-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Rotation schedule: Schedule expression or interval equivalent to every 30 days.",
+          "id": "task-09-enable-test-secret-rotation-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Rotation function: fa-kms-rotation-function.",
+          "id": "task-09-enable-test-secret-rotation-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Choose Rotate immediately when the secret is stored/saved so this lab proves the workflow now.",
+          "id": "task-09-enable-test-secret-rotation-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Save the rotation configuration.",
+          "id": "task-09-enable-test-secret-rotation-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Wait until Last rotated date appears and no rotation error banner is present.",
+          "id": "task-09-enable-test-secret-rotation-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Open Versions and verify one version carries AWSCURRENT and an older version can carry AWSPREVIOUS.",
+          "id": "task-09-enable-test-secret-rotation-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Open Lambda > fa-kms-rotation-function > Monitor > View CloudWatch logs and confirm successful step messages without secret values.",
+          "id": "task-09-enable-test-secret-rotation-browser-09",
+          "sequence": 9
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-09-enable-test-secret-rotation-cli-01",
+          "title": "Enable and verify rotation",
+          "language": "text",
+          "content": "$RotationArn = aws lambda get-function --function-name fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin --query \"Configuration.FunctionArn\" --output text\naws secretsmanager rotate-secret --secret-id fa-kms-rotating-demo-secret --rotation-lambda-arn $RotationArn --rotation-rules AutomaticallyAfterDays=30 --rotate-immediately --region eu-west-2 --profile fa-kms-admin\nStart-Sleep -Seconds 20\naws secretsmanager describe-secret --secret-id fa-kms-rotating-demo-secret --region eu-west-2 --profile fa-kms-admin --query \"{Name:Name,RotationEnabled:RotationEnabled,RotationLambdaARN:RotationLambdaARN,LastRotatedDate:LastRotatedDate,VersionIdsToStages:VersionIdsToStages}\"\naws logs describe-log-streams --log-group-name /aws/lambda/fa-kms-rotation-function --order-by LastEventTime --descending --max-items 5 --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "RotationEnabled is true.",
+        "RotationLambdaARN identifies fa-kms-rotation-function.",
+        "LastRotatedDate is populated.",
+        "A new AWSCURRENT version is present and the previous version is staged as AWSPREVIOUS.",
+        "The function logs contain operational success messages but no secret values."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Rotation is enabled on a 30-day interval.",
+          "id": "task-09-enable-test-secret-rotation-verify-01"
+        },
+        {
+          "check": "The immediate rotation completed successfully.",
+          "id": "task-09-enable-test-secret-rotation-verify-02"
+        },
+        {
+          "check": "AWSCURRENT moved to the newly rotated version.",
+          "id": "task-09-enable-test-secret-rotation-verify-03"
+        },
+        {
+          "check": "No password value was printed during verification.",
+          "id": "task-09-enable-test-secret-rotation-verify-04"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "Rotation fails with AccessDeniedException",
+          "fix": "Inspect fa-kms-rotation-role-policy, the KMS alias condition, and the Lambda resource policy. Correct only the missing fa-kms permission and retry."
+        },
+        {
+          "symptom": "Rotation fails in setSecret or testSecret",
+          "fix": "Open the Lambda logs and verify the complete training code was deployed. Do not log or print the secret value."
+        }
+      ]
+    },
+    {
+      "id": "task-10-create-waf",
+      "phaseId": "phase-04-waf",
+      "title": "Create the regional WAF web ACL with two protection rules",
+      "feature": "AWS WAF web ACL rules",
+      "goal": "Create fa-kms-web-acl with default Allow, an IP rate-based Block rule and AWSManagedRulesCommonRuleSet.",
+      "whyItMatters": "WAF evaluates ordered Layer 7 rules before the default action, and managed rule groups reduce the amount of custom attack-pattern logic you must maintain.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-09-enable-test-secret-rotation"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-waf-create",
+        "src-waf-rate",
+        "src-waf-managed",
+        "src-saa-domain1"
+      ],
+      "examRelevance": "SAA-C03 explicitly includes WAF as an application security control and expects you to distinguish it from network firewalls and DDoS services.",
+      "warnings": [
+        "AWS WAF web ACLs and rules can incur charges even when this training ACL is not associated with an application resource."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open AWS WAF & Shield in eu-west-2.",
+          "id": "task-10-create-waf-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Choose Web ACLs > Create web ACL.",
+          "id": "task-10-create-waf-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Name: fa-kms-web-acl.",
+          "id": "task-10-create-waf-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Resource type/Region: Regional resources, Europe (London) eu-west-2.",
+          "id": "task-10-create-waf-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Do not associate a production or unrelated resource. This lab intentionally proves the web ACL configuration without attaching it to an application.",
+          "id": "task-10-create-waf-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Default web ACL action: Allow.",
+          "id": "task-10-create-waf-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Add rule > Add my own rules and rule groups > Rule builder.",
+          "id": "task-10-create-waf-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Rule type: Rate-based rule.",
+          "id": "task-10-create-waf-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Name: fa-kms-rate-limit.",
+          "id": "task-10-create-waf-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Rate limit: 100 requests for the default five-minute evaluation window.",
+          "id": "task-10-create-waf-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "Request aggregation: Source IP address.",
+          "id": "task-10-create-waf-browser-11",
+          "sequence": 11
+        },
+        {
+          "instruction": "Action: Block.",
+          "id": "task-10-create-waf-browser-12",
+          "sequence": 12
+        },
+        {
+          "instruction": "Add the rule.",
+          "id": "task-10-create-waf-browser-13",
+          "sequence": 13
+        },
+        {
+          "instruction": "Add rules > Add managed rule groups > AWS managed rule groups.",
+          "id": "task-10-create-waf-browser-14",
+          "sequence": 14
+        },
+        {
+          "instruction": "Add Core rule set (AWSManagedRulesCommonRuleSet).",
+          "id": "task-10-create-waf-browser-15",
+          "sequence": 15
+        },
+        {
+          "instruction": "Keep its normal managed actions and name/reference it as fa-kms-common-rules where the console permits the rule reference name.",
+          "id": "task-10-create-waf-browser-16",
+          "sequence": 16
+        },
+        {
+          "instruction": "Set priority so fa-kms-rate-limit is evaluated before the managed rule group.",
+          "id": "task-10-create-waf-browser-17",
+          "sequence": 17
+        },
+        {
+          "instruction": "Enable sampled requests and CloudWatch metrics for the web ACL/rules.",
+          "id": "task-10-create-waf-browser-18",
+          "sequence": 18
+        },
+        {
+          "instruction": "Create the web ACL.",
+          "id": "task-10-create-waf-browser-19",
+          "sequence": 19
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-10-create-waf-cli-01",
+          "title": "Create the web ACL from complete JSON",
+          "language": "text",
+          "content": "Set-Location C:\\aws-labs\\fa-kms\n# Save the supplied JSON block as fa-kms-web-acl.json.\naws wafv2 create-web-acl --cli-input-json file://fa-kms-web-acl.json --region eu-west-2 --profile fa-kms-admin\naws wafv2 list-web-acls --scope REGIONAL --region eu-west-2 --profile fa-kms-admin --query \"WebACLs[?Name=='fa-kms-web-acl']\""
+        }
+      ],
+      "codeBlocks": [
+        {
+          "id": "task-10-create-waf-code-01",
+          "title": "fa-kms-web-acl.json",
+          "language": "json",
+          "content": "{\n  \"Name\": \"fa-kms-web-acl\",\n  \"Scope\": \"REGIONAL\",\n  \"Description\": \"Training web ACL for the Security and KMS Follow Along\",\n  \"DefaultAction\": {\n    \"Allow\": {}\n  },\n  \"Rules\": [\n    {\n      \"Name\": \"fa-kms-rate-limit\",\n      \"Priority\": 0,\n      \"Statement\": {\n        \"RateBasedStatement\": {\n          \"Limit\": 100,\n          \"AggregateKeyType\": \"IP\"\n        }\n      },\n      \"Action\": {\n        \"Block\": {}\n      },\n      \"VisibilityConfig\": {\n        \"SampledRequestsEnabled\": true,\n        \"CloudWatchMetricsEnabled\": true,\n        \"MetricName\": \"fa-kms-rate-limit\"\n      }\n    },\n    {\n      \"Name\": \"fa-kms-common-rules\",\n      \"Priority\": 1,\n      \"Statement\": {\n        \"ManagedRuleGroupStatement\": {\n          \"VendorName\": \"AWS\",\n          \"Name\": \"AWSManagedRulesCommonRuleSet\"\n        }\n      },\n      \"OverrideAction\": {\n        \"None\": {}\n      },\n      \"VisibilityConfig\": {\n        \"SampledRequestsEnabled\": true,\n        \"CloudWatchMetricsEnabled\": true,\n        \"MetricName\": \"fa-kms-common-rules\"\n      }\n    }\n  ],\n  \"VisibilityConfig\": {\n    \"SampledRequestsEnabled\": true,\n    \"CloudWatchMetricsEnabled\": true,\n    \"MetricName\": \"fa-kms-web-acl\"\n  }\n}",
+          "filename": "fa-kms-web-acl.json"
+        }
+      ],
+      "expectedResults": [
+        "fa-kms-web-acl exists with REGIONAL scope in eu-west-2.",
+        "Default action is Allow.",
+        "Priority 0 is fa-kms-rate-limit with Block action and IP aggregation.",
+        "Priority 1 references AWSManagedRulesCommonRuleSet.",
+        "CloudWatch metrics and sampled requests are enabled."
+      ],
+      "verificationChecks": [
+        {
+          "check": "The web ACL scope is REGIONAL.",
+          "id": "task-10-create-waf-verify-01"
+        },
+        {
+          "check": "Exactly the two intended rules are present.",
+          "id": "task-10-create-waf-verify-02"
+        },
+        {
+          "check": "The rate limit is 100 and aggregate key type is IP.",
+          "id": "task-10-create-waf-verify-03"
+        },
+        {
+          "check": "No application resource is associated with this training web ACL.",
+          "id": "task-10-create-waf-verify-04"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "WAF rejects the JSON",
+          "fix": "Replace the local file with the complete supplied fa-kms-web-acl.json and retry without editing property names."
+        },
+        {
+          "symptom": "Managed rule group name is rejected",
+          "fix": "Confirm VendorName is AWS and Name is AWSManagedRulesCommonRuleSet."
+        }
+      ]
+    },
+    {
+      "id": "task-11-review-waf",
+      "phaseId": "phase-04-waf",
+      "title": "Review WAF rule order, visibility and rate-limit behavior",
+      "feature": "WAF rule evaluation",
+      "goal": "Inspect the created web ACL and explain what would happen to requests as each rule and the default action are evaluated.",
+      "whyItMatters": "Rule priority and terminating actions decide which controls can see a request; understanding this is more important than memorizing the console screens.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-10-create-waf"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-waf-create",
+        "src-waf-rate",
+        "src-waf-managed"
+      ],
+      "examRelevance": "A solutions architect must choose appropriate request filtering and rate limiting at the application edge or regional web layer.",
+      "warnings": [
+        "Because the web ACL is deliberately unassociated, there are no real request samples or rate-limited IPs in this lab."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open WAF > Web ACLs > fa-kms-web-acl > Rules.",
+          "id": "task-11-review-waf-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Confirm fa-kms-rate-limit has the lower priority number and therefore runs first.",
+          "id": "task-11-review-waf-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Open the rate rule and confirm it groups request counts by source IP and blocks after the configured threshold.",
+          "id": "task-11-review-waf-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Open fa-kms-common-rules and identify that it is an AWS managed rule group rather than a hand-written pattern list.",
+          "id": "task-11-review-waf-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Open the Overview/Traffic sections and confirm metrics/sampled requests are enabled, while recognizing there will be no traffic because no resource is associated.",
+          "id": "task-11-review-waf-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Confirm the default action is Allow for requests that no rule blocks.",
+          "id": "task-11-review-waf-browser-06",
+          "sequence": 6
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-11-review-waf-cli-01",
+          "title": "Retrieve the complete web ACL",
+          "language": "text",
+          "content": "$AclId = aws wafv2 list-web-acls --scope REGIONAL --region eu-west-2 --profile fa-kms-admin --query \"WebACLs[?Name=='fa-kms-web-acl'].Id | [0]\" --output text\naws wafv2 get-web-acl --name fa-kms-web-acl --scope REGIONAL --id $AclId --region eu-west-2 --profile fa-kms-admin --query \"WebACL.{DefaultAction:DefaultAction,Rules:Rules,VisibilityConfig:VisibilityConfig}\""
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The retrieved configuration shows priority 0 rate blocking followed by priority 1 common managed rules.",
+        "The default action remains Allow.",
+        "No protected resource association exists."
+      ],
+      "verificationChecks": [
+        {
+          "check": "You can state that lower numeric priority is evaluated first.",
+          "id": "task-11-review-waf-verify-01"
+        },
+        {
+          "check": "You can state that the rate rule tracks counts per source IP.",
+          "id": "task-11-review-waf-verify-02"
+        },
+        {
+          "check": "You can distinguish managed rule groups from custom rules.",
+          "id": "task-11-review-waf-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "get-web-acl requires an ID",
+          "fix": "Run the list-web-acls command first and use the ID returned for fa-kms-web-acl."
+        }
+      ]
+    },
+    {
+      "id": "task-12-enable-guardduty",
+      "phaseId": "phase-05-guardduty",
+      "title": "Enable Amazon GuardDuty in eu-west-2",
+      "feature": "GuardDuty threat detection",
+      "goal": "Create and enable one GuardDuty detector in eu-west-2 and record its generated detector ID.",
+      "whyItMatters": "GuardDuty continuously analyzes supported AWS data sources and emits security findings without requiring you to deploy monitoring servers.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-11-review-waf"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-guardduty-start",
+        "src-saa-domain1",
+        "src-saa-inscope"
+      ],
+      "examRelevance": "SAA-C03 Domain 1 names GuardDuty as a security service for threat detection use cases.",
+      "warnings": [
+        "GuardDuty can incur usage charges after any applicable trial. Keep this lab in eu-west-2 only and disable the detector during cleanup."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open Amazon GuardDuty and confirm the Region is eu-west-2.",
+          "id": "task-12-enable-guardduty-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "If GuardDuty is already enabled from unrelated work, stop rather than modifying that existing detector; this Follow Along assumes a clean training account.",
+          "id": "task-12-enable-guardduty-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Choose Get Started or Enable GuardDuty.",
+          "id": "task-12-enable-guardduty-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Review the enablement page and enable GuardDuty for this Region.",
+          "id": "task-12-enable-guardduty-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Do not opt into unrelated paid protection-plan experiments for this lab.",
+          "id": "task-12-enable-guardduty-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Open Settings and record the Detector ID shown for eu-west-2.",
+          "id": "task-12-enable-guardduty-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Open Summary and Findings and confirm the service is enabled even if no real findings exist.",
+          "id": "task-12-enable-guardduty-browser-07",
+          "sequence": 7
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-12-enable-guardduty-cli-01",
+          "title": "CLI alternative - create and verify the detector",
+          "language": "text",
+          "content": "$DetectorId = aws guardduty create-detector --enable --finding-publishing-frequency FIFTEEN_MINUTES --tags TrainingPrefix=fa-kms --region eu-west-2 --profile fa-kms-admin --query DetectorId --output text\n$DetectorId\naws guardduty get-detector --detector-id $DetectorId --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "One GuardDuty detector exists and is enabled in eu-west-2.",
+        "A detector ID is available for later sample-finding and cleanup commands."
+      ],
+      "verificationChecks": [
+        {
+          "check": "Detector Status is ENABLED.",
+          "id": "task-12-enable-guardduty-verify-01"
+        },
+        {
+          "check": "The detector is in eu-west-2 only for this lab.",
+          "id": "task-12-enable-guardduty-verify-02"
+        },
+        {
+          "check": "The detector ID has been recorded.",
+          "id": "task-12-enable-guardduty-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "create-detector says GuardDuty is already enabled",
+          "fix": "Do not create or alter a second detector. Confirm whether the existing detector belongs to this lab; if not, stop this task to avoid changing unrelated security monitoring."
+        }
+      ]
+    },
+    {
+      "id": "task-13-guardduty-sample",
+      "phaseId": "phase-05-guardduty",
+      "title": "Generate and inspect a safe GuardDuty sample finding",
+      "feature": "GuardDuty findings",
+      "goal": "Generate sample finding data without performing malicious activity, then inspect finding type, severity and affected resource fields.",
+      "whyItMatters": "Sample findings let you learn the finding structure and test downstream handling without attacking or compromising a real resource.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-12-enable-guardduty"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-guardduty-samples",
+        "src-guardduty-start"
+      ],
+      "examRelevance": "GuardDuty findings identify suspicious activity; architects should know GuardDuty detects and reports rather than directly blocking every threat.",
+      "warnings": [
+        "Use generated sample findings only; do not create real malicious traffic or attack simulations in this lab."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "Open GuardDuty > Settings.",
+          "id": "task-13-guardduty-sample-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Find Sample findings and choose Generate sample findings.",
+          "id": "task-13-guardduty-sample-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Open Findings.",
+          "id": "task-13-guardduty-sample-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Filter or visually identify findings whose titles start with [SAMPLE].",
+          "id": "task-13-guardduty-sample-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Open one sample finding.",
+          "id": "task-13-guardduty-sample-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Review Severity, Finding type, Resource affected and Action/Actor details.",
+          "id": "task-13-guardduty-sample-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Confirm the record is clearly marked as a sample.",
+          "id": "task-13-guardduty-sample-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Do not treat the sample as a real incident.",
+          "id": "task-13-guardduty-sample-browser-08",
+          "sequence": 8
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-13-guardduty-sample-cli-01",
+          "title": "Generate one documented sample finding and inspect it",
+          "language": "text",
+          "content": "$DetectorId = aws guardduty list-detectors --region eu-west-2 --profile fa-kms-admin --query \"DetectorIds[0]\" --output text\naws guardduty create-sample-findings --detector-id $DetectorId --finding-types Backdoor:EC2/DenialOfService.Tcp --region eu-west-2 --profile fa-kms-admin\n$FindingId = aws guardduty list-findings --detector-id $DetectorId --region eu-west-2 --profile fa-kms-admin --query \"FindingIds[0]\" --output text\naws guardduty get-findings --detector-id $DetectorId --finding-ids $FindingId --region eu-west-2 --profile fa-kms-admin --query \"Findings[0].{Title:Title,Type:Type,Severity:Severity,Resource:Resource.ResourceType,Sample:Service.AdditionalInfo}\""
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "At least one [SAMPLE] finding appears.",
+        "The finding has a type, severity and resource description.",
+        "No real malicious workload was created."
+      ],
+      "verificationChecks": [
+        {
+          "check": "The inspected finding is explicitly a sample.",
+          "id": "task-13-guardduty-sample-verify-01"
+        },
+        {
+          "check": "You can identify its severity and finding type.",
+          "id": "task-13-guardduty-sample-verify-02"
+        },
+        {
+          "check": "You can explain that GuardDuty detects and reports suspicious behavior rather than acting as WAF.",
+          "id": "task-13-guardduty-sample-verify-03"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "No sample appears immediately",
+          "fix": "Refresh Findings after a short interval and confirm the detector is still ENABLED in eu-west-2."
+        }
+      ]
+    },
+    {
+      "id": "task-14-exam-review",
+      "phaseId": "phase-06-review-cleanup",
+      "title": "Review the security architecture and SAA-C03 decision points",
+      "feature": "Integrated security design",
+      "goal": "Connect KMS, Secrets Manager, WAF and GuardDuty to the problem each service solves and identify common exam traps.",
+      "whyItMatters": "The exam tests service selection and boundaries more often than button-by-button creation steps.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-13-guardduty-sample"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-saa-domain1",
+        "src-saa-inscope",
+        "src-kms-policy",
+        "src-kms-rotation",
+        "src-secret-rotation",
+        "src-waf-rate",
+        "src-guardduty-start"
+      ],
+      "examRelevance": "This task directly consolidates SAA-C03 Domain 1 secure architecture choices.",
+      "warnings": [],
+      "browserRoute": [
+        {
+          "instruction": "Open KMS and confirm the customer managed key controls encryption and key lifecycle rather than storing the application secret itself.",
+          "id": "task-14-exam-review-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Open Secrets Manager and confirm the secret uses the fa-kms KMS key and has automatic rotation enabled.",
+          "id": "task-14-exam-review-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Open WAF and confirm it evaluates web request rules; it is not a replacement for IAM, security groups or GuardDuty.",
+          "id": "task-14-exam-review-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Open GuardDuty and confirm it produces threat findings; it is not a web request firewall.",
+          "id": "task-14-exam-review-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Review these exam distinctions: KMS manages encryption keys; Secrets Manager stores/rotates secrets; WAF filters supported Layer 7 web traffic; GuardDuty detects suspicious activity.",
+          "id": "task-14-exam-review-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Review the key-policy trap: an IAM Allow alone may not be enough if the KMS key policy does not permit the access path.",
+          "id": "task-14-exam-review-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Review the rotation trap: KMS key rotation changes backing key material transparently, while Secrets Manager rotation changes the secret value and often updates a target service.",
+          "id": "task-14-exam-review-browser-07",
+          "sequence": 7
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-14-exam-review-cli-01",
+          "title": "Run a final non-destructive inventory",
+          "language": "text",
+          "content": "aws kms describe-key --key-id alias/fa-kms-security-key --region eu-west-2 --profile fa-kms-admin --query \"KeyMetadata.{KeyId:KeyId,KeyState:KeyState,KeyManager:KeyManager}\"\naws secretsmanager describe-secret --secret-id fa-kms-rotating-demo-secret --region eu-west-2 --profile fa-kms-admin --query \"{Name:Name,RotationEnabled:RotationEnabled,KmsKeyId:KmsKeyId}\"\naws wafv2 list-web-acls --scope REGIONAL --region eu-west-2 --profile fa-kms-admin --query \"WebACLs[?Name=='fa-kms-web-acl']\"\naws guardduty list-detectors --region eu-west-2 --profile fa-kms-admin"
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "All four service areas are present and their responsibilities can be explained correctly.",
+        "The inventory shows only the intended fa-kms training resources plus the generated GuardDuty detector ID."
+      ],
+      "verificationChecks": [
+        {
+          "check": "You can explain KMS versus Secrets Manager.",
+          "id": "task-14-exam-review-verify-01"
+        },
+        {
+          "check": "You can explain WAF versus GuardDuty.",
+          "id": "task-14-exam-review-verify-02"
+        },
+        {
+          "check": "You can explain KMS key-material rotation versus secret-value rotation.",
+          "id": "task-14-exam-review-verify-03"
+        },
+        {
+          "check": "No cleanup has started yet.",
+          "id": "task-14-exam-review-verify-04"
+        }
+      ],
+      "troubleshooting": []
+    },
+    {
+      "id": "task-15-cloud-cleanup",
+      "phaseId": "phase-06-review-cleanup",
+      "title": "Remove WAF, GuardDuty, Secrets Manager, Lambda and KMS resources safely",
+      "feature": "Reverse-dependency cloud cleanup",
+      "goal": "Delete or schedule deletion of every cloud resource created by the lab, keeping the IAM training identity until cloud verification is complete.",
+      "whyItMatters": "Security resources can continue to incur cost or retain sensitive configuration if cleanup stops early, and KMS keys require a waiting period before final deletion.",
+      "difficulty": "Hard",
+      "prerequisites": [
+        "task-14-exam-review"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-guardduty-disable",
+        "src-secret-rotation-setup",
+        "src-kms-create",
+        "src-waf-create"
+      ],
+      "examRelevance": "Safe lifecycle control and dependency-aware deletion are operational security practices.",
+      "warnings": [
+        "These commands are destructive. Delete only exact fa-kms resources.",
+        "The KMS key cannot be deleted immediately; schedule it for the minimum 7-day waiting period and verify PendingDeletion."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "WAF: open fa-kms-web-acl and confirm it has no associated resource, then delete exactly fa-kms-web-acl.",
+          "id": "task-15-cloud-cleanup-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "GuardDuty: in eu-west-2 open Settings and disable GuardDuty for this Region. Understand that disabling removes the detector configuration and findings for the Region.",
+          "id": "task-15-cloud-cleanup-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Secrets Manager: open fa-kms-rotating-demo-secret and delete this fake training secret. Choose the lab's immediate/force-delete path only because the value is disposable and the name is exact.",
+          "id": "task-15-cloud-cleanup-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Lambda: delete fa-kms-rotation-function.",
+          "id": "task-15-cloud-cleanup-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "CloudWatch Logs: delete /aws/lambda/fa-kms-rotation-function if the rotation invocation created it.",
+          "id": "task-15-cloud-cleanup-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "IAM role: detach AWSLambdaBasicExecutionRole from fa-kms-rotation-role, delete inline policy fa-kms-rotation-role-policy, then delete fa-kms-rotation-role.",
+          "id": "task-15-cloud-cleanup-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "KMS: open alias/fa-kms-security-key and note the Key ID before deleting the alias.",
+          "id": "task-15-cloud-cleanup-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Delete alias alias/fa-kms-security-key.",
+          "id": "task-15-cloud-cleanup-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Schedule the underlying customer managed KMS key for deletion with a 7-day waiting period.",
+          "id": "task-15-cloud-cleanup-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Verify the key state is Pending deletion/PendingDeletion and record the deletion date.",
+          "id": "task-15-cloud-cleanup-browser-10",
+          "sequence": 10
+        },
+        {
+          "instruction": "Do not delete fa-kms-admin yet; it is needed for command-line verification.",
+          "id": "task-15-cloud-cleanup-browser-11",
+          "sequence": 11
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-15-cloud-cleanup-cli-01",
+          "title": "Delete cloud resources in safe order",
+          "language": "text",
+          "content": "$AclId = aws wafv2 list-web-acls --scope REGIONAL --region eu-west-2 --profile fa-kms-admin --query \"WebACLs[?Name=='fa-kms-web-acl'].Id | [0]\" --output text\n$LockToken = aws wafv2 get-web-acl --name fa-kms-web-acl --scope REGIONAL --id $AclId --region eu-west-2 --profile fa-kms-admin --query LockToken --output text\naws wafv2 delete-web-acl --name fa-kms-web-acl --scope REGIONAL --id $AclId --lock-token $LockToken --region eu-west-2 --profile fa-kms-admin\n\n$DetectorId = aws guardduty list-detectors --region eu-west-2 --profile fa-kms-admin --query \"DetectorIds[0]\" --output text\naws guardduty delete-detector --detector-id $DetectorId --region eu-west-2 --profile fa-kms-admin\n\naws secretsmanager delete-secret --secret-id fa-kms-rotating-demo-secret --force-delete-without-recovery --region eu-west-2 --profile fa-kms-admin\n\naws lambda delete-function --function-name fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin\naws logs delete-log-group --log-group-name /aws/lambda/fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin\n\naws iam detach-role-policy --role-name fa-kms-rotation-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --profile fa-kms-admin\naws iam delete-role-policy --role-name fa-kms-rotation-role --policy-name fa-kms-rotation-role-policy --profile fa-kms-admin\naws iam delete-role --role-name fa-kms-rotation-role --profile fa-kms-admin\n\n$KeyId = aws kms describe-key --key-id alias/fa-kms-security-key --region eu-west-2 --profile fa-kms-admin --query \"KeyMetadata.KeyId\" --output text\naws kms delete-alias --alias-name alias/fa-kms-security-key --region eu-west-2 --profile fa-kms-admin\naws kms schedule-key-deletion --key-id $KeyId --pending-window-in-days 7 --region eu-west-2 --profile fa-kms-admin\naws kms describe-key --key-id $KeyId --region eu-west-2 --profile fa-kms-admin --query \"KeyMetadata.{KeyId:KeyId,KeyState:KeyState,DeletionDate:DeletionDate}\""
+        },
+        {
+          "id": "task-15-cloud-cleanup-cli-02",
+          "title": "Verify cloud resources are removed or pending deletion",
+          "language": "text",
+          "content": "aws wafv2 list-web-acls --scope REGIONAL --region eu-west-2 --profile fa-kms-admin --query \"WebACLs[?Name=='fa-kms-web-acl']\"\naws guardduty list-detectors --region eu-west-2 --profile fa-kms-admin\naws secretsmanager describe-secret --secret-id fa-kms-rotating-demo-secret --region eu-west-2 --profile fa-kms-admin\naws lambda get-function --function-name fa-kms-rotation-function --region eu-west-2 --profile fa-kms-admin\naws iam get-role --role-name fa-kms-rotation-role --profile fa-kms-admin",
+          "note": "Expected: WAF list is empty for the named ACL; GuardDuty list is empty; Secrets Manager reports scheduled deletion/not found; Lambda and IAM role return ResourceNotFound/NoSuchEntity; KMS reports PendingDeletion by Key ID."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "fa-kms-web-acl is deleted.",
+        "GuardDuty detector is deleted/disabled in eu-west-2.",
+        "fa-kms-rotating-demo-secret is force-deleted/scheduled for asynchronous immediate deletion.",
+        "fa-kms-rotation-function and its log group are absent.",
+        "fa-kms-rotation-role is absent.",
+        "alias/fa-kms-security-key is absent.",
+        "The underlying KMS key is PendingDeletion with a 7-day waiting period."
+      ],
+      "verificationChecks": [
+        {
+          "check": "No fa-kms WAF web ACL remains.",
+          "id": "task-15-cloud-cleanup-verify-01"
+        },
+        {
+          "check": "No GuardDuty detector remains in eu-west-2 from this lab.",
+          "id": "task-15-cloud-cleanup-verify-02"
+        },
+        {
+          "check": "The training secret cannot be used.",
+          "id": "task-15-cloud-cleanup-verify-03"
+        },
+        {
+          "check": "The Lambda function and role are absent.",
+          "id": "task-15-cloud-cleanup-verify-04"
+        },
+        {
+          "check": "The KMS alias is absent and the key is PendingDeletion.",
+          "id": "task-15-cloud-cleanup-verify-05"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "WAF deletion reports a stale lock token",
+          "fix": "Run get-web-acl again to obtain the latest LockToken and retry the exact delete."
+        },
+        {
+          "symptom": "KMS key cannot be scheduled for deletion",
+          "fix": "Confirm the secret and alias are removed, the key is Enabled, and you are targeting the exact Key ID recorded from alias/fa-kms-security-key."
+        },
+        {
+          "symptom": "CloudWatch log group does not exist",
+          "fix": "That is acceptable if no log group was created; continue only after confirming the Lambda function itself is deleted."
+        }
+      ]
+    },
+    {
+      "id": "task-16-identity-local-cleanup",
+      "phaseId": "phase-06-review-cleanup",
+      "title": "Remove the training access key, IAM user, policy, CLI profile and local files",
+      "feature": "Final identity and local cleanup",
+      "goal": "Remove temporary credentials only after cloud cleanup is verified, then delete the exact local lab folder and acknowledge completion.",
+      "whyItMatters": "Deleting credentials too early can strand chargeable resources, while leaving credentials after the lab creates unnecessary account risk.",
+      "difficulty": "Medium",
+      "prerequisites": [
+        "task-15-cloud-cleanup"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "sourceIds": [
+        "src-root-best",
+        "src-iam-best",
+        "src-cli-profile"
+      ],
+      "examRelevance": "Credential lifecycle and least privilege include removing temporary access after use.",
+      "warnings": [
+        "Root is used only for final removal of the temporary IAM user/policy; sign out again immediately afterward."
+      ],
+      "browserRoute": [
+        {
+          "instruction": "While still signed in as fa-kms-admin, open IAM > Users > fa-kms-admin > Security credentials.",
+          "id": "task-16-identity-local-cleanup-browser-01",
+          "sequence": 1
+        },
+        {
+          "instruction": "Delete the temporary access key only after Task 15 cloud verification is complete.",
+          "id": "task-16-identity-local-cleanup-browser-02",
+          "sequence": 2
+        },
+        {
+          "instruction": "Sign out of fa-kms-admin.",
+          "id": "task-16-identity-local-cleanup-browser-03",
+          "sequence": 3
+        },
+        {
+          "instruction": "Sign in as root for final IAM cleanup only.",
+          "id": "task-16-identity-local-cleanup-browser-04",
+          "sequence": 4
+        },
+        {
+          "instruction": "Open IAM > Users > fa-kms-admin and delete the user after confirming it owns no remaining lab role or cloud resource.",
+          "id": "task-16-identity-local-cleanup-browser-05",
+          "sequence": 5
+        },
+        {
+          "instruction": "Open IAM > Policies, select fa-kms-admin-policy and delete the customer managed policy.",
+          "id": "task-16-identity-local-cleanup-browser-06",
+          "sequence": 6
+        },
+        {
+          "instruction": "Confirm fa-kms-admin and fa-kms-admin-policy are absent.",
+          "id": "task-16-identity-local-cleanup-browser-07",
+          "sequence": 7
+        },
+        {
+          "instruction": "Sign out of root.",
+          "id": "task-16-identity-local-cleanup-browser-08",
+          "sequence": 8
+        },
+        {
+          "instruction": "Delete the local AWS CLI profile and the exact C:\\aws-labs\\fa-kms folder using the CLI/local commands below.",
+          "id": "task-16-identity-local-cleanup-browser-09",
+          "sequence": 9
+        },
+        {
+          "instruction": "Do not delete C:\\aws-labs or any sibling lab folder.",
+          "id": "task-16-identity-local-cleanup-browser-10",
+          "sequence": 10
+        }
+      ],
+      "cliRoute": [
+        {
+          "id": "task-16-identity-local-cleanup-cli-01",
+          "title": "Remove the named CLI profile and local helper files",
+          "language": "text",
+          "content": "aws configure unset aws_access_key_id --profile fa-kms-admin\naws configure unset aws_secret_access_key --profile fa-kms-admin\naws configure unset region --profile fa-kms-admin\naws configure unset output --profile fa-kms-admin\n\nif (Test-Path \"C:\\aws-labs\\fa-kms\") {\n  Remove-Item \"C:\\aws-labs\\fa-kms\" -Recurse -Force\n}\nTest-Path \"C:\\aws-labs\\fa-kms\"",
+          "note": "Run this after the IAM access key has been deleted. Test-Path should return False."
+        }
+      ],
+      "codeBlocks": [],
+      "expectedResults": [
+        "The temporary IAM access key is deleted.",
+        "fa-kms-admin and fa-kms-admin-policy are deleted by root.",
+        "The fa-kms-admin named CLI profile no longer contains credentials/Region/output.",
+        "C:\\aws-labs\\fa-kms is absent.",
+        "Only the AWS-enforced PendingDeletion KMS key remains until its deletion date."
+      ],
+      "verificationChecks": [
+        {
+          "check": "fa-kms-admin no longer exists.",
+          "id": "task-16-identity-local-cleanup-verify-01"
+        },
+        {
+          "check": "fa-kms-admin-policy no longer exists.",
+          "id": "task-16-identity-local-cleanup-verify-02"
+        },
+        {
+          "check": "The named CLI profile no longer contains usable credentials.",
+          "id": "task-16-identity-local-cleanup-verify-03"
+        },
+        {
+          "check": "C:\\aws-labs\\fa-kms returns False from Test-Path.",
+          "id": "task-16-identity-local-cleanup-verify-04"
+        },
+        {
+          "check": "The final cleanup acknowledgement can be made truthfully.",
+          "id": "task-16-identity-local-cleanup-verify-05"
+        }
+      ],
+      "troubleshooting": [
+        {
+          "symptom": "IAM user deletion says resources or credentials remain",
+          "fix": "Remove only the fa-kms-admin access key/login profile/policy attachment shown by IAM, then retry. Do not alter unrelated users."
+        }
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "symptom": "AccessDenied after switching from root to fa-kms-admin",
+      "fix": "Confirm the exact fa-kms-admin-policy is attached and aws sts get-caller-identity or the Console identity shows fa-kms-admin."
+    },
+    {
+      "id": "trouble-02",
+      "symptom": "A KMS action is allowed in IAM but still denied",
+      "fix": "Inspect the KMS key policy as well as IAM. KMS authorization can require both the key policy access path and identity permission."
+    },
+    {
+      "id": "trouble-03",
+      "symptom": "Secrets Manager rotation fails",
+      "fix": "Inspect Lambda logs, the execution-role secret/KMS permissions and Lambda's Secrets Manager invocation resource policy; never print the secret to troubleshoot."
+    },
+    {
+      "id": "trouble-04",
+      "symptom": "WAF web ACL cannot be deleted",
+      "fix": "Confirm it has no association and retrieve a fresh LockToken before delete-web-acl."
+    },
+    {
+      "id": "trouble-05",
+      "symptom": "GuardDuty sample findings do not appear",
+      "fix": "Confirm the detector is ENABLED in eu-west-2 and refresh after generating samples."
+    },
+    {
+      "id": "trouble-06",
+      "symptom": "KMS key still exists after cleanup",
+      "fix": "This is expected during the 7-day PendingDeletion window. Verify the alias is deleted and KeyState is PendingDeletion."
+    }
+  ],
+  "cleanup": {
+    "completionGate": "acknowledgement",
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "steps": [
+      {
+        "id": "cleanup-01",
+        "sequence": 1,
+        "resource": "fa-kms-web-acl",
+        "action": "Delete the unassociated REGIONAL WAF web ACL using the latest lock token.",
+        "verification": "list-web-acls returns no fa-kms-web-acl.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-02",
+        "sequence": 2,
+        "resource": "GuardDuty detector created for the lab in eu-west-2",
+        "action": "Delete the detector to disable GuardDuty in the Region.",
+        "verification": "list-detectors returns no lab detector.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-03",
+        "sequence": 3,
+        "resource": "fa-kms-rotating-demo-secret",
+        "action": "Force-delete only the fake training secret after rotation is complete.",
+        "verification": "The secret is scheduled for immediate asynchronous deletion or is no longer found.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-04",
+        "sequence": 4,
+        "resource": "fa-kms-rotation-function and /aws/lambda/fa-kms-rotation-function",
+        "action": "Delete the Lambda function, then delete its log group if present.",
+        "verification": "Lambda get-function fails for the name and the log group is absent.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-05",
+        "sequence": 5,
+        "resource": "fa-kms-rotation-role",
+        "action": "Detach AWSLambdaBasicExecutionRole, delete fa-kms-rotation-role-policy, then delete the role.",
+        "verification": "iam get-role returns NoSuchEntity.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-06",
+        "sequence": 6,
+        "resource": "alias/fa-kms-security-key",
+        "action": "Record the Key ID, delete the alias, then schedule the underlying KMS key for deletion with a 7-day waiting period.",
+        "verification": "Alias is absent and describe-key by Key ID reports PendingDeletion plus DeletionDate.",
+        "taskId": "task-15-cloud-cleanup"
+      },
+      {
+        "id": "cleanup-07",
+        "sequence": 7,
+        "resource": "temporary fa-kms-admin access key",
+        "action": "Delete the access key only after cloud cleanup verification.",
+        "verification": "No active access key remains for fa-kms-admin.",
+        "taskId": "task-16-identity-local-cleanup"
+      },
+      {
+        "id": "cleanup-08",
+        "sequence": 8,
+        "resource": "fa-kms-admin and fa-kms-admin-policy",
+        "action": "Use root only to delete the temporary training user and its customer managed policy, then sign out root.",
+        "verification": "IAM shows neither the user nor policy.",
+        "taskId": "task-16-identity-local-cleanup"
+      },
+      {
+        "id": "cleanup-09",
+        "sequence": 9,
+        "resource": "fa-kms-admin AWS CLI profile",
+        "action": "Unset the exact profile credentials, Region and output configuration.",
+        "verification": "The named profile contains no usable credentials.",
+        "taskId": "task-16-identity-local-cleanup"
+      },
+      {
+        "id": "cleanup-10",
+        "sequence": 10,
+        "resource": "C:\\aws-labs\\fa-kms",
+        "action": "Delete the exact local lab folder last.",
+        "verification": "Test-Path C:\\aws-labs\\fa-kms returns False.",
+        "taskId": "task-16-identity-local-cleanup"
+      }
+    ],
+    "programmeCleanupAcknowledgement": "I verified that fa-kms-web-acl is deleted; the lab GuardDuty detector is disabled/deleted in eu-west-2; fa-kms-rotating-demo-secret is deleted or in its immediate asynchronous deletion process; fa-kms-rotation-function, its CloudWatch log group and fa-kms-rotation-role are absent; alias/fa-kms-security-key is deleted and its exact underlying customer managed key is PendingDeletion with a recorded deletion date; the temporary fa-kms-admin access key, IAM user and fa-kms-admin-policy are removed; the fa-kms-admin CLI profile contains no usable credentials; and only then was C:\\aws-labs\\fa-kms deleted."
+  },
+  "conversionNotesForLocalCodex": [
+    "Preserve programme title, ID, learner level, exam workspace, Region and fa-kms resource prefix.",
+    "Preserve every phase/task/browser-step/CLI-block/code-block/verification/cleanup ID.",
+    "Do not turn the training-only standalone secret rotation function into a claim that a real database credential was rotated.",
+    "Do not add a WAF resource association; the unassociated web ACL is intentional for safety and cost containment.",
+    "Do not convert PendingDeletion into a claim that the KMS key has already been physically deleted."
+  ],
+  "contentMetrics": {
+    "phaseCount": 6,
+    "taskCount": 16,
+    "browserStepCount": 159,
+    "cliBlockCount": 17,
+    "verificationCheckCount": 56,
+    "cleanupStepCount": 10,
+    "sourceCount": 23,
+    "codeBlockCount": 6
+  }
+}

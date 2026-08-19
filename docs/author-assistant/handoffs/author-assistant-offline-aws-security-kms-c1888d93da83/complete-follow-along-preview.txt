@@ -1,0 +1,78 @@
+COMPLETE FOLLOW ALONG PREVIEW - HCP TF
+
+Operation: New Follow Along
+Security & KMS Follow Along
+Security & KMS Follow Along
+Outcome: Implement a customer managed AWS KMS key with automatic rotation; encrypt and rotate a training-only Secrets Manager secret with a custom Lambda rotation function; create and inspect AWS WAF web ACL rules; enable GuardDuty and safely inspect sample threat findings; then remove all training resources, with the KMS key scheduled for deletion through AWS's required waiting period.
+Region: eu-west-2
+Estimated time: Self-paced
+
+Phases: 6
+Tasks: 16
+Console checkboxes: 159
+CLI commands: 17
+Verification checks: 56
+Cleanup items: 12
+Official AWS sources: 23
+
+LEARNER JOURNEY
+
+1. Prepare the secure training account
+   - Verify the training account, Region and local tools
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Create the dedicated fa-kms IAM training user and permissions
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Create and verify the fa-kms-admin AWS CLI profile
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+
+2. Build and manage the customer managed KMS key
+   - Create the customer managed KMS key and alias
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Inspect the key policy and enable automatic key rotation
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+
+3. Encrypt and rotate a Secrets Manager secret
+   - Create the KMS-encrypted Secrets Manager training secret
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Create the rotation Lambda role and complete rotation code
+     Console: 1 step(s); CLI: 1 command(s); Checks: 4
+   - Create the rotation Lambda and allow Secrets Manager to invoke it
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Enable rotation, rotate immediately and inspect version stages
+     Console: 1 step(s); CLI: 1 command(s); Checks: 4
+
+4. Create and review AWS WAF protections
+   - Create the regional WAF web ACL with two protection rules
+     Console: 1 step(s); CLI: 1 command(s); Checks: 4
+   - Review WAF rule order, visibility and rate-limit behavior
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+
+5. Enable GuardDuty and inspect threat findings
+   - Enable Amazon GuardDuty in eu-west-2
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+   - Generate and inspect a safe GuardDuty sample finding
+     Console: 1 step(s); CLI: 1 command(s); Checks: 3
+
+6. Review security choices and clean up
+   - Review the security architecture and SAA-C03 decision points
+     Console: 1 step(s); CLI: 1 command(s); Checks: 4
+   - Remove WAF, GuardDuty, Secrets Manager, Lambda and KMS resources safely
+     Console: 1 step(s); CLI: 2 command(s); Checks: 5
+   - Remove the training access key, IAM user, policy, CLI profile and local files
+     Console: 1 step(s); CLI: 1 command(s); Checks: 5
+
+MANUAL REVIEW FINDINGS (7)
+1. Manual correction required: Final cleanup item 6 contains command chaining instead of separate CLI commands.
+2. Manual correction required: Final cleanup item 7 contains command chaining instead of separate CLI commands.
+3. Manual correction required: Final cleanup item 8 contains command chaining instead of separate CLI commands.
+4. Manual correction required: Final cleanup item 9 contains command chaining instead of separate CLI commands.
+5. Manual correction required: Final cleanup item 10 contains command chaining instead of separate CLI commands.
+6. Manual correction required: Final cleanup item 11 contains command chaining instead of separate CLI commands.
+7. Manual correction required: Final cleanup item 12 contains command chaining instead of separate CLI commands.
+
+SAFETY
+Nothing was written to Author, Supabase or AWS.
+No AWS command was executed.
+No candidate was created and nothing was approved or published.
+
+SHA-256: 42350a10800cb852785b63402a7bf155a41b73bc141dec1ba71749db57f460c5

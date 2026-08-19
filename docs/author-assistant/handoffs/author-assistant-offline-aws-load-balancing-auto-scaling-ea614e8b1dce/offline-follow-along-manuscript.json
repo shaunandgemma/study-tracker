@@ -1,0 +1,2760 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "Load Balancing & Auto Scaling Follow Along",
+    "suggestedProgrammeId": "aws-load-balancing-auto-scaling-learning-path",
+    "topic": "AWS Elastic Load Balancing and EC2 Auto Scaling",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Intermediate",
+    "outcome": "Configure an internet-facing Application Load Balancer, target group, launch template, multi-AZ Auto Scaling group, target tracking dynamic scaling policy and health checks; verify load distribution and controlled scale-out; then safely delete only the resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-lba",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "examCoverage": [
+      "Application Load Balancer Layer 7 routing",
+      "Listeners and target groups",
+      "Target-group health checks",
+      "Two-AZ load balancing",
+      "Launch templates",
+      "ASG minimum/desired/maximum capacity",
+      "ELB health integration with Auto Scaling",
+      "Health check grace period",
+      "Default instance warmup",
+      "Target tracking dynamic scaling",
+      "ALBRequestCountPerTarget",
+      "Controlled scale-out verification",
+      "Reverse-dependency cleanup"
+    ],
+    "completionDefinition": [
+      "A dedicated two-AZ VPC and public network are created from nothing.",
+      "Internet HTTP reaches only fa-lba-alb-sg; backend HTTP is allowed only from the ALB security group.",
+      "fa-lba-tg checks /health and receives targets through fa-lba-asg.",
+      "fa-lba-lt defines the repeatable Amazon Linux 2023 web-server configuration.",
+      "fa-lba-asg starts with minimum 2, desired 2 and maximum 4 across eu-west-2a and eu-west-2b.",
+      "The ASG uses ELB health checks, a 120-second grace period and 120-second default instance warmup.",
+      "fa-lba-request-scaling tracks ALB request count per target with target value 50.",
+      "Controlled HTTP traffic demonstrates a scaling activity without allowing capacity above 4.",
+      "All chargeable compute/load-balancing resources are removed before credentials or local files."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-saa-domain3",
+      "title": "Content Domain 3: Design High-Performing Architectures",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03-domain3.html",
+      "purpose": "SAA-C03 coverage for high-performing and elastic compute solutions.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-04-vpc-network",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-saa-domain4",
+      "title": "Content Domain 4: Design Cost-Optimized Architectures",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03-domain4.html",
+      "purpose": "SAA-C03 coverage for load-balancing and scaling strategies.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-alb-intro",
+      "title": "What is an Application Load Balancer?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html",
+      "purpose": "Application Load Balancer architecture and target groups.",
+      "taskIds": [
+        "task-08-create-alb",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-alb-create",
+      "title": "Create an Application Load Balancer",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-application-load-balancer.html",
+      "purpose": "Create and test an internet-facing ALB.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-08-create-alb",
+        "task-15-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-alb-target-groups",
+      "title": "Target groups for your Application Load Balancers",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html",
+      "purpose": "Target routing and per-target-group health checks.",
+      "taskIds": [
+        "task-06-target-group",
+        "task-08-create-alb",
+        "task-13-exam-review",
+        "task-14-prepare-cleanup",
+        "task-15-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-alb-health",
+      "title": "Health checks for Application Load Balancer target groups",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html",
+      "purpose": "Target health-check configuration and health states.",
+      "taskIds": [
+        "task-06-target-group",
+        "task-11-verify-health-and-routing"
+      ]
+    },
+    {
+      "id": "src-alb-check-health",
+      "title": "Check the health of your Application Load Balancer targets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/check-target-health.html",
+      "purpose": "Verify target health in the console.",
+      "taskIds": [
+        "task-06-target-group",
+        "task-11-verify-health-and-routing"
+      ]
+    },
+    {
+      "id": "src-alb-listeners",
+      "title": "Listeners for your Application Load Balancers",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html",
+      "purpose": "Listener and rule behavior.",
+      "taskIds": [
+        "task-08-create-alb"
+      ]
+    },
+    {
+      "id": "src-alb-troubleshoot",
+      "title": "Troubleshoot your Application Load Balancers",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html",
+      "purpose": "ALB security-group and health-check troubleshooting.",
+      "taskIds": [
+        "task-05-security-groups"
+      ]
+    },
+    {
+      "id": "src-asg-intro",
+      "title": "What is Amazon EC2 Auto Scaling?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html",
+      "purpose": "Desired capacity and instance health/replacement behavior.",
+      "taskIds": [
+        "task-09-create-asg",
+        "task-13-exam-review",
+        "task-14-prepare-cleanup"
+      ]
+    },
+    {
+      "id": "src-asg-launch-template",
+      "title": "Create an Auto Scaling group using a launch template",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html",
+      "purpose": "Create an Auto Scaling group from a launch template.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-07-launch-template",
+        "task-09-create-asg",
+        "task-15-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-asg-launch-templates",
+      "title": "Auto Scaling launch templates",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/launch-templates.html",
+      "purpose": "Launch templates as reusable EC2 configuration.",
+      "taskIds": [
+        "task-03-cli-and-local-files",
+        "task-07-launch-template"
+      ]
+    },
+    {
+      "id": "src-asg-target-tracking",
+      "title": "Target tracking scaling policies for Amazon EC2 Auto Scaling",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-target-tracking.html",
+      "purpose": "Target tracking scaling policy behavior and metrics.",
+      "taskIds": [
+        "task-10-scaling-policy",
+        "task-12-generate-load",
+        "task-13-exam-review",
+        "task-14-prepare-cleanup"
+      ]
+    },
+    {
+      "id": "src-asg-dynamic",
+      "title": "Dynamic scaling for Amazon EC2 Auto Scaling",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scale-based-on-demand.html",
+      "purpose": "Dynamic scaling based on demand.",
+      "taskIds": [
+        "task-10-scaling-policy",
+        "task-12-generate-load"
+      ]
+    },
+    {
+      "id": "src-asg-health",
+      "title": "Health checks for instances in an Auto Scaling group",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-health-checks.html",
+      "purpose": "Auto Scaling instance health and replacement.",
+      "taskIds": [
+        "task-09-create-asg",
+        "task-11-verify-health-and-routing",
+        "task-13-exam-review"
+      ]
+    },
+    {
+      "id": "src-asg-health-overview",
+      "title": "About the health checks for your Auto Scaling group",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/health-checks-overview.html",
+      "purpose": "Health-check types available to an Auto Scaling group.",
+      "taskIds": [
+        "task-11-verify-health-and-routing"
+      ]
+    },
+    {
+      "id": "src-asg-grace",
+      "title": "Set the health check grace period for an Auto Scaling group",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/health-check-grace-period.html",
+      "purpose": "Health-check grace period for new instances.",
+      "taskIds": [
+        "task-09-create-asg",
+        "task-11-verify-health-and-routing"
+      ]
+    },
+    {
+      "id": "src-asg-warmup",
+      "title": "Set the default instance warmup for an Auto Scaling group",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-default-instance-warmup.html",
+      "purpose": "Default instance warmup for scaling.",
+      "taskIds": [
+        "task-09-create-asg",
+        "task-10-scaling-policy",
+        "task-12-generate-load"
+      ]
+    },
+    {
+      "id": "src-asg-attach-alb",
+      "title": "Attach an Elastic Load Balancing load balancer to your Auto Scaling group",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/attach-load-balancer-asg.html",
+      "purpose": "Attach a target group and enable ELB health checks.",
+      "taskIds": [
+        "task-09-create-asg",
+        "task-11-verify-health-and-routing"
+      ]
+    },
+    {
+      "id": "src-asg-tutorial",
+      "title": "Tutorial: Set up a scaled and load-balanced application",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/tutorial-ec2-auto-scaling-load-balancer.html",
+      "purpose": "End-to-end load-balanced Auto Scaling pattern.",
+      "taskIds": [
+        "task-12-generate-load"
+      ]
+    },
+    {
+      "id": "src-ec2-user-data",
+      "title": "Run commands on your Linux instance at launch",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
+      "purpose": "EC2 user data for web-server bootstrap.",
+      "taskIds": [
+        "task-03-cli-and-local-files",
+        "task-07-launch-template"
+      ]
+    },
+    {
+      "id": "src-vpc-create",
+      "title": "Create a VPC",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html",
+      "purpose": "Dedicated VPC and subnets.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-04-vpc-network"
+      ]
+    },
+    {
+      "id": "src-vpc-igw",
+      "title": "Connect your VPC to the internet using an internet gateway",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html",
+      "purpose": "Internet gateway and public routing.",
+      "taskIds": [
+        "task-04-vpc-network",
+        "task-15-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-vpc-sg",
+      "title": "Control traffic to your AWS resources using security groups",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html",
+      "purpose": "ALB and backend security groups.",
+      "taskIds": [
+        "task-05-security-groups",
+        "task-15-final-cleanup"
+      ]
+    },
+    {
+      "id": "src-iam-best",
+      "title": "Security best practices in IAM",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+      "purpose": "Avoid root for routine work and protect credentials.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-bootstrap-user",
+        "task-15-final-cleanup"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare",
+      "sequence": 1,
+      "title": "Prepare the account and lab",
+      "goal": "Create the temporary training identity, verify the CLI profile and create the helper files."
+    },
+    {
+      "id": "phase-02-network",
+      "sequence": 2,
+      "title": "Create the two-AZ public network",
+      "goal": "Build the dedicated VPC, subnets, internet route and security groups."
+    },
+    {
+      "id": "phase-03-load-balancer",
+      "sequence": 3,
+      "title": "Create the target group and Application Load Balancer",
+      "goal": "Create a Layer 7 HTTP front door with /health target checks."
+    },
+    {
+      "id": "phase-04-auto-scaling",
+      "sequence": 4,
+      "title": "Create the launch template and Auto Scaling group",
+      "goal": "Launch a repeatable two-instance fleet across two Availability Zones and attach it to the ALB target group."
+    },
+    {
+      "id": "phase-05-dynamic-scaling",
+      "sequence": 5,
+      "title": "Configure and test dynamic scaling",
+      "goal": "Add target tracking with ALB request count per target and observe controlled scale-out."
+    },
+    {
+      "id": "phase-06-exam-review",
+      "sequence": 6,
+      "title": "Review SAA-C03 load balancing and scaling decisions",
+      "goal": "Connect the lab to Layer 7 routing, horizontal scaling, health and multi-AZ design."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Reverse-dependency cleanup",
+      "goal": "Remove automation, compute, load balancing, networking, credentials and local files safely."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare",
+      "title": "Verify the training account and AWS CLI",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm the disposable training account, AWS CLI and eu-west-2 Region before creating resources.",
+      "whyItMatters": "A known-good identity and Region prevent later ALB/ASG errors being confused with account or CLI problems.",
+      "examRelevance": "SAA-C03 covers high-performing elastic compute and appropriate load-balancing/scaling strategies.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-saa-domain3",
+        "src-saa-domain4",
+        "src-iam-best"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the AWS training account."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm that no fa-lba resource already exists for this lab."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run aws --version."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not create or use root access keys."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Root is used only for Task 2 bootstrap and final IAM-user removal."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        },
+        {
+          "title": "Bash - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "AWS CLI prints a version.",
+        "No fa-lba resource exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "AWS CLI runs successfully."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No lab resource has been created yet."
+        }
+      ]
+    },
+    {
+      "id": "task-02-bootstrap-user",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the temporary Load Balancing and Auto Scaling IAM user",
+      "feature": "IAM bootstrap",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-admin, one temporary access key and the complete lab policy, then sign out of root.",
+      "whyItMatters": "The identity needs explicit permissions for the VPC, launch template, ALB, target group and Auto Scaling group without AdministratorAccess.",
+      "examRelevance": "Secure identity boundaries remain part of sound AWS architecture.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-iam-best",
+        "src-vpc-create",
+        "src-alb-create",
+        "src-asg-launch-template"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Several create APIs need broad resource scope before generated IDs exist; the policy uses exact action lists rather than service-wide wildcards and all lab resources use fa-lba names."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in as root only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Users > Create user."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set User name to fa-lba-admin and enable console access."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create the user."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open IAM > Policies > Create policy > JSON."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Replace the editor with the complete fa-lba-admin-policy JSON below."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create the policy with the exact name fa-lba-admin-policy."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Open fa-lba-admin > Add permissions > Attach policies directly."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Select fa-lba-admin-policy and attach it."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open Security credentials and create one access key for CLI use."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Copy the values only to a temporary secure location."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Sign in as fa-lba-admin for all routine browser work."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI command",
+          "language": "text",
+          "content": "# Complete bootstrap in the IAM console. Do not create root access keys."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "fa-lba-admin-policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadEc2State\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ec2:Describe*\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingEc2Resources\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpc\", \"ec2:DeleteVpc\", \"ec2:ModifyVpcAttribute\",\n        \"ec2:CreateSubnet\", \"ec2:DeleteSubnet\", \"ec2:ModifySubnetAttribute\",\n        \"ec2:CreateInternetGateway\", \"ec2:AttachInternetGateway\", \"ec2:DetachInternetGateway\", \"ec2:DeleteInternetGateway\",\n        \"ec2:CreateRouteTable\", \"ec2:DeleteRouteTable\", \"ec2:AssociateRouteTable\", \"ec2:DisassociateRouteTable\", \"ec2:CreateRoute\", \"ec2:DeleteRoute\",\n        \"ec2:CreateSecurityGroup\", \"ec2:DeleteSecurityGroup\", \"ec2:AuthorizeSecurityGroupIngress\", \"ec2:AuthorizeSecurityGroupEgress\", \"ec2:RevokeSecurityGroupIngress\", \"ec2:RevokeSecurityGroupEgress\",\n        \"ec2:CreateLaunchTemplate\", \"ec2:DeleteLaunchTemplate\", \"ec2:CreateLaunchTemplateVersion\", \"ec2:DeleteLaunchTemplateVersions\",\n        \"ec2:CreateTags\", \"ec2:DeleteTags\", \"ec2:RunInstances\", \"ec2:TerminateInstances\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ReadLatestAmazonLinuxAmi\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"ssm:GetParameter\",\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingAlbResources\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"elasticloadbalancing:CreateLoadBalancer\", \"elasticloadbalancing:DeleteLoadBalancer\", \"elasticloadbalancing:DescribeLoadBalancers\",\n        \"elasticloadbalancing:CreateTargetGroup\", \"elasticloadbalancing:DeleteTargetGroup\", \"elasticloadbalancing:DescribeTargetGroups\", \"elasticloadbalancing:ModifyTargetGroup\", \"elasticloadbalancing:DescribeTargetHealth\",\n        \"elasticloadbalancing:CreateListener\", \"elasticloadbalancing:DeleteListener\", \"elasticloadbalancing:DescribeListeners\", \"elasticloadbalancing:DescribeRules\",\n        \"elasticloadbalancing:AddTags\", \"elasticloadbalancing:RemoveTags\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingAutoScalingResources\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"autoscaling:CreateAutoScalingGroup\", \"autoscaling:UpdateAutoScalingGroup\", \"autoscaling:DeleteAutoScalingGroup\",\n        \"autoscaling:DescribeAutoScalingGroups\", \"autoscaling:DescribeAutoScalingInstances\", \"autoscaling:DescribeScalingActivities\",\n        \"autoscaling:DescribePolicies\", \"autoscaling:PutScalingPolicy\", \"autoscaling:DeletePolicy\", \"autoscaling:SetDesiredCapacity\",\n        \"autoscaling:CreateOrUpdateTags\", \"autoscaling:DeleteTags\", \"autoscaling:AttachLoadBalancerTargetGroups\", \"autoscaling:DetachLoadBalancerTargetGroups\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ReadScalingMetrics\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"cloudwatch:DescribeAlarms\", \"cloudwatch:GetMetricData\", \"cloudwatch:GetMetricStatistics\", \"cloudwatch:ListMetrics\"],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"CreateOnlyRequiredServiceLinkedRoles\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"iam:CreateServiceLinkedRole\",\n      \"Resource\": \"*\",\n      \"Condition\": {\n        \"StringEquals\": {\n          \"iam:AWSServiceName\": [\"autoscaling.amazonaws.com\", \"elasticloadbalancing.amazonaws.com\"]\n        }\n      }\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "fa-lba-admin exists.",
+        "fa-lba-admin-policy is attached.",
+        "Exactly one temporary access key exists.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-bootstrap-user-verify-01",
+          "text": "The current browser session is fa-lba-admin."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-02",
+          "text": "No AdministratorAccess policy is attached."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-and-local-files",
+      "phaseId": "phase-01-prepare",
+      "title": "Configure the CLI profile and create the helper files",
+      "feature": "CLI and local files",
+      "difficulty": "Medium",
+      "goal": "Configure fa-lba-admin and create user-data.sh plus generate-load.ps1.",
+      "whyItMatters": "The launch template and load test remain auditable and reproducible.",
+      "examRelevance": "Launch templates can carry bootstrap user data that every Auto Scaling instance inherits.",
+      "prerequisites": [
+        "task-02-bootstrap-user"
+      ],
+      "sourceIds": [
+        "src-ec2-user-data",
+        "src-asg-launch-templates"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-lba-admin."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the temporary access key only in protected prompts."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set Region to eu-west-2 and output to json."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run get-caller-identity and confirm the ARN belongs to fa-lba-admin."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create C:\\aws-labs\\fa-lba."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create user-data.sh and paste the supplied content."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create generate-load.ps1 and paste the supplied content."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - configure profile",
+          "language": "text",
+          "content": "aws configure --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - verify identity",
+          "language": "text",
+          "content": "aws sts get-caller-identity --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force \"C:\\aws-labs\\fa-lba\""
+        },
+        {
+          "title": "PowerShell - enter folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\aws-labs\\fa-lba\""
+        },
+        {
+          "title": "PowerShell - verify folder",
+          "language": "text",
+          "content": "Get-Location"
+        },
+        {
+          "title": "Bash - verify identity",
+          "language": "text",
+          "content": "aws sts get-caller-identity --profile fa-lba-admin"
+        },
+        {
+          "title": "Bash - create folder",
+          "language": "text",
+          "content": "mkdir -p ~/aws-labs/fa-lba"
+        },
+        {
+          "title": "Bash - enter folder",
+          "language": "text",
+          "content": "cd ~/aws-labs/fa-lba"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\ndnf install -y httpd\nTOKEN=$(curl -sS -X PUT -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\" http://169.254.169.254/latest/api/token)\nINSTANCE_ID=$(curl -sS -H \"X-aws-ec2-metadata-token: ${TOKEN}\" http://169.254.169.254/latest/meta-data/instance-id)\nAZ=$(curl -sS -H \"X-aws-ec2-metadata-token: ${TOKEN}\" http://169.254.169.254/latest/meta-data/placement/availability-zone)\ncat > /var/www/html/index.html <<EOF\n<!doctype html>\n<html><head><title>fa-lba</title></head><body>\n<h1>Load Balancing & Auto Scaling Follow Along</h1>\n<p>Instance: ${INSTANCE_ID}</p>\n<p>Availability Zone: ${AZ}</p>\n</body></html>\nEOF\necho \"healthy\" > /var/www/html/health\nsystemctl enable httpd\nsystemctl start httpd"
+        },
+        {
+          "title": "generate-load.ps1",
+          "language": "text",
+          "content": "param(\n  [Parameter(Mandatory = $true)]\n  [string]$AlbDnsName\n)\n$endTime = (Get-Date).AddMinutes(5)\nwhile ((Get-Date) -lt $endTime) {\n  for ($i = 1; $i -le 60; $i++) {\n    try { Invoke-WebRequest -Uri \"http://$AlbDnsName/\" -UseBasicParsing -TimeoutSec 10 | Out-Null }\n    catch { Write-Host \"Request failed: $($_.Exception.Message)\" }\n  }\n  Write-Host \"Generated another request batch at $(Get-Date -Format T)\"\n  Start-Sleep -Seconds 10\n}"
+        }
+      ],
+      "expectedResults": [
+        "The CLI identity is fa-lba-admin.",
+        "Both helper files exist.",
+        "No credential appears in either file."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-and-local-files-verify-01",
+          "text": "The CLI profile works in eu-west-2."
+        },
+        {
+          "id": "task-03-cli-and-local-files-verify-02",
+          "text": "user-data.sh creates / and /health pages."
+        }
+      ]
+    },
+    {
+      "id": "task-04-vpc-network",
+      "phaseId": "phase-02-network",
+      "title": "Create the VPC, two public subnets, internet gateway and route table",
+      "feature": "VPC networking",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-vpc with public subnets in eu-west-2a and eu-west-2b and a public default route.",
+      "whyItMatters": "The ALB and ASG span two Availability Zones, and the instances need outbound internet for Apache installation.",
+      "examRelevance": "Multi-AZ horizontal compute and load balancing improve resilience and elasticity.",
+      "prerequisites": [
+        "task-03-cli-and-local-files"
+      ],
+      "sourceIds": [
+        "src-vpc-create",
+        "src-vpc-igw",
+        "src-saa-domain3"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Public IPv4 addresses and later ALB/EC2 resources can incur charges."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open the VPC console and select Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create VPC fa-lba-vpc with IPv4 CIDR 10.60.0.0/16."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enable DNS hostnames for fa-lba-vpc."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-lba-public-a in eu-west-2a with 10.60.1.0/24."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create fa-lba-public-b in eu-west-2b with 10.60.2.0/24."
+        },
+        {
+          "sequence": 6,
+          "instruction": "For each subnet enable auto-assign public IPv4."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create internet gateway fa-lba-igw."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Attach fa-lba-igw to fa-lba-vpc."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create route table fa-lba-public-rt in fa-lba-vpc."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Add route 0.0.0.0/0 to fa-lba-igw."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Associate fa-lba-public-a and fa-lba-public-b with fa-lba-public-rt."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create VPC",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 create-vpc --cidr-block 10.60.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-lba-vpc},{Key=FollowAlong,Value=fa-lba}]\" --query Vpc.VpcId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - enable DNS hostnames",
+          "language": "text",
+          "content": "aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames \"{\\\"Value\\\":true}\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create subnet A",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2a --cidr-block 10.60.1.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-lba-public-a},{Key=FollowAlong,Value=fa-lba}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create subnet B",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2b --cidr-block 10.60.2.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-lba-public-b},{Key=FollowAlong,Value=fa-lba}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - public IPv4 subnet A",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_A_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - public IPv4 subnet B",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_B_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create internet gateway",
+          "language": "text",
+          "content": "$IGW_ID = aws ec2 create-internet-gateway --tag-specifications \"ResourceType=internet-gateway,Tags=[{Key=Name,Value=fa-lba-igw},{Key=FollowAlong,Value=fa-lba}]\" --query InternetGateway.InternetGatewayId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - attach internet gateway",
+          "language": "text",
+          "content": "aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create route table",
+          "language": "text",
+          "content": "$RT_ID = aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-lba-public-rt},{Key=FollowAlong,Value=fa-lba}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create default route",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - associate subnet A",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - associate subnet B",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The VPC is 10.60.0.0/16.",
+        "The two /24 subnets are in different AZs.",
+        "The route table sends 0.0.0.0/0 to fa-lba-igw."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-vpc-network-verify-01",
+          "text": "Both subnets use fa-lba-public-rt."
+        },
+        {
+          "id": "task-04-vpc-network-verify-02",
+          "text": "Both subnets auto-assign public IPv4."
+        }
+      ]
+    },
+    {
+      "id": "task-05-security-groups",
+      "phaseId": "phase-02-network",
+      "title": "Create separate ALB and web security groups",
+      "feature": "Security groups",
+      "difficulty": "Medium",
+      "goal": "Allow public HTTP only to the ALB and backend HTTP only from the ALB security group.",
+      "whyItMatters": "The instances should not accept direct application traffic from the internet.",
+      "examRelevance": "The common security pattern is client -> ALB SG -> application SG.",
+      "prerequisites": [
+        "task-04-vpc-network"
+      ],
+      "sourceIds": [
+        "src-vpc-sg",
+        "src-alb-troubleshoot"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Security Groups."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-lba-alb-sg in fa-lba-vpc with inbound HTTP TCP 80 from 0.0.0.0/0."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Keep the default allow-all outbound rule."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-lba-web-sg in fa-lba-vpc."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Add inbound HTTP TCP 80 with Source set to fa-lba-alb-sg."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not add SSH."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Keep the default allow-all outbound rule."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild VPC ID",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-lba-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create ALB SG",
+          "language": "text",
+          "content": "$ALB_SG_ID = aws ec2 create-security-group --group-name fa-lba-alb-sg --description \"HTTP to training ALB\" --vpc-id $VPC_ID --tag-specifications \"ResourceType=security-group,Tags=[{Key=Name,Value=fa-lba-alb-sg},{Key=FollowAlong,Value=fa-lba}]\" --query GroupId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - allow HTTP to ALB",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id $ALB_SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0 --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create web SG",
+          "language": "text",
+          "content": "$WEB_SG_ID = aws ec2 create-security-group --group-name fa-lba-web-sg --description \"HTTP from ALB only\" --vpc-id $VPC_ID --tag-specifications \"ResourceType=security-group,Tags=[{Key=Name,Value=fa-lba-web-sg},{Key=FollowAlong,Value=fa-lba}]\" --query GroupId --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - allow ALB to web",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id $WEB_SG_ID --protocol tcp --port 80 --source-group $ALB_SG_ID --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-lba-alb-sg allows HTTP from 0.0.0.0/0.",
+        "fa-lba-web-sg allows HTTP only from fa-lba-alb-sg.",
+        "No SSH rule exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-security-groups-verify-01",
+          "text": "The web SG source is the ALB SG ID."
+        },
+        {
+          "id": "task-05-security-groups-verify-02",
+          "text": "Both groups belong to fa-lba-vpc."
+        }
+      ]
+    },
+    {
+      "id": "task-06-target-group",
+      "phaseId": "phase-03-load-balancer",
+      "title": "Create the target group and /health health check",
+      "feature": "Target group",
+      "difficulty": "Medium",
+      "goal": "Create fa-lba-tg for instance targets on HTTP:80 with health path /health.",
+      "whyItMatters": "The target group controls both backend routing and target health evaluation.",
+      "examRelevance": "ALB health checks are configured per target group and only healthy targets receive normal traffic.",
+      "prerequisites": [
+        "task-05-security-groups"
+      ],
+      "sourceIds": [
+        "src-alb-target-groups",
+        "src-alb-health",
+        "src-alb-check-health"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Target Groups > Create target group."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Target type: Instances."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Name: fa-lba-tg."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Protocol HTTP, port 80, IPv4."
+        },
+        {
+          "sequence": 5,
+          "instruction": "VPC: fa-lba-vpc."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Health check protocol HTTP."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Health check path /health."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Healthy threshold 2, unhealthy threshold 2, timeout 5 seconds, interval 30 seconds, success codes 200."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Do not manually register a target."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create the target group."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild VPC ID",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-lba-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create target group",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 create-target-group --name fa-lba-tg --protocol HTTP --port 80 --target-type instance --vpc-id $VPC_ID --health-check-protocol HTTP --health-check-path /health --health-check-port traffic-port --health-check-interval-seconds 30 --health-check-timeout-seconds 5 --healthy-threshold-count 2 --unhealthy-threshold-count 2 --matcher HttpCode=200 --tags Key=FollowAlong,Value=fa-lba --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - describe target group",
+          "language": "text",
+          "content": "aws elbv2 describe-target-groups --target-group-arns $TG_ARN --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-lba-tg exists in fa-lba-vpc.",
+        "HealthCheckPath is /health.",
+        "No targets are registered yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-target-group-verify-01",
+          "text": "The target type is instance."
+        },
+        {
+          "id": "task-06-target-group-verify-02",
+          "text": "The success matcher is 200."
+        }
+      ]
+    },
+    {
+      "id": "task-07-launch-template",
+      "phaseId": "phase-04-auto-scaling",
+      "title": "Create the launch template",
+      "feature": "Launch template",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-lt with Amazon Linux 2023, t3.micro, IMDSv2, fa-lba-web-sg and the supplied user data.",
+      "whyItMatters": "All Auto Scaling instances should launch from one repeatable configuration.",
+      "examRelevance": "Launch templates are the reusable EC2 configuration used when Auto Scaling adds capacity.",
+      "prerequisites": [
+        "task-06-target-group"
+      ],
+      "sourceIds": [
+        "src-asg-launch-template",
+        "src-asg-launch-templates",
+        "src-ec2-user-data"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "EC2 instances and public IPv4 addresses can incur charges."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Launch Templates > Create launch template."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Name: fa-lba-lt."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Version description: fa-lba-version-1."
+        },
+        {
+          "sequence": 4,
+          "instruction": "AMI: Amazon Linux 2023."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Instance type: t3.micro."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Key pair: Don't include in launch template."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Network settings: select existing security group fa-lba-web-sg."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Enable Auto-assign Public IP."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Advanced details: set IMDSv2 to Required."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Paste the supplied user-data.sh into User data."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Create the launch template and confirm version 1 exists."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - enter lab folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\aws-labs\\fa-lba\""
+        },
+        {
+          "title": "PowerShell - resolve latest AL2023 AMI",
+          "language": "text",
+          "content": "$AMI_ID = aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query \"Parameter.Value\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild web SG ID",
+          "language": "text",
+          "content": "$WEB_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-lba-web-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - base64 user data",
+          "language": "text",
+          "content": "$USER_DATA_B64 = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes((Resolve-Path \".\\user-data.sh\")))"
+        },
+        {
+          "title": "PowerShell - build launch template JSON",
+          "language": "text",
+          "content": "$LT_DATA = @{ ImageId=$AMI_ID; InstanceType=\"t3.micro\"; UserData=$USER_DATA_B64; MetadataOptions=@{HttpTokens=\"required\";HttpEndpoint=\"enabled\"}; NetworkInterfaces=@(@{DeviceIndex=0;AssociatePublicIpAddress=$true;DeleteOnTermination=$true;Groups=@($WEB_SG_ID)}); TagSpecifications=@(@{ResourceType=\"instance\";Tags=@(@{Key=\"Name\";Value=\"fa-lba-web\"},@{Key=\"FollowAlong\";Value=\"fa-lba\"})}) } | ConvertTo-Json -Depth 8"
+        },
+        {
+          "title": "PowerShell - save launch template JSON",
+          "language": "text",
+          "content": "$LT_DATA | Set-Content -Encoding utf8 .\\launch-template-data.json"
+        },
+        {
+          "title": "PowerShell - create launch template",
+          "language": "text",
+          "content": "aws ec2 create-launch-template --launch-template-name fa-lba-lt --version-description fa-lba-version-1 --launch-template-data file://launch-template-data.json --tag-specifications \"ResourceType=launch-template,Tags=[{Key=FollowAlong,Value=fa-lba}]\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - verify launch template",
+          "language": "text",
+          "content": "aws ec2 describe-launch-template-versions --launch-template-name fa-lba-lt --versions 1 --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\ndnf install -y httpd\nTOKEN=$(curl -sS -X PUT -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\" http://169.254.169.254/latest/api/token)\nINSTANCE_ID=$(curl -sS -H \"X-aws-ec2-metadata-token: ${TOKEN}\" http://169.254.169.254/latest/meta-data/instance-id)\nAZ=$(curl -sS -H \"X-aws-ec2-metadata-token: ${TOKEN}\" http://169.254.169.254/latest/meta-data/placement/availability-zone)\ncat > /var/www/html/index.html <<EOF\n<!doctype html>\n<html><head><title>fa-lba</title></head><body>\n<h1>Load Balancing & Auto Scaling Follow Along</h1>\n<p>Instance: ${INSTANCE_ID}</p>\n<p>Availability Zone: ${AZ}</p>\n</body></html>\nEOF\necho \"healthy\" > /var/www/html/health\nsystemctl enable httpd\nsystemctl start httpd"
+        }
+      ],
+      "expectedResults": [
+        "fa-lba-lt version 1 exists.",
+        "It uses t3.micro, the resolved AL2023 AMI, fa-lba-web-sg and IMDSv2 required.",
+        "No key pair is configured."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-launch-template-verify-01",
+          "text": "Version 1 is present."
+        },
+        {
+          "id": "task-07-launch-template-verify-02",
+          "text": "User data is populated."
+        },
+        {
+          "id": "task-07-launch-template-verify-03",
+          "text": "Public IPv4 is enabled for the primary network interface."
+        }
+      ]
+    },
+    {
+      "id": "task-08-create-alb",
+      "phaseId": "phase-03-load-balancer",
+      "title": "Create the Application Load Balancer and HTTP listener",
+      "feature": "Application Load Balancer",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-alb across the two public subnets and forward HTTP:80 to fa-lba-tg.",
+      "whyItMatters": "The ALB is the single public Layer 7 entry point and forwards only to healthy targets.",
+      "examRelevance": "ALB is the Layer 7 choice for HTTP/HTTPS application routing.",
+      "prerequisites": [
+        "task-06-target-group"
+      ],
+      "sourceIds": [
+        "src-alb-intro",
+        "src-alb-create",
+        "src-alb-listeners",
+        "src-alb-target-groups"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Application Load Balancers incur charges while running."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Load Balancers > Create load balancer > Application Load Balancer."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Name: fa-lba-alb."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Scheme: Internet-facing."
+        },
+        {
+          "sequence": 4,
+          "instruction": "IP address type: IPv4."
+        },
+        {
+          "sequence": 5,
+          "instruction": "VPC: fa-lba-vpc."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Select eu-west-2a/fa-lba-public-a and eu-west-2b/fa-lba-public-b."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Security group: fa-lba-alb-sg only."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Listener: HTTP port 80."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Default action: Forward to fa-lba-tg."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create the load balancer."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Wait until State is Active."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Copy the generated DNS name."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild subnet A ID",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet B ID",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild ALB SG ID",
+          "language": "text",
+          "content": "$ALB_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-lba-alb-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create ALB",
+          "language": "text",
+          "content": "$ALB_ARN = aws elbv2 create-load-balancer --name fa-lba-alb --type application --scheme internet-facing --ip-address-type ipv4 --subnets $SUBNET_A_ID $SUBNET_B_ID --security-groups $ALB_SG_ID --tags Key=FollowAlong,Value=fa-lba --query \"LoadBalancers[0].LoadBalancerArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - wait for ALB",
+          "language": "text",
+          "content": "aws elbv2 wait load-balancer-available --load-balancer-arns $ALB_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create listener",
+          "language": "text",
+          "content": "$LISTENER_ARN = aws elbv2 create-listener --load-balancer-arn $ALB_ARN --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=$TG_ARN --query \"Listeners[0].ListenerArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - get ALB DNS",
+          "language": "text",
+          "content": "$ALB_DNS = aws elbv2 describe-load-balancers --names fa-lba-alb --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - show ALB DNS",
+          "language": "text",
+          "content": "Write-Output $ALB_DNS"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-lba-alb is Active.",
+        "It spans two Availability Zones.",
+        "HTTP:80 forwards to fa-lba-tg.",
+        "An ALB DNS name is available."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-create-alb-verify-01",
+          "text": "The ALB uses fa-lba-alb-sg."
+        },
+        {
+          "id": "task-08-create-alb-verify-02",
+          "text": "The listener default action points at fa-lba-tg."
+        }
+      ]
+    },
+    {
+      "id": "task-09-create-asg",
+      "phaseId": "phase-04-auto-scaling",
+      "title": "Create the Auto Scaling group and attach the target group",
+      "feature": "Auto Scaling group",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-asg with Min 2, Desired 2 and Max 4 across both public subnets, attach fa-lba-tg, enable ELB health checks and use 120-second grace/warmup.",
+      "whyItMatters": "The group maintains capacity across two Availability Zones and automatically registers every launched instance with the target group.",
+      "examRelevance": "Horizontal scaling plus load-balancer health integration is a core elastic-compute design.",
+      "prerequisites": [
+        "task-07-launch-template",
+        "task-08-create-alb"
+      ],
+      "sourceIds": [
+        "src-asg-intro",
+        "src-asg-launch-template",
+        "src-asg-attach-alb",
+        "src-asg-health",
+        "src-asg-grace",
+        "src-asg-warmup"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Allow several minutes for Apache installation and initial health checks before diagnosing failure."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2 > Auto Scaling Groups > Create Auto Scaling group."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Name: fa-lba-asg."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Launch template: fa-lba-lt, version 1."
+        },
+        {
+          "sequence": 4,
+          "instruction": "VPC: fa-lba-vpc."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Select fa-lba-public-a and fa-lba-public-b."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Attach to an existing load balancer target group and choose fa-lba-tg."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Turn on Elastic Load Balancing health checks."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Health check grace period: 120 seconds."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Desired capacity: 2."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Minimum capacity: 2."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Maximum capacity: 4."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Default instance warmup: 120 seconds."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Do not add a scaling policy yet."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Add Name=fa-lba-web and propagate it to instances."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Create the group."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Wait for two instances to become InService."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Open fa-lba-tg > Targets and wait for both targets to become Healthy."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild subnet A ID",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet B ID",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - create ASG",
+          "language": "text",
+          "content": "aws autoscaling create-auto-scaling-group --auto-scaling-group-name fa-lba-asg --launch-template LaunchTemplateName=fa-lba-lt,Version=1 --min-size 2 --max-size 4 --desired-capacity 2 --default-instance-warmup 120 --health-check-type ELB --health-check-grace-period 120 --vpc-zone-identifier \"$SUBNET_A_ID,$SUBNET_B_ID\" --target-group-arns $TG_ARN --tags ResourceId=fa-lba-asg,ResourceType=auto-scaling-group,Key=Name,Value=fa-lba-web,PropagateAtLaunch=true ResourceId=fa-lba-asg,ResourceType=auto-scaling-group,Key=FollowAlong,Value=fa-lba,PropagateAtLaunch=true --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - describe ASG",
+          "language": "text",
+          "content": "aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names fa-lba-asg --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - check target health",
+          "language": "text",
+          "content": "aws elbv2 describe-target-health --target-group-arn $TG_ARN --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "ASG MinSize=2, DesiredCapacity=2 and MaxSize=4.",
+        "Two instances become InService.",
+        "Both target-group targets become Healthy."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-create-asg-verify-01",
+          "text": "The ASG uses fa-lba-lt version 1."
+        },
+        {
+          "id": "task-09-create-asg-verify-02",
+          "text": "HealthCheckType is ELB."
+        },
+        {
+          "id": "task-09-create-asg-verify-03",
+          "text": "DefaultInstanceWarmup is 120."
+        },
+        {
+          "id": "task-09-create-asg-verify-04",
+          "text": "Healthy targets exist."
+        }
+      ]
+    },
+    {
+      "id": "task-10-scaling-policy",
+      "phaseId": "phase-05-dynamic-scaling",
+      "title": "Create the ALB request-count target tracking policy",
+      "feature": "Dynamic scaling policy",
+      "difficulty": "Hard",
+      "goal": "Create fa-lba-request-scaling using ALBRequestCountPerTarget with target value 50.",
+      "whyItMatters": "Target tracking expresses a desired metric level and lets Auto Scaling adjust capacity in both directions.",
+      "examRelevance": "For request-driven web workloads, request count per target can connect scaling directly to backend load.",
+      "prerequisites": [
+        "task-09-create-asg"
+      ],
+      "sourceIds": [
+        "src-asg-target-tracking",
+        "src-asg-dynamic",
+        "src-asg-warmup"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-lba-asg > Automatic scaling."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create dynamic scaling policy."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Policy type: Target tracking scaling."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Name: fa-lba-request-scaling."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Metric type: Application Load Balancer request count per target."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Target value: 50."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Select the fa-lba-alb/fa-lba-tg metric resource."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Keep scale in enabled."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create the policy."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild ALB ARN",
+          "language": "text",
+          "content": "$ALB_ARN = aws elbv2 describe-load-balancers --names fa-lba-alb --query \"LoadBalancers[0].LoadBalancerArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - derive ALB resource part",
+          "language": "text",
+          "content": "$ALB_RESOURCE = ($ALB_ARN -split \"loadbalancer/\")[1]"
+        },
+        {
+          "title": "PowerShell - derive TG resource part",
+          "language": "text",
+          "content": "$TG_RESOURCE = ($TG_ARN -split \":targetgroup/\")[1]"
+        },
+        {
+          "title": "PowerShell - build resource label",
+          "language": "text",
+          "content": "$RESOURCE_LABEL = \"$ALB_RESOURCE/targetgroup/$TG_RESOURCE\""
+        },
+        {
+          "title": "PowerShell - create target tracking policy",
+          "language": "text",
+          "content": "aws autoscaling put-scaling-policy --auto-scaling-group-name fa-lba-asg --policy-name fa-lba-request-scaling --policy-type TargetTrackingScaling --target-tracking-configuration \"PredefinedMetricSpecification={PredefinedMetricType=ALBRequestCountPerTarget,ResourceLabel=$RESOURCE_LABEL},TargetValue=50,DisableScaleIn=false\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - verify policy",
+          "language": "text",
+          "content": "aws autoscaling describe-policies --auto-scaling-group-name fa-lba-asg --policy-names fa-lba-request-scaling --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "fa-lba-request-scaling exists.",
+        "Policy type is TargetTrackingScaling.",
+        "Metric is ALBRequestCountPerTarget.",
+        "TargetValue is 50."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-scaling-policy-verify-01",
+          "text": "The policy is attached to fa-lba-asg."
+        },
+        {
+          "id": "task-10-scaling-policy-verify-02",
+          "text": "Scale-in is enabled."
+        },
+        {
+          "id": "task-10-scaling-policy-verify-03",
+          "text": "The resource label identifies fa-lba-alb and fa-lba-tg."
+        }
+      ]
+    },
+    {
+      "id": "task-11-verify-health-and-routing",
+      "phaseId": "phase-05-dynamic-scaling",
+      "title": "Verify ALB routing and both layers of health checks",
+      "feature": "Health checks",
+      "difficulty": "Medium",
+      "goal": "Prove that the ALB routes HTTP to healthy Auto Scaling targets and distinguish target-group health from ASG replacement health.",
+      "whyItMatters": "The ALB decides routing eligibility while Auto Scaling can use ELB health to decide instance replacement after the grace period.",
+      "examRelevance": "Exam questions often distinguish target health, desired-capacity maintenance, grace period and warmup.",
+      "prerequisites": [
+        "task-10-scaling-policy"
+      ],
+      "sourceIds": [
+        "src-alb-health",
+        "src-alb-check-health",
+        "src-asg-health",
+        "src-asg-health-overview",
+        "src-asg-grace",
+        "src-asg-attach-alb"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-lba-tg > Targets and confirm both targets are Healthy."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open fa-lba-alb and copy its DNS name."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open http://<copied DNS name>/ in a browser."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Refresh several times and observe the Instance ID and Availability Zone."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open http://<copied DNS name>/health and confirm healthy."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open fa-lba-asg and confirm Health check type is Elastic Load Balancing and grace period is 120 seconds."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Remember: target-group health controls ALB routing; ASG ELB health integration can trigger replacement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - get ALB DNS",
+          "language": "text",
+          "content": "$ALB_DNS = aws elbv2 describe-load-balancers --names fa-lba-alb --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - request home page",
+          "language": "text",
+          "content": "Invoke-WebRequest -Uri \"http://$ALB_DNS/\" -UseBasicParsing"
+        },
+        {
+          "title": "PowerShell - request health page",
+          "language": "text",
+          "content": "Invoke-WebRequest -Uri \"http://$ALB_DNS/health\" -UseBasicParsing"
+        },
+        {
+          "title": "PowerShell - rebuild target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - inspect target health",
+          "language": "text",
+          "content": "aws elbv2 describe-target-health --target-group-arn $TG_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - inspect ASG health settings",
+          "language": "text",
+          "content": "aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names fa-lba-asg --query \"AutoScalingGroups[0].{HealthCheckType:HealthCheckType,Grace:HealthCheckGracePeriod,Desired:DesiredCapacity}\" --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The home page returns HTTP 200.",
+        "/health returns HTTP 200.",
+        "All registered targets are healthy.",
+        "ASG HealthCheckType is ELB and grace period is 120."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-verify-health-and-routing-verify-01",
+          "text": "The ALB DNS is reachable."
+        },
+        {
+          "id": "task-11-verify-health-and-routing-verify-02",
+          "text": "The backend SG does not allow HTTP from 0.0.0.0/0."
+        },
+        {
+          "id": "task-11-verify-health-and-routing-verify-03",
+          "text": "The learner can explain target-group health versus ASG replacement health."
+        }
+      ]
+    },
+    {
+      "id": "task-12-generate-load",
+      "phaseId": "phase-05-dynamic-scaling",
+      "title": "Generate controlled traffic and observe scale-out",
+      "feature": "Scaling verification",
+      "difficulty": "Hard",
+      "goal": "Run the five-minute request generator and observe fa-lba-asg scale above its initial desired capacity of 2 without exceeding 4.",
+      "whyItMatters": "A scaling policy is meaningful only when metric pressure can be connected to scaling activities and newly healthy targets.",
+      "examRelevance": "Target tracking follows changing demand and accounts for instance warmup.",
+      "prerequisites": [
+        "task-11-verify-health-and-routing"
+      ],
+      "sourceIds": [
+        "src-asg-target-tracking",
+        "src-asg-dynamic",
+        "src-asg-warmup",
+        "src-asg-tutorial"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The generator is limited to five minutes; stop it once scale-out is proven.",
+        "CloudWatch timing and 120-second warmup mean scaling is not instantaneous."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-lba-asg > Activity so scaling events are visible."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Automatic scaling in another tab and confirm fa-lba-request-scaling is enabled."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open PowerShell in C:\\aws-labs\\fa-lba."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Get the ALB DNS name."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run .\\generate-load.ps1 -AlbDnsName $ALB_DNS."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Let the generator run for up to five minutes."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Refresh Activity every minute."
+        },
+        {
+          "sequence": 8,
+          "instruction": "When a scale-out event appears, note the new Desired capacity."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Wait for any new instance to become InService."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open fa-lba-tg > Targets and wait for the new target to become Healthy."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Press Ctrl+C once scale-out above 2 is proven; do not generate unnecessary traffic."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Scale-in may take additional minutes and does not need to finish before Task 13."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - enter lab folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\aws-labs\\fa-lba\""
+        },
+        {
+          "title": "PowerShell - get ALB DNS",
+          "language": "text",
+          "content": "$ALB_DNS = aws elbv2 describe-load-balancers --names fa-lba-alb --query \"LoadBalancers[0].DNSName\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - run load generator",
+          "language": "text",
+          "content": ".\\generate-load.ps1 -AlbDnsName $ALB_DNS"
+        },
+        {
+          "title": "PowerShell - inspect capacity",
+          "language": "text",
+          "content": "aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names fa-lba-asg --query \"AutoScalingGroups[0].{Min:MinSize,Desired:DesiredCapacity,Max:MaxSize,Instances:length(Instances)}\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - inspect activities",
+          "language": "text",
+          "content": "aws autoscaling describe-scaling-activities --auto-scaling-group-name fa-lba-asg --max-items 10 --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "generate-load.ps1",
+          "language": "text",
+          "content": "param(\n  [Parameter(Mandatory = $true)]\n  [string]$AlbDnsName\n)\n$endTime = (Get-Date).AddMinutes(5)\nwhile ((Get-Date) -lt $endTime) {\n  for ($i = 1; $i -le 60; $i++) {\n    try { Invoke-WebRequest -Uri \"http://$AlbDnsName/\" -UseBasicParsing -TimeoutSec 10 | Out-Null }\n    catch { Write-Host \"Request failed: $($_.Exception.Message)\" }\n  }\n  Write-Host \"Generated another request batch at $(Get-Date -Format T)\"\n  Start-Sleep -Seconds 10\n}"
+        }
+      ],
+      "expectedResults": [
+        "ALB requests continue succeeding during the test.",
+        "Desired capacity can rise above 2 up to MaxSize 4.",
+        "New instances use fa-lba-lt and join fa-lba-tg.",
+        "New targets become Healthy before serving normal traffic."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-generate-load-verify-01",
+          "text": "A scaling activity references target tracking."
+        },
+        {
+          "id": "task-12-generate-load-verify-02",
+          "text": "Desired capacity never exceeds 4."
+        },
+        {
+          "id": "task-12-generate-load-verify-03",
+          "text": "Any new target eventually becomes Healthy."
+        }
+      ]
+    },
+    {
+      "id": "task-13-exam-review",
+      "phaseId": "phase-06-exam-review",
+      "title": "Review the SAA-C03 load balancing and Auto Scaling decisions",
+      "feature": "Exam review",
+      "difficulty": "Easy",
+      "goal": "Translate the completed architecture into exam rules and common distinctions.",
+      "whyItMatters": "SAA-C03 tests architecture selection more than console sequence memory.",
+      "examRelevance": "ALB, target groups, launch templates, Auto Scaling, target tracking and health checks are directly relevant to elastic compute design.",
+      "prerequisites": [
+        "task-12-generate-load"
+      ],
+      "sourceIds": [
+        "src-saa-domain3",
+        "src-saa-domain4",
+        "src-alb-intro",
+        "src-alb-target-groups",
+        "src-asg-intro",
+        "src-asg-target-tracking",
+        "src-asg-health"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "ALB is Layer 7 for HTTP/HTTPS application traffic."
+        },
+        {
+          "sequence": 2,
+          "instruction": "A listener receives traffic; a target group routes to and health-checks backend targets."
+        },
+        {
+          "sequence": 3,
+          "instruction": "The ALB SG accepts client HTTP; the web SG accepts HTTP only from the ALB SG."
+        },
+        {
+          "sequence": 4,
+          "instruction": "A launch template defines reusable EC2 instance configuration."
+        },
+        {
+          "sequence": 5,
+          "instruction": "An ASG manages minimum, desired and maximum capacity across multiple subnets/AZs."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Horizontal scaling adds/removes instances; vertical scaling changes instance size."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Target tracking tries to keep a chosen metric near a target value."
+        },
+        {
+          "sequence": 8,
+          "instruction": "ALBRequestCountPerTarget is useful when requests per backend represent load."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Target-group health controls routing eligibility."
+        },
+        {
+          "sequence": 10,
+          "instruction": "ASG ELB health integration can replace load-balancer-unhealthy instances after the grace period."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Health-check grace period protects a new instance during startup."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Default instance warmup prevents initializing capacity being treated as fully ready for scaling decisions."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Exam trigger: HTTP host/path routing points to ALB."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Exam trigger: automatic EC2 capacity changes point to ASG plus scaling policy."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Exam trigger: multi-AZ resilience points to ALB and ASG spanning multiple AZs."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Exam trap: healthy EC2 system checks do not prove the application is healthy at /health."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - final ASG summary",
+          "language": "text",
+          "content": "aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names fa-lba-asg --query \"AutoScalingGroups[0].{Min:MinSize,Desired:DesiredCapacity,Max:MaxSize,Health:HealthCheckType,Warmup:DefaultInstanceWarmup}\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - final target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - final target health",
+          "language": "text",
+          "content": "aws elbv2 describe-target-health --target-group-arn $TG_ARN --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can explain ALB listener -> target group -> instance flow.",
+        "The learner can explain launch template -> ASG -> scaling policy flow.",
+        "The learner can distinguish target health, ASG health, grace period and warmup."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-exam-review-verify-01",
+          "text": "The ALB is active."
+        },
+        {
+          "id": "task-13-exam-review-verify-02",
+          "text": "The ASG remains within Min 2 and Max 4."
+        },
+        {
+          "id": "task-13-exam-review-verify-03",
+          "text": "At least desired capacity is healthy before cleanup."
+        }
+      ]
+    },
+    {
+      "id": "task-14-prepare-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Stop automation, scale to zero and rebuild generated IDs",
+      "feature": "Cleanup preparation",
+      "difficulty": "Medium",
+      "goal": "Remove the scaling policy, set the ASG to zero and rebuild all generated IDs required for deterministic deletion.",
+      "whyItMatters": "Stopping automation first prevents a new scale-out event during teardown.",
+      "examRelevance": "Safe cleanup starts by disabling automation and removing the most dependent workload capacity.",
+      "prerequisites": [
+        "task-13-exam-review"
+      ],
+      "sourceIds": [
+        "src-asg-target-tracking",
+        "src-asg-intro",
+        "src-alb-target-groups"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm generate-load.ps1 is stopped."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open fa-lba-asg > Automatic scaling and delete fa-lba-request-scaling."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set Minimum capacity to 0 and Desired capacity to 0."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Keep Maximum capacity at 4 until the group is deleted."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Wait for every Auto Scaling instance to terminate."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open fa-lba-tg > Targets and wait until no target remains."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - delete scaling policy",
+          "language": "text",
+          "content": "aws autoscaling delete-policy --auto-scaling-group-name fa-lba-asg --policy-name fa-lba-request-scaling --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - scale ASG to zero",
+          "language": "text",
+          "content": "aws autoscaling update-auto-scaling-group --auto-scaling-group-name fa-lba-asg --min-size 0 --desired-capacity 0 --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - inspect ASG instances",
+          "language": "text",
+          "content": "aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names fa-lba-asg --query \"AutoScalingGroups[0].Instances\" --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild VPC ID",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 describe-vpcs --filters Name=tag:Name,Values=fa-lba-vpc --query \"Vpcs[0].VpcId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet A ID",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-a --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild subnet B ID",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 describe-subnets --filters Name=tag:Name,Values=fa-lba-public-b --query \"Subnets[0].SubnetId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild IGW ID",
+          "language": "text",
+          "content": "$IGW_ID = aws ec2 describe-internet-gateways --filters Name=tag:Name,Values=fa-lba-igw --query \"InternetGateways[0].InternetGatewayId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild route table ID",
+          "language": "text",
+          "content": "$RT_ID = aws ec2 describe-route-tables --filters Name=tag:Name,Values=fa-lba-public-rt --query \"RouteTables[0].RouteTableId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild ALB SG ID",
+          "language": "text",
+          "content": "$ALB_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-lba-alb-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild web SG ID",
+          "language": "text",
+          "content": "$WEB_SG_ID = aws ec2 describe-security-groups --filters Name=group-name,Values=fa-lba-web-sg --query \"SecurityGroups[0].GroupId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild target group ARN",
+          "language": "text",
+          "content": "$TG_ARN = aws elbv2 describe-target-groups --names fa-lba-tg --query \"TargetGroups[0].TargetGroupArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild ALB ARN",
+          "language": "text",
+          "content": "$ALB_ARN = aws elbv2 describe-load-balancers --names fa-lba-alb --query \"LoadBalancers[0].LoadBalancerArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - rebuild listener ARN",
+          "language": "text",
+          "content": "$LISTENER_ARN = aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN --query \"Listeners[0].ListenerArn\" --output text --region eu-west-2 --profile fa-lba-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The scaling policy is gone.",
+        "ASG MinSize and DesiredCapacity are 0.",
+        "All ASG instances terminate.",
+        "The target group has no registered targets."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-prepare-cleanup-verify-01",
+          "text": "No traffic generator is running."
+        },
+        {
+          "id": "task-14-prepare-cleanup-verify-02",
+          "text": "No ASG instance remains before network teardown."
+        }
+      ]
+    },
+    {
+      "id": "task-15-final-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete every fa-lba resource in reverse dependency order",
+      "feature": "Ordered cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete the ASG, launch template, listener, ALB, target group, security groups, routing, VPC, temporary identity and local files.",
+      "whyItMatters": "Reverse dependency order avoids failed deletions and prevents chargeable resources being stranded.",
+      "examRelevance": "Cost-aware design includes cleaning up temporary load balancers, instances and public IPv4 resources.",
+      "prerequisites": [
+        "task-14-prepare-cleanup"
+      ],
+      "sourceIds": [
+        "src-alb-create",
+        "src-alb-target-groups",
+        "src-asg-launch-template",
+        "src-vpc-igw",
+        "src-vpc-sg",
+        "src-iam-best"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "If a security-group deletion returns DependencyViolation, wait for ALB/EC2 ENIs to disappear and retry only that exact fa-lba security group."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Confirm Task 14 shows zero ASG instances."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete fa-lba-asg."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Delete fa-lba-lt."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Delete the HTTP:80 listener on fa-lba-alb."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-lba-alb and wait until it disappears."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-lba-tg."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete fa-lba-web-sg, then fa-lba-alb-sg."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Remove both explicit subnet associations from fa-lba-public-rt."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Delete fa-lba-public-rt."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Detach fa-lba-igw from fa-lba-vpc."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete fa-lba-igw."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Delete fa-lba-public-a."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Delete fa-lba-public-b."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Delete fa-lba-vpc."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Sign in as root only after cloud cleanup is verified."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Delete the fa-lba-admin access key."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Detach and delete fa-lba-admin-policy."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Delete fa-lba-admin and sign out of root."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Remove only the fa-lba-admin CLI profile."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Delete C:\\aws-labs\\fa-lba last."
+        },
+        {
+          "sequence": 21,
+          "instruction": "Affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - delete ASG",
+          "language": "text",
+          "content": "aws autoscaling delete-auto-scaling-group --auto-scaling-group-name fa-lba-asg --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete launch template",
+          "language": "text",
+          "content": "aws ec2 delete-launch-template --launch-template-name fa-lba-lt --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete listener",
+          "language": "text",
+          "content": "aws elbv2 delete-listener --listener-arn $LISTENER_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete ALB",
+          "language": "text",
+          "content": "aws elbv2 delete-load-balancer --load-balancer-arn $ALB_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - wait for ALB deletion",
+          "language": "text",
+          "content": "aws elbv2 wait load-balancers-deleted --load-balancer-arns $ALB_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete target group",
+          "language": "text",
+          "content": "aws elbv2 delete-target-group --target-group-arn $TG_ARN --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete web SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $WEB_SG_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete ALB SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $ALB_SG_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - get route table associations",
+          "language": "text",
+          "content": "$ASSOCIATION_IDS = aws ec2 describe-route-tables --route-table-ids $RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId\" --output text --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - disassociate route table",
+          "language": "text",
+          "content": "foreach ($ASSOCIATION_ID in ($ASSOCIATION_IDS -split \"\\s+\")) { if ($ASSOCIATION_ID) { aws ec2 disassociate-route-table --association-id $ASSOCIATION_ID --region eu-west-2 --profile fa-lba-admin } }"
+        },
+        {
+          "title": "PowerShell - delete route table",
+          "language": "text",
+          "content": "aws ec2 delete-route-table --route-table-id $RT_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - detach IGW",
+          "language": "text",
+          "content": "aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete IGW",
+          "language": "text",
+          "content": "aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet A",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet B",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - delete VPC",
+          "language": "text",
+          "content": "aws ec2 delete-vpc --vpc-id $VPC_ID --region eu-west-2 --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - clear access key",
+          "language": "text",
+          "content": "aws configure set aws_access_key_id \"\" --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - clear secret key",
+          "language": "text",
+          "content": "aws configure set aws_secret_access_key \"\" --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - clear region",
+          "language": "text",
+          "content": "aws configure set region \"\" --profile fa-lba-admin"
+        },
+        {
+          "title": "PowerShell - leave folder",
+          "language": "text",
+          "content": "Set-Location C:\\"
+        },
+        {
+          "title": "PowerShell - delete local folder",
+          "language": "text",
+          "content": "Remove-Item \"C:\\aws-labs\\fa-lba\" -Recurse -Force"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "No fa-lba ASG, launch template, ALB, listener or target group remains.",
+        "No fa-lba security group, route table, internet gateway, subnet or VPC remains.",
+        "The temporary IAM identity and CLI profile are removed.",
+        "The local folder is removed last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-final-cleanup-verify-01",
+          "text": "No chargeable ALB or EC2 instance remains."
+        },
+        {
+          "id": "task-15-final-cleanup-verify-02",
+          "text": "No fa-lba VPC resource remains."
+        },
+        {
+          "id": "task-15-final-cleanup-verify-03",
+          "text": "Unrelated resources and CLI profiles remain unchanged."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-iam-user",
+      "label": "Temporary IAM user",
+      "exactName": "fa-lba-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-iam-policy",
+      "label": "Temporary IAM policy",
+      "exactName": "fa-lba-admin-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-access-key",
+      "label": "Temporary access key",
+      "exactName": null,
+      "generatedValue": "Access key ID and secret access key",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": [
+        "res-iam-user"
+      ]
+    },
+    {
+      "id": "res-cli-profile",
+      "label": "AWS CLI profile",
+      "exactName": "fa-lba-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-and-local-files",
+      "dependsOn": [
+        "res-access-key"
+      ]
+    },
+    {
+      "id": "res-local-folder",
+      "label": "Local lab folder",
+      "exactName": "C:\\aws-labs\\fa-lba",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-and-local-files",
+      "dependsOn": []
+    },
+    {
+      "id": "res-vpc",
+      "label": "Training VPC",
+      "exactName": "fa-lba-vpc",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-vpc-network",
+      "dependsOn": []
+    },
+    {
+      "id": "res-subnet-a",
+      "label": "Public subnet A",
+      "exactName": "fa-lba-public-a",
+      "generatedValue": "Subnet ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-vpc-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-subnet-b",
+      "label": "Public subnet B",
+      "exactName": "fa-lba-public-b",
+      "generatedValue": "Subnet ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-vpc-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-igw",
+      "label": "Internet gateway",
+      "exactName": "fa-lba-igw",
+      "generatedValue": "Internet gateway ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-vpc-network",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-rt",
+      "label": "Public route table",
+      "exactName": "fa-lba-public-rt",
+      "generatedValue": "Route table ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-vpc-network",
+      "dependsOn": [
+        "res-vpc",
+        "res-subnet-a",
+        "res-subnet-b",
+        "res-igw"
+      ]
+    },
+    {
+      "id": "res-alb-sg",
+      "label": "ALB security group",
+      "exactName": "fa-lba-alb-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-security-groups",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-web-sg",
+      "label": "Web security group",
+      "exactName": "fa-lba-web-sg",
+      "generatedValue": "Security group ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-05-security-groups",
+      "dependsOn": [
+        "res-vpc",
+        "res-alb-sg"
+      ]
+    },
+    {
+      "id": "res-tg",
+      "label": "ALB target group",
+      "exactName": "fa-lba-tg",
+      "generatedValue": "Target group ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-06-target-group",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-lt",
+      "label": "EC2 launch template",
+      "exactName": "fa-lba-lt",
+      "generatedValue": "Launch template ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-07-launch-template",
+      "dependsOn": [
+        "res-web-sg"
+      ]
+    },
+    {
+      "id": "res-alb",
+      "label": "Application Load Balancer",
+      "exactName": "fa-lba-alb",
+      "generatedValue": "ALB ARN and DNS name",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-08-create-alb",
+      "dependsOn": [
+        "res-subnet-a",
+        "res-subnet-b",
+        "res-alb-sg",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-listener",
+      "label": "HTTP listener",
+      "exactName": "HTTP:80 on fa-lba-alb",
+      "generatedValue": "Listener ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-create-alb",
+      "dependsOn": [
+        "res-alb",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-asg",
+      "label": "Auto Scaling group",
+      "exactName": "fa-lba-asg",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-create-asg",
+      "dependsOn": [
+        "res-lt",
+        "res-subnet-a",
+        "res-subnet-b",
+        "res-tg"
+      ]
+    },
+    {
+      "id": "res-instances",
+      "label": "Auto Scaling EC2 instances",
+      "exactName": "Name tag fa-lba-web",
+      "generatedValue": "Instance IDs and public IPv4 addresses",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-09-create-asg",
+      "dependsOn": [
+        "res-asg",
+        "res-lt",
+        "res-web-sg"
+      ]
+    },
+    {
+      "id": "res-policy",
+      "label": "Target tracking scaling policy",
+      "exactName": "fa-lba-request-scaling",
+      "generatedValue": "Policy ARN and managed alarms",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-scaling-policy",
+      "dependsOn": [
+        "res-asg",
+        "res-alb",
+        "res-tg"
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "Targets never become healthy",
+      "likelyCause": "Apache installation/user data is not complete, outbound internet is unavailable, or the web security group does not allow the ALB security group.",
+      "fix": "Check the subnet default route/public IPv4, then verify fa-lba-web-sg allows TCP 80 from fa-lba-alb-sg and allow the grace period plus initial health checks."
+    },
+    {
+      "id": "trouble-02",
+      "title": "Target health shows 404",
+      "likelyCause": "The configured health-check path does not exist.",
+      "fix": "Confirm fa-lba-tg uses /health and user-data.sh writes /var/www/html/health."
+    },
+    {
+      "id": "trouble-03",
+      "title": "ALB DNS returns 503",
+      "likelyCause": "The listener has no healthy target.",
+      "fix": "Open fa-lba-tg Targets and resolve target health before changing the listener."
+    },
+    {
+      "id": "trouble-04",
+      "title": "ASG cannot launch instances",
+      "likelyCause": "Launch template, subnet or service-linked-role/EC2 permissions are invalid.",
+      "fix": "Read the exact ASG Activity failure, verify fa-lba-lt version 1 and both subnet IDs, then confirm the IAM policy permissions."
+    },
+    {
+      "id": "trouble-05",
+      "title": "Scaling policy does not scale out",
+      "likelyCause": "Request volume was not sustained long enough or new capacity is still warming.",
+      "fix": "Confirm ALBRequestCountPerTarget target 50, run the supplied generator for several minutes and review scaling activities before changing the target."
+    },
+    {
+      "id": "trouble-06",
+      "title": "Security group cannot be deleted",
+      "likelyCause": "An ALB or EC2 ENI still references it.",
+      "fix": "Verify zero ASG instances, delete the ALB and wait for ENIs to disappear, then retry only the exact fa-lba security group."
+    },
+    {
+      "id": "trouble-07",
+      "title": "VPC cannot be deleted",
+      "likelyCause": "A subnet, route table, internet gateway, security group or ENI dependency remains.",
+      "fix": "Recheck reverse dependency cleanup and remove only the remaining fa-lba dependency."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-lba-request-scaling",
+      "action": "Delete the target tracking policy.",
+      "verification": "describe-policies returns no fa-lba-request-scaling policy.",
+      "taskId": "task-14-prepare-cleanup"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-lba-asg EC2 instances",
+      "action": "Set MinSize and DesiredCapacity to 0 and wait for every instance to terminate.",
+      "verification": "The ASG instance list is empty and fa-lba-tg has no target.",
+      "taskId": "task-14-prepare-cleanup"
+    },
+    {
+      "sequence": 3,
+      "resource": "fa-lba-asg",
+      "action": "Delete the empty Auto Scaling group.",
+      "verification": "The group no longer exists.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-lba-lt",
+      "action": "Delete the launch template after the ASG is gone.",
+      "verification": "fa-lba-lt no longer exists.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "HTTP:80 listener on fa-lba-alb",
+      "action": "Delete the listener.",
+      "verification": "No listener remains for fa-lba-alb.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "fa-lba-alb",
+      "action": "Delete the ALB and wait for deletion.",
+      "verification": "The ALB and its ENIs are gone.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-lba-tg",
+      "action": "Delete the target group.",
+      "verification": "fa-lba-tg no longer exists.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "fa-lba-web-sg then fa-lba-alb-sg",
+      "action": "Delete the backend SG, then the ALB SG.",
+      "verification": "Neither security group remains.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-lba-public-rt",
+      "action": "Remove subnet associations and delete the route table.",
+      "verification": "The route table is absent.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 10,
+      "resource": "fa-lba-igw",
+      "action": "Detach and delete the internet gateway.",
+      "verification": "The internet gateway is absent.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 11,
+      "resource": "fa-lba-public-a and fa-lba-public-b",
+      "action": "Delete both public subnets.",
+      "verification": "Neither subnet remains.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 12,
+      "resource": "fa-lba-vpc",
+      "action": "Delete the empty VPC.",
+      "verification": "fa-lba-vpc is absent.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 13,
+      "resource": "fa-lba-admin access key, fa-lba-admin-policy and fa-lba-admin",
+      "action": "Use root only after cloud cleanup to remove the temporary access key, policy and IAM user.",
+      "verification": "The IAM user and policy are absent.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 14,
+      "resource": "AWS CLI profile fa-lba-admin",
+      "action": "Remove only this named profile.",
+      "verification": "The profile is unusable while unrelated profiles remain.",
+      "taskId": "task-15-final-cleanup"
+    },
+    {
+      "sequence": 15,
+      "resource": "C:\\aws-labs\\fa-lba",
+      "action": "Delete the local lab folder last.",
+      "verification": "The folder no longer exists.",
+      "taskId": "task-15-final-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that fa-lba-request-scaling is deleted; fa-lba-asg has no instances and is deleted; fa-lba-lt, the HTTP:80 listener, fa-lba-alb and fa-lba-tg are deleted; fa-lba-web-sg and fa-lba-alb-sg are deleted; fa-lba-public-rt, fa-lba-igw, fa-lba-public-a, fa-lba-public-b and fa-lba-vpc are deleted; no lab EC2 instance or public IPv4 remains; the temporary fa-lba-admin access key, fa-lba-admin-policy, IAM user and CLI profile are removed; unrelated AWS resources and profiles are unchanged; and only then was C:\\aws-labs\\fa-lba deleted.",
+  "warnings": {
+    "cost": "This lab creates an Application Load Balancer and at least two EC2 instances with public IPv4 addresses; these resources can incur charges even in a training account. Complete the reverse-dependency cleanup after the scaling exercise.",
+    "safety": "Delete only exact fa-lba resources. Stop if a command or console page identifies a resource outside the fa-lba training set.",
+    "credentials": "Never create root access keys and never put the fa-lba-admin access key or secret in user data, launch-template JSON, screenshots, chat or Study Tracker. Enter them only through protected aws configure prompts.",
+    "region": "Every lab resource is created in eu-west-2. The two subnets use eu-west-2a and eu-west-2b."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 15,
+    "checkboxCount": 204,
+    "cliCommandCount": 109,
+    "editableBlockCount": 5,
+    "verificationCount": 38,
+    "cleanupItemCount": 15,
+    "officialSourceCount": 25,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and JSON manuscript are offline educational authoring artifacts only. They have not been locally validated by Study Tracker, imported, accepted, approved, published or fingerprinted."
+  }
+}

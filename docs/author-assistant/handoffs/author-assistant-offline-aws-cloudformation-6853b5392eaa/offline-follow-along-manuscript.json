@@ -1,0 +1,2761 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "CloudFormation Follow Along",
+    "suggestedProgrammeId": "aws-cloudformation-learning-path",
+    "topic": "AWS CloudFormation",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Beginner",
+    "outcome": "Author declarative IaC templates using nested stacks, StackSets, custom parameters, conditions, change sets and drift detection; deploy and update the training stacks in eu-west-2; deliberately create and repair one drift event; then safely destroy only the resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-cloudformation",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "examCoverage": [
+      "CloudFormation declarative IaC and stack lifecycle",
+      "Template parameters and constraints",
+      "Conditions for optional resources",
+      "Nested stacks",
+      "Change sets",
+      "StackSets with self-managed permissions",
+      "One StackSet instance in eu-west-2",
+      "Drift creation, detection, inspection and repair",
+      "Reverse-dependency cleanup"
+    ],
+    "completionDefinition": [
+      "Four complete YAML templates are authored from nothing.",
+      "The root stack creates fixed SSM resources and a nested child stack.",
+      "A condition is false initially and then enabled through a reviewed change set.",
+      "A self-managed StackSet deploys one instance to the current account in eu-west-2.",
+      "One root SSM parameter is deliberately changed outside CloudFormation.",
+      "Drift detection identifies RootParameter as MODIFIED.",
+      "A reviewed update repairs the drift and final drift status is IN_SYNC.",
+      "All lab resources are removed in safe reverse-dependency order."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-saa-exam-guide",
+      "title": "AWS Certification Exam Guides",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/examguides/aws-certification-exam-guides.html",
+      "purpose": "Confirms the current SAA-C03 exam context.",
+      "taskIds": [
+        "task-01-prerequisites"
+      ]
+    },
+    {
+      "id": "src-saa-in-scope",
+      "title": "In-Scope AWS Services - AWS Certified Solutions Architect - Associate",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/saa-03-in-scope-services.html",
+      "purpose": "Confirms AWS CloudFormation is in scope for SAA-C03.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-welcome",
+      "title": "What is CloudFormation?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html",
+      "purpose": "CloudFormation declarative IaC and stack purpose.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-04-create-files",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-anatomy",
+      "title": "CloudFormation template sections",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html",
+      "purpose": "Template Parameters, Resources and Outputs.",
+      "taskIds": [
+        "task-04-create-files",
+        "task-05-author-nested",
+        "task-06-author-root",
+        "task-09-validate-upload"
+      ]
+    },
+    {
+      "id": "src-cfn-parameters",
+      "title": "CloudFormation template Parameters syntax",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html",
+      "purpose": "Parameters, defaults and constraints.",
+      "taskIds": [
+        "task-05-author-nested",
+        "task-06-author-root",
+        "task-08-author-stackset",
+        "task-11-verify-update",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-conditions",
+      "title": "CloudFormation template Conditions syntax",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/conditions-section-structure.html",
+      "purpose": "Conditions based on parameter values.",
+      "taskIds": [
+        "task-06-author-root",
+        "task-11-verify-update",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-nested",
+      "title": "Split a template into reusable pieces using nested stacks",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html",
+      "purpose": "Nested stack behavior.",
+      "taskIds": [
+        "task-05-author-nested",
+        "task-10-create-root",
+        "task-17-exam-review",
+        "task-18-cleanup"
+      ]
+    },
+    {
+      "id": "src-cfn-nested-resource",
+      "title": "AWS::CloudFormation::Stack",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudformation-stack.html",
+      "purpose": "Nested TemplateURL and parameters.",
+      "taskIds": [
+        "task-05-author-nested",
+        "task-06-author-root",
+        "task-09-validate-upload",
+        "task-10-create-root"
+      ]
+    },
+    {
+      "id": "src-cfn-change-set",
+      "title": "create-change-set",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-change-set.html",
+      "purpose": "Reviewable CloudFormation changes.",
+      "taskIds": [
+        "task-10-create-root",
+        "task-11-verify-update",
+        "task-16-repair-drift",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-execute-change-set",
+      "title": "execute-change-set",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudformation/execute-change-set.html",
+      "purpose": "Execute a reviewed change set.",
+      "taskIds": [
+        "task-10-create-root",
+        "task-11-verify-update",
+        "task-16-repair-drift"
+      ]
+    },
+    {
+      "id": "src-cfn-console-create",
+      "title": "Create a stack from the CloudFormation console",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html",
+      "purpose": "Browser stack creation workflow.",
+      "taskIds": [
+        "task-09-validate-upload",
+        "task-10-create-root",
+        "task-12-stackset-roles",
+        "task-18-cleanup"
+      ]
+    },
+    {
+      "id": "src-cfn-stacksets",
+      "title": "Managing stacks across accounts and Regions with StackSets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html",
+      "purpose": "StackSet purpose.",
+      "taskIds": [
+        "task-07-author-stackset-roles",
+        "task-08-author-stackset",
+        "task-13-stackset-instance",
+        "task-17-exam-review",
+        "task-18-cleanup"
+      ]
+    },
+    {
+      "id": "src-cfn-stacksets-prereq",
+      "title": "Grant self-managed permissions",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html",
+      "purpose": "Self-managed StackSet IAM roles.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-07-author-stackset-roles",
+        "task-12-stackset-roles"
+      ]
+    },
+    {
+      "id": "src-cfn-stacksets-start",
+      "title": "Get started with StackSets using a sample template",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-getting-started.html",
+      "purpose": "Single-account StackSet prerequisites.",
+      "taskIds": [
+        "task-07-author-stackset-roles",
+        "task-12-stackset-roles",
+        "task-13-stackset-instance"
+      ]
+    },
+    {
+      "id": "src-cfn-stackinstances",
+      "title": "Add stacks to CloudFormation StackSets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stackinstances-create.html",
+      "purpose": "Create stack instances.",
+      "taskIds": [
+        "task-08-author-stackset",
+        "task-13-stackset-instance",
+        "task-18-cleanup"
+      ]
+    },
+    {
+      "id": "src-cfn-drift",
+      "title": "Detect unmanaged configuration changes to stacks and resources with drift detection",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html",
+      "purpose": "Drift concepts.",
+      "taskIds": [
+        "task-14-create-drift",
+        "task-15-detect-drift",
+        "task-17-exam-review"
+      ]
+    },
+    {
+      "id": "src-cfn-drift-stack",
+      "title": "Detect drift on an entire CloudFormation stack",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/detect-drift-stack.html",
+      "purpose": "Stack drift workflow.",
+      "taskIds": [
+        "task-15-detect-drift",
+        "task-16-repair-drift"
+      ]
+    },
+    {
+      "id": "src-cfn-cli-drift",
+      "title": "detect-stack-drift",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudformation/detect-stack-drift.html",
+      "purpose": "Start drift detection.",
+      "taskIds": [
+        "task-15-detect-drift"
+      ]
+    },
+    {
+      "id": "src-cfn-cli-drift-status",
+      "title": "describe-stack-drift-detection-status",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stack-drift-detection-status.html",
+      "purpose": "Poll drift detection.",
+      "taskIds": [
+        "task-15-detect-drift",
+        "task-16-repair-drift"
+      ]
+    },
+    {
+      "id": "src-cfn-resource-drifts",
+      "title": "describe-stack-resource-drifts",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stack-resource-drifts.html",
+      "purpose": "Inspect drifted resources.",
+      "taskIds": [
+        "task-15-detect-drift"
+      ]
+    },
+    {
+      "id": "src-s3-create-bucket",
+      "title": "create-bucket",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html",
+      "purpose": "Create the private template bucket.",
+      "taskIds": [
+        "task-03-cli-profile",
+        "task-09-validate-upload",
+        "task-18-cleanup"
+      ]
+    },
+    {
+      "id": "src-ssm",
+      "title": "AWS Systems Manager Parameter Store",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html",
+      "purpose": "Training parameters used as stack resources.",
+      "taskIds": [
+        "task-05-author-nested",
+        "task-06-author-root",
+        "task-08-author-stackset",
+        "task-11-verify-update",
+        "task-14-create-drift"
+      ]
+    },
+    {
+      "id": "src-iam",
+      "title": "What is IAM?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html",
+      "purpose": "IAM users, roles and permissions.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-07-author-stackset-roles",
+        "task-12-stackset-roles"
+      ]
+    },
+    {
+      "id": "src-iam-best",
+      "title": "Security best practices in IAM",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+      "purpose": "Avoid root for routine work and limit long-lived credentials.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-02-bootstrap-user",
+        "task-03-cli-profile",
+        "task-18-cleanup"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare",
+      "sequence": 1,
+      "title": "Prepare the training account and tools",
+      "goal": "Create a safe temporary lab identity, verify AWS CLI access, and derive the unique S3 template-bucket name."
+    },
+    {
+      "id": "phase-02-author",
+      "sequence": 2,
+      "title": "Author complete CloudFormation templates",
+      "goal": "Create the nested, root, StackSet-role and StackSet workload templates."
+    },
+    {
+      "id": "phase-03-deploy",
+      "sequence": 3,
+      "title": "Deploy and update root and nested stacks",
+      "goal": "Upload the nested template, deploy the root hierarchy and update it with a reviewed change set."
+    },
+    {
+      "id": "phase-04-stacksets",
+      "sequence": 4,
+      "title": "Deploy the StackSet",
+      "goal": "Create self-managed StackSet roles and deploy one stack instance to the current account in eu-west-2."
+    },
+    {
+      "id": "phase-05-drift",
+      "sequence": 5,
+      "title": "Create, detect and repair drift",
+      "goal": "Make one deliberate out-of-band change, detect it, inspect it and repair it through CloudFormation."
+    },
+    {
+      "id": "phase-06-review",
+      "sequence": 6,
+      "title": "SAA-C03 CloudFormation review",
+      "goal": "Connect the lab to common architecture decisions and exam triggers."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Reverse-dependency cleanup",
+      "goal": "Delete every lab-created item safely and verify absence."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare",
+      "title": "Verify the training account and local tools",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm AWS Console access, AWS CLI availability and a disposable training account before creating anything.",
+      "whyItMatters": "A clean starting point makes later CloudFormation and drift errors easier to diagnose.",
+      "examRelevance": "CloudFormation is an in-scope SAA-C03 service and represents declarative infrastructure as code.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-saa-exam-guide",
+        "src-saa-in-scope",
+        "src-cfn-welcome",
+        "src-iam-best"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the AWS training account that will be used for this lab."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm no fa-cloudformation resource from this lab already exists."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell from the Start menu."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Run aws --version."
+        },
+        {
+          "sequence": 5,
+          "instruction": "If AWS CLI is missing, install AWS CLI v2 from the official AWS documentation, then reopen PowerShell."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not create root access keys; root is used only for Task 2 bootstrap and final Task 19 IAM-user removal."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        },
+        {
+          "title": "Bash - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "AWS CLI prints a version string.",
+        "The training account is accessible.",
+        "No lab resource exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "AWS CLI runs without command-not-found errors."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No fa-cloudformation resource has been created."
+        }
+      ]
+    },
+    {
+      "id": "task-02-bootstrap-user",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the temporary CloudFormation training IAM user",
+      "feature": "IAM bootstrap",
+      "difficulty": "Hard",
+      "goal": "Use root only to create fa-cloudformation-admin, one access key and the complete lab policy, then sign out of root.",
+      "whyItMatters": "CloudFormation needs permission to create the exact resources described by the lab templates while routine work should not use root.",
+      "examRelevance": "Secure access and least-privilege thinking remain part of good SAA-C03 architecture.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-iam",
+        "src-iam-best",
+        "src-cfn-stacksets-prereq"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The CloudFormation control-plane statement uses Resource \"*\" because several used CloudFormation APIs are not practical to scope before stack creation; all created workload resources still use exact fa-cloudformation names."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in as root only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Users > Create user."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter user name fa-cloudformation-admin and enable console access."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open IAM > Policies > Create policy > JSON and paste the complete policy below."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Name the policy fa-cloudformation-admin-policy and create it."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Attach fa-cloudformation-admin-policy to fa-cloudformation-admin."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open fa-cloudformation-admin > Security credentials and create one CLI access key."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Copy the key values only into a temporary secure location."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Sign in as fa-cloudformation-admin for all routine browser work."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI command",
+          "language": "text",
+          "content": "# Complete the bootstrap in the IAM console. Do not create root access keys."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "Training IAM policy JSON",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"CloudFormationLabControlPlane\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"cloudformation:CreateStack\",\"cloudformation:UpdateStack\",\"cloudformation:DeleteStack\",\"cloudformation:DescribeStacks\",\"cloudformation:DescribeStackEvents\",\"cloudformation:DescribeStackResources\",\"cloudformation:ListStackResources\",\"cloudformation:GetTemplate\",\"cloudformation:CreateChangeSet\",\"cloudformation:DescribeChangeSet\",\"cloudformation:ExecuteChangeSet\",\"cloudformation:DeleteChangeSet\",\"cloudformation:ValidateTemplate\",\"cloudformation:DetectStackDrift\",\"cloudformation:DescribeStackDriftDetectionStatus\",\"cloudformation:DescribeStackResourceDrifts\",\"cloudformation:CreateStackSet\",\"cloudformation:UpdateStackSet\",\"cloudformation:DeleteStackSet\",\"cloudformation:DescribeStackSet\",\"cloudformation:CreateStackInstances\",\"cloudformation:DeleteStackInstances\",\"cloudformation:ListStackInstances\",\"cloudformation:DescribeStackSetOperation\",\"cloudformation:ListStackSetOperations\",\"cloudformation:ListStackSetOperationResults\",\"cloudformation:DetectStackSetDrift\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"TemplateBucket\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"s3:CreateBucket\",\"s3:DeleteBucket\",\"s3:ListBucket\",\"s3:GetBucketLocation\"],\n      \"Resource\": \"arn:aws:s3:::fa-cloudformation-*\"\n    },\n    {\n      \"Sid\": \"TemplateObjects\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\n      \"Resource\": \"arn:aws:s3:::fa-cloudformation-*/*\"\n    },\n    {\n      \"Sid\": \"TrainingParameters\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"ssm:PutParameter\",\"ssm:GetParameter\",\"ssm:GetParameters\",\"ssm:DeleteParameter\"],\n      \"Resource\": \"arn:aws:ssm:eu-west-2:*:parameter/fa-cloudformation/*\"\n    },\n    {\"Sid\":\"DescribeParameters\",\"Effect\":\"Allow\",\"Action\":\"ssm:DescribeParameters\",\"Resource\":\"*\"},\n    {\n      \"Sid\": \"ManageStackSetTrainingRoles\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\"iam:CreateRole\",\"iam:DeleteRole\",\"iam:GetRole\",\"iam:TagRole\",\"iam:UntagRole\",\"iam:PutRolePolicy\",\"iam:GetRolePolicy\",\"iam:DeleteRolePolicy\"],\n      \"Resource\": [\n        \"arn:aws:iam::*:role/fa-cloudformation-stackset-admin-role\",\n        \"arn:aws:iam::*:role/fa-cloudformation-stackset-execution-role\"\n      ]\n    },\n    {\n      \"Sid\": \"PassStackSetAdminRole\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"iam:PassRole\",\n      \"Resource\": \"arn:aws:iam::*:role/fa-cloudformation-stackset-admin-role\",\n      \"Condition\": {\"StringEquals\":{\"iam:PassedToService\":\"cloudformation.amazonaws.com\"}}\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "fa-cloudformation-admin exists.",
+        "fa-cloudformation-admin-policy is attached.",
+        "Exactly one temporary access key exists.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-bootstrap-user-verify-01",
+          "text": "IAM shows fa-cloudformation-admin."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-02",
+          "text": "The user has fa-cloudformation-admin-policy."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-03",
+          "text": "The routine browser session is not root."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-profile",
+      "phaseId": "phase-01-prepare",
+      "title": "Configure the AWS CLI profile and derive lab values",
+      "feature": "AWS CLI identity",
+      "difficulty": "Easy",
+      "goal": "Configure profile fa-cloudformation-admin, verify the account ID and derive the deterministic S3 bucket name.",
+      "whyItMatters": "The account ID provides a safe unique bucket suffix without inventing a random name.",
+      "examRelevance": "S3 bucket names are global, while the CloudFormation and SSM resources remain fixed inside the training account.",
+      "prerequisites": [
+        "task-02-bootstrap-user"
+      ],
+      "sourceIds": [
+        "src-iam-best",
+        "src-s3-create-bucket"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell as your normal Windows user."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-cloudformation-admin."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the temporary access key only when prompted."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set the default Region to eu-west-2 and output to json."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run get-caller-identity and record the 12-digit account ID."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Derive TEMPLATE_BUCKET as fa-cloudformation-<account-id>-templates."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - configure profile",
+          "language": "text",
+          "content": "aws configure --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - derive account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - derive bucket",
+          "language": "text",
+          "content": "$TEMPLATE_BUCKET = \"fa-cloudformation-$AWS_ACCOUNT_ID-templates\""
+        },
+        {
+          "title": "PowerShell - show values",
+          "language": "text",
+          "content": "Write-Output \"ACCOUNT_ID=$AWS_ACCOUNT_ID`nTEMPLATE_BUCKET=$TEMPLATE_BUCKET\""
+        },
+        {
+          "title": "Bash - derive account ID",
+          "language": "text",
+          "content": "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text)"
+        },
+        {
+          "title": "Bash - derive bucket",
+          "language": "text",
+          "content": "TEMPLATE_BUCKET=\"fa-cloudformation-${AWS_ACCOUNT_ID}-templates\""
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The caller is the intended training IAM user.",
+        "AWS_ACCOUNT_ID has 12 digits.",
+        "TEMPLATE_BUCKET starts fa-cloudformation- and ends -templates."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-profile-verify-01",
+          "text": "The caller ARN contains fa-cloudformation-admin."
+        },
+        {
+          "id": "task-03-cli-profile-verify-02",
+          "text": "The derived bucket name is recorded."
+        }
+      ]
+    },
+    {
+      "id": "task-04-create-files",
+      "phaseId": "phase-02-author",
+      "title": "Create the exact local lab folder and YAML files",
+      "feature": "Local authoring structure",
+      "difficulty": "Easy",
+      "goal": "Create the lab directory and four empty YAML files before deployment.",
+      "whyItMatters": "Separate files make nested-stack and StackSet responsibilities visible.",
+      "examRelevance": "Declarative IaC begins with desired-state templates written before resources exist.",
+      "prerequisites": [
+        "task-03-cli-profile"
+      ],
+      "sourceIds": [
+        "src-cfn-anatomy",
+        "src-cfn-welcome"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In File Explorer create C:\\cloudformation-labs if needed, then create fa-cloudformation."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Inside C:\\\\cloudformation-labs\\\\fa-cloudformation create nested.yaml, root.yaml, stackset-roles.yaml and stackset.yaml."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Ensure Windows has not added .txt to any filename."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open the files in a plain-text editor."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create lab folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force \"C:\\\\cloudformation-labs\\\\fa-cloudformation\""
+        },
+        {
+          "title": "PowerShell - enter lab folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\\\cloudformation-labs\\\\fa-cloudformation\""
+        },
+        {
+          "title": "PowerShell - verify location",
+          "language": "text",
+          "content": "Get-Location"
+        },
+        {
+          "title": "PowerShell - create nested.yaml",
+          "language": "text",
+          "content": "New-Item -ItemType File -Force .\\nested.yaml"
+        },
+        {
+          "title": "PowerShell - create root.yaml",
+          "language": "text",
+          "content": "New-Item -ItemType File -Force .\\root.yaml"
+        },
+        {
+          "title": "PowerShell - create roles template",
+          "language": "text",
+          "content": "New-Item -ItemType File -Force .\\stackset-roles.yaml"
+        },
+        {
+          "title": "PowerShell - create StackSet template",
+          "language": "text",
+          "content": "New-Item -ItemType File -Force .\\stackset.yaml"
+        },
+        {
+          "title": "Bash - create directory",
+          "language": "text",
+          "content": "mkdir -p ~/cloudformation-labs/fa-cloudformation"
+        },
+        {
+          "title": "Bash - enter directory",
+          "language": "text",
+          "content": "cd ~/cloudformation-labs/fa-cloudformation"
+        },
+        {
+          "title": "Bash - create files",
+          "language": "text",
+          "content": "touch nested.yaml root.yaml stackset-roles.yaml stackset.yaml"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The lab directory exists.",
+        "All four YAML filenames exist.",
+        "No AWS resource has been created by the templates yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-create-files-verify-01",
+          "text": "The current folder is the lab folder."
+        },
+        {
+          "id": "task-04-create-files-verify-02",
+          "text": "All four files are visible."
+        }
+      ]
+    },
+    {
+      "id": "task-05-author-nested",
+      "phaseId": "phase-02-author",
+      "title": "Author the nested-stack template",
+      "feature": "Nested stack template",
+      "difficulty": "Medium",
+      "goal": "Create a complete child template that accepts parameters, creates one SSM parameter and exposes outputs to the parent.",
+      "whyItMatters": "The child becomes a reusable component managed by AWS::CloudFormation::Stack.",
+      "examRelevance": "Nested stacks split one deployment hierarchy into reusable template components.",
+      "prerequisites": [
+        "task-04-create-files"
+      ],
+      "sourceIds": [
+        "src-cfn-nested",
+        "src-cfn-nested-resource",
+        "src-cfn-parameters",
+        "src-cfn-anatomy",
+        "src-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open C:\\\\cloudformation-labs\\\\fa-cloudformation\\nested.yaml."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Replace the empty file with the complete nested.yaml block below and save it as UTF-8."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review Environment and NestedMessage."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm the fixed resource name is /fa-cloudformation/nested-message."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Review the Outputs section that the parent can read."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - open nested.yaml",
+          "language": "text",
+          "content": "notepad .\\nested.yaml"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "nested.yaml",
+          "language": "text",
+          "content": "AWSTemplateFormatVersion: '2010-09-09'\nDescription: Nested stack for the fa-cloudformation SAA-C03 Follow Along.\nParameters:\n  Environment:\n    Type: String\n    Default: training\n    AllowedValues: [training, test]\n  NestedMessage:\n    Type: String\n    MinLength: 3\n    MaxLength: 80\n    AllowedPattern: '^[A-Za-z0-9-]+$'\nResources:\n  NestedParameter:\n    Type: AWS::SSM::Parameter\n    Properties:\n      Name: /fa-cloudformation/nested-message\n      Type: String\n      Value: !Sub '${NestedMessage}-${Environment}'\n      Description: Created by the nested CloudFormation stack.\n      Tags:\n        FollowAlong: fa-cloudformation\n        ManagedBy: CloudFormation\nOutputs:\n  NestedParameterName:\n    Value: !Ref NestedParameter\n  NestedParameterArn:\n    Value: !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter${NestedParameter}'"
+        }
+      ],
+      "expectedResults": [
+        "nested.yaml contains Parameters, Resources and Outputs.",
+        "It creates only /fa-cloudformation/nested-message."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-author-nested-verify-01",
+          "text": "No unresolved placeholder text exists."
+        },
+        {
+          "id": "task-05-author-nested-verify-02",
+          "text": "The resource name uses fa-cloudformation."
+        }
+      ]
+    },
+    {
+      "id": "task-06-author-root",
+      "phaseId": "phase-02-author",
+      "title": "Author the root template with parameters and a condition",
+      "feature": "Parameters and conditions",
+      "difficulty": "Hard",
+      "goal": "Create the root template that creates a root parameter, conditionally creates another parameter and invokes the nested template by URL.",
+      "whyItMatters": "One template can change behavior through runtime inputs instead of being copied for each environment.",
+      "examRelevance": "Parameters make templates reusable and conditions control optional resources.",
+      "prerequisites": [
+        "task-05-author-nested"
+      ],
+      "sourceIds": [
+        "src-cfn-parameters",
+        "src-cfn-conditions",
+        "src-cfn-nested-resource",
+        "src-cfn-anatomy",
+        "src-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open C:\\\\cloudformation-labs\\\\fa-cloudformation\\root.yaml."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Paste the complete root.yaml block and save it."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review Environment and RootMessage constraints."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review CreateOptionalParameter and the CreateOptional condition."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Review NestedTemplateUrl; it receives the S3 URL at deployment time."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm OptionalParameter has Condition: CreateOptional."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Confirm NestedTrainingStack is AWS::CloudFormation::Stack and passes two child parameters."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Review the Outputs, including !GetAtt from the child stack."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - open root.yaml",
+          "language": "text",
+          "content": "notepad .\\root.yaml"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "root.yaml",
+          "language": "text",
+          "content": "AWSTemplateFormatVersion: '2010-09-09'\nDescription: Root stack for the fa-cloudformation SAA-C03 Follow Along.\nParameters:\n  Environment:\n    Type: String\n    Default: training\n    AllowedValues: [training, test]\n  RootMessage:\n    Type: String\n    Default: created-by-fa-cloudformation\n    MinLength: 3\n    MaxLength: 80\n    AllowedPattern: '^[A-Za-z0-9-]+$'\n  CreateOptionalParameter:\n    Type: String\n    Default: 'false'\n    AllowedValues: ['true', 'false']\n  NestedTemplateUrl:\n    Type: String\n    MinLength: 20\nConditions:\n  CreateOptional: !Equals [!Ref CreateOptionalParameter, 'true']\nResources:\n  RootParameter:\n    Type: AWS::SSM::Parameter\n    Properties:\n      Name: /fa-cloudformation/root-message\n      Type: String\n      Value: !Sub '${RootMessage}-${Environment}'\n      Tags:\n        FollowAlong: fa-cloudformation\n        ManagedBy: CloudFormation\n  OptionalParameter:\n    Type: AWS::SSM::Parameter\n    Condition: CreateOptional\n    Properties:\n      Name: /fa-cloudformation/optional-message\n      Type: String\n      Value: !Sub 'optional-${Environment}'\n      Tags:\n        FollowAlong: fa-cloudformation\n        ManagedBy: CloudFormation\n  NestedTrainingStack:\n    Type: AWS::CloudFormation::Stack\n    Properties:\n      TemplateURL: !Ref NestedTemplateUrl\n      Parameters:\n        Environment: !Ref Environment\n        NestedMessage: nested-created\n      TimeoutInMinutes: 10\nOutputs:\n  RootParameterName:\n    Value: !Ref RootParameter\n  OptionalParameterCreated:\n    Value: !If [CreateOptional, 'true', 'false']\n  NestedParameterName:\n    Value: !GetAtt NestedTrainingStack.Outputs.NestedParameterName\n  NestedStackId:\n    Value: !Ref NestedTrainingStack"
+        }
+      ],
+      "expectedResults": [
+        "root.yaml contains four parameters.",
+        "The condition evaluates CreateOptionalParameter.",
+        "The nested stack receives parameters from the root."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-author-root-verify-01",
+          "text": "OptionalParameter uses CreateOptional."
+        },
+        {
+          "id": "task-06-author-root-verify-02",
+          "text": "NestedTrainingStack uses NestedTemplateUrl."
+        },
+        {
+          "id": "task-06-author-root-verify-03",
+          "text": "All SSM names use /fa-cloudformation/."
+        }
+      ]
+    },
+    {
+      "id": "task-07-author-stackset-roles",
+      "phaseId": "phase-02-author",
+      "title": "Author the self-managed StackSet roles template",
+      "feature": "StackSet IAM roles",
+      "difficulty": "Hard",
+      "goal": "Create the administration and execution roles declaratively in a dedicated CloudFormation template.",
+      "whyItMatters": "Self-managed StackSets need a trust path from CloudFormation to the administration role and then to the execution role.",
+      "examRelevance": "StackSets separate central administration from the execution identity in each target account.",
+      "prerequisites": [
+        "task-06-author-root"
+      ],
+      "sourceIds": [
+        "src-cfn-stacksets",
+        "src-cfn-stacksets-prereq",
+        "src-cfn-stacksets-start",
+        "src-iam"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open C:\\\\cloudformation-labs\\\\fa-cloudformation\\stackset-roles.yaml."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Paste the complete roles template and save it."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Confirm the administration role name is fa-cloudformation-stackset-admin-role."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm the execution role name is fa-cloudformation-stackset-execution-role."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm the administration role can assume only the exact execution role."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm the execution role can manage only /fa-cloudformation/stackset-message plus DescribeParameters."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not add AdministratorAccess."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - open roles template",
+          "language": "text",
+          "content": "notepad .\\stackset-roles.yaml"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "stackset-roles.yaml",
+          "language": "text",
+          "content": "AWSTemplateFormatVersion: '2010-09-09'\nDescription: Self-managed StackSet roles for the fa-cloudformation training lab.\nResources:\n  StackSetAdministrationRole:\n    Type: AWS::IAM::Role\n    Properties:\n      RoleName: fa-cloudformation-stackset-admin-role\n      AssumeRolePolicyDocument:\n        Version: '2012-10-17'\n        Statement:\n          - Effect: Allow\n            Principal:\n              Service: cloudformation.amazonaws.com\n            Action: sts:AssumeRole\n      Policies:\n        - PolicyName: fa-cloudformation-assume-execution-role\n          PolicyDocument:\n            Version: '2012-10-17'\n            Statement:\n              - Effect: Allow\n                Action: sts:AssumeRole\n                Resource: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/fa-cloudformation-stackset-execution-role'\n  StackSetExecutionRole:\n    Type: AWS::IAM::Role\n    DependsOn: StackSetAdministrationRole\n    Properties:\n      RoleName: fa-cloudformation-stackset-execution-role\n      AssumeRolePolicyDocument:\n        Version: '2012-10-17'\n        Statement:\n          - Effect: Allow\n            Principal:\n              AWS: !GetAtt StackSetAdministrationRole.Arn\n            Action: sts:AssumeRole\n      Policies:\n        - PolicyName: fa-cloudformation-stackset-ssm-policy\n          PolicyDocument:\n            Version: '2012-10-17'\n            Statement:\n              - Effect: Allow\n                Action: [ssm:PutParameter, ssm:GetParameter, ssm:GetParameters, ssm:DeleteParameter]\n                Resource: !Sub 'arn:${AWS::Partition}:ssm:eu-west-2:${AWS::AccountId}:parameter/fa-cloudformation/stackset-message'\n              - Effect: Allow\n                Action: ssm:DescribeParameters\n                Resource: '*'\nOutputs:\n  AdministrationRoleArn:\n    Value: !GetAtt StackSetAdministrationRole.Arn\n  ExecutionRoleName:\n    Value: !Ref StackSetExecutionRole"
+        }
+      ],
+      "expectedResults": [
+        "The template contains two named roles.",
+        "The trust chain is CloudFormation -> admin role -> execution role.",
+        "The execution policy is limited to the StackSet training parameter."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-author-stackset-roles-verify-01",
+          "text": "fa-cloudformation-stackset-admin-role is present."
+        },
+        {
+          "id": "task-07-author-stackset-roles-verify-02",
+          "text": "fa-cloudformation-stackset-execution-role is present."
+        },
+        {
+          "id": "task-07-author-stackset-roles-verify-03",
+          "text": "No AdministratorAccess policy is present."
+        }
+      ]
+    },
+    {
+      "id": "task-08-author-stackset",
+      "phaseId": "phase-02-author",
+      "title": "Author the StackSet workload template",
+      "feature": "StackSet workload",
+      "difficulty": "Medium",
+      "goal": "Create the template that the StackSet will deploy as a stack instance.",
+      "whyItMatters": "A StackSet holds one common template while stack instances represent deployments to account/Region targets.",
+      "examRelevance": "Standardized repeated deployment across accounts or Regions is a StackSet use case.",
+      "prerequisites": [
+        "task-07-author-stackset-roles"
+      ],
+      "sourceIds": [
+        "src-cfn-stacksets",
+        "src-cfn-stackinstances",
+        "src-cfn-parameters",
+        "src-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open C:\\\\cloudformation-labs\\\\fa-cloudformation\\stackset.yaml."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Paste the complete StackSet template and save it."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review Environment and StackSetMessage."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm it creates only /fa-cloudformation/stackset-message."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm the value includes AWS::Region."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - open StackSet template",
+          "language": "text",
+          "content": "notepad .\\stackset.yaml"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "stackset.yaml",
+          "language": "text",
+          "content": "AWSTemplateFormatVersion: '2010-09-09'\nDescription: StackSet template for the fa-cloudformation SAA-C03 Follow Along.\nParameters:\n  Environment:\n    Type: String\n    Default: training\n    AllowedValues: [training, test]\n  StackSetMessage:\n    Type: String\n    Default: deployed-by-stackset\n    MinLength: 3\n    MaxLength: 80\n    AllowedPattern: '^[A-Za-z0-9-]+$'\nResources:\n  StackSetParameter:\n    Type: AWS::SSM::Parameter\n    Properties:\n      Name: /fa-cloudformation/stackset-message\n      Type: String\n      Value: !Sub '${StackSetMessage}-${Environment}-${AWS::Region}'\n      Tags:\n        FollowAlong: fa-cloudformation\n        ManagedBy: CloudFormation-StackSet\nOutputs:\n  StackSetParameterName:\n    Value: !Ref StackSetParameter"
+        }
+      ],
+      "expectedResults": [
+        "The template contains two parameters and one SSM resource.",
+        "The resource name is /fa-cloudformation/stackset-message."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-author-stackset-verify-01",
+          "text": "No resource name escapes the training prefix."
+        },
+        {
+          "id": "task-08-author-stackset-verify-02",
+          "text": "AWS::Region is used in the value."
+        }
+      ]
+    },
+    {
+      "id": "task-09-validate-upload",
+      "phaseId": "phase-03-deploy",
+      "title": "Validate templates and upload the nested template",
+      "feature": "Validation and S3",
+      "difficulty": "Medium",
+      "goal": "Validate all four templates, create the private S3 bucket, upload nested.yaml and construct its HTTPS URL.",
+      "whyItMatters": "The root stack needs a reachable child TemplateURL before it can create the nested stack.",
+      "examRelevance": "Validate before deployment and store nested templates in S3.",
+      "prerequisites": [
+        "task-08-author-stackset"
+      ],
+      "sourceIds": [
+        "src-cfn-nested-resource",
+        "src-cfn-console-create",
+        "src-s3-create-bucket",
+        "src-cfn-anatomy"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "In the AWS Console choose Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Amazon S3 and choose Create bucket."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the exact TEMPLATE_BUCKET value derived in Task 3."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Keep Block Public Access enabled and create the bucket in eu-west-2."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open the bucket and upload nested.yaml."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open the object and copy its HTTPS object URL; record it as NestedTemplateUrl."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not make the object public."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - enter lab folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\\\cloudformation-labs\\\\fa-cloudformation\""
+        },
+        {
+          "title": "PowerShell - rebuild account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - rebuild bucket",
+          "language": "text",
+          "content": "$TEMPLATE_BUCKET = \"fa-cloudformation-$AWS_ACCOUNT_ID-templates\""
+        },
+        {
+          "title": "PowerShell - validate nested",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://nested.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - validate root",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://root.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - validate roles",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://stackset-roles.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - validate StackSet",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://stackset.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - create bucket",
+          "language": "text",
+          "content": "aws s3api create-bucket --bucket $TEMPLATE_BUCKET --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - upload nested",
+          "language": "text",
+          "content": "aws s3 cp .\\nested.yaml \"s3://$TEMPLATE_BUCKET/nested.yaml\" --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - derive nested URL",
+          "language": "text",
+          "content": "$NESTED_URL = \"https://$TEMPLATE_BUCKET.s3.eu-west-2.amazonaws.com/nested.yaml\""
+        },
+        {
+          "title": "PowerShell - show nested URL",
+          "language": "text",
+          "content": "Write-Output $NESTED_URL"
+        },
+        {
+          "title": "Bash - derive account ID",
+          "language": "text",
+          "content": "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text)"
+        },
+        {
+          "title": "Bash - derive bucket",
+          "language": "text",
+          "content": "TEMPLATE_BUCKET=\"fa-cloudformation-${AWS_ACCOUNT_ID}-templates\""
+        },
+        {
+          "title": "Bash - validate nested",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://nested.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "Bash - validate root",
+          "language": "text",
+          "content": "aws cloudformation validate-template --template-body file://root.yaml --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "Bash - create bucket",
+          "language": "text",
+          "content": "aws s3api create-bucket --bucket \"$TEMPLATE_BUCKET\" --region eu-west-2 --create-bucket-configuration LocationConstraint=eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "Bash - upload nested",
+          "language": "text",
+          "content": "aws s3 cp ./nested.yaml \"s3://$TEMPLATE_BUCKET/nested.yaml\" --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "Bash - derive nested URL",
+          "language": "text",
+          "content": "NESTED_URL=\"https://${TEMPLATE_BUCKET}.s3.eu-west-2.amazonaws.com/nested.yaml\""
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "All four validate-template calls succeed.",
+        "The private bucket exists in eu-west-2.",
+        "nested.yaml exists in the bucket.",
+        "NESTED_URL ends /nested.yaml."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-validate-upload-verify-01",
+          "text": "No validation error is returned."
+        },
+        {
+          "id": "task-09-validate-upload-verify-02",
+          "text": "S3 shows the exact object."
+        },
+        {
+          "id": "task-09-validate-upload-verify-03",
+          "text": "The object is not public."
+        }
+      ]
+    },
+    {
+      "id": "task-10-create-root",
+      "phaseId": "phase-03-deploy",
+      "title": "Create the root and nested stacks",
+      "feature": "Root and nested deployment",
+      "difficulty": "Hard",
+      "goal": "Deploy fa-cloudformation-root with the optional parameter disabled and confirm the nested child is created automatically.",
+      "whyItMatters": "The parent owns the child lifecycle and should be used for normal create, update and delete operations.",
+      "examRelevance": "Nested stacks organize reusable components inside one stack hierarchy.",
+      "prerequisites": [
+        "task-09-validate-upload"
+      ],
+      "sourceIds": [
+        "src-cfn-console-create",
+        "src-cfn-nested",
+        "src-cfn-nested-resource",
+        "src-cfn-change-set",
+        "src-cfn-execute-change-set"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open CloudFormation in eu-west-2 > Stacks > Create stack > With new resources."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Upload a template file and select root.yaml."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set Stack name to fa-cloudformation-root."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set Environment=training."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Set RootMessage=created-by-fa-cloudformation."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Set CreateOptionalParameter=false."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Paste the exact NestedTemplateUrl recorded in Task 9."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Continue with default stack options and no service role."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Review and submit the stack."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Wait for CREATE_COMPLETE."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Open Resources and find NestedTrainingStack with type AWS::CloudFormation::Stack."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Open the child stack and confirm CREATE_COMPLETE."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create reviewable CREATE change set",
+          "language": "text",
+          "content": "aws cloudformation create-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-create-root --change-set-type CREATE --template-body file://root.yaml --parameters ParameterKey=Environment,ParameterValue=training ParameterKey=RootMessage,ParameterValue=created-by-fa-cloudformation ParameterKey=CreateOptionalParameter,ParameterValue=false ParameterKey=NestedTemplateUrl,ParameterValue=$NESTED_URL --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for change set",
+          "language": "text",
+          "content": "aws cloudformation wait change-set-create-complete --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-create-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect change set",
+          "language": "text",
+          "content": "aws cloudformation describe-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-create-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - execute change set",
+          "language": "text",
+          "content": "aws cloudformation execute-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-create-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for stack",
+          "language": "text",
+          "content": "aws cloudformation wait stack-create-complete --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - describe stack",
+          "language": "text",
+          "content": "aws cloudformation describe-stacks --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Root stack reaches CREATE_COMPLETE.",
+        "Nested child reaches CREATE_COMPLETE.",
+        "root-message and nested-message exist.",
+        "optional-message is absent because the condition is false."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-create-root-verify-01",
+          "text": "Root status is CREATE_COMPLETE."
+        },
+        {
+          "id": "task-10-create-root-verify-02",
+          "text": "NestedTrainingStack is AWS::CloudFormation::Stack."
+        },
+        {
+          "id": "task-10-create-root-verify-03",
+          "text": "OptionalParameterCreated output is false."
+        }
+      ]
+    },
+    {
+      "id": "task-11-verify-update",
+      "phaseId": "phase-03-deploy",
+      "title": "Verify the false condition, then update through a change set",
+      "feature": "Parameters, conditions and change sets",
+      "difficulty": "Hard",
+      "goal": "Prove the initial false condition, then review and execute an update that enables the optional resource and changes RootMessage.",
+      "whyItMatters": "The learner sees parameter input, condition evaluation and a change set affect real resources.",
+      "examRelevance": "Change sets preview impact before updates; parameters and conditions make one template reusable.",
+      "prerequisites": [
+        "task-10-create-root"
+      ],
+      "sourceIds": [
+        "src-cfn-parameters",
+        "src-cfn-conditions",
+        "src-cfn-change-set",
+        "src-cfn-execute-change-set",
+        "src-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-cloudformation-root > Parameters and confirm CreateOptionalParameter=false."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Outputs and confirm OptionalParameterCreated=false."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Systems Manager > Parameter Store and confirm root-message and nested-message exist while optional-message is absent."
+        },
+        {
+          "sequence": 4,
+          "instruction": "In CloudFormation choose Stack actions > Create change set for current stack."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Use the current template."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Keep Environment=training and NestedTemplateUrl unchanged."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Change RootMessage to updated-by-fa-cloudformation."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Change CreateOptionalParameter to true."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create the change set and wait for CREATE_COMPLETE."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Review Changes and confirm RootParameter is modified and OptionalParameter is added."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Execute the change set only after review."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Wait for UPDATE_COMPLETE."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Verify /fa-cloudformation/optional-message now exists."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - check root parameter",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/root-message --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - check nested parameter",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/nested-message --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - confirm optional absent",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/optional-message --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - create update change set",
+          "language": "text",
+          "content": "aws cloudformation create-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-enable-optional --change-set-type UPDATE --use-previous-template --parameters ParameterKey=Environment,UsePreviousValue=true ParameterKey=RootMessage,ParameterValue=updated-by-fa-cloudformation ParameterKey=CreateOptionalParameter,ParameterValue=true ParameterKey=NestedTemplateUrl,UsePreviousValue=true --include-nested-stacks --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for update change set",
+          "language": "text",
+          "content": "aws cloudformation wait change-set-create-complete --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-enable-optional --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect update change set",
+          "language": "text",
+          "content": "aws cloudformation describe-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-enable-optional --include-property-values --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - execute update",
+          "language": "text",
+          "content": "aws cloudformation execute-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-enable-optional --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for update",
+          "language": "text",
+          "content": "aws cloudformation wait stack-update-complete --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - verify optional",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/optional-message --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Initial optional parameter lookup returns ParameterNotFound.",
+        "The reviewed change set adds OptionalParameter and modifies RootParameter.",
+        "Stack reaches UPDATE_COMPLETE.",
+        "optional-message exists with optional-training."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-verify-update-verify-01",
+          "text": "The update was reviewed before execution."
+        },
+        {
+          "id": "task-11-verify-update-verify-02",
+          "text": "OptionalParameterCreated becomes true."
+        },
+        {
+          "id": "task-11-verify-update-verify-03",
+          "text": "root-message begins updated-by-fa-cloudformation."
+        }
+      ]
+    },
+    {
+      "id": "task-12-stackset-roles",
+      "phaseId": "phase-04-stacksets",
+      "title": "Deploy the self-managed StackSet IAM roles",
+      "feature": "StackSet permissions",
+      "difficulty": "Hard",
+      "goal": "Create the two StackSet roles from stackset-roles.yaml and verify the trust chain.",
+      "whyItMatters": "Self-managed StackSets require administrator and execution roles even for this single-account teaching deployment.",
+      "examRelevance": "StackSets use a central admin operation and an execution identity in each target account.",
+      "prerequisites": [
+        "task-11-verify-update"
+      ],
+      "sourceIds": [
+        "src-cfn-stacksets-prereq",
+        "src-cfn-stacksets-start",
+        "src-cfn-console-create",
+        "src-iam"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open CloudFormation > Create stack with new resources."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Upload stackset-roles.yaml."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Set Stack name fa-cloudformation-stackset-roles."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Continue through the wizard."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Acknowledge creation of named IAM resources."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create the stack and wait for CREATE_COMPLETE."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open Outputs and record AdministrationRoleArn and ExecutionRoleName."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Open IAM > Roles and verify both fa-cloudformation StackSet roles."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create roles stack",
+          "language": "text",
+          "content": "aws cloudformation create-stack --stack-name fa-cloudformation-stackset-roles --template-body file://stackset-roles.yaml --capabilities CAPABILITY_NAMED_IAM --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for roles stack",
+          "language": "text",
+          "content": "aws cloudformation wait stack-create-complete --stack-name fa-cloudformation-stackset-roles --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - get admin role ARN",
+          "language": "text",
+          "content": "$ADMIN_ROLE_ARN = aws cloudformation describe-stacks --stack-name fa-cloudformation-stackset-roles --query \"Stacks[0].Outputs[?OutputKey=='AdministrationRoleArn'].OutputValue | [0]\" --output text --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - show admin role ARN",
+          "language": "text",
+          "content": "Write-Output $ADMIN_ROLE_ARN"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Role stack reaches CREATE_COMPLETE.",
+        "Both custom roles exist.",
+        "AdministrationRoleArn is available from outputs."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-stackset-roles-verify-01",
+          "text": "Admin role trust principal is cloudformation.amazonaws.com."
+        },
+        {
+          "id": "task-12-stackset-roles-verify-02",
+          "text": "Execution role trusts the admin role."
+        },
+        {
+          "id": "task-12-stackset-roles-verify-03",
+          "text": "Execution policy is limited to the training StackSet parameter."
+        }
+      ]
+    },
+    {
+      "id": "task-13-stackset-instance",
+      "phaseId": "phase-04-stacksets",
+      "title": "Create the StackSet and one stack instance",
+      "feature": "CloudFormation StackSets",
+      "difficulty": "Hard",
+      "goal": "Create fa-cloudformation-stackset with self-managed permissions and deploy one instance to the current account in eu-west-2.",
+      "whyItMatters": "A single-account deployment safely teaches the same StackSet mechanism that scales across accounts and Regions.",
+      "examRelevance": "Repeated standardized deployment across accounts or Regions points toward StackSets.",
+      "prerequisites": [
+        "task-12-stackset-roles"
+      ],
+      "sourceIds": [
+        "src-cfn-stacksets",
+        "src-cfn-stacksets-start",
+        "src-cfn-stackinstances"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Do not start another StackSet operation while the current operation is RUNNING."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open CloudFormation > StackSets > Create StackSet."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose self-managed permissions."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Upload stackset.yaml."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set StackSet name fa-cloudformation-stackset."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Use fa-cloudformation-stackset-admin-role and fa-cloudformation-stackset-execution-role."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Set Environment=training and StackSetMessage=deployed-by-stackset."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create the StackSet."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Choose Add stacks to StackSet > Deploy new stacks."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Enter the current 12-digit account ID."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Choose eu-west-2 only."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Set failure tolerance 0 and maximum concurrent accounts 1."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Submit and wait for SUCCEEDED."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Verify /fa-cloudformation/stackset-message in Parameter Store."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - admin role ARN",
+          "language": "text",
+          "content": "$ADMIN_ROLE_ARN = \"arn:aws:iam::$AWS_ACCOUNT_ID:role/fa-cloudformation-stackset-admin-role\""
+        },
+        {
+          "title": "PowerShell - create StackSet",
+          "language": "text",
+          "content": "aws cloudformation create-stack-set --stack-set-name fa-cloudformation-stackset --template-body file://stackset.yaml --parameters ParameterKey=Environment,ParameterValue=training ParameterKey=StackSetMessage,ParameterValue=deployed-by-stackset --permission-model SELF_MANAGED --administration-role-arn $ADMIN_ROLE_ARN --execution-role-name fa-cloudformation-stackset-execution-role --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - create stack instance",
+          "language": "text",
+          "content": "$STACKSET_OPERATION_ID = aws cloudformation create-stack-instances --stack-set-name fa-cloudformation-stackset --accounts $AWS_ACCOUNT_ID --regions eu-west-2 --operation-preferences FailureToleranceCount=0,MaxConcurrentCount=1 --query OperationId --output text --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect operation",
+          "language": "text",
+          "content": "aws cloudformation describe-stack-set-operation --stack-set-name fa-cloudformation-stackset --operation-id $STACKSET_OPERATION_ID --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - list instances",
+          "language": "text",
+          "content": "aws cloudformation list-stack-instances --stack-set-name fa-cloudformation-stackset --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - verify parameter",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/stackset-message --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "StackSet exists with SELF_MANAGED permissions.",
+        "The operation reaches SUCCEEDED.",
+        "Exactly one stack instance targets the current account/eu-west-2.",
+        "stackset-message ends training-eu-west-2."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-stackset-instance-verify-01",
+          "text": "StackSet status is ACTIVE."
+        },
+        {
+          "id": "task-13-stackset-instance-verify-02",
+          "text": "Stack instance is CURRENT after success."
+        },
+        {
+          "id": "task-13-stackset-instance-verify-03",
+          "text": "The StackSet SSM parameter exists."
+        }
+      ]
+    },
+    {
+      "id": "task-14-create-drift",
+      "phaseId": "phase-05-drift",
+      "title": "Create one deliberate out-of-band change",
+      "feature": "Configuration drift",
+      "difficulty": "Medium",
+      "goal": "Change root-message outside CloudFormation so actual state no longer matches expected state.",
+      "whyItMatters": "This creates a harmless example of unmanaged configuration change.",
+      "examRelevance": "Drift detection is used to find changes made outside the IaC control plane.",
+      "prerequisites": [
+        "task-13-stackset-instance"
+      ],
+      "sourceIds": [
+        "src-cfn-drift",
+        "src-ssm"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Systems Manager > Parameter Store in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open /fa-cloudformation/root-message."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Edit."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set the value to DRIFTED-OUTSIDE-CLOUDFORMATION."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Save it."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Do not edit any other lab parameter."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Return to CloudFormation without updating the stack."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create deliberate drift",
+          "language": "text",
+          "content": "aws ssm put-parameter --name /fa-cloudformation/root-message --type String --value DRIFTED-OUTSIDE-CLOUDFORMATION --overwrite --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - verify actual value",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/root-message --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The actual SSM value is DRIFTED-OUTSIDE-CLOUDFORMATION.",
+        "The template itself is unchanged."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-create-drift-verify-01",
+          "text": "Only root-message was changed manually."
+        },
+        {
+          "id": "task-14-create-drift-verify-02",
+          "text": "The root stack still exists."
+        }
+      ]
+    },
+    {
+      "id": "task-15-detect-drift",
+      "phaseId": "phase-05-drift",
+      "title": "Detect and inspect stack drift",
+      "feature": "Drift detection",
+      "difficulty": "Hard",
+      "goal": "Run drift detection and identify RootParameter as MODIFIED with different expected and actual values.",
+      "whyItMatters": "The learner must interpret drift results, not merely start the check.",
+      "examRelevance": "A stack is DRIFTED when supported managed resources differ from expected configuration.",
+      "prerequisites": [
+        "task-14-create-drift"
+      ],
+      "sourceIds": [
+        "src-cfn-drift",
+        "src-cfn-drift-stack",
+        "src-cfn-cli-drift",
+        "src-cfn-cli-drift-status",
+        "src-cfn-resource-drifts"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-cloudformation-root in CloudFormation."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Stack actions > Detect drift."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Confirm the request and wait for completion."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open drift results."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Confirm stack drift status DRIFTED."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Find RootParameter with resource drift status MODIFIED."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Inspect the expected value and actual DRIFTED-OUTSIDE-CLOUDFORMATION value."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - start drift detection",
+          "language": "text",
+          "content": "$DRIFT_ID = aws cloudformation detect-stack-drift --stack-name fa-cloudformation-root --query StackDriftDetectionId --output text --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - poll drift status",
+          "language": "text",
+          "content": "aws cloudformation describe-stack-drift-detection-status --stack-drift-detection-id $DRIFT_ID --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect modified resources",
+          "language": "text",
+          "content": "aws cloudformation describe-stack-resource-drifts --stack-name fa-cloudformation-root --stack-resource-drift-status-filters MODIFIED --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Detection reaches DETECTION_COMPLETE.",
+        "StackDriftStatus is DRIFTED.",
+        "RootParameter is MODIFIED.",
+        "Actual value shows the deliberate manual value."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-detect-drift-verify-01",
+          "text": "Drift detection completed successfully."
+        },
+        {
+          "id": "task-15-detect-drift-verify-02",
+          "text": "RootParameter is the deliberate drifted resource."
+        }
+      ]
+    },
+    {
+      "id": "task-16-repair-drift",
+      "phaseId": "phase-05-drift",
+      "title": "Repair drift through a reviewed CloudFormation update",
+      "feature": "Drift repair",
+      "difficulty": "Hard",
+      "goal": "Change RootMessage through a reviewed change set, execute it, then confirm a new drift check is IN_SYNC.",
+      "whyItMatters": "The repair restores CloudFormation as the source of truth instead of accepting the manual edit.",
+      "examRelevance": "A controlled CloudFormation update should bring managed state back in line and then be verified.",
+      "prerequisites": [
+        "task-15-detect-drift"
+      ],
+      "sourceIds": [
+        "src-cfn-change-set",
+        "src-cfn-execute-change-set",
+        "src-cfn-drift-stack",
+        "src-cfn-cli-drift-status"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fa-cloudformation-root > Stack actions > Create change set for current stack."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Use the current template."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Keep Environment=training, CreateOptionalParameter=true and NestedTemplateUrl unchanged."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set RootMessage=repaired-by-fa-cloudformation."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create and wait for the change set."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm RootParameter is the intended modification."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Execute and wait for UPDATE_COMPLETE."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Run Detect drift again."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Wait for the new detection to finish."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Confirm stack drift status IN_SYNC."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create repair change set",
+          "language": "text",
+          "content": "aws cloudformation create-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-repair-drift --change-set-type UPDATE --use-previous-template --parameters ParameterKey=Environment,UsePreviousValue=true ParameterKey=RootMessage,ParameterValue=repaired-by-fa-cloudformation ParameterKey=CreateOptionalParameter,UsePreviousValue=true ParameterKey=NestedTemplateUrl,UsePreviousValue=true --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for repair change set",
+          "language": "text",
+          "content": "aws cloudformation wait change-set-create-complete --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-repair-drift --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect repair",
+          "language": "text",
+          "content": "aws cloudformation describe-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-repair-drift --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - execute repair",
+          "language": "text",
+          "content": "aws cloudformation execute-change-set --stack-name fa-cloudformation-root --change-set-name fa-cloudformation-repair-drift --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait for repair",
+          "language": "text",
+          "content": "aws cloudformation wait stack-update-complete --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - verify repaired value",
+          "language": "text",
+          "content": "aws ssm get-parameter --name /fa-cloudformation/root-message --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - start second drift",
+          "language": "text",
+          "content": "$DRIFT_ID_2 = aws cloudformation detect-stack-drift --stack-name fa-cloudformation-root --query StackDriftDetectionId --output text --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - poll second drift",
+          "language": "text",
+          "content": "aws cloudformation describe-stack-drift-detection-status --stack-drift-detection-id $DRIFT_ID_2 --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "root-message becomes repaired-by-fa-cloudformation-training.",
+        "Stack reaches UPDATE_COMPLETE.",
+        "New drift detection reports IN_SYNC."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-repair-drift-verify-01",
+          "text": "The repair change set was reviewed first."
+        },
+        {
+          "id": "task-16-repair-drift-verify-02",
+          "text": "Final root stack drift status is IN_SYNC."
+        }
+      ]
+    },
+    {
+      "id": "task-17-exam-review",
+      "phaseId": "phase-06-review",
+      "title": "Review SAA-C03 CloudFormation decision points",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Turn the practical work into clear architecture decision rules before teardown.",
+      "whyItMatters": "The exam rewards recognizing the correct CloudFormation mechanism from a requirement.",
+      "examRelevance": "CloudFormation is explicitly in scope for SAA-C03.",
+      "prerequisites": [
+        "task-16-repair-drift"
+      ],
+      "sourceIds": [
+        "src-saa-in-scope",
+        "src-cfn-welcome",
+        "src-cfn-parameters",
+        "src-cfn-conditions",
+        "src-cfn-nested",
+        "src-cfn-stacksets",
+        "src-cfn-drift",
+        "src-cfn-change-set"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Template means declarative desired state."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Stack means one managed collection of resources."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Parameter means runtime input without editing the template."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Condition means true/false logic controlling resource or output creation."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Nested stack means a child AWS::CloudFormation::Stack inside a parent hierarchy."
+        },
+        {
+          "sequence": 6,
+          "instruction": "StackSet means centrally distributing one template to target accounts/Regions."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Change set means previewing proposed stack changes before execution."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Drift means actual managed state differs from expected template state."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Exam trigger: repeated standardized deployment across accounts/Regions -> StackSets."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Exam trigger: reusable components inside one deployment hierarchy -> nested stacks."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Exam trigger: manual out-of-band changes -> drift detection."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Exam trigger: preview stack impact before update -> change set."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Exam trap: nested stacks and StackSets solve different problems."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - final root inventory",
+          "language": "text",
+          "content": "aws cloudformation describe-stacks --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - final StackSet inventory",
+          "language": "text",
+          "content": "aws cloudformation list-stack-instances --stack-set-name fa-cloudformation-stackset --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - final parameter inventory",
+          "language": "text",
+          "content": "aws ssm describe-parameters --parameter-filters \"Key=Name,Option=BeginsWith,Values=/fa-cloudformation/\" --region eu-west-2 --profile fa-cloudformation-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can explain stack vs nested stack vs StackSet.",
+        "The learner can explain parameter vs condition.",
+        "The learner can explain change set vs drift detection.",
+        "Only expected fa-cloudformation resources remain."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-exam-review-verify-01",
+          "text": "Root stack is healthy."
+        },
+        {
+          "id": "task-17-exam-review-verify-02",
+          "text": "StackSet instance is CURRENT."
+        },
+        {
+          "id": "task-17-exam-review-verify-03",
+          "text": "Root stack is IN_SYNC before cleanup."
+        }
+      ]
+    },
+    {
+      "id": "task-18-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete every CloudFormation training resource in reverse dependency order",
+      "feature": "Ordered cleanup",
+      "difficulty": "Hard",
+      "goal": "Remove the StackSet instance first, then StackSet, root/nested stacks, role stack, S3 artifacts, temporary identity and local files.",
+      "whyItMatters": "Deleting credentials or templates too early can strand managed resources, so cleanup preserves dependencies until they are no longer needed.",
+      "examRelevance": "Delete through the owning CloudFormation control plane rather than manually deleting child resources first.",
+      "prerequisites": [
+        "task-17-exam-review"
+      ],
+      "sourceIds": [
+        "src-cfn-stackinstances",
+        "src-cfn-stacksets",
+        "src-cfn-nested",
+        "src-cfn-console-create",
+        "src-iam-best",
+        "src-s3-create-bucket"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "If the StackSet delete operation is still RUNNING, wait for SUCCEEDED before deleting the StackSet or roles."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open CloudFormation > StackSets and open fa-cloudformation-stackset."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete the stack instance for the current account in eu-west-2 and choose not to retain the stack."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Wait until the delete operation succeeds."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Delete the now-empty fa-cloudformation-stackset."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open CloudFormation > Stacks."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-cloudformation-root and wait for it to disappear; do not delete the nested child directly."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open Systems Manager Parameter Store and verify root-message, optional-message and nested-message are absent."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete fa-cloudformation-stackset-roles and wait for it to disappear."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Open IAM Roles and verify both fa-cloudformation StackSet roles are absent."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open the exact S3 template bucket from Task 3."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete nested.yaml, then delete the empty bucket."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Verify /fa-cloudformation/stackset-message is absent."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Sign in as root only now: delete the fa-cloudformation-admin access key, detach/delete fa-cloudformation-admin-policy, delete fa-cloudformation-admin, then sign out of root."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Remove only the fa-cloudformation-admin AWS CLI profile; leave unrelated profiles unchanged."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Delete C:\\cloudformation-labs\\fa-cloudformation last."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Read and affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - rebuild account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-cloudformation-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - delete StackSet instance",
+          "language": "text",
+          "content": "$DELETE_OPERATION_ID = aws cloudformation delete-stack-instances --stack-set-name fa-cloudformation-stackset --accounts $AWS_ACCOUNT_ID --regions eu-west-2 --no-retain-stacks --query OperationId --output text --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - inspect delete operation",
+          "language": "text",
+          "content": "aws cloudformation describe-stack-set-operation --stack-set-name fa-cloudformation-stackset --operation-id $DELETE_OPERATION_ID --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - delete empty StackSet",
+          "language": "text",
+          "content": "aws cloudformation delete-stack-set --stack-set-name fa-cloudformation-stackset --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - delete root stack",
+          "language": "text",
+          "content": "aws cloudformation delete-stack --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait root delete",
+          "language": "text",
+          "content": "aws cloudformation wait stack-delete-complete --stack-name fa-cloudformation-root --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - verify SSM absence",
+          "language": "text",
+          "content": "aws ssm describe-parameters --parameter-filters \"Key=Name,Option=BeginsWith,Values=/fa-cloudformation/\" --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - delete role stack",
+          "language": "text",
+          "content": "aws cloudformation delete-stack --stack-name fa-cloudformation-stackset-roles --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - wait role stack delete",
+          "language": "text",
+          "content": "aws cloudformation wait stack-delete-complete --stack-name fa-cloudformation-stackset-roles --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - rebuild bucket",
+          "language": "text",
+          "content": "$TEMPLATE_BUCKET = \"fa-cloudformation-$AWS_ACCOUNT_ID-templates\""
+        },
+        {
+          "title": "PowerShell - delete nested object",
+          "language": "text",
+          "content": "aws s3 rm \"s3://$TEMPLATE_BUCKET/nested.yaml\" --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - delete bucket",
+          "language": "text",
+          "content": "aws s3api delete-bucket --bucket $TEMPLATE_BUCKET --region eu-west-2 --profile fa-cloudformation-admin"
+        },
+        {
+          "title": "PowerShell - leave lab folder",
+          "language": "text",
+          "content": "Set-Location C:\\"
+        },
+        {
+          "title": "PowerShell - delete local lab folder",
+          "language": "text",
+          "content": "Remove-Item \"C:\\cloudformation-labs\\fa-cloudformation\" -Recurse -Force"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "StackSet instance and StackSet are gone.",
+        "Root stack and nested child are gone.",
+        "All four /fa-cloudformation/ parameters are absent.",
+        "StackSet roles stack and both roles are gone.",
+        "nested.yaml and template bucket are gone.",
+        "Temporary IAM user, access key, policy and CLI profile are removed.",
+        "Local lab directory is removed last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-cleanup-verify-01",
+          "text": "No fa-cloudformation CloudFormation stack remains."
+        },
+        {
+          "id": "task-18-cleanup-verify-02",
+          "text": "No /fa-cloudformation/ SSM parameter remains."
+        },
+        {
+          "id": "task-18-cleanup-verify-03",
+          "text": "No fa-cloudformation StackSet role remains."
+        },
+        {
+          "id": "task-18-cleanup-verify-04",
+          "text": "No fa-cloudformation template bucket remains."
+        },
+        {
+          "id": "task-18-cleanup-verify-05",
+          "text": "Unrelated resources and CLI profiles remain unchanged."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "resource-iam-user",
+      "label": "Temporary training IAM user",
+      "exactName": "fa-cloudformation-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-iam-policy",
+      "label": "Training IAM policy",
+      "exactName": "fa-cloudformation-admin-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-access-key",
+      "label": "Temporary IAM access key",
+      "exactName": null,
+      "generatedValue": "Access key ID and secret access key",
+      "captureAllowed": false,
+      "sensitive": true,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": [
+        "resource-iam-user"
+      ]
+    },
+    {
+      "id": "resource-cli-profile",
+      "label": "AWS CLI profile",
+      "exactName": "fa-cloudformation-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-03-cli-profile",
+      "dependsOn": [
+        "resource-access-key"
+      ]
+    },
+    {
+      "id": "resource-local-folder",
+      "label": "Local lab folder",
+      "exactName": "C:\\\\cloudformation-labs\\\\fa-cloudformation",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-create-files",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-template-bucket",
+      "label": "Private S3 template bucket",
+      "exactName": "fa-cloudformation-<derived AWS account ID>-templates",
+      "generatedValue": "Derived from verified AWS account ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-09-validate-upload",
+      "dependsOn": [
+        "resource-cli-profile"
+      ]
+    },
+    {
+      "id": "resource-nested-object",
+      "label": "Nested template object",
+      "exactName": "nested.yaml",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-09-validate-upload",
+      "dependsOn": [
+        "resource-template-bucket"
+      ]
+    },
+    {
+      "id": "resource-root-stack",
+      "label": "Root stack",
+      "exactName": "fa-cloudformation-root",
+      "generatedValue": "Stack ID",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-create-root",
+      "dependsOn": [
+        "resource-nested-object"
+      ]
+    },
+    {
+      "id": "resource-nested-stack",
+      "label": "Nested child stack",
+      "exactName": "Generated from logical ID NestedTrainingStack",
+      "generatedValue": "Nested stack ID/name",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-create-root",
+      "dependsOn": [
+        "resource-root-stack",
+        "resource-nested-object"
+      ]
+    },
+    {
+      "id": "resource-root-param",
+      "label": "Root SSM parameter",
+      "exactName": "/fa-cloudformation/root-message",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-create-root",
+      "dependsOn": [
+        "resource-root-stack"
+      ]
+    },
+    {
+      "id": "resource-nested-param",
+      "label": "Nested SSM parameter",
+      "exactName": "/fa-cloudformation/nested-message",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-10-create-root",
+      "dependsOn": [
+        "resource-nested-stack"
+      ]
+    },
+    {
+      "id": "resource-optional-param",
+      "label": "Conditional SSM parameter",
+      "exactName": "/fa-cloudformation/optional-message",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-11-verify-update",
+      "dependsOn": [
+        "resource-root-stack"
+      ]
+    },
+    {
+      "id": "resource-role-stack",
+      "label": "StackSet roles stack",
+      "exactName": "fa-cloudformation-stackset-roles",
+      "generatedValue": "Stack ID",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-stackset-roles",
+      "dependsOn": []
+    },
+    {
+      "id": "resource-admin-role",
+      "label": "StackSet admin role",
+      "exactName": "fa-cloudformation-stackset-admin-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-stackset-roles",
+      "dependsOn": [
+        "resource-role-stack"
+      ]
+    },
+    {
+      "id": "resource-exec-role",
+      "label": "StackSet execution role",
+      "exactName": "fa-cloudformation-stackset-execution-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-stackset-roles",
+      "dependsOn": [
+        "resource-admin-role"
+      ]
+    },
+    {
+      "id": "resource-stackset",
+      "label": "CloudFormation StackSet",
+      "exactName": "fa-cloudformation-stackset",
+      "generatedValue": "StackSet ID",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-13-stackset-instance",
+      "dependsOn": [
+        "resource-admin-role",
+        "resource-exec-role"
+      ]
+    },
+    {
+      "id": "resource-stack-instance",
+      "label": "StackSet stack instance",
+      "exactName": "Current training account / eu-west-2",
+      "generatedValue": "Underlying stack ID",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-13-stackset-instance",
+      "dependsOn": [
+        "resource-stackset"
+      ]
+    },
+    {
+      "id": "resource-stackset-param",
+      "label": "StackSet SSM parameter",
+      "exactName": "/fa-cloudformation/stackset-message",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-13-stackset-instance",
+      "dependsOn": [
+        "resource-stack-instance"
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "Template validation fails",
+      "likelyCause": "YAML indentation, quoting or copied content changed.",
+      "fix": "Compare the local file with the complete editable block and correct the first validation error before deployment."
+    },
+    {
+      "id": "trouble-02",
+      "title": "Nested stack cannot read TemplateURL",
+      "likelyCause": "nested.yaml is missing, URL is wrong, or S3 read permission is missing.",
+      "fix": "Rebuild TEMPLATE_BUCKET/NESTED_URL from the verified account ID and confirm nested.yaml exists in that private bucket."
+    },
+    {
+      "id": "trouble-03",
+      "title": "Root stack rolls back",
+      "likelyCause": "A nested resource failed, an exact SSM name already exists, or a parameter constraint failed.",
+      "fix": "Open Events, find the first CREATE_FAILED event and follow the nested stack link when NestedTrainingStack failed."
+    },
+    {
+      "id": "trouble-04",
+      "title": "OptionalParameter is not in the change set",
+      "likelyCause": "CreateOptionalParameter was not changed to true.",
+      "fix": "Recreate the change set with CreateOptionalParameter=true and keep NestedTemplateUrl unchanged."
+    },
+    {
+      "id": "trouble-05",
+      "title": "StackSet cannot pass the administration role",
+      "likelyCause": "The roles stack is not complete or the training user lacks the exact restricted iam:PassRole permission.",
+      "fix": "Verify the roles stack is CREATE_COMPLETE and the admin role ARN exactly matches fa-cloudformation-stackset-admin-role."
+    },
+    {
+      "id": "trouble-06",
+      "title": "StackSet instance operation fails",
+      "likelyCause": "Role trust/permissions are wrong or stackset-message already exists.",
+      "fix": "Inspect describe-stack-set-operation and list-stack-set-operation-results, then verify both roles and the exact SSM name."
+    },
+    {
+      "id": "trouble-07",
+      "title": "Drift remains IN_SYNC after manual edit",
+      "likelyCause": "The wrong SSM parameter was edited or the new value was not saved.",
+      "fix": "Read /fa-cloudformation/root-message directly and confirm DRIFTED-OUTSIDE-CLOUDFORMATION before rerunning drift detection."
+    },
+    {
+      "id": "trouble-08",
+      "title": "Final drift check remains DRIFTED",
+      "likelyCause": "Another resource changed manually or the repair update did not complete.",
+      "fix": "Describe all resource drifts and repair only the lab resource whose actual state differs from the template."
+    },
+    {
+      "id": "trouble-09",
+      "title": "StackSet cannot be deleted",
+      "likelyCause": "A stack instance still exists or the instance deletion is still running.",
+      "fix": "Wait for the delete operation to reach SUCCEEDED and confirm the instance list is empty before deleting the StackSet."
+    },
+    {
+      "id": "trouble-10",
+      "title": "S3 bucket cannot be deleted",
+      "likelyCause": "The bucket is not empty.",
+      "fix": "List the exact bucket, delete nested.yaml only, then retry deleting the bucket."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "StackSet stack instance in current account / eu-west-2",
+      "action": "Delete it with retain-stacks disabled.",
+      "verification": "The StackSet operation reports SUCCEEDED and no instance remains.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-cloudformation-stackset",
+      "action": "Delete the empty StackSet.",
+      "verification": "It no longer appears in CloudFormation.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 3,
+      "resource": "fa-cloudformation-root",
+      "action": "Delete the root stack and allow it to delete its nested child and three SSM parameters.",
+      "verification": "Root/nested stacks and root-message, optional-message, nested-message are absent.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-cloudformation-stackset-roles",
+      "action": "Delete the StackSet roles stack.",
+      "verification": "Both fa-cloudformation StackSet roles are absent.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "nested.yaml in the deterministic S3 bucket",
+      "action": "Delete the uploaded nested template object.",
+      "verification": "The bucket is empty.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "fa-cloudformation-<derived AWS account ID>-templates",
+      "action": "Delete the empty bucket.",
+      "verification": "The bucket is absent.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-cloudformation-admin access key, fa-cloudformation-admin-policy, and IAM user",
+      "action": "Use root only after cloud cleanup to remove the temporary identity.",
+      "verification": "The user and policy are absent.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "AWS CLI profile fa-cloudformation-admin",
+      "action": "Remove only the training profile.",
+      "verification": "The profile is unusable while unrelated profiles remain.",
+      "taskId": "task-18-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "C:\\\\cloudformation-labs\\\\fa-cloudformation",
+      "action": "Delete the exact local lab folder last.",
+      "verification": "The folder is absent.",
+      "taskId": "task-18-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that the fa-cloudformation StackSet instance and StackSet are deleted; fa-cloudformation-root and its nested child are deleted; /fa-cloudformation/root-message, /fa-cloudformation/optional-message, /fa-cloudformation/nested-message and /fa-cloudformation/stackset-message are absent from eu-west-2; fa-cloudformation-stackset-roles and both StackSet IAM roles are deleted; nested.yaml and the deterministic fa-cloudformation-<account-id>-templates bucket are deleted; the temporary fa-cloudformation-admin access key, policy, IAM user and CLI profile are removed; unrelated resources and profiles are unchanged; and only then was C:\\cloudformation-labs\\fa-cloudformation deleted.",
+  "warnings": {
+    "cost": "This lab creates a small private S3 bucket/object, CloudFormation stacks, two IAM roles, a StackSet/stack instance and small Systems Manager Parameter Store values. Review current AWS pricing and complete cleanup when finished.",
+    "safety": "Delete only resources with exact fa-cloudformation names or the deterministic fa-cloudformation-<account-id>-templates bucket. Never delete the nested child directly while the root owns it.",
+    "credentials": "Never create root access keys or place the temporary IAM-user access key/secret in templates, screenshots, source control or saved resource fields. Enter access-key values only through protected aws configure prompts.",
+    "region": "All workload resources and the StackSet instance are created in eu-west-2, and the template bucket is also created in eu-west-2."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 18,
+    "checkboxCount": 205,
+    "cliCommandCount": 97,
+    "editableBlockCount": 5,
+    "verificationCount": 48,
+    "cleanupItemCount": 9,
+    "officialSourceCount": 24,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "Offline educational authoring artifact only; no Study Tracker validation, import, acceptance, approval, publication or fingerprint has been performed."
+  }
+}
