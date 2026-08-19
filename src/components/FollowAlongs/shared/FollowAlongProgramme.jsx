@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useAuth } from '../../../features/auth/useAuth.js';
+import { isDemoUser } from '../../../features/demo/demoMode.js';
 import { buildCompletionTransition, normalizeFollowAlongCompletionStatus, validateFollowAlongConfig } from './followAlongContract.js';
 import { FollowAlongDashboard } from './FollowAlongDashboard.jsx';
 import { FollowAlongNavigator } from './FollowAlongNavigator.jsx';
@@ -22,6 +23,7 @@ function initialProgress(config) {
 export const FollowAlongProgramme = ({ config, persistence, extensions = [], onBackToLanding = null }) => {
   const validation = useMemo(() => validateFollowAlongConfig(config), [config]);
   const { currentUser } = useAuth();
+  const persistenceUserId = isDemoUser(currentUser) ? null : currentUser?.id;
   const [progress, setProgress] = useState(() => validation.valid ? initialProgress(config) : {});
   const [resources, setResources] = useState({});
   const [subView, setSubView] = useState('runner');
@@ -35,21 +37,21 @@ export const FollowAlongProgramme = ({ config, persistence, extensions = [], onB
     if (!validation.valid) return undefined;
     let active = true;
     setLoading(true);
-    persistence.load(currentUser?.id).then(async loaded => {
+    persistence.load(persistenceUserId).then(async loaded => {
       if (!active) return;
       if (loaded?.error) setError(loaded.error);
       if (loaded?.progress) {
         setProgress({ ...initialProgress(config), ...loaded.progress, completionStatus: normalizeFollowAlongCompletionStatus(loaded.progress.completionStatus) });
         setResources(loaded.resources || {});
-        if (currentUser?.id) await persistence.save(currentUser.id, loaded.progress, loaded.resources || {});
+        if (persistenceUserId) await persistence.save(persistenceUserId, loaded.progress, loaded.resources || {});
       }
     }).catch(caught => active && setError(caught?.message || 'Unable to load Follow Along progress.')).finally(() => active && setLoading(false));
     return () => { active = false; };
-  }, [config, currentUser?.id, persistence, validation.valid]);
+  }, [config, persistence, persistenceUserId, validation.valid]);
 
   const persist = useCallback(async (nextProgress, nextResources = resources) => {
     const snapshot = { ...progress, ...nextProgress, completionStatus: normalizeFollowAlongCompletionStatus(nextProgress.completionStatus ?? progress.completionStatus), updatedAt: new Date().toISOString() };
-    const result = await persistence.save(currentUser?.id, snapshot, nextResources);
+    const result = await persistence.save(persistenceUserId, snapshot, nextResources);
     if (!result?.success) {
       setError(result?.error || 'Unable to save Follow Along progress.');
       return { success: false, error: result?.error };
@@ -58,7 +60,7 @@ export const FollowAlongProgramme = ({ config, persistence, extensions = [], onB
     setResources(nextResources);
     setError('');
     return { success: true, snapshot, resources: nextResources };
-  }, [currentUser?.id, persistence, progress, resources]);
+  }, [persistence, persistenceUserId, progress, resources]);
 
   const transition = useCallback(async action => {
     if (transitionLock.current) return false;

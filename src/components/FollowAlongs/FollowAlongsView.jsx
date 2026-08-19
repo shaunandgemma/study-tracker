@@ -5,7 +5,7 @@ import { useAuth } from '../../features/auth/useAuth.js';
 import { PublishedFollowAlongView } from './PublishedFollowAlongView.jsx';
 
 export const FollowAlongsView = ({ initialProgrammeId = null, examId = 'aws-saa-c03', examCode = 'AWS SAA-C03' }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, isDemoAccount } = useAuth();
   const [selectedProgrammeId, setSelectedProgrammeId] = useState(initialProgrammeId);
 
   // Sync state if initialProgrammeId prop changes
@@ -17,6 +17,9 @@ export const FollowAlongsView = ({ initialProgrammeId = null, examId = 'aws-saa-
 
   // If VPC topic selected, open VpcLearningPathView with Back button
   if (selectedProgrammeId === 'vpc-learning-path') {
+    if (isDemoAccount) {
+      return <div role="alert" className="rounded-2xl border border-cyan-800 bg-cyan-950/30 p-6 text-sm text-cyan-100">The legacy VPC path is unavailable in the isolated demo. Choose a published Follow Along instead.</div>;
+    }
     return (
       <VpcLearningPathView
         onBackToLanding={() => setSelectedProgrammeId(null)}

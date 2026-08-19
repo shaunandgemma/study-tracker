@@ -15,7 +15,7 @@ test('Follow Along read-only authentication consumers', async (t) => {
     for (const file of authConsumerFiles) {
       const source = read(file);
       assert.match(source, /features\/auth\/useAuth\.js/);
-      assert.match(source, /const \{ currentUser \} = useAuth\(\)/);
+      assert.match(source, /const \{[^}]*currentUser[^}]*\} = useAuth\(\)/);
     }
   });
 
@@ -29,9 +29,10 @@ test('Follow Along read-only authentication consumers', async (t) => {
 
   await t.test('3. Shared Follow Along persistence keeps the same user ID boundary', () => {
     const source = read('src/components/FollowAlongs/shared/FollowAlongProgramme.jsx');
-    assert.match(source, /persistence\.load\(currentUser\?\.id\)/);
-    assert.match(source, /persistence\.save\(currentUser\.id, loaded\.progress/);
-    assert.match(source, /persistence\.save\(currentUser\?\.id, snapshot, nextResources\)/);
+    assert.match(source, /const persistenceUserId = isDemoUser\(currentUser\) \? null : currentUser\?\.id/);
+    assert.match(source, /persistence\.load\(persistenceUserId\)/);
+    assert.match(source, /persistence\.save\(persistenceUserId, loaded\.progress/);
+    assert.match(source, /persistence\.save\(persistenceUserId, snapshot, nextResources\)/);
   });
 
   await t.test('4. VPC retains its guest and signed-in persistence paths', () => {

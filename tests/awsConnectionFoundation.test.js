@@ -36,7 +36,7 @@ test('Independent AWS connection foundation', async (t) => {
   await t.test('1. Provider is nested beneath AuthProvider and active', () => {
     const appSource = read('src/App.jsx');
     assert.match(appSource, /<AuthProvider>[\s\S]*<AuthenticatedApplication \/>/);
-    assert.match(appSource, /<AwsConnectionProvider enabled=\{true\}>[\s\S]*<ExamProvider>[\s\S]*<MainContent \/>/);
+    assert.match(appSource, /<AwsConnectionProvider enabled=\{!isDemoAccount\}>[\s\S]*<ExamProvider[^>]*>[\s\S]*<MainContent \/>/);
   });
 
   await t.test('2. Standby context renders a stable inactive state', () => {
@@ -106,6 +106,6 @@ test('Independent AWS connection foundation', async (t) => {
 
   await t.test('9. TaskContext is retired without affecting AWS connection ownership', () => {
     assert.equal(existsSync('src/context/TaskContext.jsx'), false);
-    assert.match(read('src/App.jsx'), /<AwsConnectionProvider enabled=\{true\}>/);
+    assert.match(read('src/App.jsx'), /<AwsConnectionProvider enabled=\{!isDemoAccount\}>/);
   });
 });

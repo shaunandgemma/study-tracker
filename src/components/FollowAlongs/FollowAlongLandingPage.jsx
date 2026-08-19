@@ -6,6 +6,8 @@ import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from 
 import { createPublishedProgressLoadingSummaries, loadPublishedFollowAlongProgressSummaries } from '../../features/followAlongs/published/publishedFollowAlongProgress.js';
 import { ALL_FOLLOW_ALONG_CATEGORIES, getSortedFollowAlongCategories } from '../../features/followAlongs/published/followAlongCategoryFilter.js';
 import { getTerraformFollowAlongNumber, sortTerraformFollowAlongs } from '../../features/followAlongs/published/terraformFollowAlongOrder.js';
+import { createFollowAlongPersistence } from '../../services/followAlongPersistenceService.js';
+import { demoProgressStorage, isDemoUser } from '../../features/demo/demoMode.js';
 
 export const FollowAlongLandingPage = ({
   currentUser = null,
@@ -17,6 +19,7 @@ export const FollowAlongLandingPage = ({
   const [selectedCategory, setSelectedCategory] = useState(ALL_FOLLOW_ALONG_CATEGORIES);
   const [programmes, setProgrammes] = useState(() => FOLLOW_ALONG_LANDING_PROGRAMMES.filter(programme => isFollowAlongProgrammeForExam(programme, examId)));
   const [progressSummaries, setProgressSummaries] = useState({});
+  const demoAccount = isDemoUser(currentUser);
 
   useEffect(() => {
     let active = true;
@@ -30,11 +33,17 @@ export const FollowAlongLandingPage = ({
           .filter(programme => isFollowAlongProgrammeForExam(programme, examId))
       );
       setProgressSummaries(createPublishedProgressLoadingSummaries(result.rows));
-      const summaries = await loadPublishedFollowAlongProgressSummaries(result.rows, currentUser?.id || null);
+      const summaries = await loadPublishedFollowAlongProgressSummaries(
+        result.rows,
+        demoAccount ? null : currentUser?.id || null,
+        demoAccount
+          ? { persistenceFactory: config => createFollowAlongPersistence(config, { storage: demoProgressStorage }) }
+          : {}
+      );
       if (active) setProgressSummaries(summaries);
     });
     return () => { active = false; };
-  }, [currentUser?.id, examId]);
+  }, [currentUser?.id, demoAccount, examId]);
 
   // Extract unique categories
   const categories = getSortedFollowAlongCategories(programmes);

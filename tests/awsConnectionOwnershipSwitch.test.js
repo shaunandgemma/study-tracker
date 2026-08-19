@@ -11,7 +11,7 @@ test('AWS connection ownership switch', async (t) => {
   const followAlongValidation = read('src/features/followAlongs/runtime/FollowAlongAwsValidationPanel.jsx');
 
   await t.test('1. The independent provider is active', () => {
-    assert.match(app, /<AwsConnectionProvider enabled=\{true\}>/);
+    assert.match(app, /<AwsConnectionProvider enabled=\{!isDemoAccount\}>/);
   });
 
   await t.test('2. The independent context is the sole connection loader', () => {

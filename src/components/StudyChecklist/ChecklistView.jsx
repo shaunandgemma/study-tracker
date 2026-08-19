@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, onExitKnowledgeGuide = () => {} }) => {
-  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic } = useExam();
+  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic, canManageContent } = useExam();
   const isAwsGuide = activeExamId === 'aws-saa-c03';
   const knowledgeGuideOrder = isAwsGuide
     ? (activeExam?.topics || []).flatMap(topic => (topic.items || []).map(item => item.id))
@@ -269,13 +269,13 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
             <span>Check All Groups</span>
           </button>
 
-          <button
+          {canManageContent && <button
             onClick={() => setIsAddingTopic(!isAddingTopic)}
             className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             <span>+ Add New Topic</span>
-          </button>
+          </button>}
 
           <button
             onClick={handleReset}
@@ -289,7 +289,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
       </div>
 
       {/* Level 1: Inline Form for Adding New Topic / Service */}
-      {isAddingTopic && (
+      {canManageContent && isAddingTopic && (
         <form onSubmit={handleCreateTopic} className="p-6 rounded-3xl bg-slate-900 border border-indigo-800/80 shadow-2xl space-y-4 animate-fadeIn">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">

@@ -20,7 +20,7 @@ test('Step 60 Hands On runtime retirement', async (t) => {
 
   await t.test('2. the app no longer imports or mounts TaskProvider', () => {
     assert.doesNotMatch(appSource, /TaskProvider|TaskContext|HandsOnTasks/);
-    assert.match(appSource, /<ExamProvider>\s*<MainContent \/>\s*<\/ExamProvider>/);
+    assert.match(appSource, /<ExamProvider[^>]*>\s*<MainContent \/>\s*<\/ExamProvider>/);
   });
 
   await t.test('3. the replacement archive boundary is read-only during normal use', () => {

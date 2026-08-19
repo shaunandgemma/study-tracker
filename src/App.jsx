@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ExamProvider, useExam } from './context/ExamContext';
 import { AuthProvider } from './features/auth/AuthContext';
+import { useAuth } from './features/auth/useAuth.js';
+import { DemoAccessGate } from './features/demo/DemoAccessGate.jsx';
 import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
 import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
 import { AwsConnectionProvider } from './features/awsConnection/AwsConnectionContext';
@@ -30,6 +32,7 @@ import { getDomainForQuestion } from './data/saaC03DomainMapping';
 
 const MainContent = () => {
   const { exams, viewMode, setViewMode, activeExam, activeExamId, setActiveExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
+  const { isDemoAccount, canManageContent } = useAuth();
   const { isSetupOpen, closeSetup } = useAwsConnection();
 
   // Main navigation remains usable while the shared AWS setup screen is open.
@@ -252,18 +255,20 @@ const MainContent = () => {
       domainAllocation: result.config.domainAllocation
     };
 
-    // Save to Supabase — non-blocking, errors don't crash results
-    try {
-      const { data, error } = await saveAttemptToSupabase(attemptPayload);
-      if (error) {
+    // Demo attempts remain in memory and never reach Supabase.
+    if (!isDemoAccount) {
+      try {
+        const { data, error } = await saveAttemptToSupabase(attemptPayload);
+        if (error) {
+          setAttemptSaveError(true);
+        } else if (data) {
+          // Prepend to in-memory Supabase attempts list (avoids refetch)
+          addSupabaseAttempt(data);
+        }
+      } catch (err) {
+        console.error('[App] Unexpected error saving attempt to Supabase:', err);
         setAttemptSaveError(true);
-      } else if (data) {
-        // Prepend to in-memory Supabase attempts list (avoids refetch)
-        addSupabaseAttempt(data);
       }
-    } catch (err) {
-      console.error('[App] Unexpected error saving attempt to Supabase:', err);
-      setAttemptSaveError(true);
     }
 
     setPrepState('results');
@@ -289,6 +294,7 @@ const MainContent = () => {
                 exams={exams}
                 onSelectExam={handleSelectExam}
                 onAddExam={() => setIsAddModalOpen(true)}
+                canManageContent={canManageContent}
               />
             )}
 
@@ -396,6 +402,7 @@ const MainContent = () => {
 
 const AuthenticatedApplication = () => {
   const [authorRequested, setAuthorRequested] = useState(() => isAuthorEntryRequested());
+  const { currentUser, loadingAuth, demoModeEnabled, signInAsDemo, openAuthModal, isDemoAccount } = useAuth();
 
   useEffect(() => {
     const updateEntry = () => setAuthorRequested(isAuthorEntryRequested());
@@ -405,9 +412,17 @@ const AuthenticatedApplication = () => {
 
   if (authorRequested) return <AuthorEntry />;
 
+  if (loadingAuth) {
+    return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm font-semibold text-slate-300">Checking safe access...</div>;
+  }
+
+  if (demoModeEnabled && !currentUser) {
+    return <DemoAccessGate onSignIn={openAuthModal} onEnterDemo={signInAsDemo} />;
+  }
+
   return (
-    <AwsConnectionProvider enabled={true}>
-      <ExamProvider>
+    <AwsConnectionProvider enabled={!isDemoAccount}>
+      <ExamProvider key={currentUser?.id || 'guest'}>
         <MainContent />
       </ExamProvider>
     </AwsConnectionProvider>

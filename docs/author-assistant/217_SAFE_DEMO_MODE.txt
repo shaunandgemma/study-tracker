@@ -1,0 +1,101 @@
+217 - SAFE DEMO MODE
+====================
+
+1. PURPOSE
+----------
+The local Study Tracker can now be demonstrated without exposing or changing real learner data.
+
+2. LOCAL SWITCH
+---------------
+Safe demo mode is enabled locally with:
+
+VITE_DEMO_MODE=true
+
+This is stored in E:\code\study-tracker\.env.development.local.
+That file is ignored by Git and is not an AWS or Supabase secret.
+
+Restart the local app after changing the switch.
+
+3. LOGIN SCREEN
+---------------
+When safe demo mode is enabled, a signed-out visitor must choose one of these options:
+
+1. Enter Demo Account.
+2. Administrator Sign In.
+
+Public account creation is disabled while safe demo mode is enabled.
+The demo account is created only inside the browser. It is not a Supabase user and has no password or authentication token.
+
+4. DEMO ACCOUNT SAFETY
+----------------------
+The Demo Learner account:
+
+1. Uses fake checklist and exam-history records.
+2. Keeps checklist changes only in React memory.
+3. Keeps Follow Along progress only in temporary memory.
+4. Never saves exam attempts to Supabase.
+5. Never loads or saves the browser's real Follow Along progress.
+6. Cannot open the legacy VPC path.
+7. Cannot use the AWS connection feature.
+8. Cannot add, edit, delete, import, export, approve or publish content.
+9. Cannot access Author or Approver pages because it has no server-managed role.
+10. Resets its temporary data after a page refresh or when the browser session ends.
+
+Published questions and published Follow Along instructions remain readable. They are shared learning content, not private learner data.
+
+5. ADMINISTRATOR CONTROLS
+-------------------------
+Public exam and checklist content-management controls now require the signed-in user to have this server-managed Supabase app metadata role:
+
+admin
+
+Only an Admin can:
+
+1. Add a custom exam.
+2. Add, edit or delete checklist topics.
+3. Add, edit, bulk import or delete checklist rows.
+4. Import or export the app backup JSON.
+
+The role is read only from app_metadata. A browser user cannot grant the role through user_metadata.
+
+These public exam/checklist edits currently change browser-local content. If this content is moved to Supabase later, matching Admin-only database RLS/RPC rules must be added; interface hiding must never be treated as server security.
+
+The separate Author and Approver role system remains unchanged. An Author can still manage Author drafts, and a separate Approver can still use the protected approval workflow.
+
+6. NORMAL LEARNER USE
+---------------------
+A normal signed-in user can still:
+
+1. Read study content.
+2. Tick checklist progress.
+3. Take practice exams.
+4. Use published Follow Alongs.
+
+They cannot change the app's exam or checklist structure unless they are an Admin.
+
+7. LOCAL USE
+------------
+1. Stop the local app if it is running.
+2. Start it again with npm run dev.
+3. Open the local address shown by Vite.
+4. Choose Enter Demo Account to test the safe demonstration.
+5. Choose Sign Out to return to the access screen.
+6. Use Administrator Sign In only with a real protected account.
+
+8. TESTED BOUNDARIES
+--------------------
+1. Demo flag requires the exact value true.
+2. Demo identity never receives Admin authority.
+3. Fake records are fresh independent copies.
+4. Demo progress storage is memory-only and resettable.
+5. Demo exam submission does not call the Supabase save path.
+6. AWS connection provider is disabled for Demo Learner.
+7. Content-management functions reject non-Admins.
+8. Add, edit, delete and backup controls are hidden from non-Admins.
+9. Published Follow Along progress uses temporary memory in demo mode.
+10. Production build completes successfully.
+
+9. IMPORTANT BOUNDARY
+---------------------
+This step changes only the local application code and local development flag.
+It does not deploy to AWS, change Amplify, alter Supabase data, create accounts, or change database roles.

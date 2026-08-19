@@ -3,7 +3,7 @@ import { useExam } from '../../context/ExamContext';
 import { X, Plus, Award } from 'lucide-react';
 
 export const AddExamModal = ({ isOpen, onClose }) => {
-  const { addCustomExam } = useExam();
+  const { addCustomExam, canManageContent } = useExam();
 
   const [code, setCode] = useState('');
   const [title, setTitle] = useState('');
@@ -15,7 +15,7 @@ export const AddExamModal = ({ isOpen, onClose }) => {
   const [domain1Name, setDomain1Name] = useState('Domain 1: Core Fundamentals');
   const [domain2Name, setDomain2Name] = useState('Domain 2: Advanced Architecture');
 
-  if (!isOpen) return null;
+  if (!isOpen || !canManageContent) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight, Award, BookOpenCheck, CheckCircle2, GraduationCap, PlusCircle, Sparkles } from 'lucide-react';
 import { getExamChecklistItemCount } from '../../utils/examNavigation.js';
 
-export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam = () => {} }) => (
+export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam = () => {}, canManageContent = false }) => (
   <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] animate-fadeIn">
     <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-indigo-950/35 to-slate-950 p-7 sm:p-10 shadow-2xl">
       <div className="relative z-10 max-w-3xl space-y-6">
@@ -72,13 +72,13 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
           </button>
         ))}
 
-        <button
+        {canManageContent && <button
           type="button"
           onClick={onAddExam}
           className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-indigo-700/70 bg-indigo-950/30 px-4 py-3 text-xs font-bold text-indigo-300 transition hover:bg-indigo-950/60"
         >
           <PlusCircle className="h-4 w-4" /> Add Custom Exam
-        </button>
+        </button>}
       </div>
     </aside>
   </div>

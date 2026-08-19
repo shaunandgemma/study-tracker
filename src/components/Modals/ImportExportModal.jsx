@@ -3,10 +3,10 @@ import { useExam } from '../../context/ExamContext';
 import { X, Download, Upload, Database, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const ImportExportModal = ({ isOpen, onClose }) => {
-  const { exportData, importData } = useExam();
+  const { exportData, importData, canManageContent } = useExam();
   const [importStatus, setImportStatus] = useState(null);
 
-  if (!isOpen) return null;
+  if (!isOpen || !canManageContent) return null;
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

@@ -110,7 +110,7 @@ test('Follow Along Author foundation', async t => {
     const app = readFileSync('src/App.jsx', 'utf8');
     assert.match(app, /if \(authorRequested\) return <AuthorEntry \/>/);
     assert.match(app, /<AuthProvider>[\s\S]*<AuthenticatedApplication \/>/);
-    assert.match(app, /return \([\s\S]*<AwsConnectionProvider[\s\S]*<ExamProvider>[\s\S]*<MainContent \/>/);
+    assert.match(app, /return \([\s\S]*<AwsConnectionProvider[\s\S]*<ExamProvider[^>]*>[\s\S]*<MainContent \/>/);
     assert.doesNotMatch(app, /TaskProvider|TaskContext/);
   });
 });

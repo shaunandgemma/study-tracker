@@ -5,7 +5,7 @@ import { useAuth } from '../features/auth/useAuth.js';
 
 export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) => {
   const { theme, toggleTheme } = useExam();
-  const { currentUser, openAuthModal, signOut: signOutUser } = useAuth();
+  const { currentUser, openAuthModal, signOut: signOutUser, canManageContent, isDemoAccount } = useAuth();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   return (
@@ -19,6 +19,7 @@ export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) =>
           </span>
           <span className="text-lg font-bold tracking-tight text-white sm:text-xl">ExamPulse</span>
           <span className="hidden rounded-full border border-indigo-800/50 bg-indigo-950/80 px-2 py-0.5 text-xs font-semibold text-indigo-300 sm:inline-block">Prep AI</span>
+          {isDemoAccount && <span className="rounded-full border border-cyan-700 bg-cyan-950/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-cyan-200">Safe Demo</span>}
         </button>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -33,7 +34,7 @@ export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) =>
           ) : (
             <button type="button" onClick={() => openAuthModal()} className="rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white transition hover:bg-indigo-500">Sign In</button>
           )}
-          <button type="button" onClick={onOpenBackupModal} className="rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300" title="Backup / Restore JSON Data"><Database className="h-4 w-4" /></button>
+          {canManageContent && <button type="button" onClick={onOpenBackupModal} className="rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300" title="Backup / Restore JSON Data"><Database className="h-4 w-4" /></button>}
           <button type="button" onClick={toggleTheme} className="rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300" title="Toggle Theme">
             {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-400" />}
           </button>
@@ -52,7 +53,7 @@ export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) =>
             </div>
             <div className="flex-1 space-y-2 py-5">
               <button type="button" onClick={() => { setIsMobileDrawerOpen(false); onGoHome(); }} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200"><Home className="h-4 w-4 text-indigo-400" /> Choose an exam</button>
-              <button type="button" onClick={() => { setIsMobileDrawerOpen(false); onOpenBackupModal(); }} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200"><Database className="h-4 w-4 text-indigo-400" /> Backup / Restore</button>
+              {canManageContent && <button type="button" onClick={() => { setIsMobileDrawerOpen(false); onOpenBackupModal(); }} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200"><Database className="h-4 w-4 text-indigo-400" /> Backup / Restore</button>}
               <button type="button" onClick={toggleTheme} className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-xs font-bold text-slate-200">{theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-400" />} Toggle theme</button>
             </div>
             {currentUser ? (

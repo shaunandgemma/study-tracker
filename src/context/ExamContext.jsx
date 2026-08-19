@@ -17,6 +17,13 @@ import {
   removeRetiredCustomExams
 } from '../utils/storage';
 import { fetchAttemptsFromSupabase } from '../services/attemptService';
+import { DEFAULT_EXAMS } from '../data/examData.js';
+import { useAuth } from '../features/auth/useAuth.js';
+import {
+  buildDemoAttempts,
+  cloneDemoChecklist,
+  cloneDemoExamHistory
+} from '../features/demo/demoMode.js';
 
 const ExamContext = createContext();
 
@@ -27,8 +34,9 @@ export const normalizeMainViewMode = (mode) => (
 );
 
 export const ExamProvider = ({ children }) => {
-  const [exams, setExams] = useState(() => loadExams());
-  const [activeExamId, setActiveExamIdState] = useState(() => loadActiveExamId());
+  const { isDemoAccount, canManageContent } = useAuth();
+  const [exams, setExams] = useState(() => isDemoAccount ? structuredClone(DEFAULT_EXAMS) : loadExams());
+  const [activeExamId, setActiveExamIdState] = useState(() => isDemoAccount ? 'aws-saa-c03' : loadActiveExamId());
   const [viewModeRaw, setViewModeRaw] = useState('app-home'); // 'app-home' | 'exam-home' | exam tools
   const [legacyAutoOpenProgrammeId, setLegacyAutoOpenProgrammeId] = useState(null);
 
@@ -47,9 +55,9 @@ export const ExamProvider = ({ children }) => {
 
   const viewMode = normalizeMainViewMode(viewModeRaw);
   const [theme, setTheme] = useState(() => getStoredTheme());
-  const [checklist, setChecklist] = useState(() => loadChecklistState());
-  const [flagged, setFlagged] = useState(() => loadFlaggedState());
-  const [examHistory, setExamHistory] = useState(() => loadExamHistory());
+  const [checklist, setChecklist] = useState(() => isDemoAccount ? cloneDemoChecklist() : loadChecklistState());
+  const [flagged, setFlagged] = useState(() => isDemoAccount ? {} : loadFlaggedState());
+  const [examHistory, setExamHistory] = useState(() => isDemoAccount ? cloneDemoExamHistory() : loadExamHistory());
   const [highlightedTopicId, setHighlightedTopicId] = useState(null);
 
   // Supabase-persisted attempt history (full snapshots)
@@ -72,7 +80,7 @@ export const ExamProvider = ({ children }) => {
 
   const setActiveExamId = (id) => {
     setActiveExamIdState(id);
-    saveActiveExamId(id);
+    if (!isDemoAccount) saveActiveExamId(id);
   };
 
   const activeExam = exams.find(e => e.id === activeExamId) || exams[0];
@@ -83,20 +91,22 @@ export const ExamProvider = ({ children }) => {
     if (!code) return;
     setLoadingAttempts(true);
     try {
-      const rows = await fetchAttemptsFromSupabase(code);
+      const rows = isDemoAccount
+        ? buildDemoAttempts(exams.find(exam => exam.id === code))
+        : await fetchAttemptsFromSupabase(code);
       setSupabaseAttempts(rows);
     } catch (err) {
       console.error('[ExamContext] Failed to load Supabase attempts:', err);
     } finally {
       setLoadingAttempts(false);
     }
-  }, [activeExam?.id]);
+  }, [activeExam?.id, exams, isDemoAccount]);
 
   useEffect(() => {
     if (activeExam?.id) {
       loadAttempts(activeExam.id);
     }
-  }, [activeExam?.id]);
+  }, [activeExam?.id, loadAttempts]);
 
   // Prepend a newly saved attempt to in-memory list (avoids refetch round-trip)
   const addSupabaseAttempt = (attempt) => {
@@ -105,12 +115,14 @@ export const ExamProvider = ({ children }) => {
 
   // Helper to persist exams state change
   const updateExamsState = (updater) => {
+    if (!canManageContent) return false;
     setExams(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
       const retained = removeRetiredCustomExams(updated);
       saveExams(retained);
       return retained;
     });
+    return true;
   };
 
   // Checklist Task toggle checkmark
@@ -124,7 +136,7 @@ export const ExamProvider = ({ children }) => {
           [taskId]: !examTasks[taskId]
         }
       };
-      saveChecklistState(updated);
+      if (!isDemoAccount) saveChecklistState(updated);
       return updated;
     });
   };
@@ -141,7 +153,7 @@ export const ExamProvider = ({ children }) => {
         ...prev,
         [examId]: updatedExamTasks
       };
-      saveChecklistState(updated);
+      if (!isDemoAccount) saveChecklistState(updated);
       return updated;
     });
   };
@@ -157,7 +169,7 @@ export const ExamProvider = ({ children }) => {
           [questionId]: !examFlags[questionId]
         }
       };
-      saveFlaggedState(updated);
+      if (!isDemoAccount) saveFlaggedState(updated);
       return updated;
     });
   };
@@ -169,7 +181,7 @@ export const ExamProvider = ({ children }) => {
         ...prev,
         [examId]: {}
       };
-      saveFlaggedState(updated);
+      if (!isDemoAccount) saveFlaggedState(updated);
       return updated;
     });
   };
@@ -178,7 +190,7 @@ export const ExamProvider = ({ children }) => {
   const recordExamResult = (result) => {
     setExamHistory(prev => {
       const updated = [result, ...prev];
-      saveExamHistory(updated);
+      if (!isDemoAccount) saveExamHistory(updated);
       return updated;
     });
   };
@@ -194,8 +206,10 @@ export const ExamProvider = ({ children }) => {
 
   // Add Custom Exam
   const addCustomExam = (newExam) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prev => [...prev, newExam]);
     setActiveExamId(newExam.id);
+    return { success: true };
   };
 
   // ==========================================
@@ -204,6 +218,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 1: Add Topic / Service Header
   const addTopic = (examId, topicData) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -223,6 +238,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 1: Edit Topic Header
   const editTopic = (examId, topicId, topicData) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -242,6 +258,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 1: Delete Topic Header
   const deleteTopic = (examId, topicId) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -253,6 +270,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 2: Add Single Item
   const addItem = (examId, topicId, text) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -272,6 +290,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 2: Add Bulk Items (Newline-Separated Paste)
   const addBulkItems = (examId, topicId, linesArray) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     if (!linesArray || !linesArray.length) return;
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
@@ -295,6 +314,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 2: Edit Item
   const editItem = (examId, topicId, itemId, text) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -313,6 +333,7 @@ export const ExamProvider = ({ children }) => {
 
   // Level 2: Delete Item
   const deleteItem = (examId, topicId, itemId) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required.' };
     updateExamsState(prevExams => {
       return prevExams.map(ex => {
         if (ex.id !== examId) return ex;
@@ -328,6 +349,7 @@ export const ExamProvider = ({ children }) => {
 
   // Import Backup JSON
   const importData = (jsonStr) => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required to import app data.' };
     const res = importBackupJSON(jsonStr);
     if (res.success) {
       setExams(loadExams());
@@ -340,19 +362,21 @@ export const ExamProvider = ({ children }) => {
 
   // Export Backup JSON
   const exportData = () => {
+    if (!canManageContent) return { success: false, message: 'Administrator access is required to export app data.' };
     exportBackupJSON();
+    return { success: true };
   };
 
   // Reset progress for current exam
   const resetExamProgress = (examId) => {
     setChecklist(prev => {
       const updated = { ...prev, [examId]: {} };
-      saveChecklistState(updated);
+      if (!isDemoAccount) saveChecklistState(updated);
       return updated;
     });
     setFlagged(prev => {
       const updated = { ...prev, [examId]: {} };
-      saveFlaggedState(updated);
+      if (!isDemoAccount) saveFlaggedState(updated);
       return updated;
     });
   };
@@ -361,6 +385,8 @@ export const ExamProvider = ({ children }) => {
     <ExamContext.Provider
       value={{
         exams,
+        canManageContent,
+        isDemoAccount,
         activeExam,
         activeExamId,
         setActiveExamId,

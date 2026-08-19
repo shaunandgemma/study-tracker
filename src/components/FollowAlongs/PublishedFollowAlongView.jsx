@@ -2,9 +2,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FollowAlongProgramme } from './shared/FollowAlongProgramme.jsx';
 import { createPublishedFollowAlongService } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 import { createFollowAlongPersistence } from '../../services/followAlongPersistenceService.js';
+import { useAuth } from '../../features/auth/useAuth.js';
+import { demoProgressStorage } from '../../features/demo/demoMode.js';
 
 function PublishedProgramme({ config, onBackToLanding }) {
-  const persistence = useMemo(() => createFollowAlongPersistence(config), [config]);
+  const { isDemoAccount } = useAuth();
+  const persistence = useMemo(
+    () => createFollowAlongPersistence(config, isDemoAccount ? { storage: demoProgressStorage } : {}),
+    [config, isDemoAccount]
+  );
   return <FollowAlongProgramme config={config} persistence={persistence} extensions={[]} onBackToLanding={onBackToLanding} />;
 }
 

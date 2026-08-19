@@ -30,7 +30,8 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
     addItem,
     addBulkItems,
     editItem,
-    deleteItem
+    deleteItem,
+    canManageContent
   } = useExam();
 
   const [isOpen, setIsOpen] = useState(true);
@@ -161,7 +162,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
             </button>
 
             <div className="flex-1">
-              {isEditingTopic ? (
+              {canManageContent && isEditingTopic ? (
                 <div className="space-y-2 max-w-lg">
                   <div className="flex items-center gap-2">
                     <input
@@ -210,7 +211,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                     )}
 
                     {/* Topic Edit & Delete Buttons */}
-                    <div className="flex items-center gap-1 ml-auto sm:ml-2">
+                    {canManageContent && <div className="flex items-center gap-1 ml-auto sm:ml-2">
                       <button
                         onClick={() => {
                           setEditTopicTitle(topic.title);
@@ -233,7 +234,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
-                    </div>
+                    </div>}
                   </div>
 
                   <h3 className="text-lg font-extrabold text-slate-100 mt-1 flex items-center gap-2">
@@ -298,7 +299,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
           <div className="space-y-2.5">
             {filteredItems.map(item => {
               const isChecked = !!checklist[activeExamId]?.[item.id];
-              const isEditingThisItem = editingItemId === item.id;
+              const isEditingThisItem = canManageContent && editingItemId === item.id;
 
               return (
                 <div
@@ -367,7 +368,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                       )}
 
                       {/* Edit & Delete Action Buttons */}
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">
+                      {canManageContent && <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => {
                             setEditItemText(item.text);
@@ -385,7 +386,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                      </div>
+                      </div>}
                     </>
                   )}
                 </div>
@@ -394,7 +395,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
           </div>
 
           {/* Add Item Actions Toolbar */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800/80">
+          {canManageContent && <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800/80">
             
             {/* Inline Add Single Item Form */}
             {isAddingItem ? (
@@ -439,13 +440,13 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
               </div>
             )}
 
-          </div>
+          </div>}
 
         </div>
       )}
 
       {/* Bulk Paste Modal */}
-      {showBulkPasteModal && (
+      {canManageContent && showBulkPasteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             

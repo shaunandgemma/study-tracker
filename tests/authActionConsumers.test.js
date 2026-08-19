@@ -28,7 +28,9 @@ test('Shared authentication action consumers', async (t) => {
   });
 
   await t.test('3. Navbar keeps account controls independent after Hands On navigation retirement', () => {
-    assert.match(navbarSource, /const \{ currentUser, openAuthModal, signOut: signOutUser \} = useAuth\(\)/);
+    assert.match(navbarSource, /const \{[^}]*currentUser[^}]*openAuthModal[^}]*signOut: signOutUser[^}]*\} = useAuth\(\)/);
+    assert.match(navbarSource, /canManageContent/);
+    assert.match(navbarSource, /isDemoAccount/);
     assert.doesNotMatch(navbarSource, /useTask|calculateTaskProgress|hands-on-tasks|Hands-On Tasks/);
   });
 

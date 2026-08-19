@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../features/auth/useAuth.js';
-import { X, Mail, Lock, LogIn, UserPlus, AlertCircle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { X, Mail, Lock, LogIn, UserPlus, AlertCircle, CheckCircle2, Loader2, Sparkles, FlaskConical } from 'lucide-react';
 
 export const AuthModal = () => {
   const {
     isAuthModalOpen,
     closeAuthModal,
     signInWithEmail,
-    signUpWithEmail
+    signUpWithEmail,
+    signInAsDemo,
+    demoModeEnabled
   } = useAuth();
 
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
@@ -63,6 +65,14 @@ export const AuthModal = () => {
     }
   };
 
+  const handleDemoSignIn = async () => {
+    setErrorMsg('');
+    setIsSubmitting(true);
+    const result = await signInAsDemo();
+    if (!result.success) setErrorMsg(result.error || 'Unable to start the demo account.');
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
       <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
@@ -89,8 +99,8 @@ export const AuthModal = () => {
 
         {/* Mode Selector Tabs */}
         <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800">
-            <button
+          <div className={`grid ${demoModeEnabled ? 'grid-cols-1' : 'grid-cols-2'} gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800`}>
+            {!demoModeEnabled && <button
               type="button"
               onClick={() => { setMode('signin'); setErrorMsg(''); setSuccessMsg(''); }}
               className={`py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
@@ -101,7 +111,7 @@ export const AuthModal = () => {
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Sign In</span>
-            </button>
+            </button>}
             <button
               type="button"
               onClick={() => { setMode('signup'); setErrorMsg(''); setSuccessMsg(''); }}
@@ -190,9 +200,22 @@ export const AuthModal = () => {
             </button>
           </form>
 
+          {demoModeEnabled && (
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={handleDemoSignIn}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-800 bg-cyan-950/40 px-4 py-3 text-sm font-bold text-cyan-200 disabled:opacity-50"
+            >
+              <FlaskConical className="h-4 w-4" /> Use isolated Demo Account
+            </button>
+          )}
+
           {/* Security footnote */}
           <p className="text-[11px] text-slate-500 text-center leading-relaxed">
-            Authentication is managed securely by Supabase Auth. Your AWS credentials are never stored in your browser.
+            {demoModeEnabled
+              ? 'Administrator authentication is managed by Supabase. Demo access uses no Supabase account and writes no learner data to Supabase or AWS.'
+              : 'Authentication is managed securely by Supabase Auth. Your AWS credentials are never stored in your browser.'}
           </p>
         </div>
       </div>
