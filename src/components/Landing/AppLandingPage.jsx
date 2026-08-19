@@ -16,7 +16,7 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
             Prepare for your next certification with a clear learning path.
           </h1>
           <p className="max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-            ExamPulse brings together editable study checklists, practice exams, progress history, and guided Follow Alongs. Select an exam to open a workspace containing only the learning tools assigned to it.
+            LATT brings together editable study checklists, practice exams, progress history, and guided Follow Alongs. Select an exam to open a workspace containing only the learning tools assigned to it.
           </p>
         </div>
 

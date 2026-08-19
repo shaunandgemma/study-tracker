@@ -366,7 +366,7 @@ const MainContent = () => {
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span>ExamPulse Prep AI — Interactive Study & AWS Follow Alongs</span>
+          <span>LATT — Learning All Things Tech</span>
           <span>Local Storage Persisted & Offline Ready</span>
         </div>
       </footer>

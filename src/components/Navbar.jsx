@@ -11,14 +11,14 @@ export const Navbar = ({ onGoHome = () => {}, onOpenBackupModal = () => {} }) =>
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900/90 text-slate-100 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <button type="button" onClick={onGoHome} className="flex shrink-0 items-center gap-2.5" aria-label="Open ExamPulse home">
+        <button type="button" onClick={onGoHome} className="flex shrink-0 items-center gap-2.5" aria-label="Open LATT home">
           <span className="rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/20">
             <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-slate-950 sm:h-10 sm:w-10">
               <Sparkles className="h-4 w-4 text-indigo-400 sm:h-5 sm:w-5" />
             </span>
           </span>
-          <span className="text-lg font-bold tracking-tight text-white sm:text-xl">ExamPulse</span>
-          <span className="hidden rounded-full border border-indigo-800/50 bg-indigo-950/80 px-2 py-0.5 text-xs font-semibold text-indigo-300 sm:inline-block">Prep AI</span>
+          <span className="text-lg font-bold tracking-tight text-white sm:text-xl">LATT</span>
+          <span className="hidden rounded-full border border-indigo-800/50 bg-indigo-950/80 px-2 py-0.5 text-xs font-semibold text-indigo-300 sm:inline-block">Learning All Things Tech</span>
           {isDemoAccount && <span className="rounded-full border border-cyan-700 bg-cyan-950/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-cyan-200">Safe Demo</span>}
         </button>
 

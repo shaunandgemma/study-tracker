@@ -5,7 +5,7 @@ export const DEMO_SESSION_KEY = 'exampulse_demo_session_v1';
 
 export const DEMO_USER = Object.freeze({
   id: 'demo-read-only',
-  email: 'demo@exampulse.invalid',
+  email: 'demo@latt.invalid',
   app_metadata: Object.freeze({ role: 'demo', roles: Object.freeze(['demo']) }),
   user_metadata: Object.freeze({ display_name: 'Demo Learner' }),
   is_demo: true

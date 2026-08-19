@@ -9,7 +9,7 @@ export const DemoAccessGate = ({ onSignIn = () => {}, onEnterDemo = () => {}, en
         <span className="inline-flex items-center gap-2 rounded-full border border-indigo-700/70 bg-indigo-950/70 px-3 py-1 text-xs font-bold text-indigo-200">
           <ShieldCheck className="h-4 w-4" /> Safe demonstration access
         </span>
-        <h1 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl">Explore ExamPulse without touching live user data.</h1>
+        <h1 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-5xl">Explore LATT without touching live user data.</h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
           Use the isolated Demo Learner account to explore exams, checklists and Follow Alongs. Demo progress is temporary, uses fake records and never writes to Supabase or AWS.
         </p>

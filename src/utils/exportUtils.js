@@ -473,7 +473,7 @@ export function generateAttemptPDF(attemptData, activeExam) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.setTextColor(148, 163, 184);
-    doc.text('ExamPulse SAA-C03 Prep AI — Official Exam Results Report', pageMargin, pageHeight - 6);
+    doc.text('LATT — Official Exam Results Report', pageMargin, pageHeight - 6);
     doc.text(`Page ${p} of ${totalPages}`, pageMargin + printableWidth - 15, pageHeight - 6);
   }
 
