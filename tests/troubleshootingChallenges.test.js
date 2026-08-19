@@ -13,22 +13,25 @@ import {
 } from '../src/features/troubleshooting/troubleshootingProgress.js';
 
 test('troubleshooting challenge catalogue', async t => {
-  await t.test('contains six unique independently editable challenges', () => {
-    assert.equal(TROUBLESHOOTING_CHALLENGES.length, 6);
-    assert.equal(new Set(TROUBLESHOOTING_CHALLENGES.map(challenge => challenge.id)).size, 6);
-    assert.equal(getTroubleshootingChallengesForExam('aws-saa-c03').length, 3);
+  await t.test('contains every unique independently editable challenge', () => {
+    const challengeFiles = fs.readdirSync('src/data/troubleshootingChallenges', {
+      recursive: true,
+      withFileTypes: true
+    }).filter(entry => (
+      entry.isFile()
+      && entry.name.endsWith('.js')
+      && !['index.js', 'generatedChallengeCatalogue.js'].includes(entry.name)
+    ));
+
+    assert.equal(TROUBLESHOOTING_CHALLENGES.length, challengeFiles.length);
+    assert.equal(new Set(TROUBLESHOOTING_CHALLENGES.map(challenge => challenge.id)).size, challengeFiles.length);
+    assert.equal(getTroubleshootingChallengesForExam('aws-saa-c03').length, 4);
     assert.equal(getTroubleshootingChallengesForExam('terraform-associate-004').length, 3);
     assert.equal(getTroubleshootingChallengesForExam('comptia-security-plus').length, 0);
-
-    const sourceFiles = [
-      'src/data/troubleshootingChallenges/terraform/terraformSyntaxValidation.js',
-      'src/data/troubleshootingChallenges/terraform/terraformUnwantedReplacement.js',
-      'src/data/troubleshootingChallenges/terraform/terraformStateDrift.js',
-      'src/data/troubleshootingChallenges/aws/privateSubnetConnectivity.js',
-      'src/data/troubleshootingChallenges/aws/albUnhealthyTargets.js',
-      'src/data/troubleshootingChallenges/aws/iamAccessDenied.js'
-    ];
-    sourceFiles.forEach(file => assert.equal(fs.existsSync(file), true, `${file} must exist`));
+    assert.equal(
+      getTroubleshootingChallenge('aws-cloudfront-s3-access-denied')?.order,
+      4
+    );
   });
 
   await t.test('each challenge contains complete evidence, validation, hints and resolution', () => {

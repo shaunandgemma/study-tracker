@@ -1,0 +1,41 @@
+224. AUTOMATIC TROUBLESHOOTING CHALLENGE REGISTRATION
+
+1. WHY THE CLOUDFRONT CHALLENGE DID NOT APPEAR
+
+The challenge file existed, but the app used a manually maintained import list in:
+
+E:\code\study-tracker\src\data\troubleshootingChallenges\index.js
+
+Files placed in the AWS folder were not automatically added to that list.
+
+2. WHAT CHANGED
+
+A safe local registration script now scans all exam folders below:
+
+E:\code\study-tracker\src\data\troubleshootingChallenges
+
+It validates every challenge and generates the app catalogue automatically.
+
+3. AUTOMATIC USE
+
+The registration runs automatically before:
+
+- npm run dev
+- npm run build
+- npm test
+
+4. MANUAL USE
+
+To register files without starting the app, run:
+
+npm run troubleshooting:register
+
+5. SAFETY CHECKS
+
+The script stops with a clear error when a challenge is incomplete, has a duplicate ID, or uses the same order number as another challenge in the same exam.
+
+6. RESULT
+
+cloudFrontS3AccessDenied.js is now registered as AWS SAA-C03 troubleshooting challenge number 4.
+
+No Supabase, AWS, Author, approval or publishing action is involved. This is local app source content only.

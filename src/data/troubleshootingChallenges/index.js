@@ -1,18 +1,6 @@
-import terraformSyntaxValidation from './terraform/terraformSyntaxValidation.js';
-import terraformUnwantedReplacement from './terraform/terraformUnwantedReplacement.js';
-import terraformStateDrift from './terraform/terraformStateDrift.js';
-import privateSubnetConnectivity from './aws/privateSubnetConnectivity.js';
-import albUnhealthyTargets from './aws/albUnhealthyTargets.js';
-import iamAccessDenied from './aws/iamAccessDenied.js';
+import registeredTroubleshootingChallenges from './generatedChallengeCatalogue.js';
 
-export const TROUBLESHOOTING_CHALLENGES = Object.freeze([
-  terraformSyntaxValidation,
-  terraformUnwantedReplacement,
-  terraformStateDrift,
-  privateSubnetConnectivity,
-  albUnhealthyTargets,
-  iamAccessDenied
-]);
+export const TROUBLESHOOTING_CHALLENGES = registeredTroubleshootingChallenges;
 
 export const getTroubleshootingChallengesForExam = examId => TROUBLESHOOTING_CHALLENGES
   .filter(challenge => challenge.examId === examId)
