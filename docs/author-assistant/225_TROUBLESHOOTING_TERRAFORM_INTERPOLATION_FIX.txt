@@ -1,0 +1,38 @@
+225. TROUBLESHOOTING TERRAFORM INTERPOLATION FIX
+
+1. PROBLEM
+
+The troubleshooting registration stopped while loading:
+
+src/data/troubleshootingChallenges/terraform/incorrectDependencyOrdering.js
+
+JavaScript interpreted the Terraform interpolation marker ${...} as JavaScript code inside a template string.
+
+2. CORRECTION
+
+Terraform interpolation markers inside JavaScript template strings now escape the dollar sign so they remain visible Terraform example text.
+
+The same correction was applied to:
+
+- incorrectDependencyOrdering.js
+- unstableCountAddressing.js
+
+3. REGISTRATION IMPROVEMENT
+
+The registration script now reports a clearer message when a challenge file cannot be loaded.
+
+It also verifies that challenge order numbers for each exam remain continuous from 1 with no gaps.
+
+4. TEST CORRECTION
+
+The troubleshooting tests no longer assume the old fixed challenge totals. They verify all discovered challenge files and continuous exam ordering.
+
+5. VERIFIED RESULT
+
+- Total registered challenges: 41
+- AWS SAA-C03 challenges: 23
+- Terraform Associate 004 challenges: 18
+- Troubleshooting tests: 8 passed
+- Local app build: passed
+
+No Supabase or AWS data was changed.

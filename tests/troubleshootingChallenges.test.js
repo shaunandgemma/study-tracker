@@ -25,8 +25,8 @@ test('troubleshooting challenge catalogue', async t => {
 
     assert.equal(TROUBLESHOOTING_CHALLENGES.length, challengeFiles.length);
     assert.equal(new Set(TROUBLESHOOTING_CHALLENGES.map(challenge => challenge.id)).size, challengeFiles.length);
-    assert.equal(getTroubleshootingChallengesForExam('aws-saa-c03').length, 4);
-    assert.equal(getTroubleshootingChallengesForExam('terraform-associate-004').length, 3);
+    assert.ok(getTroubleshootingChallengesForExam('aws-saa-c03').length > 0);
+    assert.ok(getTroubleshootingChallengesForExam('terraform-associate-004').length > 0);
     assert.equal(getTroubleshootingChallengesForExam('comptia-security-plus').length, 0);
     assert.equal(
       getTroubleshootingChallenge('aws-cloudfront-s3-access-denied')?.order,
@@ -55,8 +55,13 @@ test('troubleshooting challenge catalogue', async t => {
   });
 
   await t.test('catalogue lookups retain exam order', () => {
-    const terraform = getTroubleshootingChallengesForExam('terraform-associate-004');
-    assert.deepEqual(terraform.map(challenge => challenge.order), [1, 2, 3]);
+    for (const examId of ['aws-saa-c03', 'terraform-associate-004']) {
+      const challenges = getTroubleshootingChallengesForExam(examId);
+      assert.deepEqual(
+        challenges.map(challenge => challenge.order),
+        Array.from({ length: challenges.length }, (_, index) => index + 1)
+      );
+    }
     assert.equal(getTroubleshootingChallenge('aws-iam-access-denied')?.title, 'Diagnose an S3 AccessDenied response');
     assert.equal(getTroubleshootingChallenge('missing-challenge'), null);
   });

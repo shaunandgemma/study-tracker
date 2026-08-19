@@ -102,7 +102,17 @@ const challenges = [];
 for (const absolutePath of challengeFiles) {
   const relativePath = path.relative(challengeRoot, absolutePath).split(path.sep).join('/');
   const moduleUrl = `${pathToFileURL(absolutePath).href}?registration=${fs.statSync(absolutePath).mtimeMs}`;
-  const challengeModule = await import(moduleUrl);
+  let challengeModule;
+  try {
+    challengeModule = await import(moduleUrl);
+  } catch (error) {
+    throw new Error(
+      `${relativePath}: the challenge file could not be loaded. `
+      + 'Terraform interpolation inside a JavaScript template string must escape its dollar sign. '
+      + `Original error: ${error.message}`,
+      { cause: error }
+    );
+  }
   validateChallenge(challengeModule.default, relativePath);
   challenges.push({ absolutePath, relativePath, challenge: challengeModule.default });
 }
@@ -122,6 +132,20 @@ for (const entry of challenges) {
     throw new Error(`Duplicate order ${entry.challenge.order} for ${entry.challenge.examId}: ${existingOrder} and ${entry.relativePath}.`);
   }
   seenExamOrders.set(examOrder, entry.relativePath);
+}
+
+const examOrders = new Map();
+for (const entry of challenges) {
+  const entries = examOrders.get(entry.challenge.examId) || [];
+  entries.push(entry);
+  examOrders.set(entry.challenge.examId, entries);
+}
+for (const [examId, entries] of examOrders) {
+  const orders = entries.map(entry => entry.challenge.order).sort((left, right) => left - right);
+  const expectedOrders = Array.from({ length: orders.length }, (_, index) => index + 1);
+  if (orders.some((order, index) => order !== expectedOrders[index])) {
+    throw new Error(`${examId}: challenge order numbers must be continuous from 1. Found ${orders.join(', ')}.`);
+  }
 }
 
 const imports = challenges.map((entry, index) => (
