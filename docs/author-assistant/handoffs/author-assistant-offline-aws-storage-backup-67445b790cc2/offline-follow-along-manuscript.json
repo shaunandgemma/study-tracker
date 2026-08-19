@@ -1,0 +1,3355 @@
+{
+  "manuscriptVersion": "1.0",
+  "programme": {
+    "title": "AWS Storage and Backup Follow Along",
+    "suggestedProgrammeId": "aws-storage-backup-learning-path",
+    "topic": "AWS Storage and Backup",
+    "examWorkspace": "AWS SAA-C03",
+    "learnerLevel": "Hard",
+    "outcome": "Create and restore encrypted EBS storage from a snapshot; build encrypted Regional EFS across two Availability Zones with mount targets and an access point; select the correct Amazon FSx family; create an AWS Backup vault, plan, resource selection and EBS/EFS recovery points; choose S3 Glacier retrieval options and Storage Gateway architectures; and safely delete only resources created by the lab.",
+    "region": "AWS eu-west-2",
+    "resourcePrefix": "fa-s3-storage",
+    "selfPaced": true,
+    "statusNotice": "Offline authoring manuscript only — not locally validated, imported, accepted, approved, published or fingerprinted.",
+    "completionDefinition": [
+      "Two SSM-managed EC2 clients are created in eu-west-2a and eu-west-2b without SSH access.",
+      "A 4-GiB encrypted gp3 EBS volume is formatted, written, snapshotted and restored to a second encrypted volume.",
+      "The restored EBS volume contains the original training file and remains AZ-scoped to eu-west-2a.",
+      "An encrypted Regional EFS file system has one mount target in each client Availability Zone.",
+      "An EFS access point enforces /shared and POSIX identity 1001:1001; client B reads a file written by client A.",
+      "A complete Amazon FSx decision matrix distinguishes Windows File Server, Lustre, ONTAP and OpenZFS.",
+      "AWS Backup contains a scheduled plan/explicit resource selection plus completed on-demand EBS and EFS recovery points.",
+      "A complete S3 Glacier retrieval matrix covers Instant Retrieval, Flexible Retrieval Expedited/Standard/Bulk and Deep Archive Standard/Bulk without incurring archive minimum-duration lab charges.",
+      "A complete Storage Gateway architecture matrix covers S3 File Gateway, FSx File Gateway, cached/stored Volume Gateway and Tape Gateway.",
+      "All recovery points, storage, compute, networking, service roles, credentials and local files are removed in reverse dependency order."
+    ]
+  },
+  "sources": [
+    {
+      "id": "src-ebs-volumes",
+      "title": "Amazon EBS volumes",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html",
+      "purpose": "EBS volume families and selection.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-03-cli-files",
+        "task-06-ebs-types-volume",
+        "task-10-ebs-vs-efs-review",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-ebs-features",
+      "title": "Features and benefits of Amazon EBS volumes",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/EBSFeatures.html",
+      "purpose": "EBS volume capabilities including encryption.",
+      "taskIds": [
+        "task-06-ebs-types-volume"
+      ]
+    },
+    {
+      "id": "src-ebs-create",
+      "title": "Create an Amazon EBS volume",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-creating-volume.html",
+      "purpose": "Create encrypted EBS volumes and volumes from snapshots.",
+      "taskIds": [
+        "task-05-launch-clients",
+        "task-06-ebs-types-volume",
+        "task-07-ebs-snapshot-restore"
+      ]
+    },
+    {
+      "id": "src-ebs-use",
+      "title": "Make an Amazon EBS volume available for use",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-using-volumes.html",
+      "purpose": "Format and mount attached EBS block devices.",
+      "taskIds": [
+        "task-06-ebs-types-volume"
+      ]
+    },
+    {
+      "id": "src-ebs-snapshots",
+      "title": "Amazon EBS snapshots",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html",
+      "purpose": "Snapshot backup and lifecycle concepts.",
+      "taskIds": [
+        "task-07-ebs-snapshot-restore",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-ebs-create-snapshot",
+      "title": "Create a snapshot of an EBS volume",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-create-snapshot.html",
+      "purpose": "Create a point-in-time EBS snapshot.",
+      "taskIds": [
+        "task-07-ebs-snapshot-restore"
+      ]
+    },
+    {
+      "id": "src-ebs-snapshot-how",
+      "title": "How Amazon EBS snapshots work",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/how_snapshots_work.html",
+      "purpose": "Incremental snapshot behavior.",
+      "taskIds": [
+        "task-07-ebs-snapshot-restore"
+      ]
+    },
+    {
+      "id": "src-ebs-encryption",
+      "title": "Amazon EBS encryption",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption.html",
+      "purpose": "Encrypted volumes/snapshots and encryption migration behavior.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-06-ebs-types-volume",
+        "task-07-ebs-snapshot-restore"
+      ]
+    },
+    {
+      "id": "src-ebs-encryption-how",
+      "title": "How Amazon EBS encryption works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/ebs/latest/userguide/how-ebs-encryption-works.html",
+      "purpose": "AWS KMS-backed EBS encryption.",
+      "taskIds": [
+        "task-06-ebs-types-volume"
+      ]
+    },
+    {
+      "id": "src-efs-what",
+      "title": "What is Amazon Elastic File System?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html",
+      "purpose": "Regional EFS, multi-AZ durability, NFS and encryption.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-08-create-efs",
+        "task-09-efs-access-point-share",
+        "task-10-ebs-vs-efs-review",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-efs-how",
+      "title": "How Amazon EFS works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html",
+      "purpose": "Mount targets and same-AZ DNS resolution.",
+      "taskIds": [
+        "task-08-create-efs",
+        "task-10-ebs-vs-efs-review"
+      ]
+    },
+    {
+      "id": "src-efs-mount-target",
+      "title": "Managing mount targets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/accessing-fs.html",
+      "purpose": "One mount target per Availability Zone and VPC access.",
+      "taskIds": [
+        "task-04-network-roles",
+        "task-08-create-efs",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-efs-create-mt",
+      "title": "Creating mount targets",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/manage-fs-access-create-delete-mount-targets.html",
+      "purpose": "Create Regional EFS mount targets.",
+      "taskIds": [
+        "task-08-create-efs"
+      ]
+    },
+    {
+      "id": "src-efs-accesspoints",
+      "title": "Working with access points",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/efs-access-points.html",
+      "purpose": "Application-specific entry points and enforced identities/root directories.",
+      "taskIds": [
+        "task-09-efs-access-point-share"
+      ]
+    },
+    {
+      "id": "src-efs-create-ap",
+      "title": "Creating access points",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/create-access-point.html",
+      "purpose": "Access-point POSIX identity and root-directory settings.",
+      "taskIds": [
+        "task-09-efs-access-point-share"
+      ]
+    },
+    {
+      "id": "src-efs-mount-ap",
+      "title": "Mounting with EFS access points",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/mounting-access-points.html",
+      "purpose": "Mount access points with the EFS mount helper and TLS.",
+      "taskIds": [
+        "task-09-efs-access-point-share"
+      ]
+    },
+    {
+      "id": "src-efs-utils",
+      "title": "Installing the Amazon EFS client",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/using-amazon-efs-utils.html",
+      "purpose": "amazon-efs-utils and TLS mount helper.",
+      "taskIds": [
+        "task-04-network-roles",
+        "task-05-launch-clients",
+        "task-09-efs-access-point-share"
+      ]
+    },
+    {
+      "id": "src-efs-encryption",
+      "title": "Encrypting data at rest",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/efs/latest/ug/encryption-at-rest.html",
+      "purpose": "EFS encryption at rest.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-08-create-efs"
+      ]
+    },
+    {
+      "id": "src-fsx-docs",
+      "title": "Amazon FSx Documentation",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/fsx/",
+      "purpose": "The four Amazon FSx file-system families.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-03-cli-files",
+        "task-11-fsx-selection",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-fsx-windows",
+      "title": "What is FSx for Windows File Server?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html",
+      "purpose": "Windows/SMB and Active Directory selection criteria.",
+      "taskIds": [
+        "task-11-fsx-selection"
+      ]
+    },
+    {
+      "id": "src-fsx-lustre",
+      "title": "What is Amazon FSx for Lustre?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/fsx/latest/LustreGuide/what-is.html",
+      "purpose": "High-performance POSIX/Lustre and S3 integration.",
+      "taskIds": [
+        "task-11-fsx-selection"
+      ]
+    },
+    {
+      "id": "src-fsx-ontap",
+      "title": "What is Amazon FSx for NetApp ONTAP?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/what-is-fsx-ontap.html",
+      "purpose": "ONTAP and multi-protocol storage.",
+      "taskIds": [
+        "task-11-fsx-selection"
+      ]
+    },
+    {
+      "id": "src-fsx-openzfs",
+      "title": "What is Amazon FSx for OpenZFS?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/what-is-fsx.html",
+      "purpose": "Managed OpenZFS and NFS access.",
+      "taskIds": [
+        "task-11-fsx-selection"
+      ]
+    },
+    {
+      "id": "src-backup-what",
+      "title": "What is AWS Backup?",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html",
+      "purpose": "Backup plans and centralized backup management.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-12-backup-vault-plan",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-backup-plan",
+      "title": "Create a backup plan",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/creating-a-backup-plan.html",
+      "purpose": "Backup plan rules and scheduling.",
+      "taskIds": [
+        "task-12-backup-vault-plan"
+      ]
+    },
+    {
+      "id": "src-backup-assign",
+      "title": "Select AWS services to backup",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/assigning-resources.html",
+      "purpose": "Assign resources to a backup plan.",
+      "taskIds": [
+        "task-12-backup-vault-plan"
+      ]
+    },
+    {
+      "id": "src-backup-role",
+      "title": "IAM service roles",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/iam-service-roles.html",
+      "purpose": "AWS Backup service roles and managed policies.",
+      "taskIds": [
+        "task-02-bootstrap-user",
+        "task-04-network-roles",
+        "task-12-backup-vault-plan",
+        "task-18-identity-local-cleanup"
+      ]
+    },
+    {
+      "id": "src-backup-vault",
+      "title": "Backup vault creation and deletion",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/create-a-vault.html",
+      "purpose": "Backup vault lifecycle and deletion requirements.",
+      "taskIds": [
+        "task-12-backup-vault-plan",
+        "task-13-backup-recovery-points",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-backup-recovery",
+      "title": "Backup creation, maintenance, and restore",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/recovery-points.html",
+      "purpose": "Recovery points stored in backup vaults.",
+      "taskIds": [
+        "task-13-backup-recovery-points",
+        "task-17-cloud-cleanup"
+      ]
+    },
+    {
+      "id": "src-backup-ondemand",
+      "title": "Creating an on-demand backup using AWS Backup",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/recov-point-create-on-demand-backup.html",
+      "purpose": "On-demand backup jobs.",
+      "taskIds": [
+        "task-13-backup-recovery-points"
+      ]
+    },
+    {
+      "id": "src-glacier-classes",
+      "title": "Understanding S3 Glacier storage classes for long-term data storage",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/glacier-storage-classes.html",
+      "purpose": "Glacier Instant Retrieval, Flexible Retrieval and Deep Archive.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-14-glacier-retrieval",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-glacier-options",
+      "title": "Understanding archive retrieval options",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects-retrieval-options.html",
+      "purpose": "Expedited, Standard and Bulk retrieval times.",
+      "taskIds": [
+        "task-03-cli-files",
+        "task-14-glacier-retrieval"
+      ]
+    },
+    {
+      "id": "src-glacier-restore",
+      "title": "Restoring an archived object",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/restoring-objects.html",
+      "purpose": "Restore requests and temporary restored copies.",
+      "taskIds": [
+        "task-14-glacier-retrieval"
+      ]
+    },
+    {
+      "id": "src-glacier-minimum",
+      "title": "Understanding archival storage in S3 Glacier Flexible Retrieval and S3 Glacier Deep Archive",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/archival-storage.html",
+      "purpose": "Minimum storage-duration cost considerations.",
+      "taskIds": [
+        "task-14-glacier-retrieval"
+      ]
+    },
+    {
+      "id": "src-storagegateway-docs",
+      "title": "AWS Storage Gateway Documentation",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/",
+      "purpose": "Storage Gateway file, volume and tape documentation.",
+      "taskIds": [
+        "task-01-prerequisites",
+        "task-03-cli-files",
+        "task-15-storage-gateway",
+        "task-16-exam-review"
+      ]
+    },
+    {
+      "id": "src-storagegateway-volume",
+      "title": "How Volume Gateway works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/vgw/StorageGatewayConcepts.html",
+      "purpose": "Cached and stored volume architecture.",
+      "taskIds": [
+        "task-15-storage-gateway"
+      ]
+    },
+    {
+      "id": "src-storagegateway-tape",
+      "title": "How Tape Gateway works",
+      "publisher": "AWS",
+      "url": "https://docs.aws.amazon.com/storagegateway/latest/tgw/StorageGatewayConcepts.html",
+      "purpose": "Virtual tape library architecture.",
+      "taskIds": [
+        "task-15-storage-gateway"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-01-prepare",
+      "sequence": 1,
+      "title": "Prepare the storage lab",
+      "goal": "Create the temporary IAM identities, networking and two SSM-managed EC2 clients."
+    },
+    {
+      "id": "phase-02-ebs",
+      "sequence": 2,
+      "title": "Work with encrypted EBS and snapshots",
+      "goal": "Select an EBS volume family, create encrypted gp3 block storage, write data, snapshot it and restore the data to a new encrypted volume."
+    },
+    {
+      "id": "phase-03-efs",
+      "sequence": 3,
+      "title": "Build Regional EFS shared storage",
+      "goal": "Create encrypted Regional EFS, one mount target per Availability Zone and an access point, then prove shared access from two EC2 clients."
+    },
+    {
+      "id": "phase-04-fsx",
+      "sequence": 4,
+      "title": "Select the correct Amazon FSx family",
+      "goal": "Use a complete protocol/workload matrix to choose Windows File Server, Lustre, ONTAP or OpenZFS without creating costly test file systems."
+    },
+    {
+      "id": "phase-05-backup",
+      "sequence": 5,
+      "title": "Create AWS Backup plans and recovery points",
+      "goal": "Create a backup vault, scheduled plan and explicit selection for the restored EBS volume and EFS file system, then create on-demand recovery points."
+    },
+    {
+      "id": "phase-06-archive-hybrid",
+      "sequence": 6,
+      "title": "Plan Glacier retrieval and Storage Gateway architecture",
+      "goal": "Choose archive retrieval tiers and hybrid-storage gateway types without creating minimum-duration archive objects or gateway appliances."
+    },
+    {
+      "id": "phase-07-cleanup",
+      "sequence": 7,
+      "title": "Review and reverse-dependency cleanup",
+      "goal": "Consolidate storage exam decisions, then delete backups, file systems, block storage, EC2/network resources, identities and local files safely."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-01-prerequisites",
+      "phaseId": "phase-01-prepare",
+      "title": "Verify the training account and storage scope",
+      "feature": "Prerequisites",
+      "difficulty": "Easy",
+      "goal": "Confirm AWS CLI access, the disposable account and eu-west-2 before creating storage resources.",
+      "whyItMatters": "EBS, EFS, FSx, Backup, S3 archive classes and Storage Gateway solve different storage layers, so the lab starts by fixing account/Region and cost boundaries.",
+      "examRelevance": "SAA-C03 storage questions focus on workload access patterns, durability, performance, backup and recovery choices.",
+      "prerequisites": [],
+      "sourceIds": [
+        "src-ebs-volumes",
+        "src-efs-what",
+        "src-fsx-docs",
+        "src-backup-what",
+        "src-glacier-classes",
+        "src-storagegateway-docs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in to the disposable AWS training account."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Confirm no resource beginning fa-s3-storage exists."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open Windows PowerShell and run aws --version."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Confirm all active cloud resources in this lab will be created in Europe (London) eu-west-2."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Do not create or use root access keys."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Root is used only for the one-time bootstrap in Task 2 and final removal of the temporary training IAM user in Task 18."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - verify AWS CLI",
+          "language": "text",
+          "content": "aws --version"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "AWS CLI prints a version.",
+        "No fa-s3-storage resource exists yet."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-01-prerequisites-verify-01",
+          "text": "The active console Region is eu-west-2."
+        },
+        {
+          "id": "task-01-prerequisites-verify-02",
+          "text": "No lab resource has been created."
+        }
+      ]
+    },
+    {
+      "id": "task-02-bootstrap-user",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the temporary storage IAM training user",
+      "feature": "IAM bootstrap",
+      "difficulty": "Hard",
+      "goal": "Use root only to create fa-s3-storage-admin, one temporary access key and the complete storage/backup lab policy.",
+      "whyItMatters": "The training identity needs explicit rights for EBS, EFS, AWS Backup, SSM, VPC and the two custom service roles without AdministratorAccess.",
+      "examRelevance": "Storage protection still depends on controlled identities and service roles.",
+      "prerequisites": [
+        "task-01-prerequisites"
+      ],
+      "sourceIds": [
+        "src-backup-role",
+        "src-ebs-encryption",
+        "src-efs-encryption"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Sign in as root only for this bootstrap task."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open IAM > Users > Create user."
+        },
+        {
+          "sequence": 3,
+          "instruction": "User name: fa-s3-storage-admin."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Enable console access."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create the user."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open Policies > Create policy > JSON."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Paste the complete fa-s3-storage-admin-policy below."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Choose Next and set Policy name to fa-s3-storage-admin-policy."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create the policy."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Attach it directly to fa-s3-storage-admin."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Open Security credentials and create exactly one access key for CLI use."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Copy it only to a temporary secure location."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Sign in as fa-s3-storage-admin for routine work."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "No root CLI command",
+          "language": "text",
+          "content": "# Complete this one-time IAM bootstrap in the AWS console. Do not create root access keys."
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "fa-s3-storage-admin-policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"ReadTrainingState\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"sts:GetCallerIdentity\",\n        \"ec2:Describe*\",\n        \"elasticfilesystem:DescribeFileSystems\",\n        \"elasticfilesystem:DescribeMountTargets\",\n        \"elasticfilesystem:DescribeAccessPoints\",\n        \"backup:ListBackupVaults\",\n        \"backup:ListBackupPlans\",\n        \"backup:ListBackupJobs\",\n        \"backup:ListRecoveryPointsByBackupVault\",\n        \"backup:DescribeBackupJob\",\n        \"backup:DescribeRecoveryPoint\",\n        \"iam:GetRole\",\n        \"iam:GetInstanceProfile\",\n        \"iam:ListAttachedRolePolicies\",\n        \"ssm:DescribeInstanceInformation\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingVpcAndEc2\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVpc\",\n        \"ec2:DeleteVpc\",\n        \"ec2:ModifyVpcAttribute\",\n        \"ec2:CreateSubnet\",\n        \"ec2:DeleteSubnet\",\n        \"ec2:ModifySubnetAttribute\",\n        \"ec2:CreateInternetGateway\",\n        \"ec2:AttachInternetGateway\",\n        \"ec2:DetachInternetGateway\",\n        \"ec2:DeleteInternetGateway\",\n        \"ec2:CreateRouteTable\",\n        \"ec2:DeleteRouteTable\",\n        \"ec2:AssociateRouteTable\",\n        \"ec2:DisassociateRouteTable\",\n        \"ec2:CreateRoute\",\n        \"ec2:DeleteRoute\",\n        \"ec2:CreateSecurityGroup\",\n        \"ec2:DeleteSecurityGroup\",\n        \"ec2:AuthorizeSecurityGroupIngress\",\n        \"ec2:RevokeSecurityGroupIngress\",\n        \"ec2:RunInstances\",\n        \"ec2:TerminateInstances\",\n        \"ec2:CreateTags\",\n        \"ec2:DeleteTags\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingEbs\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ec2:CreateVolume\",\n        \"ec2:DeleteVolume\",\n        \"ec2:AttachVolume\",\n        \"ec2:DetachVolume\",\n        \"ec2:ModifyVolume\",\n        \"ec2:CreateSnapshot\",\n        \"ec2:DeleteSnapshot\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ReadLatestAmazonLinuxAndUseSystemsManager\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ssm:GetParameter\",\n        \"ssm:SendCommand\",\n        \"ssm:GetCommandInvocation\",\n        \"ssm:ListCommandInvocations\",\n        \"ssm:StartSession\",\n        \"ssm:TerminateSession\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingEfs\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"elasticfilesystem:CreateFileSystem\",\n        \"elasticfilesystem:DeleteFileSystem\",\n        \"elasticfilesystem:CreateMountTarget\",\n        \"elasticfilesystem:DeleteMountTarget\",\n        \"elasticfilesystem:CreateAccessPoint\",\n        \"elasticfilesystem:DeleteAccessPoint\",\n        \"elasticfilesystem:TagResource\",\n        \"elasticfilesystem:UntagResource\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageTrainingBackup\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"backup:CreateBackupVault\",\n        \"backup:DeleteBackupVault\",\n        \"backup:CreateBackupPlan\",\n        \"backup:GetBackupPlan\",\n        \"backup:DeleteBackupPlan\",\n        \"backup:CreateBackupSelection\",\n        \"backup:ListBackupSelections\",\n        \"backup:DeleteBackupSelection\",\n        \"backup:StartBackupJob\",\n        \"backup:DeleteRecoveryPoint\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Sid\": \"ManageOnlyTrainingRolesAndProfiles\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"iam:CreateRole\",\n        \"iam:DeleteRole\",\n        \"iam:AttachRolePolicy\",\n        \"iam:DetachRolePolicy\",\n        \"iam:CreateInstanceProfile\",\n        \"iam:DeleteInstanceProfile\",\n        \"iam:AddRoleToInstanceProfile\",\n        \"iam:RemoveRoleFromInstanceProfile\",\n        \"iam:TagRole\",\n        \"iam:UntagRole\"\n      ],\n      \"Resource\": [\n        \"arn:aws:iam::*:role/fa-s3-storage-*\",\n        \"arn:aws:iam::*:instance-profile/fa-s3-storage-*\"\n      ]\n    },\n    {\n      \"Sid\": \"PassOnlyTrainingRolesToTheirServices\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"iam:PassRole\",\n      \"Resource\": [\n        \"arn:aws:iam::*:role/fa-s3-storage-ec2-role\",\n        \"arn:aws:iam::*:role/fa-s3-storage-backup-role\"\n      ],\n      \"Condition\": {\n        \"StringEquals\": {\n          \"iam:PassedToService\": [\n            \"ec2.amazonaws.com\",\n            \"backup.amazonaws.com\"\n          ]\n        }\n      }\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The training user and customer managed policy exist.",
+        "Exactly one temporary access key exists.",
+        "Root is signed out."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-02-bootstrap-user-verify-01",
+          "text": "AdministratorAccess is not attached."
+        },
+        {
+          "id": "task-02-bootstrap-user-verify-02",
+          "text": "The routine browser session uses fa-s3-storage-admin."
+        }
+      ]
+    },
+    {
+      "id": "task-03-cli-files",
+      "phaseId": "phase-01-prepare",
+      "title": "Configure the CLI profile and create the storage decision files",
+      "feature": "CLI and study files",
+      "difficulty": "Medium",
+      "goal": "Configure fa-s3-storage-admin and create every local script/decision file required later.",
+      "whyItMatters": "Keeping scripts and architecture matrices visible makes storage configuration reproducible and keeps credentials out of the manuscript.",
+      "examRelevance": "Hard storage labs should prove both implementation and service-selection reasoning.",
+      "prerequisites": [
+        "task-02-bootstrap-user"
+      ],
+      "sourceIds": [
+        "src-ebs-volumes",
+        "src-fsx-docs",
+        "src-glacier-options",
+        "src-storagegateway-docs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open Windows PowerShell."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Run aws configure --profile fa-s3-storage-admin."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Enter the temporary access key only in protected prompts."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Set Region eu-west-2 and output json."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Run get-caller-identity."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create C:\\aws-labs\\fa-s3-storage."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create instance-user-data.sh, prepare-ebs.sh, unmount-ebs.sh, verify-restored-ebs.sh, ebs-volume-types.json, fsx-selection.json, backup-plan.json, s3-glacier-retrieval-plan.json and storage-gateway-architecture.json."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Paste the complete blocks supplied below into their matching files."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Do not put AWS credentials into any local file."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - configure profile",
+          "language": "text",
+          "content": "aws configure --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - verify identity",
+          "language": "text",
+          "content": "aws sts get-caller-identity --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - capture account ID",
+          "language": "text",
+          "content": "$AWS_ACCOUNT_ID = aws sts get-caller-identity --profile fa-s3-storage-admin --query Account --output text"
+        },
+        {
+          "title": "PowerShell - create lab folder",
+          "language": "text",
+          "content": "New-Item -ItemType Directory -Force \"C:\\aws-labs\\fa-s3-storage\""
+        },
+        {
+          "title": "PowerShell - enter lab folder",
+          "language": "text",
+          "content": "Set-Location \"C:\\aws-labs\\fa-s3-storage\""
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "instance-user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\n\ndnf install -y amazon-efs-utils xfsprogs\n\nsystemctl enable amazon-ssm-agent\nsystemctl start amazon-ssm-agent"
+        },
+        {
+          "title": "prepare-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nROOT_SOURCE=$(findmnt -n -o SOURCE /)\nROOT_PARENT=$(lsblk -no PKNAME \"$ROOT_SOURCE\" | head -n1)\n\nDATA_DEV=$(lsblk -dpno NAME,TYPE | awk '$2==\"disk\"{print $1}' | grep -v \"/dev/${ROOT_PARENT}\" | head -n1)\n\nif [ -z \"${DATA_DEV}\" ]; then\n  echo \"No non-root EBS data disk was detected.\"\n  exit 1\nfi\n\nsudo mkfs.xfs -f \"${DATA_DEV}\"\nsudo mkdir -p /mnt/ebs\nsudo mount \"${DATA_DEV}\" /mnt/ebs\n\necho \"fa-s3-storage encrypted EBS snapshot training file\" | sudo tee /mnt/ebs/ebs-training.txt\nsudo sync\n\nsudo cat /mnt/ebs/ebs-training.txt\nlsblk -f"
+        },
+        {
+          "title": "unmount-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nsudo sync\nsudo umount /mnt/ebs"
+        },
+        {
+          "title": "verify-restored-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nROOT_SOURCE=$(findmnt -n -o SOURCE /)\nROOT_PARENT=$(lsblk -no PKNAME \"$ROOT_SOURCE\" | head -n1)\n\nDATA_DEV=$(lsblk -dpno NAME,TYPE | awk '$2==\"disk\"{print $1}' | grep -v \"/dev/${ROOT_PARENT}\" | head -n1)\n\nif [ -z \"${DATA_DEV}\" ]; then\n  echo \"No restored non-root EBS data disk was detected.\"\n  exit 1\nfi\n\nsudo mkdir -p /mnt/ebs-restored\nsudo mount -o ro \"${DATA_DEV}\" /mnt/ebs-restored\nsudo cat /mnt/ebs-restored/ebs-training.txt"
+        },
+        {
+          "title": "ebs-volume-types.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"ebsVolumeSelection\": [\n    {\n      \"type\": \"gp3\",\n      \"family\": \"General Purpose SSD\",\n      \"selection\": \"Default general-purpose choice for many boot volumes, applications, virtual desktops, and development/test workloads. Performance can be provisioned independently from capacity within service limits.\",\n      \"handsOn\": true\n    },\n    {\n      \"type\": \"gp2\",\n      \"family\": \"General Purpose SSD\",\n      \"selection\": \"Previous-generation general-purpose SSD where performance scales with volume size. Prefer gp3 for new designs unless a compatibility or migration reason dictates otherwise.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"io2\",\n      \"family\": \"Provisioned IOPS SSD\",\n      \"selection\": \"High-performance, latency-sensitive and IOPS-intensive workloads that require provisioned IOPS and stronger durability characteristics.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"io1\",\n      \"family\": \"Provisioned IOPS SSD\",\n      \"selection\": \"Previous-generation provisioned-IOPS SSD. Existing workloads may use it, while io2 is the current higher-durability provisioned-IOPS choice.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"st1\",\n      \"family\": \"Throughput Optimized HDD\",\n      \"selection\": \"Frequently accessed, throughput-intensive large sequential workloads such as big-data processing and log processing. Not suitable as a boot volume.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"sc1\",\n      \"family\": \"Cold HDD\",\n      \"selection\": \"Lowest-cost EBS HDD option for infrequently accessed large sequential data where throughput requirements are modest. Not suitable as a boot volume.\",\n      \"handsOn\": false\n    }\n  ],\n  \"snapshotModel\": {\n    \"scope\": \"Snapshots are point-in-time backups of EBS volumes and are incremental after the first snapshot.\",\n    \"restore\": \"Create a new EBS volume from a snapshot in the Availability Zone where the volume will be attached.\",\n    \"encryption\": \"Encrypted volumes create encrypted snapshots; volumes created from encrypted snapshots remain encrypted.\"\n  }\n}"
+        },
+        {
+          "title": "fsx-selection.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"fsxSelection\": [\n    {\n      \"fileSystem\": \"Amazon FSx for Windows File Server\",\n      \"protocols\": [\"SMB\"],\n      \"identity\": \"Microsoft Active Directory authentication\",\n      \"bestFit\": \"Windows-native shared file workloads that require SMB and Windows file-system features.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for Lustre\",\n      \"protocols\": [\"Lustre\", \"POSIX-compatible file access\"],\n      \"identity\": \"Linux/POSIX workload model\",\n      \"bestFit\": \"High-performance parallel workloads such as HPC, machine learning and analytics; supports integration with Amazon S3 data repositories.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for NetApp ONTAP\",\n      \"protocols\": [\"NFS\", \"SMB\", \"iSCSI\", \"NVMe\"],\n      \"identity\": \"ONTAP storage virtual machines and protocol-specific identity controls\",\n      \"bestFit\": \"NetApp/ONTAP migrations and multi-protocol enterprise workloads that need file and block access.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for OpenZFS\",\n      \"protocols\": [\"NFS v3\", \"NFS v4.0\", \"NFS v4.1\", \"NFS v4.2\"],\n      \"identity\": \"NFS/POSIX-oriented workload model\",\n      \"bestFit\": \"NFS-based workloads that benefit from OpenZFS semantics and managed ZFS storage.\"\n    }\n  ],\n  \"examDecisionRule\": \"Match the protocol, operating-system ecosystem, performance profile, data-source integration, and migration requirement before selecting an FSx family.\",\n  \"notCreatedInThisLab\": \"No FSx file system is created because the service choices have different minimum capacities, deployment requirements and ongoing costs.\"\n}"
+        },
+        {
+          "title": "backup-plan.json",
+          "language": "json",
+          "content": "{\n  \"BackupPlanName\": \"fa-s3-storage-plan\",\n  \"Rules\": [\n    {\n      \"RuleName\": \"fa-s3-storage-daily\",\n      \"TargetBackupVaultName\": \"fa-s3-storage-vault\",\n      \"ScheduleExpression\": \"cron(0 2 * * ? *)\",\n      \"StartWindowMinutes\": 60,\n      \"CompletionWindowMinutes\": 180,\n      \"Lifecycle\": {\n        \"DeleteAfterDays\": 7\n      }\n    }\n  ]\n}"
+        },
+        {
+          "title": "s3-glacier-retrieval-plan.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"s3GlacierRetrievalChoices\": [\n    {\n      \"storageClass\": \"S3 Glacier Instant Retrieval\",\n      \"access\": \"Real-time, millisecond access\",\n      \"restoreRequestRequired\": false,\n      \"selection\": \"Rarely accessed archive data that still requires immediate retrieval.\"\n    },\n    {\n      \"storageClass\": \"S3 Glacier Flexible Retrieval\",\n      \"access\": {\n        \"Expedited\": \"Typically 1-5 minutes\",\n        \"Standard\": \"Typically 3-5 hours without Batch Operations\",\n        \"Bulk\": \"Typically 5-12 hours\"\n      },\n      \"restoreRequestRequired\": true,\n      \"selection\": \"Long-term archives where retrieval can range from minutes to hours and cost can be traded against speed.\"\n    },\n    {\n      \"storageClass\": \"S3 Glacier Deep Archive\",\n      \"access\": {\n        \"Standard\": \"Typically within 12 hours\",\n        \"Bulk\": \"Typically within 48 hours\"\n      },\n      \"restoreRequestRequired\": true,\n      \"selection\": \"Very long-lived archives with the lowest urgency for retrieval.\"\n    }\n  ],\n  \"costSafety\": {\n    \"minimumStorageDuration\": {\n      \"S3 Glacier Flexible Retrieval\": \"90 days\",\n      \"S3 Glacier Deep Archive\": \"180 days\"\n    },\n    \"labDecision\": \"Do not create archive-class objects merely for the lab because early deletion can still incur minimum-storage-duration charges.\"\n  }\n}"
+        },
+        {
+          "title": "storage-gateway-architecture.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"storageGatewayArchitecture\": [\n    {\n      \"gateway\": \"Amazon S3 File Gateway\",\n      \"clientInterface\": [\"NFS\", \"SMB\"],\n      \"cloudStorage\": \"Amazon S3 objects\",\n      \"bestFit\": \"On-premises applications that need file-protocol access while storing data as objects in S3.\"\n    },\n    {\n      \"gateway\": \"Amazon FSx File Gateway\",\n      \"clientInterface\": [\"SMB\"],\n      \"cloudStorage\": \"Amazon FSx for Windows File Server\",\n      \"bestFit\": \"On-premises users/applications that need low-latency cached access to Windows file shares hosted on FSx for Windows File Server.\"\n    },\n    {\n      \"gateway\": \"Volume Gateway - cached volumes\",\n      \"clientInterface\": [\"iSCSI block volumes\"],\n      \"cloudStorage\": \"Primary data stored in Amazon S3 with frequently accessed blocks cached locally\",\n      \"bestFit\": \"Hybrid block workloads where on-premises capacity should be minimized while retaining low-latency access to hot blocks.\"\n    },\n    {\n      \"gateway\": \"Volume Gateway - stored volumes\",\n      \"clientInterface\": [\"iSCSI block volumes\"],\n      \"cloudStorage\": \"Primary data remains local with asynchronous backups to AWS\",\n      \"bestFit\": \"Hybrid block workloads that require the full primary dataset on premises.\"\n    },\n    {\n      \"gateway\": \"Tape Gateway\",\n      \"clientInterface\": [\"Virtual tape library over iSCSI\"],\n      \"cloudStorage\": \"Virtual tapes archived in AWS cloud storage\",\n      \"bestFit\": \"Existing tape-based backup applications that need cloud-backed virtual tape media.\"\n    }\n  ],\n  \"architectureReminder\": \"Storage Gateway is for ongoing hybrid storage integration. It is not a substitute for EBS/EFS/FSx when the workload is already fully hosted inside AWS.\"\n}"
+        }
+      ],
+      "expectedResults": [
+        "The CLI identity is fa-s3-storage-admin.",
+        "All nine local files exist.",
+        "No file contains AWS credentials."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-03-cli-files-verify-01",
+          "text": "The EBS, FSx, Glacier and Storage Gateway files parse as JSON."
+        },
+        {
+          "id": "task-03-cli-files-verify-02",
+          "text": "AWS_ACCOUNT_ID is recorded for later ARN construction."
+        }
+      ]
+    },
+    {
+      "id": "task-04-network-roles",
+      "phaseId": "phase-01-prepare",
+      "title": "Create the two-AZ VPC, security groups and service roles",
+      "feature": "Lab networking and roles",
+      "difficulty": "Hard",
+      "goal": "Create a dedicated VPC with two public subnets, no inbound EC2 access, NFS restricted from the EC2 SG to the EFS SG, an EC2 SSM role and an AWS Backup role.",
+      "whyItMatters": "Two EC2 clients in different Availability Zones are needed to prove EFS shared access, while SSM avoids SSH keys/inbound SSH.",
+      "examRelevance": "The network is deliberately minimal so the lab remains about storage rather than application networking.",
+      "prerequisites": [
+        "task-03-cli-files"
+      ],
+      "sourceIds": [
+        "src-efs-mount-target",
+        "src-efs-utils",
+        "src-backup-role"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open VPC in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create fa-s3-storage-vpc with CIDR 10.130.0.0/16."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create fa-s3-storage-public-a in eu-west-2a with 10.130.1.0/24."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Create fa-s3-storage-public-b in eu-west-2b with 10.130.2.0/24."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Enable auto-assign public IPv4 on both subnets."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create fa-s3-storage-igw and attach it to the VPC."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Create fa-s3-storage-public-rt, add 0.0.0.0/0 to the IGW, and associate both subnets."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Create fa-s3-storage-ec2-sg with no inbound rules and default outbound."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Create fa-s3-storage-efs-sg with inbound NFS TCP 2049 from fa-s3-storage-ec2-sg only."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Open IAM and create fa-s3-storage-ec2-role trusted by ec2.amazonaws.com."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Attach AmazonSSMManagedInstanceCore."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Create instance profile fa-s3-storage-ec2-profile and add the EC2 role."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Create fa-s3-storage-backup-role trusted by backup.amazonaws.com."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Attach AWSBackupServiceRolePolicyForBackup."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - save EC2 trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\ec2-trust.json"
+        },
+        {
+          "title": "PowerShell - create EC2 role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-s3-storage-ec2-role --assume-role-policy-document file://ec2-trust.json --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - attach SSM managed policy",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name fa-s3-storage-ec2-role --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create instance profile",
+          "language": "text",
+          "content": "aws iam create-instance-profile --instance-profile-name fa-s3-storage-ec2-profile --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - add EC2 role",
+          "language": "text",
+          "content": "aws iam add-role-to-instance-profile --instance-profile-name fa-s3-storage-ec2-profile --role-name fa-s3-storage-ec2-role --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - save Backup trust",
+          "language": "text",
+          "content": "@'\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"backup.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}\n'@ | Set-Content -Encoding utf8 .\\backup-trust.json"
+        },
+        {
+          "title": "PowerShell - create Backup role",
+          "language": "text",
+          "content": "aws iam create-role --role-name fa-s3-storage-backup-role --assume-role-policy-document file://backup-trust.json --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - attach Backup managed policy",
+          "language": "text",
+          "content": "aws iam attach-role-policy --role-name fa-s3-storage-backup-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create VPC",
+          "language": "text",
+          "content": "$VPC_ID = aws ec2 create-vpc --cidr-block 10.130.0.0/16 --tag-specifications \"ResourceType=vpc,Tags=[{Key=Name,Value=fa-s3-storage-vpc}]\" --query Vpc.VpcId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - subnet A",
+          "language": "text",
+          "content": "$SUBNET_A_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2a --cidr-block 10.130.1.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-s3-storage-public-a}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - subnet B",
+          "language": "text",
+          "content": "$SUBNET_B_ID = aws ec2 create-subnet --vpc-id $VPC_ID --availability-zone eu-west-2b --cidr-block 10.130.2.0/24 --tag-specifications \"ResourceType=subnet,Tags=[{Key=Name,Value=fa-s3-storage-public-b}]\" --query Subnet.SubnetId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - enable public IP A",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_A_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - enable public IP B",
+          "language": "text",
+          "content": "aws ec2 modify-subnet-attribute --subnet-id $SUBNET_B_ID --map-public-ip-on-launch --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create IGW",
+          "language": "text",
+          "content": "$IGW_ID = aws ec2 create-internet-gateway --tag-specifications \"ResourceType=internet-gateway,Tags=[{Key=Name,Value=fa-s3-storage-igw}]\" --query InternetGateway.InternetGatewayId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - attach IGW",
+          "language": "text",
+          "content": "aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - route table",
+          "language": "text",
+          "content": "$RT_ID = aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications \"ResourceType=route-table,Tags=[{Key=Name,Value=fa-s3-storage-public-rt}]\" --query RouteTable.RouteTableId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - default route",
+          "language": "text",
+          "content": "aws ec2 create-route --route-table-id $RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - associate A",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - associate B",
+          "language": "text",
+          "content": "aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create EC2 SG",
+          "language": "text",
+          "content": "$EC2_SG_ID = aws ec2 create-security-group --group-name fa-s3-storage-ec2-sg --description \"SSM-managed storage lab clients\" --vpc-id $VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create EFS SG",
+          "language": "text",
+          "content": "$EFS_SG_ID = aws ec2 create-security-group --group-name fa-s3-storage-efs-sg --description \"NFS only from storage lab clients\" --vpc-id $VPC_ID --query GroupId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - allow NFS from client SG",
+          "language": "text",
+          "content": "aws ec2 authorize-security-group-ingress --group-id $EFS_SG_ID --protocol tcp --port 2049 --source-group $EC2_SG_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "EC2 trust policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        },
+        {
+          "title": "AWS Backup trust policy",
+          "language": "json",
+          "content": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"Service\": \"backup.amazonaws.com\"\n      },\n      \"Action\": \"sts:AssumeRole\"\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The VPC spans eu-west-2a and eu-west-2b.",
+        "EC2 SG has no inbound rules.",
+        "EFS SG accepts NFS only from EC2 SG.",
+        "Both service roles exist."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-04-network-roles-verify-01",
+          "text": "fa-s3-storage-ec2-role has AmazonSSMManagedInstanceCore."
+        },
+        {
+          "id": "task-04-network-roles-verify-02",
+          "text": "fa-s3-storage-backup-role has AWSBackupServiceRolePolicyForBackup."
+        }
+      ]
+    },
+    {
+      "id": "task-05-launch-clients",
+      "phaseId": "phase-01-prepare",
+      "title": "Launch one SSM-managed EC2 storage client in each Availability Zone",
+      "feature": "EC2 storage clients",
+      "difficulty": "Hard",
+      "goal": "Launch fa-s3-storage-client-a and fa-s3-storage-client-b with no SSH key and the EFS/XFS packages installed by user data.",
+      "whyItMatters": "The clients prove AZ-scoped EBS behavior and multi-AZ EFS shared access without opening inbound administrative ports.",
+      "examRelevance": "EBS volumes attach within an Availability Zone; EFS is network file storage designed for concurrent clients.",
+      "prerequisites": [
+        "task-04-network-roles"
+      ],
+      "sourceIds": [
+        "src-ebs-create",
+        "src-efs-utils"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "The t3.micro clients and their public IPv4 addresses can incur charges while running."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EC2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Launch fa-s3-storage-client-a using Amazon Linux 2023, t3.micro, subnet fa-s3-storage-public-a, fa-s3-storage-ec2-sg, no key pair and instance profile fa-s3-storage-ec2-profile."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Under Advanced details paste instance-user-data.sh."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Launch fa-s3-storage-client-b with the same settings except subnet fa-s3-storage-public-b."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Wait for both EC2 status checks to pass."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Open Systems Manager > Fleet Manager / Managed nodes and confirm both instances are managed."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Do not add SSH ingress."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - latest AL2023 AMI",
+          "language": "text",
+          "content": "$AMI_ID = aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - encode user data",
+          "language": "text",
+          "content": "$USER_DATA_B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\instance-user-data.sh\")))"
+        },
+        {
+          "title": "PowerShell - launch client A",
+          "language": "text",
+          "content": "$INSTANCE_A_ID = aws ec2 run-instances --image-id $AMI_ID --instance-type t3.micro --subnet-id $SUBNET_A_ID --security-group-ids $EC2_SG_ID --iam-instance-profile Name=fa-s3-storage-ec2-profile --associate-public-ip-address --user-data $USER_DATA_B64 --tag-specifications \"ResourceType=instance,Tags=[{Key=Name,Value=fa-s3-storage-client-a},{Key=FollowAlong,Value=fa-s3-storage}]\" --query \"Instances[0].InstanceId\" --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - launch client B",
+          "language": "text",
+          "content": "$INSTANCE_B_ID = aws ec2 run-instances --image-id $AMI_ID --instance-type t3.micro --subnet-id $SUBNET_B_ID --security-group-ids $EC2_SG_ID --iam-instance-profile Name=fa-s3-storage-ec2-profile --associate-public-ip-address --user-data $USER_DATA_B64 --tag-specifications \"ResourceType=instance,Tags=[{Key=Name,Value=fa-s3-storage-client-b},{Key=FollowAlong,Value=fa-s3-storage}]\" --query \"Instances[0].InstanceId\" --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait for status checks",
+          "language": "text",
+          "content": "aws ec2 wait instance-status-ok --instance-ids $INSTANCE_A_ID $INSTANCE_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - verify SSM clients",
+          "language": "text",
+          "content": "aws ssm describe-instance-information --filters Key=InstanceIds,Values=$INSTANCE_A_ID,$INSTANCE_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "instance-user-data.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euxo pipefail\n\ndnf install -y amazon-efs-utils xfsprogs\n\nsystemctl enable amazon-ssm-agent\nsystemctl start amazon-ssm-agent"
+        }
+      ],
+      "expectedResults": [
+        "Both clients are running in different AZs.",
+        "Both are managed by Systems Manager.",
+        "No SSH key or inbound SSH rule exists."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-05-launch-clients-verify-01",
+          "text": "Client A is in eu-west-2a."
+        },
+        {
+          "id": "task-05-launch-clients-verify-02",
+          "text": "Client B is in eu-west-2b."
+        }
+      ]
+    },
+    {
+      "id": "task-06-ebs-types-volume",
+      "phaseId": "phase-02-ebs",
+      "title": "Select an EBS volume type and create encrypted gp3 storage",
+      "feature": "EBS volume types and encryption",
+      "difficulty": "Hard",
+      "goal": "Use the EBS selection matrix, then create a 4-GiB encrypted gp3 volume in eu-west-2a and write a known file from client A.",
+      "whyItMatters": "The exercise separates volume-family selection from encryption: all EBS volume types support encryption, while workload characteristics determine gp3/io2/st1/sc1 selection.",
+      "examRelevance": "EBS is AZ-scoped block storage and gp3 is a strong general-purpose default for many workloads.",
+      "prerequisites": [
+        "task-05-launch-clients"
+      ],
+      "sourceIds": [
+        "src-ebs-volumes",
+        "src-ebs-features",
+        "src-ebs-create",
+        "src-ebs-use",
+        "src-ebs-encryption",
+        "src-ebs-encryption-how"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open ebs-volume-types.json and review gp3, gp2, io2, io1, st1 and sc1."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open EC2 > Volumes."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Create volume."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Volume type: gp3."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Size: 4 GiB."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Availability Zone: eu-west-2a."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Encryption: enabled."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Use the account's default EBS KMS key."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Tag Name=fa-s3-storage-ebs-source and FollowAlong=fa-s3-storage."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create the volume."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Select it, choose Actions > Attach volume, select fa-s3-storage-client-a and use device name /dev/sdf."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Use Systems Manager Run Command with prepare-ebs.sh."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Verify the script prints the known fa-s3-storage training line."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - review type matrix",
+          "language": "text",
+          "content": "Get-Content .\\ebs-volume-types.json"
+        },
+        {
+          "title": "PowerShell - create encrypted gp3",
+          "language": "text",
+          "content": "$EBS_SOURCE_ID = aws ec2 create-volume --availability-zone eu-west-2a --volume-type gp3 --size 4 --encrypted --tag-specifications \"ResourceType=volume,Tags=[{Key=Name,Value=fa-s3-storage-ebs-source},{Key=FollowAlong,Value=fa-s3-storage}]\" --query VolumeId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait volume",
+          "language": "text",
+          "content": "aws ec2 wait volume-available --volume-ids $EBS_SOURCE_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - attach volume",
+          "language": "text",
+          "content": "aws ec2 attach-volume --volume-id $EBS_SOURCE_ID --instance-id $INSTANCE_A_ID --device /dev/sdf --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - encode prepare script",
+          "language": "text",
+          "content": "$PREPARE_B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\prepare-ebs.sh\")))"
+        },
+        {
+          "title": "PowerShell - build remote prepare commands",
+          "language": "text",
+          "content": "$PREPARE_PARAMS = @{commands=@(\"echo $PREPARE_B64 | base64 -d > /tmp/prepare-ebs.sh\",\"chmod +x /tmp/prepare-ebs.sh\",\"sudo /tmp/prepare-ebs.sh\")} | ConvertTo-Json -Compress"
+        },
+        {
+          "title": "PowerShell - run prepare script",
+          "language": "text",
+          "content": "$PREPARE_CMD_ID = aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $PREPARE_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - get script result",
+          "language": "text",
+          "content": "aws ssm get-command-invocation --command-id $PREPARE_CMD_ID --instance-id $INSTANCE_A_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - verify encryption",
+          "language": "text",
+          "content": "aws ec2 describe-volumes --volume-ids $EBS_SOURCE_ID --query \"Volumes[0].{Type:VolumeType,Size:Size,Encrypted:Encrypted,KmsKeyId:KmsKeyId,AZ:AvailabilityZone}\" --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "ebs-volume-types.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"ebsVolumeSelection\": [\n    {\n      \"type\": \"gp3\",\n      \"family\": \"General Purpose SSD\",\n      \"selection\": \"Default general-purpose choice for many boot volumes, applications, virtual desktops, and development/test workloads. Performance can be provisioned independently from capacity within service limits.\",\n      \"handsOn\": true\n    },\n    {\n      \"type\": \"gp2\",\n      \"family\": \"General Purpose SSD\",\n      \"selection\": \"Previous-generation general-purpose SSD where performance scales with volume size. Prefer gp3 for new designs unless a compatibility or migration reason dictates otherwise.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"io2\",\n      \"family\": \"Provisioned IOPS SSD\",\n      \"selection\": \"High-performance, latency-sensitive and IOPS-intensive workloads that require provisioned IOPS and stronger durability characteristics.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"io1\",\n      \"family\": \"Provisioned IOPS SSD\",\n      \"selection\": \"Previous-generation provisioned-IOPS SSD. Existing workloads may use it, while io2 is the current higher-durability provisioned-IOPS choice.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"st1\",\n      \"family\": \"Throughput Optimized HDD\",\n      \"selection\": \"Frequently accessed, throughput-intensive large sequential workloads such as big-data processing and log processing. Not suitable as a boot volume.\",\n      \"handsOn\": false\n    },\n    {\n      \"type\": \"sc1\",\n      \"family\": \"Cold HDD\",\n      \"selection\": \"Lowest-cost EBS HDD option for infrequently accessed large sequential data where throughput requirements are modest. Not suitable as a boot volume.\",\n      \"handsOn\": false\n    }\n  ],\n  \"snapshotModel\": {\n    \"scope\": \"Snapshots are point-in-time backups of EBS volumes and are incremental after the first snapshot.\",\n    \"restore\": \"Create a new EBS volume from a snapshot in the Availability Zone where the volume will be attached.\",\n    \"encryption\": \"Encrypted volumes create encrypted snapshots; volumes created from encrypted snapshots remain encrypted.\"\n  }\n}"
+        },
+        {
+          "title": "prepare-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nROOT_SOURCE=$(findmnt -n -o SOURCE /)\nROOT_PARENT=$(lsblk -no PKNAME \"$ROOT_SOURCE\" | head -n1)\n\nDATA_DEV=$(lsblk -dpno NAME,TYPE | awk '$2==\"disk\"{print $1}' | grep -v \"/dev/${ROOT_PARENT}\" | head -n1)\n\nif [ -z \"${DATA_DEV}\" ]; then\n  echo \"No non-root EBS data disk was detected.\"\n  exit 1\nfi\n\nsudo mkfs.xfs -f \"${DATA_DEV}\"\nsudo mkdir -p /mnt/ebs\nsudo mount \"${DATA_DEV}\" /mnt/ebs\n\necho \"fa-s3-storage encrypted EBS snapshot training file\" | sudo tee /mnt/ebs/ebs-training.txt\nsudo sync\n\nsudo cat /mnt/ebs/ebs-training.txt\nlsblk -f"
+        }
+      ],
+      "expectedResults": [
+        "The source volume is gp3, 4 GiB, eu-west-2a and Encrypted=true.",
+        "The training file exists on the XFS volume."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-06-ebs-types-volume-verify-01",
+          "text": "KmsKeyId is populated."
+        },
+        {
+          "id": "task-06-ebs-types-volume-verify-02",
+          "text": "The volume is attached only to client A in the same Availability Zone."
+        }
+      ]
+    },
+    {
+      "id": "task-07-ebs-snapshot-restore",
+      "phaseId": "phase-02-ebs",
+      "title": "Create an EBS snapshot and restore an encrypted volume",
+      "feature": "EBS snapshots",
+      "difficulty": "Hard",
+      "goal": "Unmount/detach the source volume, create a snapshot, restore it to a second encrypted volume in eu-west-2a and prove the file survived.",
+      "whyItMatters": "Snapshots are point-in-time backups; restoration creates a new EBS volume rather than mounting the snapshot directly as a normal filesystem.",
+      "examRelevance": "Snapshots support backup/DR workflows and preserve encryption for encrypted source volumes.",
+      "prerequisites": [
+        "task-06-ebs-types-volume"
+      ],
+      "sourceIds": [
+        "src-ebs-snapshots",
+        "src-ebs-create-snapshot",
+        "src-ebs-snapshot-how",
+        "src-ebs-create",
+        "src-ebs-encryption"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Use SSM to run unmount-ebs.sh on client A."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Detach fa-s3-storage-ebs-source and wait for Available."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create a snapshot tagged Name=fa-s3-storage-ebs-snapshot."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Wait until the snapshot is Completed."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open the snapshot details and confirm Encrypted=true."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Create a new gp3 volume from the snapshot in eu-west-2a named fa-s3-storage-ebs-restored."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Confirm the restored volume is encrypted."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Attach it to client A as /dev/sdf."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Run verify-restored-ebs.sh through SSM."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Confirm the original training line is printed from the restored filesystem."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - encode unmount script",
+          "language": "text",
+          "content": "$UNMOUNT_B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\unmount-ebs.sh\")))"
+        },
+        {
+          "title": "PowerShell - send unmount",
+          "language": "text",
+          "content": "$UNMOUNT_PARAMS = @{commands=@(\"echo $UNMOUNT_B64 | base64 -d > /tmp/unmount-ebs.sh\",\"chmod +x /tmp/unmount-ebs.sh\",\"sudo /tmp/unmount-ebs.sh\")} | ConvertTo-Json -Compress; $UNMOUNT_CMD_ID = aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $UNMOUNT_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - detach source",
+          "language": "text",
+          "content": "aws ec2 detach-volume --volume-id $EBS_SOURCE_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait source available",
+          "language": "text",
+          "content": "aws ec2 wait volume-available --volume-ids $EBS_SOURCE_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create snapshot",
+          "language": "text",
+          "content": "$SNAPSHOT_ID = aws ec2 create-snapshot --volume-id $EBS_SOURCE_ID --description \"fa-s3-storage encrypted snapshot lab\" --tag-specifications \"ResourceType=snapshot,Tags=[{Key=Name,Value=fa-s3-storage-ebs-snapshot},{Key=FollowAlong,Value=fa-s3-storage}]\" --query SnapshotId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait snapshot",
+          "language": "text",
+          "content": "aws ec2 wait snapshot-completed --snapshot-ids $SNAPSHOT_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create restored volume",
+          "language": "text",
+          "content": "$EBS_RESTORED_ID = aws ec2 create-volume --availability-zone eu-west-2a --snapshot-id $SNAPSHOT_ID --volume-type gp3 --tag-specifications \"ResourceType=volume,Tags=[{Key=Name,Value=fa-s3-storage-ebs-restored},{Key=FollowAlong,Value=fa-s3-storage}]\" --query VolumeId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait restored volume",
+          "language": "text",
+          "content": "aws ec2 wait volume-available --volume-ids $EBS_RESTORED_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - attach restored volume",
+          "language": "text",
+          "content": "aws ec2 attach-volume --volume-id $EBS_RESTORED_ID --instance-id $INSTANCE_A_ID --device /dev/sdf --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - encode verify script",
+          "language": "text",
+          "content": "$VERIFY_B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path \".\\verify-restored-ebs.sh\")))"
+        },
+        {
+          "title": "PowerShell - verify restored data",
+          "language": "text",
+          "content": "$VERIFY_PARAMS = @{commands=@(\"echo $VERIFY_B64 | base64 -d > /tmp/verify-restored-ebs.sh\",\"chmod +x /tmp/verify-restored-ebs.sh\",\"sudo /tmp/verify-restored-ebs.sh\")} | ConvertTo-Json -Compress; $VERIFY_CMD_ID = aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $VERIFY_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - read restore output",
+          "language": "text",
+          "content": "aws ssm get-command-invocation --command-id $VERIFY_CMD_ID --instance-id $INSTANCE_A_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - verify snapshot encryption",
+          "language": "text",
+          "content": "aws ec2 describe-snapshots --snapshot-ids $SNAPSHOT_ID --query \"Snapshots[0].{State:State,Encrypted:Encrypted,KmsKeyId:KmsKeyId}\" --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - verify restored encryption",
+          "language": "text",
+          "content": "aws ec2 describe-volumes --volume-ids $EBS_RESTORED_ID --query \"Volumes[0].{Encrypted:Encrypted,KmsKeyId:KmsKeyId,AZ:AvailabilityZone}\" --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "unmount-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nsudo sync\nsudo umount /mnt/ebs"
+        },
+        {
+          "title": "verify-restored-ebs.sh",
+          "language": "text",
+          "content": "#!/bin/bash\nset -euo pipefail\n\nROOT_SOURCE=$(findmnt -n -o SOURCE /)\nROOT_PARENT=$(lsblk -no PKNAME \"$ROOT_SOURCE\" | head -n1)\n\nDATA_DEV=$(lsblk -dpno NAME,TYPE | awk '$2==\"disk\"{print $1}' | grep -v \"/dev/${ROOT_PARENT}\" | head -n1)\n\nif [ -z \"${DATA_DEV}\" ]; then\n  echo \"No restored non-root EBS data disk was detected.\"\n  exit 1\nfi\n\nsudo mkdir -p /mnt/ebs-restored\nsudo mount -o ro \"${DATA_DEV}\" /mnt/ebs-restored\nsudo cat /mnt/ebs-restored/ebs-training.txt"
+        }
+      ],
+      "expectedResults": [
+        "The snapshot is Completed and encrypted.",
+        "The restored volume is encrypted and contains the original training file."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-07-ebs-snapshot-restore-verify-01",
+          "text": "The restored volume is in eu-west-2a so it can attach to client A."
+        },
+        {
+          "id": "task-07-ebs-snapshot-restore-verify-02",
+          "text": "The file content exactly matches the source-volume content."
+        }
+      ]
+    },
+    {
+      "id": "task-08-create-efs",
+      "phaseId": "phase-03-efs",
+      "title": "Create encrypted Regional EFS and mount targets in two Availability Zones",
+      "feature": "EFS Regional and mount targets",
+      "difficulty": "Hard",
+      "goal": "Create one encrypted Regional EFS file system and one mount target in each AZ used by the EC2 clients.",
+      "whyItMatters": "Regional EFS stores data redundantly across multiple Availability Zones, while mount targets provide NFS endpoints inside the VPC.",
+      "examRelevance": "EFS is shared network file storage, unlike AZ-scoped EBS block volumes.",
+      "prerequisites": [
+        "task-07-ebs-snapshot-restore"
+      ],
+      "sourceIds": [
+        "src-efs-what",
+        "src-efs-how",
+        "src-efs-mount-target",
+        "src-efs-create-mt",
+        "src-efs-encryption"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EFS in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create file system."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Customize."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Name: fa-s3-storage-efs."
+        },
+        {
+          "sequence": 5,
+          "instruction": "File system type/storage class: Regional."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Encryption at rest: enabled."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Performance mode: General Purpose."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Throughput mode: Bursting."
+        },
+        {
+          "sequence": 9,
+          "instruction": "VPC: fa-s3-storage-vpc."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create a mount target in eu-west-2a using fa-s3-storage-public-a and fa-s3-storage-efs-sg."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Create a mount target in eu-west-2b using fa-s3-storage-public-b and fa-s3-storage-efs-sg."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Create the file system."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Wait until both mount targets are Available."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create encrypted Regional EFS",
+          "language": "text",
+          "content": "$FILE_SYSTEM_ID = aws efs create-file-system --creation-token fa-s3-storage-efs --performance-mode generalPurpose --throughput-mode bursting --encrypted --tags Key=Name,Value=fa-s3-storage-efs Key=FollowAlong,Value=fa-s3-storage --query FileSystemId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create mount target A",
+          "language": "text",
+          "content": "$MOUNT_TARGET_A_ID = aws efs create-mount-target --file-system-id $FILE_SYSTEM_ID --subnet-id $SUBNET_A_ID --security-groups $EFS_SG_ID --query MountTargetId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create mount target B",
+          "language": "text",
+          "content": "$MOUNT_TARGET_B_ID = aws efs create-mount-target --file-system-id $FILE_SYSTEM_ID --subnet-id $SUBNET_B_ID --security-groups $EFS_SG_ID --query MountTargetId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - inspect EFS",
+          "language": "text",
+          "content": "aws efs describe-file-systems --file-system-id $FILE_SYSTEM_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - inspect mount targets",
+          "language": "text",
+          "content": "aws efs describe-mount-targets --file-system-id $FILE_SYSTEM_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The EFS file system is encrypted and Regional.",
+        "One mount target exists in eu-west-2a and one in eu-west-2b."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-08-create-efs-verify-01",
+          "text": "Both mount targets use fa-s3-storage-efs-sg."
+        },
+        {
+          "id": "task-08-create-efs-verify-02",
+          "text": "Only one mount target exists per Availability Zone."
+        }
+      ]
+    },
+    {
+      "id": "task-09-efs-access-point-share",
+      "phaseId": "phase-03-efs",
+      "title": "Create an EFS access point and prove cross-AZ shared file access",
+      "feature": "EFS access points",
+      "difficulty": "Hard",
+      "goal": "Create fa-s3-storage-ap with /shared as its enforced root and POSIX identity 1001:1001, mount it over TLS on both clients, write from A and read from B.",
+      "whyItMatters": "Access points create application-specific entry points that can enforce POSIX identity and a root directory without creating a separate EFS file system.",
+      "examRelevance": "EFS can be mounted concurrently from multiple AZs, making it appropriate for shared Linux file storage.",
+      "prerequisites": [
+        "task-08-create-efs"
+      ],
+      "sourceIds": [
+        "src-efs-accesspoints",
+        "src-efs-create-ap",
+        "src-efs-mount-ap",
+        "src-efs-utils",
+        "src-efs-what"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open EFS > Access points."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Create access point."
+        },
+        {
+          "sequence": 3,
+          "instruction": "File system: fa-s3-storage-efs."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Name: fa-s3-storage-ap."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Root directory path: /shared."
+        },
+        {
+          "sequence": 6,
+          "instruction": "POSIX user ID: 1001."
+        },
+        {
+          "sequence": 7,
+          "instruction": "POSIX group ID: 1001."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Root directory owner user/group: 1001/1001."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Permissions: 0750."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Create the access point."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Use the EFS mount helper with TLS and the access point on both clients."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Write shared-from-a.txt from client A."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Read the same file from client B."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Confirm both clients use the same EFS file system despite being in different Availability Zones."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create EFS access point",
+          "language": "text",
+          "content": "$AP_ID = aws efs create-access-point --file-system-id $FILE_SYSTEM_ID --posix-user Uid=1001,Gid=1001 --root-directory \"Path=/shared,CreationInfo={OwnerUid=1001,OwnerGid=1001,Permissions=0750}\" --tags Key=Name,Value=fa-s3-storage-ap Key=FollowAlong,Value=fa-s3-storage --query AccessPointId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - mount on A",
+          "language": "text",
+          "content": "$MOUNT_A_PARAMS = @{commands=@(\"sudo mkdir -p /mnt/efs\",\"sudo mount -t efs -o tls,accesspoint=$AP_ID $FILE_SYSTEM_ID`:/ /mnt/efs\")} | ConvertTo-Json -Compress; $MOUNT_A_CMD = aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $MOUNT_A_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - mount on B",
+          "language": "text",
+          "content": "$MOUNT_B_PARAMS = @{commands=@(\"sudo mkdir -p /mnt/efs\",\"sudo mount -t efs -o tls,accesspoint=$AP_ID $FILE_SYSTEM_ID`:/ /mnt/efs\")} | ConvertTo-Json -Compress; $MOUNT_B_CMD = aws ssm send-command --instance-ids $INSTANCE_B_ID --document-name AWS-RunShellScript --parameters $MOUNT_B_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - write from A",
+          "language": "text",
+          "content": "$WRITE_PARAMS = @{commands=@(\"echo shared-from-client-a | sudo tee /mnt/efs/shared-from-a.txt\",\"sudo cat /mnt/efs/shared-from-a.txt\")} | ConvertTo-Json -Compress; $WRITE_CMD = aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $WRITE_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - read from B",
+          "language": "text",
+          "content": "$READ_PARAMS = @{commands=@(\"sudo cat /mnt/efs/shared-from-a.txt\")} | ConvertTo-Json -Compress; $READ_CMD = aws ssm send-command --instance-ids $INSTANCE_B_ID --document-name AWS-RunShellScript --parameters $READ_PARAMS --query Command.CommandId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - get client B read result",
+          "language": "text",
+          "content": "aws ssm get-command-invocation --command-id $READ_CMD --instance-id $INSTANCE_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - describe access point",
+          "language": "text",
+          "content": "aws efs describe-access-points --access-point-id $AP_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Both clients mount the EFS access point over TLS.",
+        "Client B reads shared-from-client-a from the file written by client A."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-09-efs-access-point-share-verify-01",
+          "text": "Access point RootDirectory is /shared."
+        },
+        {
+          "id": "task-09-efs-access-point-share-verify-02",
+          "text": "POSIX UID/GID are 1001."
+        },
+        {
+          "id": "task-09-efs-access-point-share-verify-03",
+          "text": "The file system remains encrypted at rest."
+        }
+      ]
+    },
+    {
+      "id": "task-10-ebs-vs-efs-review",
+      "phaseId": "phase-03-efs",
+      "title": "Compare EBS and EFS failure/attachment boundaries",
+      "feature": "EBS versus EFS",
+      "difficulty": "Medium",
+      "goal": "Use the deployed resources to explain AZ-scoped block storage versus Regional shared file storage.",
+      "whyItMatters": "Choosing storage based on protocol and availability boundary is more important than memorizing service names.",
+      "examRelevance": "EBS is block storage attached to compute; Regional EFS is shared NFS with mount targets across AZs.",
+      "prerequisites": [
+        "task-09-efs-access-point-share"
+      ],
+      "sourceIds": [
+        "src-ebs-volumes",
+        "src-efs-what",
+        "src-efs-how"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open the EC2 Volumes page and confirm fa-s3-storage-ebs-restored is in eu-west-2a."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open EFS and confirm fa-s3-storage-efs is Regional."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Open EFS Network and confirm mount targets exist in eu-west-2a and eu-west-2b."
+        },
+        {
+          "sequence": 4,
+          "instruction": "State why the restored EBS volume cannot simply attach to client B in eu-west-2b."
+        },
+        {
+          "sequence": 5,
+          "instruction": "State why both clients can access the same EFS data through their VPC mount-target path."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - EBS AZ",
+          "language": "text",
+          "content": "aws ec2 describe-volumes --volume-ids $EBS_RESTORED_ID --query \"Volumes[0].AvailabilityZone\" --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - EFS mount targets",
+          "language": "text",
+          "content": "aws efs describe-mount-targets --file-system-id $FILE_SYSTEM_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The EBS restored volume reports eu-west-2a.",
+        "The EFS file system has mount targets in both training AZs."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-10-ebs-vs-efs-review-verify-01",
+          "text": "The learner can explain block versus shared NFS storage and AZ versus Regional access."
+        }
+      ]
+    },
+    {
+      "id": "task-11-fsx-selection",
+      "phaseId": "phase-04-fsx",
+      "title": "Select the correct Amazon FSx family for four workloads",
+      "feature": "Amazon FSx selection",
+      "difficulty": "Hard",
+      "goal": "Use fsx-selection.json and the FSx console to choose Windows File Server, Lustre, ONTAP or OpenZFS from protocol and workload requirements.",
+      "whyItMatters": "FSx is a family of managed file systems, not one interchangeable storage product.",
+      "examRelevance": "SAA-C03 answers often hinge on SMB/AD, HPC/S3 integration, ONTAP multi-protocol requirements or OpenZFS/NFS semantics.",
+      "prerequisites": [
+        "task-10-ebs-vs-efs-review"
+      ],
+      "sourceIds": [
+        "src-fsx-docs",
+        "src-fsx-windows",
+        "src-fsx-lustre",
+        "src-fsx-ontap",
+        "src-fsx-openzfs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "FSx file systems can be materially more expensive than the tiny EBS/EFS lab resources, so this task is a complete service-selection exercise rather than a disposable FSx deployment."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open fsx-selection.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Amazon FSx in eu-west-2 and choose Create file system only to inspect the current family choices."
+        },
+        {
+          "sequence": 3,
+          "instruction": "For a Windows application requiring SMB and Microsoft Active Directory, select FSx for Windows File Server in the decision file."
+        },
+        {
+          "sequence": 4,
+          "instruction": "For a Linux HPC/ML workload that needs a high-performance parallel file system and S3 data-repository integration, select FSx for Lustre."
+        },
+        {
+          "sequence": 5,
+          "instruction": "For an enterprise NetApp migration requiring NFS, SMB and iSCSI, select FSx for NetApp ONTAP."
+        },
+        {
+          "sequence": 6,
+          "instruction": "For an NFS workload that specifically needs managed OpenZFS semantics, select FSx for OpenZFS."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Close the create wizard without creating any FSx resource."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect FSx decision file",
+          "language": "text",
+          "content": "Get-Content .\\fsx-selection.json"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "fsx-selection.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"fsxSelection\": [\n    {\n      \"fileSystem\": \"Amazon FSx for Windows File Server\",\n      \"protocols\": [\"SMB\"],\n      \"identity\": \"Microsoft Active Directory authentication\",\n      \"bestFit\": \"Windows-native shared file workloads that require SMB and Windows file-system features.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for Lustre\",\n      \"protocols\": [\"Lustre\", \"POSIX-compatible file access\"],\n      \"identity\": \"Linux/POSIX workload model\",\n      \"bestFit\": \"High-performance parallel workloads such as HPC, machine learning and analytics; supports integration with Amazon S3 data repositories.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for NetApp ONTAP\",\n      \"protocols\": [\"NFS\", \"SMB\", \"iSCSI\", \"NVMe\"],\n      \"identity\": \"ONTAP storage virtual machines and protocol-specific identity controls\",\n      \"bestFit\": \"NetApp/ONTAP migrations and multi-protocol enterprise workloads that need file and block access.\"\n    },\n    {\n      \"fileSystem\": \"Amazon FSx for OpenZFS\",\n      \"protocols\": [\"NFS v3\", \"NFS v4.0\", \"NFS v4.1\", \"NFS v4.2\"],\n      \"identity\": \"NFS/POSIX-oriented workload model\",\n      \"bestFit\": \"NFS-based workloads that benefit from OpenZFS semantics and managed ZFS storage.\"\n    }\n  ],\n  \"examDecisionRule\": \"Match the protocol, operating-system ecosystem, performance profile, data-source integration, and migration requirement before selecting an FSx family.\",\n  \"notCreatedInThisLab\": \"No FSx file system is created because the service choices have different minimum capacities, deployment requirements and ongoing costs.\"\n}"
+        }
+      ],
+      "expectedResults": [
+        "All four FSx families are mapped to a distinct protocol/workload requirement.",
+        "No chargeable FSx file system is created."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-11-fsx-selection-verify-01",
+          "text": "Windows -> SMB/AD."
+        },
+        {
+          "id": "task-11-fsx-selection-verify-02",
+          "text": "Lustre -> HPC/S3."
+        },
+        {
+          "id": "task-11-fsx-selection-verify-03",
+          "text": "ONTAP -> multi-protocol including NFS/SMB/iSCSI."
+        },
+        {
+          "id": "task-11-fsx-selection-verify-04",
+          "text": "OpenZFS -> NFS/OpenZFS workloads."
+        }
+      ]
+    },
+    {
+      "id": "task-12-backup-vault-plan",
+      "phaseId": "phase-05-backup",
+      "title": "Create the AWS Backup vault, plan and explicit resource selection",
+      "feature": "AWS Backup plans",
+      "difficulty": "Hard",
+      "goal": "Create fa-s3-storage-vault, a daily seven-day-retention backup plan, and assign the restored EBS volume plus EFS file system through the custom Backup role.",
+      "whyItMatters": "A backup plan expresses policy; a resource selection determines which protected resources the policy applies to.",
+      "examRelevance": "Centralized backup policy is different from manually creating an EBS snapshot, even though both can protect EBS data.",
+      "prerequisites": [
+        "task-11-fsx-selection"
+      ],
+      "sourceIds": [
+        "src-backup-what",
+        "src-backup-plan",
+        "src-backup-assign",
+        "src-backup-role",
+        "src-backup-vault"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open AWS Backup in eu-west-2."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Choose Backup vaults > Create backup vault."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Backup vault name: fa-s3-storage-vault."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Use the default AWS Backup encryption key for this training vault."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Create the vault."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Choose Backup plans > Create backup plan > Build a new plan."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Plan name: fa-s3-storage-plan."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Rule name: fa-s3-storage-daily."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Backup vault: fa-s3-storage-vault."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Frequency: Daily at approximately 02:00 UTC."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Start window: 1 hour."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Completion window: 3 hours."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Lifecycle deletion: 7 days."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Create the plan."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Assign resources."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Resource assignment name: fa-s3-storage-selection."
+        },
+        {
+          "sequence": 17,
+          "instruction": "IAM role: fa-s3-storage-backup-role."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Select the exact fa-s3-storage-ebs-restored EBS volume and fa-s3-storage-efs file system."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Do not select all resources in the account."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - create backup vault",
+          "language": "text",
+          "content": "aws backup create-backup-vault --backup-vault-name fa-s3-storage-vault --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - create backup plan",
+          "language": "text",
+          "content": "$PLAN_ID = aws backup create-backup-plan --backup-plan file://backup-plan.json --query BackupPlanId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - build protected ARNs",
+          "language": "text",
+          "content": "$BACKUP_ROLE_ARN = aws iam get-role --role-name fa-s3-storage-backup-role --query Role.Arn --output text --profile fa-s3-storage-admin; $EBS_BACKUP_ARN = \"arn:aws:ec2:eu-west-2:$AWS_ACCOUNT_ID:volume/$EBS_RESTORED_ID\"; $EFS_BACKUP_ARN = \"arn:aws:elasticfilesystem:eu-west-2:$AWS_ACCOUNT_ID:file-system/$FILE_SYSTEM_ID\""
+        },
+        {
+          "title": "PowerShell - build selection JSON",
+          "language": "text",
+          "content": "$SELECTION = @{SelectionName=\"fa-s3-storage-selection\";IamRoleArn=$BACKUP_ROLE_ARN;Resources=@($EBS_BACKUP_ARN,$EFS_BACKUP_ARN)} | ConvertTo-Json -Depth 6; $SELECTION | Set-Content -Encoding utf8 .\\backup-selection.json"
+        },
+        {
+          "title": "PowerShell - create selection",
+          "language": "text",
+          "content": "$SELECTION_ID = aws backup create-backup-selection --backup-plan-id $PLAN_ID --backup-selection file://backup-selection.json --query SelectionId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - inspect backup plan",
+          "language": "text",
+          "content": "aws backup get-backup-plan --backup-plan-id $PLAN_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - inspect selection",
+          "language": "text",
+          "content": "aws backup list-backup-selections --backup-plan-id $PLAN_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "backup-plan.json",
+          "language": "json",
+          "content": "{\n  \"BackupPlanName\": \"fa-s3-storage-plan\",\n  \"Rules\": [\n    {\n      \"RuleName\": \"fa-s3-storage-daily\",\n      \"TargetBackupVaultName\": \"fa-s3-storage-vault\",\n      \"ScheduleExpression\": \"cron(0 2 * * ? *)\",\n      \"StartWindowMinutes\": 60,\n      \"CompletionWindowMinutes\": 180,\n      \"Lifecycle\": {\n        \"DeleteAfterDays\": 7\n      }\n    }\n  ]\n}"
+        }
+      ],
+      "expectedResults": [
+        "The backup vault exists.",
+        "The plan contains the daily rule and seven-day retention.",
+        "The selection contains exactly one EBS volume ARN and one EFS file-system ARN."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-12-backup-vault-plan-verify-01",
+          "text": "The backup role is fa-s3-storage-backup-role."
+        },
+        {
+          "id": "task-12-backup-vault-plan-verify-02",
+          "text": "No unrelated account resource is selected."
+        }
+      ]
+    },
+    {
+      "id": "task-13-backup-recovery-points",
+      "phaseId": "phase-05-backup",
+      "title": "Create on-demand EBS and EFS backups and inspect recovery points",
+      "feature": "AWS Backup recovery points",
+      "difficulty": "Hard",
+      "goal": "Start one on-demand backup job for the restored EBS volume and one for EFS, wait for completion and inspect both recovery points in the vault.",
+      "whyItMatters": "The scheduled plan may not run during a short lab; on-demand jobs produce visible recovery points immediately while the plan proves policy configuration.",
+      "examRelevance": "A recovery point is the protected backup artifact stored in a backup vault and used later for restore operations.",
+      "prerequisites": [
+        "task-12-backup-vault-plan"
+      ],
+      "sourceIds": [
+        "src-backup-recovery",
+        "src-backup-ondemand",
+        "src-backup-vault"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "EFS backup completion can take longer than the EBS backup. Keep the lab resources until both jobs report a terminal state."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open AWS Backup > Protected resources or Create on-demand backup."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Create an on-demand backup for fa-s3-storage-ebs-restored into fa-s3-storage-vault using fa-s3-storage-backup-role."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Create a second on-demand backup for fa-s3-storage-efs into the same vault."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Open Jobs > Backup jobs and wait until both jobs are Completed."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Open Backup vaults > fa-s3-storage-vault."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Confirm at least two recovery points are listed: one EBS and one EFS."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Open each recovery point and identify its protected resource ARN."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Do not start a restore job; the objective is backup policy and recovery-point creation."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - start EBS backup",
+          "language": "text",
+          "content": "$EBS_BACKUP_JOB_ID = aws backup start-backup-job --backup-vault-name fa-s3-storage-vault --resource-arn $EBS_BACKUP_ARN --iam-role-arn $BACKUP_ROLE_ARN --recovery-point-tags FollowAlong=fa-s3-storage --query BackupJobId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - start EFS backup",
+          "language": "text",
+          "content": "$EFS_BACKUP_JOB_ID = aws backup start-backup-job --backup-vault-name fa-s3-storage-vault --resource-arn $EFS_BACKUP_ARN --iam-role-arn $BACKUP_ROLE_ARN --recovery-point-tags FollowAlong=fa-s3-storage --query BackupJobId --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait for EBS backup",
+          "language": "text",
+          "content": "do { Start-Sleep -Seconds 20; $EBS_JOB_STATE = aws backup describe-backup-job --backup-job-id $EBS_BACKUP_JOB_ID --query State --output text --region eu-west-2 --profile fa-s3-storage-admin } until ($EBS_JOB_STATE -in @(\"COMPLETED\",\"FAILED\",\"ABORTED\",\"EXPIRED\"))"
+        },
+        {
+          "title": "PowerShell - wait for EFS backup",
+          "language": "text",
+          "content": "do { Start-Sleep -Seconds 20; $EFS_JOB_STATE = aws backup describe-backup-job --backup-job-id $EFS_BACKUP_JOB_ID --query State --output text --region eu-west-2 --profile fa-s3-storage-admin } until ($EFS_JOB_STATE -in @(\"COMPLETED\",\"FAILED\",\"ABORTED\",\"EXPIRED\"))"
+        },
+        {
+          "title": "PowerShell - list recovery points",
+          "language": "text",
+          "content": "aws backup list-recovery-points-by-backup-vault --backup-vault-name fa-s3-storage-vault --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "Both backup jobs reach COMPLETED.",
+        "The vault contains EBS and EFS recovery points."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-13-backup-recovery-points-verify-01",
+          "text": "Each recovery point references one of the exact training resource ARNs."
+        },
+        {
+          "id": "task-13-backup-recovery-points-verify-02",
+          "text": "No restore resource is created."
+        }
+      ]
+    },
+    {
+      "id": "task-14-glacier-retrieval",
+      "phaseId": "phase-06-archive-hybrid",
+      "title": "Select S3 Glacier retrieval classes and tiers",
+      "feature": "S3 Glacier retrieval",
+      "difficulty": "Hard",
+      "goal": "Use the retrieval plan to distinguish Instant Retrieval, Flexible Retrieval Expedited/Standard/Bulk and Deep Archive Standard/Bulk.",
+      "whyItMatters": "Archive design balances storage cost, minimum storage duration and recovery urgency; not every Glacier class uses a restore request.",
+      "examRelevance": "Exam questions often encode the correct class in the required retrieval time.",
+      "prerequisites": [
+        "task-13-backup-recovery-points"
+      ],
+      "sourceIds": [
+        "src-glacier-classes",
+        "src-glacier-options",
+        "src-glacier-restore",
+        "src-glacier-minimum"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open s3-glacier-retrieval-plan.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Review S3 Glacier Instant Retrieval: real-time access without an archive restore request."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Review S3 Glacier Flexible Retrieval Expedited: typically 1-5 minutes."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Review Flexible Retrieval Standard: typically 3-5 hours without Batch Operations."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Review Flexible Retrieval Bulk: typically 5-12 hours."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Review S3 Glacier Deep Archive Standard: typically within 12 hours."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Review Deep Archive Bulk: typically within 48 hours."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Open S3 > Create bucket/object storage-class choices only to inspect the current Glacier classes."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Do not upload training objects into Flexible Retrieval or Deep Archive; minimum storage-duration charges can apply even when objects are deleted early."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Do not initiate a restore because no archived object was created."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect Glacier plan",
+          "language": "text",
+          "content": "Get-Content .\\s3-glacier-retrieval-plan.json"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "s3-glacier-retrieval-plan.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"s3GlacierRetrievalChoices\": [\n    {\n      \"storageClass\": \"S3 Glacier Instant Retrieval\",\n      \"access\": \"Real-time, millisecond access\",\n      \"restoreRequestRequired\": false,\n      \"selection\": \"Rarely accessed archive data that still requires immediate retrieval.\"\n    },\n    {\n      \"storageClass\": \"S3 Glacier Flexible Retrieval\",\n      \"access\": {\n        \"Expedited\": \"Typically 1-5 minutes\",\n        \"Standard\": \"Typically 3-5 hours without Batch Operations\",\n        \"Bulk\": \"Typically 5-12 hours\"\n      },\n      \"restoreRequestRequired\": true,\n      \"selection\": \"Long-term archives where retrieval can range from minutes to hours and cost can be traded against speed.\"\n    },\n    {\n      \"storageClass\": \"S3 Glacier Deep Archive\",\n      \"access\": {\n        \"Standard\": \"Typically within 12 hours\",\n        \"Bulk\": \"Typically within 48 hours\"\n      },\n      \"restoreRequestRequired\": true,\n      \"selection\": \"Very long-lived archives with the lowest urgency for retrieval.\"\n    }\n  ],\n  \"costSafety\": {\n    \"minimumStorageDuration\": {\n      \"S3 Glacier Flexible Retrieval\": \"90 days\",\n      \"S3 Glacier Deep Archive\": \"180 days\"\n    },\n    \"labDecision\": \"Do not create archive-class objects merely for the lab because early deletion can still incur minimum-storage-duration charges.\"\n  }\n}"
+        }
+      ],
+      "expectedResults": [
+        "The learner can map retrieval urgency to the appropriate Glacier storage class/tier.",
+        "No minimum-duration archive object is created."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-14-glacier-retrieval-verify-01",
+          "text": "Instant Retrieval is distinguished from restore-based Flexible Retrieval/Deep Archive."
+        },
+        {
+          "id": "task-14-glacier-retrieval-verify-02",
+          "text": "Deep Archive has no Expedited tier in the plan."
+        }
+      ]
+    },
+    {
+      "id": "task-15-storage-gateway",
+      "phaseId": "phase-06-archive-hybrid",
+      "title": "Build the Storage Gateway architecture decision",
+      "feature": "Storage Gateway architecture",
+      "difficulty": "Hard",
+      "goal": "Use the architecture file and Storage Gateway console to distinguish S3 File Gateway, FSx File Gateway, cached/stored Volume Gateway and Tape Gateway.",
+      "whyItMatters": "Storage Gateway is hybrid storage integration, so the correct gateway depends on whether the on-premises application speaks file, block or virtual tape protocols and where primary data should live.",
+      "examRelevance": "SAA-C03 scenarios commonly distinguish hybrid file access, iSCSI block access and virtual tape backup integration.",
+      "prerequisites": [
+        "task-14-glacier-retrieval"
+      ],
+      "sourceIds": [
+        "src-storagegateway-docs",
+        "src-storagegateway-volume",
+        "src-storagegateway-tape"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open storage-gateway-architecture.json."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Open Storage Gateway in eu-west-2."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Choose Create gateway only to inspect current gateway family choices."
+        },
+        {
+          "sequence": 4,
+          "instruction": "For NFS/SMB access to S3-backed objects, choose S3 File Gateway in the decision file."
+        },
+        {
+          "sequence": 5,
+          "instruction": "For cached on-premises access to FSx for Windows File Server shares, choose FSx File Gateway."
+        },
+        {
+          "sequence": 6,
+          "instruction": "For iSCSI block storage with primary data in S3 and local hot-block cache, choose cached Volume Gateway."
+        },
+        {
+          "sequence": 7,
+          "instruction": "For iSCSI block storage whose full primary dataset must remain local with AWS backups, choose stored Volume Gateway."
+        },
+        {
+          "sequence": 8,
+          "instruction": "For existing tape backup software requiring a virtual tape library, choose Tape Gateway."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Close the create wizard without activating a gateway."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - inspect Storage Gateway plan",
+          "language": "text",
+          "content": "Get-Content .\\storage-gateway-architecture.json"
+        }
+      ],
+      "editableBlocks": [
+        {
+          "title": "storage-gateway-architecture.json",
+          "language": "json",
+          "content": "{\n  \"programme\": \"AWS Storage and Backup Follow Along\",\n  \"resourcePrefix\": \"fa-s3-storage\",\n  \"storageGatewayArchitecture\": [\n    {\n      \"gateway\": \"Amazon S3 File Gateway\",\n      \"clientInterface\": [\"NFS\", \"SMB\"],\n      \"cloudStorage\": \"Amazon S3 objects\",\n      \"bestFit\": \"On-premises applications that need file-protocol access while storing data as objects in S3.\"\n    },\n    {\n      \"gateway\": \"Amazon FSx File Gateway\",\n      \"clientInterface\": [\"SMB\"],\n      \"cloudStorage\": \"Amazon FSx for Windows File Server\",\n      \"bestFit\": \"On-premises users/applications that need low-latency cached access to Windows file shares hosted on FSx for Windows File Server.\"\n    },\n    {\n      \"gateway\": \"Volume Gateway - cached volumes\",\n      \"clientInterface\": [\"iSCSI block volumes\"],\n      \"cloudStorage\": \"Primary data stored in Amazon S3 with frequently accessed blocks cached locally\",\n      \"bestFit\": \"Hybrid block workloads where on-premises capacity should be minimized while retaining low-latency access to hot blocks.\"\n    },\n    {\n      \"gateway\": \"Volume Gateway - stored volumes\",\n      \"clientInterface\": [\"iSCSI block volumes\"],\n      \"cloudStorage\": \"Primary data remains local with asynchronous backups to AWS\",\n      \"bestFit\": \"Hybrid block workloads that require the full primary dataset on premises.\"\n    },\n    {\n      \"gateway\": \"Tape Gateway\",\n      \"clientInterface\": [\"Virtual tape library over iSCSI\"],\n      \"cloudStorage\": \"Virtual tapes archived in AWS cloud storage\",\n      \"bestFit\": \"Existing tape-based backup applications that need cloud-backed virtual tape media.\"\n    }\n  ],\n  \"architectureReminder\": \"Storage Gateway is for ongoing hybrid storage integration. It is not a substitute for EBS/EFS/FSx when the workload is already fully hosted inside AWS.\"\n}"
+        }
+      ],
+      "expectedResults": [
+        "The learner can select a gateway from the client protocol and data-placement requirement.",
+        "No gateway appliance, local cache disk or virtual tape is created."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-15-storage-gateway-verify-01",
+          "text": "File, block and tape gateway models are clearly separated."
+        }
+      ]
+    },
+    {
+      "id": "task-16-exam-review",
+      "phaseId": "phase-07-cleanup",
+      "title": "Review the SAA-C03 storage and backup decision points",
+      "feature": "Exam consolidation",
+      "difficulty": "Easy",
+      "goal": "Summarize block/file/archive/hybrid storage and backup choices before teardown.",
+      "whyItMatters": "The exam tests architecture selection: protocol, scope, performance, recovery time, cost and sharing behavior drive the answer.",
+      "examRelevance": "The hands-on resources provide concrete anchors for EBS, EFS and Backup while the decision files cover expensive families safely.",
+      "prerequisites": [
+        "task-15-storage-gateway"
+      ],
+      "sourceIds": [
+        "src-ebs-volumes",
+        "src-efs-what",
+        "src-fsx-docs",
+        "src-backup-what",
+        "src-glacier-classes",
+        "src-storagegateway-docs"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "EBS: AZ-scoped block storage for EC2; choose volume family based on latency, IOPS, throughput and cost."
+        },
+        {
+          "sequence": 2,
+          "instruction": "EBS snapshots: point-in-time backups; restore by creating a new volume. Encrypted source volumes create encrypted snapshots."
+        },
+        {
+          "sequence": 3,
+          "instruction": "EFS Regional: shared NFS file system with data stored across multiple AZs; mount targets provide VPC NFS endpoints."
+        },
+        {
+          "sequence": 4,
+          "instruction": "EFS access point: application-specific root and POSIX identity boundary on the same file system."
+        },
+        {
+          "sequence": 5,
+          "instruction": "FSx Windows: SMB/Active Directory."
+        },
+        {
+          "sequence": 6,
+          "instruction": "FSx Lustre: high-performance parallel Linux/POSIX workloads and S3 integration."
+        },
+        {
+          "sequence": 7,
+          "instruction": "FSx ONTAP: NetApp and multi-protocol NFS/SMB/iSCSI/NVMe requirements."
+        },
+        {
+          "sequence": 8,
+          "instruction": "FSx OpenZFS: managed OpenZFS for NFS workloads."
+        },
+        {
+          "sequence": 9,
+          "instruction": "AWS Backup plan: policy/schedule/lifecycle; backup selection: protected resources; recovery point: stored backup artifact."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Glacier Instant Retrieval: immediate access; Flexible/Deep Archive use restore workflows and different retrieval speeds."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Storage Gateway: hybrid file, block or virtual-tape interface to AWS storage."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Exam trigger: one EC2 database data disk -> EBS; multiple Linux hosts sharing the same files -> EFS."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Exam trigger: Windows SMB/AD -> FSx Windows; HPC + S3 dataset -> FSx Lustre."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Exam trigger: centrally scheduled multi-service backups -> AWS Backup."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Exam trigger: archive retrieval in minutes -> Flexible Retrieval Expedited; hours and lowest urgency -> Standard/Bulk or Deep Archive based on retention/retrieval need."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - EBS summary",
+          "language": "text",
+          "content": "aws ec2 describe-volumes --volume-ids $EBS_SOURCE_ID $EBS_RESTORED_ID --query \"Volumes[].{Id:VolumeId,Type:VolumeType,AZ:AvailabilityZone,Encrypted:Encrypted,State:State}\" --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - EFS summary",
+          "language": "text",
+          "content": "aws efs describe-file-systems --file-system-id $FILE_SYSTEM_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - Backup summary",
+          "language": "text",
+          "content": "aws backup list-recovery-points-by-backup-vault --backup-vault-name fa-s3-storage-vault --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The learner can select EBS/EFS/FSx/Backup/Glacier/Storage Gateway from requirements.",
+        "The live lab still contains the expected EBS, EFS and recovery points before cleanup."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-16-exam-review-verify-01",
+          "text": "The learner can explain EBS encryption/snapshot inheritance and EFS multi-AZ shared access."
+        }
+      ]
+    },
+    {
+      "id": "task-17-cloud-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete recovery points, EFS, EBS, EC2 and VPC resources in reverse dependency order",
+      "feature": "Cloud cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete backup policy/recovery points before the vault, unmount/delete EFS dependencies, detach/delete EBS/snapshots, terminate clients and then remove the VPC.",
+      "whyItMatters": "Backup vaults cannot be deleted while recovery points remain, and storage/network dependencies must be removed before their parent resources.",
+      "examRelevance": "Safe cleanup is part of storage architecture because snapshots, EFS and backup recovery points continue accruing storage cost after compute stops.",
+      "prerequisites": [
+        "task-16-exam-review"
+      ],
+      "sourceIds": [
+        "src-backup-vault",
+        "src-backup-recovery",
+        "src-efs-mount-target",
+        "src-ebs-snapshots"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [
+        "Do not delete fa-s3-storage-vault until recovery points are gone. Do not delete EFS security groups until mount targets and client ENIs are gone."
+      ],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Delete the AWS Backup resource selection fa-s3-storage-selection."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Delete backup plan fa-s3-storage-plan."
+        },
+        {
+          "sequence": 3,
+          "instruction": "List all recovery points in fa-s3-storage-vault and delete only those recovery points."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Wait until the vault contains zero recovery points, then delete fa-s3-storage-vault."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Use SSM on both EC2 clients to unmount /mnt/efs if mounted."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete EFS access point fa-s3-storage-ap."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Delete both EFS mount targets and wait until they disappear."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete fa-s3-storage-efs."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Use SSM on client A to unmount /mnt/ebs-restored if still mounted."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Detach fa-s3-storage-ebs-restored and wait until Available."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Delete fa-s3-storage-ebs-restored."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Delete fa-s3-storage-ebs-source."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Delete fa-s3-storage-ebs-snapshot."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Terminate fa-s3-storage-client-a and fa-s3-storage-client-b and wait for Terminated."
+        },
+        {
+          "sequence": 15,
+          "instruction": "Delete fa-s3-storage-efs-sg and fa-s3-storage-ec2-sg."
+        },
+        {
+          "sequence": 16,
+          "instruction": "Remove explicit route-table associations and delete fa-s3-storage-public-rt."
+        },
+        {
+          "sequence": 17,
+          "instruction": "Detach and delete fa-s3-storage-igw."
+        },
+        {
+          "sequence": 18,
+          "instruction": "Delete both public subnets."
+        },
+        {
+          "sequence": 19,
+          "instruction": "Delete fa-s3-storage-vpc."
+        },
+        {
+          "sequence": 20,
+          "instruction": "Verify no chargeable EBS/EFS/EC2/Backup resource remains."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - delete backup selection",
+          "language": "text",
+          "content": "aws backup delete-backup-selection --backup-plan-id $PLAN_ID --selection-id $SELECTION_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete backup plan",
+          "language": "text",
+          "content": "aws backup delete-backup-plan --backup-plan-id $PLAN_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - capture recovery points",
+          "language": "text",
+          "content": "$RECOVERY_POINTS = aws backup list-recovery-points-by-backup-vault --backup-vault-name fa-s3-storage-vault --query \"RecoveryPoints[].RecoveryPointArn\" --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete recovery points",
+          "language": "text",
+          "content": "foreach ($RP in ($RECOVERY_POINTS -split \"\\s+\")) { if ($RP) { aws backup delete-recovery-point --backup-vault-name fa-s3-storage-vault --recovery-point-arn $RP --region eu-west-2 --profile fa-s3-storage-admin } }"
+        },
+        {
+          "title": "PowerShell - delete backup vault",
+          "language": "text",
+          "content": "aws backup delete-backup-vault --backup-vault-name fa-s3-storage-vault --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - unmount EFS on A",
+          "language": "text",
+          "content": "$UNMOUNT_EFS = @{commands=@(\"sudo umount /mnt/efs || true\")} | ConvertTo-Json -Compress; aws ssm send-command --instance-ids $INSTANCE_A_ID --document-name AWS-RunShellScript --parameters $UNMOUNT_EFS --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - unmount EFS on B",
+          "language": "text",
+          "content": "aws ssm send-command --instance-ids $INSTANCE_B_ID --document-name AWS-RunShellScript --parameters $UNMOUNT_EFS --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete access point",
+          "language": "text",
+          "content": "aws efs delete-access-point --access-point-id $AP_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete mount target A",
+          "language": "text",
+          "content": "aws efs delete-mount-target --mount-target-id $MOUNT_TARGET_A_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete mount target B",
+          "language": "text",
+          "content": "aws efs delete-mount-target --mount-target-id $MOUNT_TARGET_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EFS",
+          "language": "text",
+          "content": "aws efs delete-file-system --file-system-id $FILE_SYSTEM_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - detach restored EBS",
+          "language": "text",
+          "content": "aws ec2 detach-volume --volume-id $EBS_RESTORED_ID --force --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait restored available",
+          "language": "text",
+          "content": "aws ec2 wait volume-available --volume-ids $EBS_RESTORED_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete restored EBS",
+          "language": "text",
+          "content": "aws ec2 delete-volume --volume-id $EBS_RESTORED_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete source EBS",
+          "language": "text",
+          "content": "aws ec2 delete-volume --volume-id $EBS_SOURCE_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EBS snapshot",
+          "language": "text",
+          "content": "aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - terminate clients",
+          "language": "text",
+          "content": "aws ec2 terminate-instances --instance-ids $INSTANCE_A_ID $INSTANCE_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - wait clients terminated",
+          "language": "text",
+          "content": "aws ec2 wait instance-terminated --instance-ids $INSTANCE_A_ID $INSTANCE_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EFS SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $EFS_SG_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EC2 SG",
+          "language": "text",
+          "content": "aws ec2 delete-security-group --group-id $EC2_SG_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - route associations",
+          "language": "text",
+          "content": "$ASSOCS = aws ec2 describe-route-tables --route-table-ids $RT_ID --query \"RouteTables[0].Associations[?Main==`false`].RouteTableAssociationId\" --output text --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - disassociate routes",
+          "language": "text",
+          "content": "foreach ($A in ($ASSOCS -split \"\\s+\")) { if ($A) { aws ec2 disassociate-route-table --association-id $A --region eu-west-2 --profile fa-s3-storage-admin } }"
+        },
+        {
+          "title": "PowerShell - delete route table",
+          "language": "text",
+          "content": "aws ec2 delete-route-table --route-table-id $RT_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - detach IGW",
+          "language": "text",
+          "content": "aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete IGW",
+          "language": "text",
+          "content": "aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet A",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_A_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete subnet B",
+          "language": "text",
+          "content": "aws ec2 delete-subnet --subnet-id $SUBNET_B_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete VPC",
+          "language": "text",
+          "content": "aws ec2 delete-vpc --vpc-id $VPC_ID --region eu-west-2 --profile fa-s3-storage-admin"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The backup vault is empty and deleted.",
+        "EFS access point, mount targets and file system are deleted.",
+        "Both training EBS data volumes and the manual snapshot are deleted.",
+        "Both EC2 clients and VPC resources are deleted."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-17-cloud-cleanup-verify-01",
+          "text": "No recovery point remains."
+        },
+        {
+          "id": "task-17-cloud-cleanup-verify-02",
+          "text": "No chargeable EC2/EBS/EFS storage resource from the lab remains."
+        }
+      ]
+    },
+    {
+      "id": "task-18-identity-local-cleanup",
+      "phaseId": "phase-07-cleanup",
+      "title": "Delete service roles, temporary credentials and local storage files",
+      "feature": "Identity and local cleanup",
+      "difficulty": "Hard",
+      "goal": "Delete the custom Backup/EC2 roles and instance profile, then remove the temporary human IAM identity, CLI profile and local lab folder last.",
+      "whyItMatters": "Service roles must remain until protected resources and backup jobs are no longer using them.",
+      "examRelevance": "Identity cleanup is the final dependency layer after storage, backup and networking resources are gone.",
+      "prerequisites": [
+        "task-17-cloud-cleanup"
+      ],
+      "sourceIds": [
+        "src-backup-role"
+      ],
+      "modeAvailability": [
+        "browser",
+        "cli"
+      ],
+      "warnings": [],
+      "browserSteps": [
+        {
+          "sequence": 1,
+          "instruction": "Open IAM."
+        },
+        {
+          "sequence": 2,
+          "instruction": "Detach AWSBackupServiceRolePolicyForBackup from fa-s3-storage-backup-role and delete the role."
+        },
+        {
+          "sequence": 3,
+          "instruction": "Detach AmazonSSMManagedInstanceCore from fa-s3-storage-ec2-role."
+        },
+        {
+          "sequence": 4,
+          "instruction": "Remove fa-s3-storage-ec2-role from fa-s3-storage-ec2-profile."
+        },
+        {
+          "sequence": 5,
+          "instruction": "Delete fa-s3-storage-ec2-profile."
+        },
+        {
+          "sequence": 6,
+          "instruction": "Delete fa-s3-storage-ec2-role."
+        },
+        {
+          "sequence": 7,
+          "instruction": "Sign in as root only for final human-user cleanup."
+        },
+        {
+          "sequence": 8,
+          "instruction": "Delete the fa-s3-storage-admin access key."
+        },
+        {
+          "sequence": 9,
+          "instruction": "Detach and delete fa-s3-storage-admin-policy."
+        },
+        {
+          "sequence": 10,
+          "instruction": "Delete fa-s3-storage-admin."
+        },
+        {
+          "sequence": 11,
+          "instruction": "Sign out of root."
+        },
+        {
+          "sequence": 12,
+          "instruction": "Remove only the fa-s3-storage-admin AWS CLI profile."
+        },
+        {
+          "sequence": 13,
+          "instruction": "Delete C:\\aws-labs\\fa-s3-storage last."
+        },
+        {
+          "sequence": 14,
+          "instruction": "Read and affirm the programme cleanup acknowledgement."
+        }
+      ],
+      "cliBlocks": [
+        {
+          "title": "PowerShell - detach Backup policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name fa-s3-storage-backup-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete Backup role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-s3-storage-backup-role --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - detach SSM policy",
+          "language": "text",
+          "content": "aws iam detach-role-policy --role-name fa-s3-storage-ec2-role --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - remove EC2 role from profile",
+          "language": "text",
+          "content": "aws iam remove-role-from-instance-profile --instance-profile-name fa-s3-storage-ec2-profile --role-name fa-s3-storage-ec2-role --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EC2 profile",
+          "language": "text",
+          "content": "aws iam delete-instance-profile --instance-profile-name fa-s3-storage-ec2-profile --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - delete EC2 role",
+          "language": "text",
+          "content": "aws iam delete-role --role-name fa-s3-storage-ec2-role --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI access key",
+          "language": "text",
+          "content": "aws configure set aws_access_key_id \"\" --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI secret key",
+          "language": "text",
+          "content": "aws configure set aws_secret_access_key \"\" --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - clear CLI region",
+          "language": "text",
+          "content": "aws configure set region \"\" --profile fa-s3-storage-admin"
+        },
+        {
+          "title": "PowerShell - leave lab folder",
+          "language": "text",
+          "content": "Set-Location C:\\"
+        },
+        {
+          "title": "PowerShell - delete local lab folder",
+          "language": "text",
+          "content": "Remove-Item \"C:\\aws-labs\\fa-s3-storage\" -Recurse -Force"
+        }
+      ],
+      "editableBlocks": [],
+      "expectedResults": [
+        "The two custom service roles and EC2 instance profile are deleted.",
+        "The temporary training IAM user/key/policy and CLI profile are deleted.",
+        "The local lab folder is deleted last."
+      ],
+      "verificationChecks": [
+        {
+          "id": "task-18-identity-local-cleanup-verify-01",
+          "text": "No unrelated IAM role, policy or CLI profile was deleted."
+        },
+        {
+          "id": "task-18-identity-local-cleanup-verify-02",
+          "text": "No local fa-s3-storage file remains."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "res-admin",
+      "label": "Temporary IAM user",
+      "exactName": "fa-s3-storage-admin",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-admin-policy",
+      "label": "Temporary IAM policy",
+      "exactName": "fa-s3-storage-admin-policy",
+      "generatedValue": null,
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-02-bootstrap-user",
+      "dependsOn": []
+    },
+    {
+      "id": "res-ec2-role",
+      "label": "EC2 SSM role",
+      "exactName": "fa-s3-storage-ec2-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": []
+    },
+    {
+      "id": "res-ec2-profile",
+      "label": "EC2 instance profile",
+      "exactName": "fa-s3-storage-ec2-profile",
+      "generatedValue": "Instance profile ARN",
+      "captureAllowed": false,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-ec2-role"
+      ]
+    },
+    {
+      "id": "res-backup-role",
+      "label": "AWS Backup role",
+      "exactName": "fa-s3-storage-backup-role",
+      "generatedValue": "Role ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": []
+    },
+    {
+      "id": "res-vpc",
+      "label": "Storage VPC",
+      "exactName": "fa-s3-storage-vpc",
+      "generatedValue": "VPC ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": []
+    },
+    {
+      "id": "res-subnets",
+      "label": "Two public subnets",
+      "exactName": "fa-s3-storage-public-a, fa-s3-storage-public-b",
+      "generatedValue": "Subnet IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-igw",
+      "label": "Internet gateway",
+      "exactName": "fa-s3-storage-igw",
+      "generatedValue": "IGW ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-rt",
+      "label": "Public route table",
+      "exactName": "fa-s3-storage-public-rt",
+      "generatedValue": "Route table ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-subnets",
+        "res-igw"
+      ]
+    },
+    {
+      "id": "res-ec2-sg",
+      "label": "EC2 security group",
+      "exactName": "fa-s3-storage-ec2-sg",
+      "generatedValue": "SG ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-vpc"
+      ]
+    },
+    {
+      "id": "res-efs-sg",
+      "label": "EFS security group",
+      "exactName": "fa-s3-storage-efs-sg",
+      "generatedValue": "SG ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-04-network-roles",
+      "dependsOn": [
+        "res-ec2-sg"
+      ]
+    },
+    {
+      "id": "res-clients",
+      "label": "Two EC2 storage clients and root volumes",
+      "exactName": "fa-s3-storage-client-a, fa-s3-storage-client-b",
+      "generatedValue": "Instance IDs/public IPv4s/root volume IDs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-05-launch-clients",
+      "dependsOn": [
+        "res-ec2-profile",
+        "res-subnets",
+        "res-ec2-sg"
+      ]
+    },
+    {
+      "id": "res-ebs-source",
+      "label": "Encrypted gp3 source volume",
+      "exactName": "fa-s3-storage-ebs-source",
+      "generatedValue": "Volume ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-06-ebs-types-volume",
+      "dependsOn": [
+        "res-clients"
+      ]
+    },
+    {
+      "id": "res-ebs-snapshot",
+      "label": "Encrypted EBS snapshot",
+      "exactName": "fa-s3-storage-ebs-snapshot",
+      "generatedValue": "Snapshot ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-07-ebs-snapshot-restore",
+      "dependsOn": [
+        "res-ebs-source"
+      ]
+    },
+    {
+      "id": "res-ebs-restored",
+      "label": "Restored encrypted gp3 volume",
+      "exactName": "fa-s3-storage-ebs-restored",
+      "generatedValue": "Volume ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-07-ebs-snapshot-restore",
+      "dependsOn": [
+        "res-ebs-snapshot",
+        "res-clients"
+      ]
+    },
+    {
+      "id": "res-efs",
+      "label": "Regional encrypted EFS",
+      "exactName": "fa-s3-storage-efs",
+      "generatedValue": "File system ID/ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-08-create-efs",
+      "dependsOn": [
+        "res-subnets",
+        "res-efs-sg"
+      ]
+    },
+    {
+      "id": "res-mount-targets",
+      "label": "Two EFS mount targets",
+      "exactName": "One in eu-west-2a and one in eu-west-2b",
+      "generatedValue": "Mount target IDs/IPs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-08-create-efs",
+      "dependsOn": [
+        "res-efs",
+        "res-subnets",
+        "res-efs-sg"
+      ]
+    },
+    {
+      "id": "res-access-point",
+      "label": "EFS access point",
+      "exactName": "fa-s3-storage-ap",
+      "generatedValue": "Access point ID/ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-09-efs-access-point-share",
+      "dependsOn": [
+        "res-efs"
+      ]
+    },
+    {
+      "id": "res-backup-vault",
+      "label": "AWS Backup vault",
+      "exactName": "fa-s3-storage-vault",
+      "generatedValue": "Vault ARN",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-backup-vault-plan",
+      "dependsOn": []
+    },
+    {
+      "id": "res-backup-plan",
+      "label": "AWS Backup plan",
+      "exactName": "fa-s3-storage-plan",
+      "generatedValue": "Backup plan ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-backup-vault-plan",
+      "dependsOn": [
+        "res-backup-vault"
+      ]
+    },
+    {
+      "id": "res-backup-selection",
+      "label": "AWS Backup resource selection",
+      "exactName": "fa-s3-storage-selection",
+      "generatedValue": "Selection ID",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": false,
+      "createdByTaskId": "task-12-backup-vault-plan",
+      "dependsOn": [
+        "res-backup-plan",
+        "res-backup-role",
+        "res-ebs-restored",
+        "res-efs"
+      ]
+    },
+    {
+      "id": "res-recovery-points",
+      "label": "EBS and EFS AWS Backup recovery points",
+      "exactName": "Recovery points in fa-s3-storage-vault",
+      "generatedValue": "Recovery point ARNs",
+      "captureAllowed": true,
+      "sensitive": false,
+      "chargeable": true,
+      "createdByTaskId": "task-13-backup-recovery-points",
+      "dependsOn": [
+        "res-backup-vault",
+        "res-ebs-restored",
+        "res-efs"
+      ]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "trouble-01",
+      "title": "EC2 clients do not appear in Systems Manager",
+      "likelyCause": "The instance profile, public egress route, public IPv4 address or SSM Agent startup is missing.",
+      "fix": "Verify fa-s3-storage-ec2-profile is attached, the subnet routes 0.0.0.0/0 to the IGW, and the instance has public IPv4 egress."
+    },
+    {
+      "id": "trouble-02",
+      "title": "prepare-ebs.sh reports no non-root disk",
+      "likelyCause": "The gp3 volume is not attached or the instance has not exposed the new NVMe block device yet.",
+      "fix": "Verify the EBS attachment is attached to client A, wait a few seconds, then rerun lsblk through SSM before rerunning the script."
+    },
+    {
+      "id": "trouble-03",
+      "title": "Restored EBS volume cannot attach",
+      "likelyCause": "The restored volume was created in an Availability Zone different from client A.",
+      "fix": "Confirm both client A and fa-s3-storage-ebs-restored are in eu-west-2a; EBS attachment is AZ-scoped."
+    },
+    {
+      "id": "trouble-04",
+      "title": "EFS mount times out",
+      "likelyCause": "The EFS SG does not allow TCP 2049 from the EC2 SG or the mount target in that AZ is unavailable.",
+      "fix": "Verify fa-s3-storage-efs-sg inbound NFS source is fa-s3-storage-ec2-sg and one mount target is Available in each client AZ."
+    },
+    {
+      "id": "trouble-05",
+      "title": "EFS access-point mount fails because /shared does not exist",
+      "likelyCause": "Access-point root CreationInfo was omitted or incomplete.",
+      "fix": "Verify the access point contains /shared with OwnerUid=1001, OwnerGid=1001 and Permissions=0750."
+    },
+    {
+      "id": "trouble-06",
+      "title": "Client B cannot see the file written by client A",
+      "likelyCause": "One client mounted the file system root instead of the access point, the mount failed, or the write command did not complete.",
+      "fix": "Check mount output on both clients and confirm both use the same FILE_SYSTEM_ID and AP_ID."
+    },
+    {
+      "id": "trouble-07",
+      "title": "AWS Backup job fails immediately",
+      "likelyCause": "The backup role ARN/resource ARN is wrong or the service role lacks backup permissions.",
+      "fix": "Verify fa-s3-storage-backup-role has AWSBackupServiceRolePolicyForBackup and the selection/on-demand job references the exact EBS/EFS ARNs."
+    },
+    {
+      "id": "trouble-08",
+      "title": "Backup vault cannot be deleted",
+      "likelyCause": "One or more recovery points remain.",
+      "fix": "List recovery points in fa-s3-storage-vault and delete only those exact recovery points before retrying vault deletion."
+    },
+    {
+      "id": "trouble-09",
+      "title": "EFS security group cannot be deleted",
+      "likelyCause": "Mount-target ENIs or EC2 ENIs still reference the security groups.",
+      "fix": "Delete the access point/mount targets and terminate both clients before deleting the storage lab security groups."
+    }
+  ],
+  "programmeCleanup": [
+    {
+      "sequence": 1,
+      "resource": "fa-s3-storage-selection",
+      "action": "Delete the resource selection so the plan no longer targets the live resources.",
+      "verification": "The selection no longer appears for the plan.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 2,
+      "resource": "fa-s3-storage-plan",
+      "action": "Delete the backup plan.",
+      "verification": "The plan no longer appears.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 3,
+      "resource": "EBS and EFS recovery points in fa-s3-storage-vault",
+      "action": "Delete every recovery point created by the lab.",
+      "verification": "The vault recovery-point list is empty.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 4,
+      "resource": "fa-s3-storage-vault",
+      "action": "Delete the empty backup vault.",
+      "verification": "The vault is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 5,
+      "resource": "fa-s3-storage-ap",
+      "action": "Unmount EFS clients and delete the EFS access point.",
+      "verification": "No access point remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 6,
+      "resource": "EFS mount targets",
+      "action": "Delete both mount targets and wait for their ENIs to disappear.",
+      "verification": "describe-mount-targets returns no targets.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 7,
+      "resource": "fa-s3-storage-efs",
+      "action": "Delete the Regional EFS file system.",
+      "verification": "The file system is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 8,
+      "resource": "fa-s3-storage-ebs-restored",
+      "action": "Unmount/detach and delete the restored EBS volume.",
+      "verification": "The restored volume is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 9,
+      "resource": "fa-s3-storage-ebs-source",
+      "action": "Delete the detached original gp3 volume.",
+      "verification": "The source volume is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 10,
+      "resource": "fa-s3-storage-ebs-snapshot",
+      "action": "Delete the manual encrypted EBS snapshot.",
+      "verification": "The snapshot is absent.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 11,
+      "resource": "fa-s3-storage-client-a and fa-s3-storage-client-b",
+      "action": "Terminate both clients; their root volumes are deleted by instance termination settings.",
+      "verification": "Both instances are Terminated.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 12,
+      "resource": "fa-s3-storage-efs-sg and fa-s3-storage-ec2-sg",
+      "action": "Delete both security groups after all ENIs are gone.",
+      "verification": "Neither security group remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 13,
+      "resource": "fa-s3-storage-public-rt, fa-s3-storage-igw, both subnets and fa-s3-storage-vpc",
+      "action": "Remove route-table associations and delete network resources in dependency order.",
+      "verification": "No fa-s3-storage VPC resource remains.",
+      "taskId": "task-17-cloud-cleanup"
+    },
+    {
+      "sequence": 14,
+      "resource": "fa-s3-storage-backup-role, fa-s3-storage-ec2-profile and fa-s3-storage-ec2-role",
+      "action": "Detach managed policies and delete the service roles/profile after cloud cleanup.",
+      "verification": "The service identities are absent.",
+      "taskId": "task-18-identity-local-cleanup"
+    },
+    {
+      "sequence": 15,
+      "resource": "fa-s3-storage-admin access key, policy and user",
+      "action": "Use root only after cloud verification to delete the temporary human identity.",
+      "verification": "User/key/policy are absent.",
+      "taskId": "task-18-identity-local-cleanup"
+    },
+    {
+      "sequence": 16,
+      "resource": "AWS CLI profile fa-s3-storage-admin",
+      "action": "Remove only the training profile.",
+      "verification": "Unrelated profiles remain unchanged.",
+      "taskId": "task-18-identity-local-cleanup"
+    },
+    {
+      "sequence": 17,
+      "resource": "C:\\aws-labs\\fa-s3-storage",
+      "action": "Delete the exact local lab folder last.",
+      "verification": "C:\\aws-labs\\fa-s3-storage no longer exists.",
+      "taskId": "task-18-identity-local-cleanup"
+    }
+  ],
+  "programmeCleanupPolicy": {
+    "manualOnly": true,
+    "ordering": "reverse_dependency",
+    "completionGate": "acknowledgement"
+  },
+  "programmeCleanupAcknowledgement": "I verified that fa-s3-storage-selection and fa-s3-storage-plan are deleted; all EBS and EFS recovery points are removed before fa-s3-storage-vault is deleted; fa-s3-storage-ap, both EFS mount targets and fa-s3-storage-efs are deleted; fa-s3-storage-ebs-restored, fa-s3-storage-ebs-source and fa-s3-storage-ebs-snapshot are deleted; both fa-s3-storage EC2 clients and their root volumes are terminated; both storage security groups and every fa-s3-storage VPC resource are deleted; no FSx file system, Glacier archive object or Storage Gateway appliance was created; fa-s3-storage-backup-role, fa-s3-storage-ec2-profile and fa-s3-storage-ec2-role are deleted; the temporary fa-s3-storage-admin access key, policy, IAM user and CLI profile are removed; unrelated resources and profiles are unchanged; and only then was C:\\aws-labs\\fa-s3-storage deleted.",
+  "warnings": {
+    "cost": "This lab creates two t3.micro EC2 clients with public IPv4 addresses, two 4-GiB EBS data volumes, one EBS snapshot, a small Regional EFS file system, two EFS mount targets, AWS Backup recovery points and a backup vault/plan. These can incur charges. FSx, Glacier archive objects and Storage Gateway appliances are intentionally not provisioned because their minimum capacities, minimum storage durations or gateway infrastructure can create disproportionate lab cost.",
+    "safety": "Delete only exact fa-s3-storage resources and generated IDs derived from those names. Recovery points must be deleted before the backup vault; EFS mount targets before the EFS file system; EC2/EFS ENIs before security groups/VPC.",
+    "credentials": "Never create root access keys and never place fa-s3-storage-admin credentials in user data, scripts, JSON plans, screenshots, chat or Study Tracker. Use only protected aws configure prompts.",
+    "region": "Every active cloud resource in this Follow Along is created in eu-west-2. EBS source/restored volumes and client A are in eu-west-2a; client B is in eu-west-2b; Regional EFS spans the Region through mount targets in both AZs."
+  },
+  "qualityReport": {
+    "phaseCount": 7,
+    "taskCount": 18,
+    "checkboxCount": 243,
+    "cliCommandCount": 129,
+    "editableBlockCount": 21,
+    "verificationCount": 36,
+    "cleanupItemCount": 17,
+    "officialSourceCount": 37,
+    "missingItems": [],
+    "uncertainItems": []
+  },
+  "boundaries": {
+    "appReady": false,
+    "fingerprinted": false,
+    "imported": false,
+    "published": false,
+    "previewStatus": "This preview and JSON manuscript are offline educational authoring artifacts only. They have not been locally validated by Study Tracker, imported, accepted, approved, published or fingerprinted."
+  }
+}
