@@ -15,8 +15,8 @@ function wordCount(value) {
 }
 
 test('Terraform 004 question bank has valid exam-style structure and explanations', () => {
-  assert.equal(questions.length, 50);
-  assert.ok(questions.filter(question => question.type === 'multiple').length >= 10);
+  assert.equal(questions.length, 100);
+  assert.ok(questions.filter(question => question.type === 'multiple').length >= 20);
 
   for (const question of questions) {
     assert.ok(topicIds.has(question.topicId), `${question.id} has an unknown topic`);
@@ -68,4 +68,20 @@ test('correct choices do not reveal themselves as conspicuous length outliers', 
 test('all eight official objective groups are represented', () => {
   const representedTopics = new Set(questions.map(question => question.topicId));
   assert.deepEqual(representedTopics, topicIds);
+});
+
+test('questions 51 through 100 cover every published Terraform 004 sub-objective', () => {
+  const secondSet = questions.filter(question => {
+    const number = Number(question.id.replace('q-tf004-', ''));
+    return number >= 51 && number <= 100;
+  });
+  const expectedObjectives = TERRAFORM_ASSOCIATE_EXAM.topics
+    .flatMap(topic => topic.items.map(item => item.id));
+  const representedObjectives = new Set(secondSet.map(question => question.objectiveId));
+
+  assert.equal(secondSet.length, 50);
+  assert.equal(representedObjectives.size, expectedObjectives.length);
+  for (const objectiveId of expectedObjectives) {
+    assert.ok(representedObjectives.has(objectiveId), `missing ${objectiveId}`);
+  }
 });

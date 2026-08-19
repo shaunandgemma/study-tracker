@@ -39,14 +39,14 @@ test('Terraform 004 content coverage map', async t => {
     const summary = getTerraformCoverageSummary();
     assert.equal(summary.objectives, 37);
     assert.equal(summary.knowledgeGuideObjectives, 37);
-    assert.equal(summary.questionObjectives, 32);
+    assert.equal(summary.questionObjectives, 37);
     assert.equal(summary.followAlongObjectives, 28);
     assert.equal(summary.troubleshootingObjectives, 5);
-    assert.equal(summary.questionBankSize, 30);
+    assert.equal(summary.questionBankSize, 100);
     assert.equal(summary.followAlongProgrammes, 4);
     assert.equal(summary.troubleshootingChallenges, 3);
     assert.deepEqual(summary.gaps.knowledgeGuide, []);
-    assert.deepEqual(summary.gaps.questions, ['tf004-3c', 'tf004-3f', 'tf004-3g', 'tf004-4c', 'tf004-4d']);
+    assert.deepEqual(summary.gaps.questions, []);
   });
 
   await t.test('keeps a readable local planning document', () => {

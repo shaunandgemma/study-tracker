@@ -6,12 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { TERRAFORM_ASSOCIATE_EXAM } from '../src/data/exams/terraformAssociateExam.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const migrationPath = path.join(root, 'supabase', 'migrations', '20260829_expand_terraform_004_exam_questions.sql');
+const migrationPath = path.join(root, 'supabase', 'migrations', '20260830_expand_terraform_004_exam_questions_to_100.sql');
 
-test('Terraform 004 is configured to prefer Supabase while retaining 50 local questions', () => {
+test('Terraform 004 is configured to prefer Supabase while retaining 100 local questions', () => {
   assert.equal(TERRAFORM_ASSOCIATE_EXAM.questionSource, 'supabase');
-  assert.equal(TERRAFORM_ASSOCIATE_EXAM.questions.length, 50);
-  assert.equal(new Set(TERRAFORM_ASSOCIATE_EXAM.questions.map(question => question.id)).size, 50);
+  assert.equal(TERRAFORM_ASSOCIATE_EXAM.questions.length, 100);
+  assert.equal(new Set(TERRAFORM_ASSOCIATE_EXAM.questions.map(question => question.id)).size, 100);
 });
 
 test('Terraform question migration is guarded and scoped away from AWS questions', () => {
@@ -22,8 +22,8 @@ test('Terraform question migration is guarded and scoped away from AWS questions
   }
 
   assert.match(sql, /exam_code <> 'terraform-associate-004'/);
-  assert.match(sql, /expected 50 seed questions/);
-  assert.match(sql, /topic mapping count is not 50/);
+  assert.match(sql, /expected 100 seed questions/);
+  assert.match(sql, /topic mapping count is not 100/);
   assert.doesNotMatch(sql, /q-saa-/);
   assert.doesNotMatch(sql, /DELETE FROM public\.exam_questions/i);
   assert.doesNotMatch(sql, /exam_attempts|follow_along_|hands_on_/i);

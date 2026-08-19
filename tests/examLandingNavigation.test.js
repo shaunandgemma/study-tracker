@@ -38,7 +38,7 @@ test('exam-first landing navigation', async t => {
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === COMPTIA_SECURITY_PLUS_EXAM.id)?.title, COMPTIA_SECURITY_PLUS_EXAM.title);
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === TERRAFORM_ASSOCIATE_EXAM.id)?.topics.length, 8);
     assert.equal(getExamChecklistItemCount(TERRAFORM_ASSOCIATE_EXAM), 37);
-    assert.equal(TERRAFORM_ASSOCIATE_EXAM.questions.length, 30);
+    assert.equal(TERRAFORM_ASSOCIATE_EXAM.questions.length, 100);
   });
 
   await t.test('2. the app opens at the general landing page and then an exam landing page', () => {

@@ -1,0 +1,77 @@
+227. TERRAFORM ASSOCIATE 004 SECOND 50-QUESTION EXPANSION
+
+1. PURPOSE
+
+Add another 50 high-quality questions to the Terraform Associate 004 Prep Exam, increasing the complete bank from 50 to 100 questions.
+
+2. COVERAGE STANDARD
+
+Questions 51 through 100 deliberately cover every one of the 37 individual sub-objectives in HashiCorp's published Terraform Associate 004 content list.
+
+Official references:
+- https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004
+- https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-study-004
+- https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-questions-004
+
+3. SECOND-SET DISTRIBUTION
+
+- Infrastructure as Code: 3 questions
+- Terraform Fundamentals: 4 questions
+- Core Terraform Workflow: 7 questions
+- Terraform Configuration: 12 questions
+- Terraform Modules: 6 questions
+- Terraform State Management: 7 questions
+- Maintain Infrastructure: 5 questions
+- HCP Terraform: 6 questions
+
+Total: 50 new questions
+
+The distribution gives the largest coverage to Terraform Configuration and the Core Workflow while still covering every official sub-objective.
+
+4. QUESTION QUALITY
+
+The new set contains:
+- 39 single-answer questions.
+- 11 select-two questions.
+- 5 Easy questions.
+- 27 Medium questions.
+- 18 Hard questions.
+
+Each question uses:
+- A clear exam-style question or scenario.
+- Plausible distractors based on common Terraform misunderstandings.
+- Balanced option lengths so the correct answer is not exposed by its wording length.
+- A teaching explanation that describes the correct behavior and relevant limitations.
+- No dependence on AWS-specific knowledge beyond understanding a provider example.
+
+5. NEW QUALITY SAFEGUARD
+
+Every question from 51 through 100 contains an objectiveId that links it to one exact Terraform 004 checklist item.
+
+The automated test fails if:
+- The second set does not contain exactly 50 questions.
+- Any of the 37 official sub-objectives is absent.
+- A correct answer is a conspicuous length outlier.
+- An answer index is invalid.
+- A select-two question does not have exactly two answers.
+- A question lacks a meaningful explanation.
+
+6. DATABASE MIGRATION
+
+New guarded migration:
+supabase/migrations/20260830_expand_terraform_004_exam_questions_to_100.sql
+
+This migration contains the complete reviewed set of 100 questions. It safely inserts new questions and updates the existing Terraform questions when their IDs already exist.
+
+It affects only:
+- Exam code terraform-associate-004.
+- Question IDs q-tf004-1 through q-tf004-100.
+- The topic mappings belonging to those exact questions.
+
+It does not change AWS questions, exam attempts, Follow Alongs, drafts, candidates, approvals, users, or published programmes.
+
+7. DEPLOYMENT BOUNDARY
+
+Migration 20260830 has been prepared locally but has not been deployed.
+
+Migration 20260829 has not been edited or replaced because it may already have been applied. If it is still pending, Supabase will show both migrations in order. Migration 20260830 safely produces the final 100-question state.
