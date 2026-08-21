@@ -1,23 +1,40 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { authService as defaultAuthService } from './authService.js';
+import { examEntitlementService as defaultExamEntitlementService } from '../../services/examEntitlementService.js';
 import {
   DEMO_USER,
   hasStoredDemoSession,
-  isAdminUser,
   isDemoModeEnabled,
   isDemoUser,
   resetDemoData,
   storeDemoSession
 } from '../demo/demoMode.js';
+import {
+  buildApplicationAccessPolicy,
+  getNextExamEntitlementBoundary
+} from '../access/applicationAccessPolicy.js';
+import { resolveEntitlementRefreshResult } from '../access/entitlementRefreshPolicy.js';
 
 export const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children, service = defaultAuthService }) => {
+const MAX_ENTITLEMENT_TIMER_DELAY_MS = 2_147_000_000;
+const ENTITLEMENT_BOUNDARY_GRACE_MS = 1_000;
+
+export const AuthProvider = ({
+  children,
+  service = defaultAuthService,
+  entitlementService = defaultExamEntitlementService
+}) => {
   const demoModeEnabled = isDemoModeEnabled();
   const [currentUser, setCurrentUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [verifiedEntitlements, setVerifiedEntitlements] = useState([]);
+  const [entitlementsLoading, setEntitlementsLoading] = useState(false);
+  const [entitlementError, setEntitlementError] = useState(null);
+  const [accessEvaluationTime, setAccessEvaluationTime] = useState(() => Date.now());
+  const entitlementRequestIdRef = useRef(0);
 
   useEffect(() => {
     let isActive = true;
@@ -57,6 +74,94 @@ export const AuthProvider = ({ children, service = defaultAuthService }) => {
       unsubscribe();
     };
   }, [demoModeEnabled, service]);
+
+  const refreshEntitlements = useCallback(async ({ blocking = false } = {}) => {
+    const requestId = entitlementRequestIdRef.current + 1;
+    entitlementRequestIdRef.current = requestId;
+    const userId = currentUser?.id;
+
+    setAccessEvaluationTime(Date.now());
+
+    if (!userId || isDemoUser(currentUser)) {
+      setVerifiedEntitlements([]);
+      setEntitlementsLoading(false);
+      setEntitlementError(null);
+      return { success: true, verified: true, rows: [] };
+    }
+
+    if (blocking) {
+      setVerifiedEntitlements([]);
+      setEntitlementsLoading(true);
+    }
+    setEntitlementError(null);
+
+    try {
+      const result = await entitlementService.loadOwnEntitlements({ userId });
+      if (requestId !== entitlementRequestIdRef.current) return { ...result, stale: true };
+
+      setAccessEvaluationTime(Date.now());
+      const decision = resolveEntitlementRefreshResult(result);
+      if (decision.accepted) {
+        setVerifiedEntitlements(decision.rows);
+        setEntitlementError(null);
+      } else {
+        setVerifiedEntitlements([]);
+        setEntitlementError(decision.error);
+      }
+      return result;
+    } catch (error) {
+      if (requestId !== entitlementRequestIdRef.current) {
+        return { success: false, verified: false, rows: [], stale: true };
+      }
+      setAccessEvaluationTime(Date.now());
+      setVerifiedEntitlements([]);
+      setEntitlementError(error?.message || 'Unable to verify exam access.');
+      return { success: false, verified: false, rows: [], error: error?.message || 'Unable to verify exam access.' };
+    } finally {
+      if (requestId === entitlementRequestIdRef.current) setEntitlementsLoading(false);
+    }
+  }, [currentUser, entitlementService]);
+
+  useEffect(() => {
+    refreshEntitlements({ blocking: true });
+
+    return () => {
+      entitlementRequestIdRef.current += 1;
+    };
+  }, [refreshEntitlements]);
+
+  useEffect(() => {
+    if (!currentUser?.id || isDemoUser(currentUser)) return undefined;
+
+    const refreshOnFocus = () => {
+      setAccessEvaluationTime(Date.now());
+      refreshEntitlements({ blocking: false });
+    };
+
+    globalThis.addEventListener?.('focus', refreshOnFocus);
+    return () => globalThis.removeEventListener?.('focus', refreshOnFocus);
+  }, [currentUser, refreshEntitlements]);
+
+  useEffect(() => {
+    if (!currentUser?.id || isDemoUser(currentUser)) return undefined;
+
+    const now = Date.now();
+    const nextBoundary = getNextExamEntitlementBoundary(verifiedEntitlements, now);
+    if (nextBoundary === null) return undefined;
+
+    const delay = Math.min(
+      Math.max(nextBoundary - now + ENTITLEMENT_BOUNDARY_GRACE_MS, 0),
+      MAX_ENTITLEMENT_TIMER_DELAY_MS
+    );
+    const timer = globalThis.setTimeout?.(() => {
+      setAccessEvaluationTime(Date.now());
+      refreshEntitlements({ blocking: false });
+    }, delay);
+
+    return () => {
+      if (timer !== undefined) globalThis.clearTimeout?.(timer);
+    };
+  }, [currentUser, refreshEntitlements, verifiedEntitlements]);
 
   const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
   const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
@@ -125,13 +230,30 @@ export const AuthProvider = ({ children, service = defaultAuthService }) => {
     return result;
   }, [currentUser, service]);
 
+  const accessPolicy = useMemo(
+    () => buildApplicationAccessPolicy(currentUser, {
+      verifiedEntitlements,
+      now: accessEvaluationTime
+    }),
+    [accessEvaluationTime, currentUser, verifiedEntitlements]
+  );
+
   const value = useMemo(() => ({
     currentUser,
     loadingAuth,
     authError,
+    entitlementsLoading,
+    entitlementError,
+    verifiedEntitlements,
+    refreshEntitlements,
     demoModeEnabled,
     isDemoAccount: isDemoUser(currentUser),
-    canManageContent: isAdminUser(currentUser),
+    accessPolicy,
+    accountType: accessPolicy.accountType,
+    canUseAccountProgress: accessPolicy.canUseAccountProgress,
+    canAccessAuthor: accessPolicy.canAccessAuthor,
+    canAccessApprovals: accessPolicy.canAccessApprovals,
+    canManageContent: accessPolicy.canManageContent,
     isAuthModalOpen,
     openAuthModal,
     closeAuthModal,
@@ -143,6 +265,11 @@ export const AuthProvider = ({ children, service = defaultAuthService }) => {
     currentUser,
     loadingAuth,
     authError,
+    accessPolicy,
+    entitlementsLoading,
+    entitlementError,
+    verifiedEntitlements,
+    refreshEntitlements,
     demoModeEnabled,
     isAuthModalOpen,
     openAuthModal,

@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs';
 import {
   canAccessFollowAlongApprovals,
   canAccessFollowAlongAuthor,
-  isAuthorApprovalEntryRequested
+  isAuthorApprovalEntryRequested,
+  isUnsupportedAuthorEntryRequested
 } from '../src/features/followAlongAuthor/authorAccess.js';
 import {
   AUTHOR_TRUSTED_APPROVAL_FLAG,
@@ -26,6 +27,8 @@ test('Step 53 trusted approval pilot', async t => {
     assert.equal(canAccessFollowAlongApprovals({ id: 'fake', user_metadata: { role: 'approver' } }), false);
     assert.equal(isAuthorApprovalEntryRequested({ hash: '#author/approvals' }), true);
     assert.equal(isAuthorApprovalEntryRequested({ hash: '#author' }), false);
+    assert.equal(isAuthorApprovalEntryRequested({ hash: '#author/approvals/' }), false);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author/approvals/' }), true);
   });
 
   await t.test('2. Trusted approval application flag is strict and disabled by default', () => {

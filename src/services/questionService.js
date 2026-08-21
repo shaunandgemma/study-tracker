@@ -1,5 +1,12 @@
 import { supabase } from '../lib/supabase';
-import fallbackBank from '../../data/saa-c03-question-export.json';
+
+export const PROTECTED_EXAM_QUESTION_IDS = Object.freeze([
+  'aws-saa-c03',
+  'terraform-associate-004',
+  'comptia-sec-plus'
+]);
+
+const isProtectedExam = examCode => PROTECTED_EXAM_QUESTION_IDS.includes(examCode);
 
 /**
  * Transforms raw database rows and topic mappings into the question structure
@@ -44,7 +51,7 @@ function mapDatabaseToAppQuestion(q, topicMap) {
 function mapFallbackQuestions(examCode, localFallbackQuestions = null) {
   const sourceQuestions = Array.isArray(localFallbackQuestions)
     ? localFallbackQuestions
-    : fallbackBank.filter(q => (q.exam_code || 'aws-saa-c03') === examCode || examCode === 'aws-saa-c03');
+    : [];
 
   return sourceQuestions
     .map(q => ({
@@ -93,11 +100,15 @@ export async function getExamQuestions(examCode, localFallbackQuestions = null) 
 
       return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
     }
+
+    if (!qError && isProtectedExam(examCode)) return [];
   } catch (err) {
-    console.warn('[questionService] Failed to load questions from Supabase, using local fallback:', err);
+    console.warn('[questionService] Failed to load protected questions from Supabase:', err);
   }
 
-  return mapFallbackQuestions(examCode, localFallbackQuestions);
+  return isProtectedExam(examCode)
+    ? []
+    : mapFallbackQuestions(examCode, localFallbackQuestions);
 }
 
 /**
@@ -152,11 +163,15 @@ export async function getQuestionsByTopic(examCode, topicId, localFallbackQuesti
         return sortedQuestions.map(q => mapDatabaseToAppQuestion(q, topicMap));
       }
     }
+
+    if (!tError && isProtectedExam(examCode)) return [];
   } catch (err) {
-    console.warn('[questionService] Failed to load topic questions from Supabase, using local fallback:', err);
+    console.warn('[questionService] Failed to load protected topic questions from Supabase:', err);
   }
 
-  // Fallback to local bundled questions if Supabase is offline/unconfigured or fails
+  if (isProtectedExam(examCode)) return [];
+
+  // Custom local exams may still use their explicitly supplied browser questions.
   return mapFallbackQuestions(examCode, localFallbackQuestions).filter(q =>
     q.topicId === topicId || (Array.isArray(q.topicIds) && q.topicIds.includes(topicId))
   );

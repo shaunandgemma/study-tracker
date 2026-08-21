@@ -382,6 +382,21 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
+# Step 008J enables both authenticated sandbox browser entrypoints alongside the
+# signed webhook. JWT verification remains required for Checkout and the portal.
+[functions.create-exam-checkout]
+enabled = true
+verify_jwt = true
+
+[functions.create-stripe-portal-session]
+enabled = true
+verify_jwt = true
+
+[functions.stripe-webhook]
+enabled = true
+# Stripe authenticates this endpoint with its raw-body signature, not a Supabase JWT.
+verify_jwt = false
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

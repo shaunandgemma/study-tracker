@@ -34,9 +34,11 @@ async function candidateFor(draft = readyDraft()) {
 
 test('Follow Along Author release candidate and secure approval boundary', async t => {
   await t.test('1. Approver roles come only from server-managed app metadata', () => {
-    assert.deepEqual(getAuthorApproverRoles({ app_metadata: { roles: ['author', 'approver'] } }), ['approver']);
-    assert.deepEqual(getAuthorApproverRoles({ app_metadata: { role: 'admin' } }), ['admin']);
-    assert.deepEqual(getAuthorApproverRoles({ user_metadata: { role: 'admin' } }), []);
+    assert.deepEqual(getAuthorApproverRoles({ id: 'conflict', app_metadata: { roles: ['author', 'approver'] } }), []);
+    assert.deepEqual(getAuthorApproverRoles({ id: 'combined-admin', app_metadata: { roles: ['admin', 'author', 'approver'] } }), ['admin', 'approver']);
+    assert.deepEqual(getAuthorApproverRoles({ id: 'admin', app_metadata: { role: 'admin' } }), ['admin']);
+    assert.deepEqual(getAuthorApproverRoles({ id: 'fake', user_metadata: { role: 'admin' } }), []);
+    assert.deepEqual(getAuthorApproverRoles({ id: 'demo-read-only', is_demo: true, app_metadata: { role: 'admin' } }), []);
   });
 
   await t.test('2. Browser-only storage blocks final approval even for an admin', () => {
@@ -50,6 +52,9 @@ test('Follow Along Author release candidate and secure approval boundary', async
     assert.equal(admin.allowed, true);
     const approver = canApproveAuthorRelease({ user: { id: 'reviewer-1', app_metadata: { roles: ['approver'] } }, createdBy: 'author-1', storageAuthority: AUTHOR_APPROVAL_STORAGE_AUTHORITY.TRUSTED_SERVER });
     assert.equal(approver.allowed, true);
+    const conflicting = canApproveAuthorRelease({ user: { id: 'conflict-1', app_metadata: { roles: ['author', 'approver'] } }, createdBy: 'author-1', storageAuthority: AUTHOR_APPROVAL_STORAGE_AUTHORITY.TRUSTED_SERVER });
+    assert.equal(conflicting.allowed, false);
+    assert.match(conflicting.reason, /admin or approver role/i);
     const self = canApproveAuthorRelease({ user: { id: 'author-1', app_metadata: { role: 'admin' } }, createdBy: 'author-1', storageAuthority: AUTHOR_APPROVAL_STORAGE_AUTHORITY.TRUSTED_SERVER });
     assert.equal(self.allowed, false);
     assert.match(self.reason, /cannot approve their own/i);

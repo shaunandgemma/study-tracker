@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,7 +15,6 @@ import {
   Siren,
   Wrench
 } from 'lucide-react';
-import { getTroubleshootingChallengesForExam } from '../../data/troubleshootingChallenges/index.js';
 import {
   buildRcaReport,
   calculateTroubleshootingScore,
@@ -25,15 +24,24 @@ import {
 } from '../../features/troubleshooting/troubleshootingProgress.js';
 import { useExam } from '../../context/ExamContext.jsx';
 import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
-import { limitDemoTroubleshootingChallenges } from '../../features/demo/demoContentPolicy.js';
 import { demoProgressStorage } from '../../features/demo/demoMode.js';
+import { useAuth } from '../../features/auth/useAuth.js';
+import {
+  learnerTroubleshootingProgress,
+  reconcileTroubleshootingProgress
+} from '../../services/learnerTroubleshootingProgress.js';
+import { supportsLearnerAccountProgress } from '../../services/learnerChecklistFlagProgress.js';
+import {
+  applyProtectedTroubleshootingVisibility,
+  protectedTroubleshootingContentService
+} from '../../services/protectedTroubleshootingContentService.js';
 
 const getProgress = (allProgress, challengeId) => ({
   ...createEmptyTroubleshootingProgress(),
   ...(allProgress[challengeId] || {})
 });
 
-const ChallengeList = ({ challenges, progress, examCode, onOpen, demoAccount }) => {
+const ChallengeList = ({ challenges, progress, examCode, onOpen, previewOnly }) => {
   const completed = challenges.filter(challenge => getProgress(progress, challenge.id).completed).length;
 
   return (
@@ -56,9 +64,9 @@ const ChallengeList = ({ challenges, progress, examCode, onOpen, demoAccount }) 
         </div>
       </section>
 
-      {demoAccount && (
+      {previewOnly && (
         <DemoContentNotice>
-          Two Troubleshooting Challenges are included in this exam workspace. The paid exam workspace unlocks the complete incident library.
+          Preview access includes two Troubleshooting Challenges in this exam workspace. Signed-in progress is saved. An active exam entitlement unlocks the complete incident library.
         </DemoContentNotice>
       )}
 
@@ -90,6 +98,38 @@ const ChallengeList = ({ challenges, progress, examCode, onOpen, demoAccount }) 
           );
         })}
       </div>
+    </div>
+  );
+};
+
+const ProtectedTroubleshootingState = ({ status, onRetry }) => {
+  if (status === 'loading') {
+    return (
+      <div role="status" className="rounded-2xl border border-cyan-900/60 bg-slate-900/70 p-8 text-center">
+        <ShieldCheck className="mx-auto h-8 w-8 text-cyan-400" />
+        <p className="mt-3 text-sm font-bold text-slate-200">Loading protected Troubleshooting Challenges…</p>
+        <p className="mt-2 text-xs text-slate-500">Only content available for this exact exam and account will be shown.</p>
+      </div>
+    );
+  }
+
+  if (status === 'unavailable') {
+    return (
+      <div role="alert" className="rounded-2xl border border-amber-800/60 bg-amber-950/20 p-8 text-center">
+        <FileWarning className="mx-auto h-8 w-8 text-amber-400" />
+        <p className="mt-3 text-sm font-bold text-amber-100">Troubleshooting Challenges are temporarily unavailable.</p>
+        <p className="mt-2 text-xs leading-5 text-amber-200/70">Protected content was not loaded, and no bundled challenge content was substituted.</p>
+        <button type="button" onClick={onRetry} className="mt-5 inline-flex items-center gap-2 rounded-xl border border-amber-700 bg-amber-950/60 px-4 py-2.5 text-xs font-black text-amber-100 transition hover:bg-amber-900/60">
+          <RotateCcw className="h-4 w-4" /> Try again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-center">
+      <BookOpen className="mx-auto h-8 w-8 text-slate-600" />
+      <p className="mt-3 text-sm text-slate-400">No protected Troubleshooting Challenges are assigned to this exam yet.</p>
     </div>
   );
 };
@@ -305,7 +345,7 @@ const ChallengeRunner = ({ challenge, saved, updateSaved, onBack, onReset }) => 
               {!saved.completed && !confirmReveal && <button type="button" onClick={() => setConfirmReveal(true)} className="text-xs font-bold text-slate-500 transition hover:text-amber-300">I am stuck — end challenge and reveal solution</button>}
               {!saved.completed && confirmReveal && <div className="flex flex-wrap items-center gap-2"><span className="text-xs text-amber-300">This records a score of 0.</span><button type="button" onClick={revealSolution} className="rounded-lg bg-amber-700 px-3 py-1.5 text-xs font-black text-white">Reveal solution</button><button type="button" onClick={() => setConfirmReveal(false)} className="px-2 text-xs text-slate-400">Cancel</button></div>}
             </div>
-            {!confirmReset ? <button type="button" onClick={() => setConfirmReset(true)} className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-white"><RotateCcw className="h-4 w-4" /> Reset local work</button> : <div className="flex items-center gap-2"><button type="button" onClick={() => { onReset(); setConfirmReset(false); }} className="rounded-lg bg-red-800 px-3 py-1.5 text-xs font-black text-white">Confirm reset</button><button type="button" onClick={() => setConfirmReset(false)} className="text-xs text-slate-400">Cancel</button></div>}
+            {!confirmReset ? <button type="button" onClick={() => setConfirmReset(true)} className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 transition hover:text-white"><RotateCcw className="h-4 w-4" /> Reset this work</button> : <div className="flex items-center gap-2"><button type="button" onClick={() => { onReset(); setConfirmReset(false); }} className="rounded-lg bg-red-800 px-3 py-1.5 text-xs font-black text-white">Confirm reset</button><button type="button" onClick={() => setConfirmReset(false)} className="text-xs text-slate-400">Cancel</button></div>}
           </section>
         </div>
 
@@ -316,48 +356,197 @@ const ChallengeRunner = ({ challenge, saved, updateSaved, onBack, onReset }) => 
 };
 
 export const TroubleshootingView = ({ examId, examCode }) => {
-  const { isDemoAccount } = useExam();
+  const { isDemoAccount, isPreviewAccess } = useExam();
+  const { currentUser } = useAuth();
   const progressStorage = isDemoAccount ? demoProgressStorage : null;
-  const challenges = useMemo(() => {
-    const available = getTroubleshootingChallengesForExam(examId);
-    return isDemoAccount ? limitDemoTroubleshootingChallenges(available) : available;
-  }, [examId, isDemoAccount]);
+  const [contentRequestRevision, setContentRequestRevision] = useState(0);
+  const [protectedContentState, setProtectedContentState] = useState({
+    status: 'loading',
+    challenges: []
+  });
+  const challenges = protectedContentState.challenges;
   const [selectedChallengeId, setSelectedChallengeId] = useState(null);
   const [allProgress, setAllProgress] = useState(() => loadTroubleshootingProgress(progressStorage));
+  const allProgressRef = useRef(allProgress);
+  const writeSequenceRef = useRef({});
+  const writeTimersRef = useRef(new Map());
+  const [blockedChallenges, setBlockedChallenges] = useState({});
+  const [accountSyncState, setAccountSyncState] = useState('local');
+  const [accountNotice, setAccountNotice] = useState('');
   const selectedChallenge = challenges.find(challenge => challenge.id === selectedChallengeId) || null;
+  const progressUserId = !isDemoAccount && currentUser?.id ? currentUser.id : null;
+  const accountProgressEnabled = Boolean(progressUserId && supportsLearnerAccountProgress(examId));
+  const effectivePreviewOnly = isPreviewAccess || (
+    challenges.length > 0
+    && challenges.every(challenge => Number.isInteger(challenge.previewOrder))
+  );
 
   useEffect(() => {
-    saveTroubleshootingProgress(allProgress, progressStorage);
-  }, [allProgress, progressStorage]);
+    let cancelled = false;
+    setSelectedChallengeId(null);
+    setProtectedContentState({ status: 'loading', challenges: [] });
+
+    const loadProtectedChallenges = async () => {
+      const result = await protectedTroubleshootingContentService.listForExam(examId);
+      if (cancelled) return;
+      if (!result.success) {
+        setProtectedContentState({ status: 'unavailable', challenges: [] });
+        return;
+      }
+
+      const visible = applyProtectedTroubleshootingVisibility({
+        challenges: result.challenges,
+        examId,
+        previewOnly: isPreviewAccess
+      });
+      setProtectedContentState(visible.success
+        ? { status: 'ready', challenges: visible.challenges }
+        : { status: 'unavailable', challenges: [] });
+    };
+
+    loadProtectedChallenges();
+    return () => {
+      cancelled = true;
+    };
+  }, [contentRequestRevision, examId, isPreviewAccess]);
+
+  useEffect(() => {
+    allProgressRef.current = allProgress;
+  }, [allProgress]);
+
+  useEffect(() => () => {
+    for (const timer of writeTimersRef.current.values()) clearTimeout(timer);
+    writeTimersRef.current.clear();
+  }, []);
+
+  useEffect(() => {
+    if (!accountProgressEnabled || protectedContentState.status !== 'ready') {
+      setAccountSyncState('local');
+      setBlockedChallenges({});
+      setAccountNotice('');
+      return undefined;
+    }
+
+    let cancelled = false;
+    setAccountSyncState('loading');
+    setAccountNotice('');
+
+    const loadAccountProgress = async () => {
+      const result = await learnerTroubleshootingProgress.loadExamProgress({
+        userId: progressUserId,
+        examId
+      });
+      if (cancelled) return;
+
+      if (!result.success) {
+        setAccountSyncState('error');
+        setAccountNotice('Account notebooks could not be loaded. Your browser notebooks remain unchanged.');
+        return;
+      }
+
+      const reconciled = reconcileTroubleshootingProgress({
+        browserProgress: allProgressRef.current,
+        examId,
+        challengeIds: challenges.map(challenge => challenge.id),
+        rows: result.rows
+      });
+      allProgressRef.current = reconciled.progress;
+      setAllProgress(reconciled.progress);
+      setBlockedChallenges(reconciled.blocked);
+      setAccountSyncState('ready');
+
+      const blockedCount = Object.keys(reconciled.blocked).length;
+      setAccountNotice(blockedCount
+        ? `Account sync is paused for ${blockedCount} challenge${blockedCount === 1 ? '' : 's'}. Browser work was kept because it needs a controlled comparison.`
+        : '');
+    };
+
+    loadAccountProgress();
+    return () => {
+      cancelled = true;
+    };
+  }, [accountProgressEnabled, challenges, examId, progressUserId, protectedContentState.status]);
+
+  const scheduleAccountSave = (challengeId, progress) => {
+    if (
+      !accountProgressEnabled
+      || accountSyncState !== 'ready'
+      || blockedChallenges[challengeId]
+    ) return;
+
+    const existingTimer = writeTimersRef.current.get(challengeId);
+    if (existingTimer) clearTimeout(existingTimer);
+    const sequence = (writeSequenceRef.current[challengeId] || 0) + 1;
+    writeSequenceRef.current[challengeId] = sequence;
+
+    const timer = setTimeout(async () => {
+      writeTimersRef.current.delete(challengeId);
+      const result = await learnerTroubleshootingProgress.saveChallenge({
+        userId: progressUserId,
+        examId,
+        challengeId,
+        progress
+      });
+      if (writeSequenceRef.current[challengeId] !== sequence) return;
+      if (result.success && result.verified) {
+        const blockedCount = Object.keys(blockedChallenges).length;
+        setAccountNotice(blockedCount
+          ? `Account sync is paused for ${blockedCount} challenge${blockedCount === 1 ? '' : 's'}. Browser work was kept because it needs a controlled comparison.`
+          : '');
+      } else {
+        setAccountNotice('This notebook is saved in this browser, but could not be verified in your account.');
+      }
+    }, 700);
+    writeTimersRef.current.set(challengeId, timer);
+  };
 
   const updateSelected = changes => {
     if (!selectedChallenge) return;
-    setAllProgress(current => ({
-      ...current,
-      [selectedChallenge.id]: {
-        ...getProgress(current, selectedChallenge.id),
-        ...changes,
-        updatedAt: new Date().toISOString()
-      }
-    }));
+    const current = allProgressRef.current;
+    const updatedChallenge = {
+      ...getProgress(current, selectedChallenge.id),
+      ...changes,
+      updatedAt: new Date().toISOString()
+    };
+    const updated = { ...current, [selectedChallenge.id]: updatedChallenge };
+    allProgressRef.current = updated;
+    setAllProgress(updated);
+    saveTroubleshootingProgress(updated, progressStorage);
+    scheduleAccountSave(selectedChallenge.id, updatedChallenge);
   };
 
   const resetSelected = () => {
     if (!selectedChallenge) return;
-    setAllProgress(current => {
-      const next = { ...current };
-      delete next[selectedChallenge.id];
-      return next;
-    });
+    const next = { ...allProgressRef.current };
+    delete next[selectedChallenge.id];
+    allProgressRef.current = next;
+    setAllProgress(next);
+    saveTroubleshootingProgress(next, progressStorage);
+    scheduleAccountSave(selectedChallenge.id, createEmptyTroubleshootingProgress());
   };
 
-  if (!challenges.length) {
-    return <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-8 text-center"><BookOpen className="mx-auto h-8 w-8 text-slate-600" /><p className="mt-3 text-sm text-slate-400">No troubleshooting challenges are assigned to this exam yet.</p></div>;
+  const content = selectedChallenge
+    ? <ChallengeRunner challenge={selectedChallenge} saved={getProgress(allProgress, selectedChallenge.id)} updateSaved={updateSelected} onBack={() => setSelectedChallengeId(null)} onReset={resetSelected} />
+    : <ChallengeList challenges={challenges} progress={allProgress} examCode={examCode} onOpen={setSelectedChallengeId} previewOnly={effectivePreviewOnly} />;
+
+  if (protectedContentState.status !== 'ready' || !challenges.length) {
+    return (
+      <ProtectedTroubleshootingState
+        status={protectedContentState.status === 'ready' ? 'empty' : protectedContentState.status}
+        onRetry={() => setContentRequestRevision(revision => revision + 1)}
+      />
+    );
   }
 
-  if (selectedChallenge) {
-    return <ChallengeRunner challenge={selectedChallenge} saved={getProgress(allProgress, selectedChallenge.id)} updateSaved={updateSelected} onBack={() => setSelectedChallengeId(null)} onReset={resetSelected} />;
-  }
-
-  return <ChallengeList challenges={challenges} progress={allProgress} examCode={examCode} onOpen={setSelectedChallengeId} demoAccount={isDemoAccount} />;
+  return (
+    <>
+      {accountNotice && (
+        <div className="mb-5 rounded-xl border border-amber-500/40 bg-amber-950/40 px-4 py-3 text-sm text-amber-100" role="status">
+          <p className="font-semibold">Troubleshooting notebook account sync</p>
+          <p className="mt-1 text-amber-200/90">{accountNotice}</p>
+        </div>
+      )}
+      {content}
+    </>
+  );
 };

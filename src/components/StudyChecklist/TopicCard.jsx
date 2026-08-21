@@ -12,13 +12,19 @@ import {
   Sparkles,
   Check,
   X,
-  FileText,
   ClipboardList,
   CheckSquare,
   ChevronRight
 } from 'lucide-react';
 
-export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapsed, onOpenKnowledgeGuide = null }) => {
+export const TopicCard = ({
+  topic,
+  searchQuery,
+  onLaunchTopicQuiz,
+  forceCollapsed,
+  onOpenKnowledgeGuide = null,
+  contentManagementEnabled = true
+}) => {
   const { 
     activeExamId, 
     checklist, 
@@ -33,6 +39,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
     deleteItem,
     canManageContent
   } = useExam();
+  const canEditContent = canManageContent && contentManagementEnabled;
 
   const [isOpen, setIsOpen] = useState(true);
   const cardRef = useRef(null);
@@ -162,7 +169,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
             </button>
 
             <div className="flex-1">
-              {canManageContent && isEditingTopic ? (
+              {canEditContent && isEditingTopic ? (
                 <div className="space-y-2 max-w-lg">
                   <div className="flex items-center gap-2">
                     <input
@@ -211,7 +218,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                     )}
 
                     {/* Topic Edit & Delete Buttons */}
-                    {canManageContent && <div className="flex items-center gap-1 ml-auto sm:ml-2">
+                    {canEditContent && <div className="flex items-center gap-1 ml-auto sm:ml-2">
                       <button
                         onClick={() => {
                           setEditTopicTitle(topic.title);
@@ -299,7 +306,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
           <div className="space-y-2.5">
             {filteredItems.map(item => {
               const isChecked = !!checklist[activeExamId]?.[item.id];
-              const isEditingThisItem = canManageContent && editingItemId === item.id;
+              const isEditingThisItem = canEditContent && editingItemId === item.id;
 
               return (
                 <div
@@ -368,7 +375,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
                       )}
 
                       {/* Edit & Delete Action Buttons */}
-                      {canManageContent && <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">
+                      {canEditContent && <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => {
                             setEditItemText(item.text);
@@ -395,7 +402,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
           </div>
 
           {/* Add Item Actions Toolbar */}
-          {canManageContent && <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800/80">
+          {canEditContent && <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800/80">
             
             {/* Inline Add Single Item Form */}
             {isAddingItem ? (
@@ -446,7 +453,7 @@ export const TopicCard = ({ topic, searchQuery, onLaunchTopicQuiz, forceCollapse
       )}
 
       {/* Bulk Paste Modal */}
-      {canManageContent && showBulkPasteModal && (
+      {canEditContent && showBulkPasteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             

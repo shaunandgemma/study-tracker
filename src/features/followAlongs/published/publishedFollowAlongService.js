@@ -255,7 +255,10 @@ export function createPublishedFollowAlongService(client = supabase, { enabled =
       if (error) return { success: false, error: error.message || 'Unable to load the published Follow Along.' };
       if (!data) return { success: false, notFound: true, error: 'The published Follow Along could not be found.' };
       const config = buildPublishedFollowAlongConfig(data);
-      return config ? { success: true, row: data, config } : { success: false, error: 'The published Follow Along package is incomplete.' };
+      const programme = buildPublishedProgrammeCard(data);
+      return config && programme
+        ? { success: true, row: data, config, programme }
+        : { success: false, error: 'The published Follow Along package is incomplete.' };
     }
   };
 }

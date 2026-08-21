@@ -14,7 +14,6 @@ import {
   createAuthorSharedStorageService,
   getControlledPublishingConfirmation,
 } from "./authorSharedStorageService.js";
-import { createPublishedFollowAlongService } from "../followAlongs/published/publishedFollowAlongService.js";
 import { AuthorApproverReadinessPreview } from "./AuthorApproverReadinessPreview.jsx";
 import {
   buildAuthorApproverReadinessPreview,
@@ -196,10 +195,6 @@ export function AuthorApprovalQueue({ currentUser }) {
     () => createAuthorSharedStorageService(undefined, { enabled: true }),
     [],
   );
-  const publishedService = useMemo(
-    () => createPublishedFollowAlongService(),
-    [],
-  );
   const [candidates, setCandidates] = useState([]);
   const [publishedProgrammes, setPublishedProgrammes] = useState(new Map());
   const [confirmations, setConfirmations] = useState({});
@@ -231,18 +226,18 @@ export function AuthorApprovalQueue({ currentUser }) {
 
     try {
       const publishedResult = await withQueueTimeout(
-        publishedService.listPublishedProgrammes(),
+        service.listPublishedDrafts(),
         "Published Follow Along history",
       );
       if (publishedResult.success) {
-        setPublishedProgrammes(new Map((publishedResult.rows || []).map((row) => [row.programme_id, row])));
+        setPublishedProgrammes(new Map((publishedResult.publications || []).map((row) => [row.programme_id, row])));
       } else if (!publishedResult.disabled) {
         setMessage((current) => current || publishedResult.error);
       }
     } catch (error) {
       setMessage((current) => current || error?.message || "Unable to load published Follow Along history.");
     }
-  }, [publishedService, service]);
+  }, [service]);
 
   useEffect(() => {
     void refresh();

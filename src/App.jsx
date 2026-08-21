@@ -6,6 +6,8 @@ import { DemoAccessGate } from './features/demo/DemoAccessGate.jsx';
 import { DemoAnnualAccessBanner } from './features/demo/DemoAnnualAccessPromotion.jsx';
 import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
 import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
+import { PaymentReturnEntry } from './features/payments/PaymentReturnEntry.jsx';
+import { getPaymentRoute } from './features/payments/paymentRoutes.js';
 import { Navbar } from './components/Navbar';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
@@ -16,6 +18,7 @@ import { TroubleshootingView } from './components/Troubleshooting/Troubleshootin
 import { AppLandingPage } from './components/Landing/AppLandingPage.jsx';
 import { ExamLandingPage } from './components/Landing/ExamLandingPage.jsx';
 import { ExamWorkspaceHeader } from './components/Landing/ExamWorkspaceHeader.jsx';
+import { LearnerProgressImportPanel } from './components/Progress/LearnerProgressImportPanel.jsx';
 import { AddExamModal } from './components/Modals/AddExamModal';
 import { ImportExportModal } from './components/Modals/ImportExportModal';
 import { AuthModal } from './components/Modals/AuthModal';
@@ -27,10 +30,12 @@ import {
 } from './utils/examUtils';
 import { saveAttemptToSupabase, QUESTION_BANK_VERSION } from './services/attemptService';
 import { getDomainForQuestion } from './data/saaC03DomainMapping';
+import { isExamPreviewOnly } from './features/access/applicationAccessPolicy.js';
 
 const MainContent = () => {
-  const { exams, viewMode, setViewMode, activeExam, activeExamId, setActiveExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, legacyAutoOpenProgrammeId } = useExam();
-  const { isDemoAccount, canManageContent } = useAuth();
+  const { exams, viewMode, setViewMode, activeExam, activeExamId, setActiveExamId, recordExamResult, clearFlags, flagged, addSupabaseAttempt, progressSyncError, dismissProgressSyncError } = useExam();
+  const { isDemoAccount, canManageContent, accessPolicy, entitlementError } = useAuth();
+  const isPreviewAccess = isExamPreviewOnly(accessPolicy, activeExamId);
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
@@ -55,7 +60,7 @@ const MainContent = () => {
   };
 
   const handleSelectExam = (examId) => {
-    setActiveExamId(examId);
+    if (!setActiveExamId(examId)) return;
     setPrepState('setup');
     setPresetConfig(null);
     setViewMode('exam-home');
@@ -87,7 +92,7 @@ const MainContent = () => {
         const pool = activeQuizConfig.fullPool || activeQuizConfig.questions;
         let preparedQuestions = [];
         if (activeQuizConfig.mode === 'full') {
-          preparedQuestions = isDemoAccount
+          preparedQuestions = isPreviewAccess
             ? prepareExamQuestions(pool)
             : prepareFullMockForExam(activeExamId, pool);
         } else if (activeQuizConfig.mode === 'custom' && activeQuizConfig.fullPool) {
@@ -279,7 +284,30 @@ const MainContent = () => {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
         <>
-            {isDemoAccount && viewMode !== 'app-home' && <DemoAnnualAccessBanner />}
+            {isPreviewAccess && viewMode !== 'app-home' && <DemoAnnualAccessBanner />}
+
+            {isPreviewAccess && entitlementError && (
+              <div className="mb-5 rounded-xl border border-amber-500/40 bg-amber-950/40 px-4 py-3 text-sm text-amber-100" role="status">
+                <p className="font-semibold">Exam access could not be verified</p>
+                <p className="mt-1 text-amber-200/90">Preview access is shown safely. Your signed-in progress can still be saved.</p>
+              </div>
+            )}
+
+            {progressSyncError && (
+              <div className="mb-5 flex items-start justify-between gap-4 rounded-xl border border-amber-500/40 bg-amber-950/40 px-4 py-3 text-sm text-amber-100" role="status">
+                <div>
+                  <p className="font-semibold">Account progress needs attention</p>
+                  <p className="mt-1 text-amber-200/90">{progressSyncError}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={dismissProgressSyncError}
+                  className="shrink-0 rounded-lg border border-amber-400/40 px-3 py-1.5 font-semibold hover:bg-amber-400/10"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
 
             {viewMode === 'app-home' && (
               <AppLandingPage
@@ -287,17 +315,21 @@ const MainContent = () => {
                 onSelectExam={handleSelectExam}
                 onAddExam={() => setIsAddModalOpen(true)}
                 canManageContent={canManageContent}
-                isDemoAccount={isDemoAccount}
+                accessPolicy={accessPolicy}
               />
             )}
 
             {viewMode === 'exam-home' && (
-              <ExamLandingPage
-                exam={activeExam}
-                onBack={() => setViewMode('app-home')}
-                onSelectTool={handleSelectExamTool}
-                isDemoAccount={isDemoAccount}
-              />
+              <>
+                <ExamLandingPage
+                  exam={activeExam}
+                  onBack={() => setViewMode('app-home')}
+                  onSelectTool={handleSelectExamTool}
+                  previewOnly={isPreviewAccess}
+                  accessPolicy={accessPolicy}
+                />
+                <LearnerProgressImportPanel examId={activeExamId} />
+              </>
             )}
 
             {viewMode === 'checklist' && (
@@ -325,13 +357,12 @@ const MainContent = () => {
               </>
             )}
 
-            {(viewMode === 'follow-alongs' || viewMode === 'vpc-learning-path') && (
+            {viewMode === 'follow-alongs' && (
               <>
                 <ExamWorkspaceHeader exam={activeExam} viewMode="follow-alongs" onBack={() => setViewMode('exam-home')} />
                 <FollowAlongsView
                   examId={activeExamId}
                   examCode={activeExam?.code}
-                  initialProgrammeId={viewMode === 'vpc-learning-path' ? 'vpc-learning-path' : legacyAutoOpenProgrammeId}
                 />
               </>
             )}
@@ -395,10 +426,14 @@ const MainContent = () => {
 
 const AuthenticatedApplication = () => {
   const [authorRequested, setAuthorRequested] = useState(() => isAuthorEntryRequested());
-  const { currentUser, loadingAuth, demoModeEnabled, signInAsDemo, openAuthModal } = useAuth();
+  const [paymentRoute, setPaymentRoute] = useState(() => getPaymentRoute());
+  const { currentUser, loadingAuth, entitlementsLoading, demoModeEnabled, isDemoAccount, signInAsDemo, openAuthModal } = useAuth();
 
   useEffect(() => {
-    const updateEntry = () => setAuthorRequested(isAuthorEntryRequested());
+    const updateEntry = () => {
+      setAuthorRequested(isAuthorEntryRequested());
+      setPaymentRoute(getPaymentRoute());
+    };
     globalThis.addEventListener?.('hashchange', updateEntry);
     return () => globalThis.removeEventListener?.('hashchange', updateEntry);
   }, []);
@@ -409,8 +444,28 @@ const AuthenticatedApplication = () => {
     return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm font-semibold text-slate-300">Checking safe access...</div>;
   }
 
-  if (demoModeEnabled && !currentUser) {
-    return <DemoAccessGate onSignIn={openAuthModal} onEnterDemo={signInAsDemo} />;
+  if (paymentRoute) {
+    return (
+      <PaymentReturnEntry
+        route={paymentRoute}
+        signedIn={Boolean(currentUser)}
+        onReturnHome={() => { globalThis.location.hash = ''; }}
+      />
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <DemoAccessGate
+        demoEnabled={demoModeEnabled}
+        onSignIn={openAuthModal}
+        onEnterDemo={signInAsDemo}
+      />
+    );
+  }
+
+  if (currentUser && !isDemoAccount && entitlementsLoading) {
+    return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm font-semibold text-slate-300">Checking exam access...</div>;
   }
 
   return (

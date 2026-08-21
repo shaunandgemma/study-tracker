@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   loadExams,
   saveExams,
@@ -17,6 +17,11 @@ import {
   removeRetiredCustomExams
 } from '../utils/storage';
 import { fetchAttemptsFromSupabase } from '../services/attemptService';
+import {
+  learnerChecklistFlagProgress,
+  mergeLearnerAccountProgress,
+  supportsLearnerAccountProgress
+} from '../services/learnerChecklistFlagProgress.js';
 import { DEFAULT_EXAMS } from '../data/examData.js';
 import { useAuth } from '../features/auth/useAuth.js';
 import {
@@ -24,45 +29,43 @@ import {
   cloneDemoChecklist,
   cloneDemoExamHistory
 } from '../features/demo/demoMode.js';
+import { isExamPreviewOnly } from '../features/access/applicationAccessPolicy.js';
 
 const ExamContext = createContext();
 
-export const normalizeMainViewMode = (mode) => (
-  mode === 'vpc-learning-path'
-    ? 'follow-alongs'
-    : mode
-);
-
 export const ExamProvider = ({ children }) => {
-  const { isDemoAccount, canManageContent } = useAuth();
+  const { currentUser, isDemoAccount, canManageContent, accessPolicy } = useAuth();
   const [exams, setExams] = useState(() => isDemoAccount ? structuredClone(DEFAULT_EXAMS) : loadExams());
-  const [activeExamId, setActiveExamIdState] = useState(() => isDemoAccount ? 'aws-saa-c03' : loadActiveExamId());
+  const [requestedActiveExamId, setActiveExamIdState] = useState(() => isDemoAccount ? 'aws-saa-c03' : loadActiveExamId());
   const [viewModeRaw, setViewModeRaw] = useState('app-home'); // 'app-home' | 'exam-home' | exam tools
-  const [legacyAutoOpenProgrammeId, setLegacyAutoOpenProgrammeId] = useState(null);
 
   const setViewMode = useCallback((mode) => {
-    if (mode === 'vpc-learning-path') {
-      setLegacyAutoOpenProgrammeId('vpc-learning-path');
-      setViewModeRaw('follow-alongs');
-    } else {
-      const normalizedMode = normalizeMainViewMode(mode);
-      if (normalizedMode !== 'follow-alongs') {
-        setLegacyAutoOpenProgrammeId(null);
-      }
-      setViewModeRaw(normalizedMode);
-    }
+    setViewModeRaw(mode);
   }, []);
 
-  const viewMode = normalizeMainViewMode(viewModeRaw);
+  const viewMode = viewModeRaw;
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [checklist, setChecklist] = useState(() => isDemoAccount ? cloneDemoChecklist() : loadChecklistState());
   const [flagged, setFlagged] = useState(() => isDemoAccount ? {} : loadFlaggedState());
+  const checklistRef = useRef(checklist);
+  const flaggedRef = useRef(flagged);
+  const progressMutationRevisionRef = useRef(0);
+  const progressWriteSequenceRef = useRef(0);
+  const [progressSyncError, setProgressSyncError] = useState(null);
   const [examHistory, setExamHistory] = useState(() => isDemoAccount ? cloneDemoExamHistory() : loadExamHistory());
   const [highlightedTopicId, setHighlightedTopicId] = useState(null);
 
   // Supabase-persisted attempt history (full snapshots)
   const [supabaseAttempts, setSupabaseAttempts] = useState([]);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
+
+  useEffect(() => {
+    checklistRef.current = checklist;
+  }, [checklist]);
+
+  useEffect(() => {
+    flaggedRef.current = flagged;
+  }, [flagged]);
 
   // Apply dark theme class to root html/body
   useEffect(() => {
@@ -79,11 +82,118 @@ export const ExamProvider = ({ children }) => {
   };
 
   const setActiveExamId = (id) => {
+    if (!exams.some(exam => exam.id === id)) return false;
     setActiveExamIdState(id);
     if (!isDemoAccount) saveActiveExamId(id);
+    return true;
   };
 
-  const activeExam = exams.find(e => e.id === activeExamId) || exams[0];
+  const activeExam = exams.find(e => e.id === requestedActiveExamId) || exams[0];
+  const activeExamId = activeExam?.id || null;
+  const isPreviewAccess = isExamPreviewOnly(accessPolicy, activeExam?.id);
+  const progressUserId = !isDemoAccount && currentUser?.id ? currentUser.id : null;
+  const accountProgressEnabled = Boolean(progressUserId && supportsLearnerAccountProgress(activeExam?.id));
+
+  useEffect(() => {
+    if (!activeExamId || requestedActiveExamId === activeExamId) return;
+    setActiveExamIdState(activeExamId);
+    if (!isDemoAccount) saveActiveExamId(activeExamId);
+  }, [activeExamId, isDemoAccount, requestedActiveExamId]);
+
+  useEffect(() => {
+    if (!accountProgressEnabled) {
+      setProgressSyncError(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const mutationRevisionAtLoadStart = progressMutationRevisionRef.current;
+    const loadPrivateProgress = async () => {
+      const result = await learnerChecklistFlagProgress.loadExamProgress({
+        userId: progressUserId,
+        examId: activeExam.id
+      });
+
+      if (cancelled || mutationRevisionAtLoadStart !== progressMutationRevisionRef.current) return;
+      if (!result.success) {
+        setProgressSyncError('Your account progress could not be loaded. Your existing browser progress is unchanged.');
+        return;
+      }
+
+      const merged = mergeLearnerAccountProgress({
+        checklist: checklistRef.current,
+        flagged: flaggedRef.current,
+        examId: activeExam.id,
+        rows: result.rows
+      });
+      checklistRef.current = merged.checklist;
+      flaggedRef.current = merged.flagged;
+      setChecklist(merged.checklist);
+      setFlagged(merged.flagged);
+      setProgressSyncError(null);
+    };
+
+    loadPrivateProgress();
+    return () => {
+      cancelled = true;
+    };
+  }, [accountProgressEnabled, activeExam?.id, progressUserId]);
+
+  const commitChecklist = useCallback((updated) => {
+    progressMutationRevisionRef.current += 1;
+    checklistRef.current = updated;
+    setChecklist(updated);
+    if (!isDemoAccount) saveChecklistState(updated);
+  }, [isDemoAccount]);
+
+  const commitFlags = useCallback((updated) => {
+    progressMutationRevisionRef.current += 1;
+    flaggedRef.current = updated;
+    setFlagged(updated);
+    if (!isDemoAccount) saveFlaggedState(updated);
+  }, [isDemoAccount]);
+
+  const verifyAccountWrites = useCallback(async (operations) => {
+    if (!accountProgressEnabled || operations.length === 0) return;
+    const writeSequence = progressWriteSequenceRef.current + 1;
+    progressWriteSequenceRef.current = writeSequence;
+    try {
+      const results = await Promise.all(operations);
+      if (writeSequence !== progressWriteSequenceRef.current) return;
+      const failed = results.find(result => !result?.success || !result?.verified);
+      setProgressSyncError(failed
+        ? 'This change is saved in this browser, but could not be verified in your account.'
+        : null);
+    } catch (error) {
+      console.error('[ExamContext] Failed to verify learner progress:', error);
+      if (writeSequence !== progressWriteSequenceRef.current) return;
+      setProgressSyncError('This change is saved in this browser, but could not be verified in your account.');
+    }
+  }, [accountProgressEnabled]);
+
+  const saveChecklistItemsToAccount = useCallback((examId, items) => {
+    if (!accountProgressEnabled || examId !== activeExam?.id) return;
+    void verifyAccountWrites(items.map(({ contentId, completed }) => (
+      learnerChecklistFlagProgress.saveChecklistItem({
+        userId: progressUserId,
+        examId,
+        contentId,
+        completed
+      })
+    )));
+  }, [accountProgressEnabled, activeExam?.id, progressUserId, verifyAccountWrites]);
+
+  const saveQuestionFlagsToAccount = useCallback((examId, items) => {
+    if (!accountProgressEnabled || examId !== activeExam?.id) return;
+    void verifyAccountWrites(items.map(({ contentId, flagged: isFlagged }) => (
+      learnerChecklistFlagProgress.saveQuestionFlag({
+        userId: progressUserId,
+        examId,
+        contentId,
+        flagged: isFlagged
+      })
+    )));
+  }, [accountProgressEnabled, activeExam?.id, progressUserId, verifyAccountWrites]);
 
   // Load Supabase attempts whenever the active exam changes
   const loadAttempts = useCallback(async (examCode) => {
@@ -127,63 +237,45 @@ export const ExamProvider = ({ children }) => {
 
   // Checklist Task toggle checkmark
   const toggleTask = (examId, taskId) => {
-    setChecklist(prev => {
-      const examTasks = prev[examId] || {};
-      const updated = {
-        ...prev,
-        [examId]: {
-          ...examTasks,
-          [taskId]: !examTasks[taskId]
-        }
-      };
-      if (!isDemoAccount) saveChecklistState(updated);
-      return updated;
+    const current = checklistRef.current;
+    const examTasks = current[examId] || {};
+    const completed = !examTasks[taskId];
+    commitChecklist({
+      ...current,
+      [examId]: { ...examTasks, [taskId]: completed }
     });
+    saveChecklistItemsToAccount(examId, [{ contentId: taskId, completed }]);
   };
 
   // Bulk check/uncheck tasks in a checklist group
   const checkGroupTasks = (examId, taskIds, shouldCheck = true) => {
-    setChecklist(prev => {
-      const examTasks = prev[examId] || {};
-      const updatedExamTasks = { ...examTasks };
-      taskIds.forEach(id => {
-        updatedExamTasks[id] = shouldCheck;
-      });
-      const updated = {
-        ...prev,
-        [examId]: updatedExamTasks
-      };
-      if (!isDemoAccount) saveChecklistState(updated);
-      return updated;
+    const current = checklistRef.current;
+    const updatedExamTasks = { ...(current[examId] || {}) };
+    taskIds.forEach(id => {
+      updatedExamTasks[id] = shouldCheck;
     });
+    commitChecklist({ ...current, [examId]: updatedExamTasks });
+    saveChecklistItemsToAccount(examId, taskIds.map(contentId => ({ contentId, completed: shouldCheck })));
   };
 
   // Flag Question toggle
   const toggleFlag = (examId, questionId) => {
-    setFlagged(prev => {
-      const examFlags = prev[examId] || {};
-      const updated = {
-        ...prev,
-        [examId]: {
-          ...examFlags,
-          [questionId]: !examFlags[questionId]
-        }
-      };
-      if (!isDemoAccount) saveFlaggedState(updated);
-      return updated;
+    const current = flaggedRef.current;
+    const examFlags = current[examId] || {};
+    const isFlagged = !examFlags[questionId];
+    commitFlags({
+      ...current,
+      [examId]: { ...examFlags, [questionId]: isFlagged }
     });
+    saveQuestionFlagsToAccount(examId, [{ contentId: questionId, flagged: isFlagged }]);
   };
 
   // Clear all flags for an exam
   const clearFlags = (examId) => {
-    setFlagged(prev => {
-      const updated = {
-        ...prev,
-        [examId]: {}
-      };
-      if (!isDemoAccount) saveFlaggedState(updated);
-      return updated;
-    });
+    const current = flaggedRef.current;
+    const questionIds = Object.keys(current[examId] || {});
+    commitFlags({ ...current, [examId]: {} });
+    saveQuestionFlagsToAccount(examId, questionIds.map(contentId => ({ contentId, flagged: false })));
   };
 
   // Record Quiz Result
@@ -369,16 +461,12 @@ export const ExamProvider = ({ children }) => {
 
   // Reset progress for current exam
   const resetExamProgress = (examId) => {
-    setChecklist(prev => {
-      const updated = { ...prev, [examId]: {} };
-      if (!isDemoAccount) saveChecklistState(updated);
-      return updated;
-    });
-    setFlagged(prev => {
-      const updated = { ...prev, [examId]: {} };
-      if (!isDemoAccount) saveFlaggedState(updated);
-      return updated;
-    });
+    const taskIds = Object.keys(checklistRef.current[examId] || {});
+    const questionIds = Object.keys(flaggedRef.current[examId] || {});
+    commitChecklist({ ...checklistRef.current, [examId]: {} });
+    commitFlags({ ...flaggedRef.current, [examId]: {} });
+    saveChecklistItemsToAccount(examId, taskIds.map(contentId => ({ contentId, completed: false })));
+    saveQuestionFlagsToAccount(examId, questionIds.map(contentId => ({ contentId, flagged: false })));
   };
 
   return (
@@ -387,12 +475,12 @@ export const ExamProvider = ({ children }) => {
         exams,
         canManageContent,
         isDemoAccount,
+        isPreviewAccess,
         activeExam,
         activeExamId,
         setActiveExamId,
         viewMode,
         setViewMode,
-        legacyAutoOpenProgrammeId,
         theme,
         toggleTheme,
         checklist,
@@ -401,6 +489,8 @@ export const ExamProvider = ({ children }) => {
         flagged,
         toggleFlag,
         clearFlags,
+        progressSyncError,
+        dismissProgressSyncError: () => setProgressSyncError(null),
         examHistory,
         recordExamResult,
         supabaseAttempts,

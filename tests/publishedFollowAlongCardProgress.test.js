@@ -5,6 +5,7 @@ import {
   createPublishedProgressLoadingSummaries,
   loadPublishedFollowAlongProgressSummaries
 } from '../src/features/followAlongs/published/publishedFollowAlongProgress.js';
+import { buildPublishedFollowAlongConfig } from '../src/features/followAlongs/published/publishedFollowAlongService.js';
 import { createFollowAlongPersistence } from '../src/services/followAlongPersistenceService.js';
 
 function publishedRow(programmeId, taskCount = 3) {
@@ -52,6 +53,37 @@ test('published card progress creates a loading entry for each exact programme',
       'sns-learning-path': { loading: true }
     }
   );
+});
+
+test('protected Follow Along rows preserve the same programme and progress IDs', async () => {
+  const source = publishedRow('terraform-modules-learning-path', 4);
+  const config = buildPublishedFollowAlongConfig(source);
+  const protectedRow = {
+    programme: { id: 'terraform-modules-learning-path' },
+    config
+  };
+
+  assert.deepEqual(createPublishedProgressLoadingSummaries([protectedRow]), {
+    'terraform-modules-learning-path': { loading: true }
+  });
+
+  const summaries = await loadPublishedFollowAlongProgressSummaries(
+    [protectedRow],
+    'learner-1',
+    {
+      persistenceFactory(receivedConfig) {
+        assert.equal(receivedConfig, config);
+        return {
+          async getProgressSummary(userId) {
+            assert.equal(userId, 'learner-1');
+            return { loading: false, completedTasks: 1, totalTasks: 4 };
+          }
+        };
+      }
+    }
+  );
+
+  assert.equal(summaries['terraform-modules-learning-path'].completedTasks, 1);
 });
 
 test('published card progress loads each programme summary for the signed-in learner', async () => {
@@ -113,8 +145,7 @@ test('card progress ignores stale task IDs from older published revisions', asyn
     setItem(key, value) { values.set(key, value); }
   };
   const row = publishedRow('sqs-learning-path', 5);
-  const config = (await import('../src/features/followAlongs/published/publishedFollowAlongService.js'))
-    .buildPublishedFollowAlongConfig(row);
+  const config = buildPublishedFollowAlongConfig(row);
   const persistence = createFollowAlongPersistence(config, { storage, supabaseClient: null });
 
   await persistence.saveGuest({
@@ -145,8 +176,7 @@ test('card progress never exceeds one hundred percent', async () => {
     setItem(key, value) { values.set(key, value); }
   };
   const row = publishedRow('sns-learning-path', 3);
-  const config = (await import('../src/features/followAlongs/published/publishedFollowAlongService.js'))
-    .buildPublishedFollowAlongConfig(row);
+  const config = buildPublishedFollowAlongConfig(row);
   const persistence = createFollowAlongPersistence(config, { storage, supabaseClient: null });
 
   await persistence.saveGuest({

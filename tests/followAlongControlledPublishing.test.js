@@ -292,9 +292,10 @@ test('Step 54 controlled publishing', async t => {
   await t.test('19. approval queue cannot remain stuck loading when either read fails or stalls', () => {
     assert.match(queue, /const QUEUE_TIMEOUT_MS = 15000/);
     assert.match(queue, /withQueueTimeout\(\s*service\.listReleaseCandidates\(\)/s);
-    assert.match(queue, /withQueueTimeout\(\s*publishedService\.listPublishedProgrammes\(\)/s);
+    assert.match(queue, /withQueueTimeout\(\s*service\.listPublishedDrafts\(\)/s);
+    assert.doesNotMatch(queue, /createPublishedFollowAlongService|listPublishedProgrammes|runtime_content/);
     assert.match(queue, /finally\s*{\s*setLoading\(false\)/s);
-    assert.doesNotMatch(queue, /Promise\.all\(\[\s*service\.listReleaseCandidates\(\),\s*publishedService\.listPublishedProgrammes\(\)/s);
+    assert.doesNotMatch(queue, /Promise\.all\(\[\s*service\.listReleaseCandidates\(\),\s*service\.listPublishedDrafts\(\)/s);
   });
 
   await t.test('20. approval permits one browser request and duplicate database requests fail without waiting', () => {

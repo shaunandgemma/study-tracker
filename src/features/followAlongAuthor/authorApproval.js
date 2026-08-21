@@ -1,4 +1,4 @@
-import { getAuthorRoles } from './authorAccess.js';
+import { canAccessFollowAlongApprovals, getAuthorRoles } from './authorAccess.js';
 import { normalizeAuthorDraft } from './authorDraftService.js';
 
 export const AUTHOR_APPROVAL_STORAGE_AUTHORITY = Object.freeze({
@@ -42,7 +42,9 @@ function timestamp(now) {
 }
 
 export function getAuthorApproverRoles(user) {
-  return getAuthorRoles(user).filter(role => role === 'admin' || role === 'approver');
+  const roles = getAuthorRoles(user);
+  if (!canAccessFollowAlongApprovals(user)) return [];
+  return roles.filter(role => role === 'admin' || role === 'approver');
 }
 
 export function canApproveAuthorRelease({ user, createdBy, storageAuthority } = {}) {

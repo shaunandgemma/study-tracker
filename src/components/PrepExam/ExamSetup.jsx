@@ -28,7 +28,7 @@ import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
 import { limitDemoExamQuestions } from '../../features/demo/demoContentPolicy.js';
 
 export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
-  const { activeExam, supabaseAttempts, loadingAttempts, isDemoAccount } = useExam();
+  const { activeExam, supabaseAttempts, loadingAttempts, isPreviewAccess } = useExam();
 
   const allTopicsList = useMemo(
     () => activeExam?.topics || activeExam?.domains || [],
@@ -41,9 +41,9 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
   const [enableTimer, setEnableTimer] = useState(true);
 
   // Custom Exam configuration states
-  const [customCountInput, setCustomCountInput] = useState(isDemoAccount ? '10' : '25');
+  const [customCountInput, setCustomCountInput] = useState(isPreviewAccess ? '10' : '25');
   const [isAllAvailable, setIsAllAvailable] = useState(false);
-  const [customSelectionType, setCustomSelectionType] = useState(isDemoAccount ? 'random' : 'balanced'); // 'balanced' | 'random'
+  const [customSelectionType, setCustomSelectionType] = useState(isPreviewAccess ? 'random' : 'balanced'); // 'balanced' | 'random'
   const [customTimerType, setCustomTimerType] = useState('untimed'); // 'timed' | 'untimed'
 
   // Loaded question banks from Supabase or local fallback
@@ -58,10 +58,10 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
     ...(Array.isArray(question.topicIds) ? question.topicIds : [])
   ].filter(Boolean))), [fullExamQuestions]);
   const topicsList = useMemo(() => (
-    isDemoAccount && fullExamQuestions.length
+    isPreviewAccess && fullExamQuestions.length
       ? allTopicsList.filter(topic => demoTopicIds.has(topic.id))
       : allTopicsList
-  ), [allTopicsList, demoTopicIds, fullExamQuestions.length, isDemoAccount]);
+  ), [allTopicsList, demoTopicIds, fullExamQuestions.length, isPreviewAccess]);
 
   useEffect(() => {
     if (topicsList.length && !topicsList.some(topic => topic.id === selectedDomainId)) {
@@ -82,13 +82,13 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
         if (activeExam.questionSource === 'supabase' || activeExam.id === 'aws-saa-c03' || !activeExam.questions) {
           const fetched = await getExamQuestions(activeExam.id, activeExam.questions || null);
           if (isMounted) {
-            setFullExamQuestions(isDemoAccount ? limitDemoExamQuestions(fetched) : fetched);
+            setFullExamQuestions(isPreviewAccess ? limitDemoExamQuestions(fetched) : fetched);
             setLoadingFull(false);
           }
         } else {
           if (isMounted) {
             const localQuestions = activeExam.questions || [];
-            setFullExamQuestions(isDemoAccount ? limitDemoExamQuestions(localQuestions) : localQuestions);
+            setFullExamQuestions(isPreviewAccess ? limitDemoExamQuestions(localQuestions) : localQuestions);
             setLoadingFull(false);
           }
         }
@@ -106,7 +106,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
     return () => {
       isMounted = false;
     };
-  }, [activeExam, isDemoAccount]);
+  }, [activeExam, isPreviewAccess]);
 
   // 2. Fetch targeted topic questions when mode === 'domain' or selectedDomainId changes
   useEffect(() => {
@@ -118,7 +118,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
       setError(null);
 
       try {
-        if (isDemoAccount) {
+        if (isPreviewAccess) {
           const available = fullExamQuestions.filter(q =>
             (q.topicId || q.domainId) === selectedDomainId ||
             (Array.isArray(q.topicIds) && q.topicIds.includes(selectedDomainId))
@@ -162,7 +162,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
     return () => {
       isMounted = false;
     };
-  }, [activeExam, mode, selectedDomainId, isDemoAccount, fullExamQuestions]);
+  }, [activeExam, mode, selectedDomainId, isPreviewAccess, fullExamQuestions]);
 
   if (!activeExam) return null;
 
@@ -230,7 +230,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
 
     try {
       if (mode === 'full') {
-        const preparedQuestions = isDemoAccount
+        const preparedQuestions = isPreviewAccess
           ? prepareExamQuestions(fullExamQuestions)
           : prepareFullMockForExam(activeExam.id, fullExamQuestions);
         onStartExam({
@@ -241,7 +241,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
           questionCount: preparedQuestions.length,
           questions: preparedQuestions,
           fullPool: fullExamQuestions,
-          timeAllowedSeconds: isDemoAccount && enableTimer ? preparedQuestions.length * 120 : undefined
+          timeAllowedSeconds: isPreviewAccess && enableTimer ? preparedQuestions.length * 120 : undefined
         });
       } else if (mode === 'domain') {
         const preparedQuestions = prepareExamQuestions(topicQuestions);
@@ -255,7 +255,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
           fullPool: topicQuestions
         });
       } else if (mode === 'custom') {
-        const selectionTypeParam = isAllAvailable ? 'all' : (isDemoAccount ? 'random' : customSelectionType);
+        const selectionTypeParam = isAllAvailable ? 'all' : (isPreviewAccess ? 'random' : customSelectionType);
         const countParam = isAllAvailable ? 'all' : parsedCustomCount;
 
         const result = prepareCustomExamQuestions(fullExamQuestions, {
@@ -306,9 +306,9 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
         </p>
       </div>
 
-      {isDemoAccount && (
+      {isPreviewAccess && (
         <DemoContentNotice>
-          This exam uses the same {bankTotal} preview questions on every visit. Question and answer order can still shuffle for realistic practice; the remaining bank stays outside the Demo experience.
+          Preview access uses the same {bankTotal} questions on every visit. Question and answer order can still shuffle for realistic practice. Signed-in progress is saved, while the remaining question bank requires an active entitlement for this exam.
         </DemoContentNotice>
       )}
 
@@ -333,10 +333,10 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
                 <CheckCircle2 className="w-5 h-5 text-indigo-400" />
               )}
             </div>
-            <h3 className="text-lg font-bold text-slate-100">{isDemoAccount ? 'Demo Exam Preview' : 'Full Mock Exam'}</h3>
+            <h3 className="text-lg font-bold text-slate-100">{isPreviewAccess ? 'Exam Preview' : 'Full Mock Exam'}</h3>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-              {isDemoAccount
-                ? `Practice with the fixed ${bankTotal}-question Demo set without exposing the complete exam bank.`
+              {isPreviewAccess
+                ? `Practice with the fixed ${bankTotal}-question preview set without exposing the complete exam bank.`
                 : activeExam.id === 'aws-saa-c03'
                 ? 'Covers all service topics in official weighted proportions. Draws 65 questions from the bank.'
                 : `Covers every available topic using all ${bankTotal} questions in this exam bank.`}
@@ -345,10 +345,10 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
           <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs font-semibold text-slate-400">
             <span className="flex items-center gap-1 text-indigo-300 font-extrabold">
               <HelpCircle className="w-3.5 h-3.5 text-indigo-400" /> 
-              {isDemoAccount ? bankTotal : (activeExam.id === 'aws-saa-c03' ? 65 : bankTotal)} Questions
+              {isPreviewAccess ? bankTotal : (activeExam.id === 'aws-saa-c03' ? 65 : bankTotal)} Questions
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-purple-400" /> {isDemoAccount ? bankTotal * 2 : (activeExam.timeLimitMinutes || 130)} Mins
+              <Clock className="w-3.5 h-3.5 text-purple-400" /> {isPreviewAccess ? bankTotal * 2 : (activeExam.timeLimitMinutes || 130)} Mins
             </span>
           </div>
         </div>
@@ -521,9 +521,9 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
                   <button
                     type="button"
                     onClick={() => setCustomSelectionType('balanced')}
-                    disabled={isAllAvailable || isDemoAccount}
+                    disabled={isAllAvailable || isPreviewAccess}
                     className={`p-3 rounded-xl border text-xs font-bold text-left transition-all ${
-                      isAllAvailable || isDemoAccount
+                      isAllAvailable || isPreviewAccess
                         ? 'opacity-40 cursor-not-allowed bg-slate-950 border-slate-800 text-slate-500'
                         : customSelectionType === 'balanced'
                           ? 'bg-indigo-950/80 border-indigo-500 text-indigo-200 ring-1 ring-indigo-500'
@@ -531,7 +531,7 @@ export const ExamSetup = ({ onStartExam, presetConfig, onViewAttempt }) => {
                     }`}
                   >
                     <span className="block text-slate-100 font-extrabold mb-0.5">Balanced</span>
-                    <span className="text-[11px] text-slate-400 font-normal">{isDemoAccount ? 'Available with the full question bank' : 'Official domain weighting (30/26/24/20%)'}</span>
+                    <span className="text-[11px] text-slate-400 font-normal">{isPreviewAccess ? 'Available with the full question bank' : 'Official domain weighting (30/26/24/20%)'}</span>
                   </button>
 
                   <button

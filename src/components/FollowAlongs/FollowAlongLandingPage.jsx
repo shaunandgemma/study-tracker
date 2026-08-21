@@ -1,42 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { Layers, Search, Sparkles, Network, CheckCircle2, ListFilter, ChevronDown } from 'lucide-react';
-import { FOLLOW_ALONG_LANDING_PROGRAMMES, isFollowAlongProgrammeForExam, isFollowAlongProgrammeVisible } from '../../data/followAlongProgrammes.js';
+import { Layers, Search, Sparkles, Network, CheckCircle2, ListFilter, ChevronDown, ShieldCheck } from 'lucide-react';
 import { FollowAlongCard } from './FollowAlongCard.jsx';
-import { createPublishedFollowAlongService, mergePublishedProgrammeCards } from '../../features/followAlongs/published/publishedFollowAlongService.js';
 import { createPublishedProgressLoadingSummaries, loadPublishedFollowAlongProgressSummaries } from '../../features/followAlongs/published/publishedFollowAlongProgress.js';
 import { ALL_FOLLOW_ALONG_CATEGORIES, getSortedFollowAlongCategories } from '../../features/followAlongs/published/followAlongCategoryFilter.js';
 import { getTerraformFollowAlongNumber, sortTerraformFollowAlongs } from '../../features/followAlongs/published/terraformFollowAlongOrder.js';
 import { createFollowAlongPersistence } from '../../services/followAlongPersistenceService.js';
 import { demoProgressStorage, isDemoUser } from '../../features/demo/demoMode.js';
 import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
-import { limitDemoFollowAlongs } from '../../features/demo/demoContentPolicy.js';
+import {
+  applyProtectedFollowAlongVisibility,
+  protectedFollowAlongContentService
+} from '../../services/protectedFollowAlongContentService.js';
+
+const ProtectedFollowAlongState = ({ status, onRetry }) => {
+  if (status === 'loading') {
+    return (
+      <div role="status" className="rounded-2xl border border-cyan-900/60 bg-slate-900/70 p-8 text-center">
+        <ShieldCheck className="mx-auto h-8 w-8 text-cyan-400" />
+        <p className="mt-3 text-sm font-bold text-slate-200">Loading protected Follow Alongs…</p>
+        <p className="mt-2 text-xs text-slate-500">Only programmes available for this exact exam and account will be shown.</p>
+      </div>
+    );
+  }
+
+  if (status === 'unavailable') {
+    return (
+      <div role="alert" className="rounded-2xl border border-amber-800/60 bg-amber-950/20 p-8 text-center">
+        <p className="text-sm font-bold text-amber-200">Protected Follow Alongs are temporarily unavailable.</p>
+        <p className="mt-2 text-xs text-amber-200/80">No bundled or legacy paid content was substituted.</p>
+        <button type="button" onClick={onRetry} className="mt-4 rounded-xl border border-amber-700 bg-amber-900/50 px-4 py-2 text-xs font-bold text-amber-100 hover:bg-amber-900">
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div role="status" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-8 text-center">
+      <p className="text-sm font-bold text-slate-200">No published Follow Alongs are available for this exam.</p>
+      <p className="mt-2 text-xs text-slate-500">Content from another exam or a bundled fallback was not substituted.</p>
+    </div>
+  );
+};
 
 export const FollowAlongLandingPage = ({
   currentUser = null,
+  previewOnly = false,
   examId = 'aws-saa-c03',
   examCode = 'AWS SAA-C03',
   onSelectProgramme = () => {}
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(ALL_FOLLOW_ALONG_CATEGORIES);
-  const [programmes, setProgrammes] = useState(() => FOLLOW_ALONG_LANDING_PROGRAMMES.filter(programme => isFollowAlongProgrammeForExam(programme, examId)));
+  const [contentRequestRevision, setContentRequestRevision] = useState(0);
+  const [contentStatus, setContentStatus] = useState('loading');
+  const [programmes, setProgrammes] = useState([]);
   const [progressSummaries, setProgressSummaries] = useState({});
   const demoAccount = isDemoUser(currentUser);
 
   useEffect(() => {
     let active = true;
-    const service = createPublishedFollowAlongService();
+    setContentStatus('loading');
+    setProgrammes([]);
     setProgressSummaries({});
-    service.listPublishedProgrammes().then(async result => {
-      if (!active || !result.success) return;
-      setProgrammes(
-        mergePublishedProgrammeCards(FOLLOW_ALONG_LANDING_PROGRAMMES, result.programmes)
-          .filter(isFollowAlongProgrammeVisible)
-          .filter(programme => isFollowAlongProgrammeForExam(programme, examId))
-      );
-      setProgressSummaries(createPublishedProgressLoadingSummaries(result.rows));
+    protectedFollowAlongContentService.listForExam(examId).then(async result => {
+      if (!active) return;
+      if (!result.success) {
+        setContentStatus('unavailable');
+        return;
+      }
+      const visible = applyProtectedFollowAlongVisibility({
+        followAlongs: result.followAlongs,
+        examId,
+        previewOnly
+      });
+      if (!visible.success) {
+        setContentStatus('unavailable');
+        return;
+      }
+      const protectedFollowAlongs = visible.followAlongs;
+      setProgrammes(protectedFollowAlongs.map(item => item.programme));
+      setContentStatus(protectedFollowAlongs.length ? 'ready' : 'empty');
+      setProgressSummaries(createPublishedProgressLoadingSummaries(protectedFollowAlongs));
       const summaries = await loadPublishedFollowAlongProgressSummaries(
-        result.rows,
+        protectedFollowAlongs,
         demoAccount ? null : currentUser?.id || null,
         demoAccount
           ? { persistenceFactory: config => createFollowAlongPersistence(config, { storage: demoProgressStorage }) }
@@ -45,15 +92,21 @@ export const FollowAlongLandingPage = ({
       if (active) setProgressSummaries(summaries);
     });
     return () => { active = false; };
-  }, [currentUser?.id, demoAccount, examId]);
+  }, [contentRequestRevision, currentUser?.id, demoAccount, examId, previewOnly]);
+
+  if (contentStatus !== 'ready') {
+    return (
+      <ProtectedFollowAlongState
+        status={contentStatus}
+        onRetry={() => setContentRequestRevision(revision => revision + 1)}
+      />
+    );
+  }
 
   const orderedProgrammes = examId === 'terraform-associate-004'
     ? sortTerraformFollowAlongs(programmes)
     : programmes;
-  const demoProgrammes = limitDemoFollowAlongs(
-    orderedProgrammes.filter(programme => programme.status === 'available')
-  );
-  const displayedProgrammes = demoAccount ? demoProgrammes : orderedProgrammes;
+  const displayedProgrammes = orderedProgrammes;
 
   // Extract unique categories from only the content this account can open.
   const categories = getSortedFollowAlongCategories(displayedProgrammes);
@@ -116,9 +169,9 @@ export const FollowAlongLandingPage = ({
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-cyan-600/10 via-cyan-500/5 to-transparent pointer-events-none" />
       </div>
 
-      {demoAccount && (
+      {previewOnly && (
         <DemoContentNotice>
-          Two Follow Alongs are available in this exam workspace. The paid exam workspace unlocks the complete assigned Follow Along library.
+          Preview access includes two Follow Alongs in this exam workspace. Signed-in progress is saved. An active exam entitlement unlocks the complete assigned Follow Along library.
         </DemoContentNotice>
       )}
 

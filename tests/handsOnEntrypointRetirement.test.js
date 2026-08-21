@@ -10,6 +10,7 @@ test('Step 58 Hands On entry-point retirement', async (t) => {
   const mobileSource = read('src/components/MobileBottomNav.jsx');
   const examContextSource = read('src/context/ExamContext.jsx');
   const landingSource = read('src/components/FollowAlongs/FollowAlongLandingPage.jsx');
+  const appLandingSource = read('src/components/Landing/AppLandingPage.jsx');
 
   await t.test('1. the retired Hands On page is no longer imported or rendered', () => {
     assert.doesNotMatch(appSource, /HandsOnTasksView|viewMode === 'hands-on-tasks'/);
@@ -27,17 +28,16 @@ test('Step 58 Hands On entry-point retirement', async (t) => {
     assert.match(mobileSource, /id: 'follow-alongs'/);
   });
 
-  await t.test('4. the retired Hands On mode is gone while the old VPC route remains safe', () => {
+  await t.test('4. the retired Hands On mode and hidden VPC learner route are gone', () => {
     assert.doesNotMatch(examContextSource, /hands-on-tasks/);
-    assert.match(examContextSource, /mode === 'vpc-learning-path'/);
-    assert.match(examContextSource, /\? 'follow-alongs'/);
-    assert.match(examContextSource, /setViewModeRaw\(normalizedMode\)/);
+    assert.doesNotMatch(examContextSource, /vpc-learning-path|legacyAutoOpenProgrammeId/);
+    assert.match(examContextSource, /setViewModeRaw\(mode\)/);
   });
 
   await t.test('5. user-facing wording describes Follow Alongs', () => {
-    assert.match(appSource, /Interactive Study & AWS Follow Alongs/);
+    assert.match(appLandingSource, /guided Follow Alongs/);
     assert.match(landingSource, /multiple guided tasks/);
-    assert.doesNotMatch(`${appSource}\n${landingSource}`, /Hands-On Labs|hands-on labs|Back to All Labs/);
+    assert.doesNotMatch(`${appSource}\n${appLandingSource}\n${landingSource}`, /Hands-On Labs|hands-on labs|Back to All Labs/);
   });
 
   await t.test('6. the unused AWS connection entry point is retired', () => {

@@ -14,9 +14,17 @@ function notStartedSummary(config) {
   };
 }
 
+function getProgrammeConfig(row) {
+  return row?.config || buildPublishedFollowAlongConfig(row);
+}
+
+function getProgrammeId(row, config = getProgrammeConfig(row)) {
+  return config?.identity?.programmeId || row?.programme?.id || row?.programme_id || null;
+}
+
 export function createPublishedProgressLoadingSummaries(rows = []) {
   return Object.fromEntries(rows.map(row => [
-    row?.programme_id,
+    getProgrammeId(row),
     { loading: true }
   ]).filter(([programmeId]) => Boolean(programmeId)));
 }
@@ -27,8 +35,8 @@ export async function loadPublishedFollowAlongProgressSummaries(
   { persistenceFactory = createFollowAlongPersistence } = {}
 ) {
   const summaries = await Promise.all(rows.map(async row => {
-    const config = buildPublishedFollowAlongConfig(row);
-    const programmeId = config?.identity?.programmeId || row?.programme_id;
+    const config = getProgrammeConfig(row);
+    const programmeId = getProgrammeId(row, config);
     if (!programmeId || !config) return null;
 
     try {

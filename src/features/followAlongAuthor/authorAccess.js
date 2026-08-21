@@ -1,28 +1,23 @@
-const AUTHOR_ROLES = new Set(['author', 'admin']);
-const APPROVER_ROLES = new Set(['approver', 'admin']);
-const PRIVILEGED_FOLLOW_ALONG_ROLES = new Set(['author', 'approver', 'admin']);
+import {
+  buildApplicationAccessPolicy,
+  getApplicationRoles
+} from '../access/applicationAccessPolicy.js';
 
 export function getAuthorRoles(user) {
-  const appMetadata = user?.app_metadata;
-  if (!appMetadata || typeof appMetadata !== 'object') return [];
-
-  const roles = [];
-  if (typeof appMetadata.role === 'string') roles.push(appMetadata.role);
-  if (Array.isArray(appMetadata.roles)) roles.push(...appMetadata.roles);
-
-  return [...new Set(roles.map(role => String(role).trim().toLowerCase()).filter(Boolean))];
+  return getApplicationRoles(user);
 }
 
 export function canAccessFollowAlongAuthor(user) {
-  return Boolean(user?.id) && getAuthorRoles(user).some(role => AUTHOR_ROLES.has(role));
+  return buildApplicationAccessPolicy(user).canAccessAuthor;
 }
 
 export function canAccessFollowAlongApprovals(user) {
-  return Boolean(user?.id) && getAuthorRoles(user).some(role => APPROVER_ROLES.has(role));
+  return buildApplicationAccessPolicy(user).canAccessApprovals;
 }
 
 export function isPrivilegedFollowAlongAccount(user) {
-  return Boolean(user?.id) && getAuthorRoles(user).some(role => PRIVILEGED_FOLLOW_ALONG_ROLES.has(role));
+  const policy = buildApplicationAccessPolicy(user);
+  return policy.canAccessAuthor || policy.canAccessApprovals;
 }
 
 export function isAuthorApprovalEntryRequested(location = globalThis.location) {
@@ -32,4 +27,11 @@ export function isAuthorApprovalEntryRequested(location = globalThis.location) {
 export function isAuthorEntryRequested(location = globalThis.location) {
   const hash = String(location?.hash || '').toLowerCase();
   return hash === '#author' || hash.startsWith('#author/');
+}
+
+export function isUnsupportedAuthorEntryRequested(location = globalThis.location) {
+  const hash = String(location?.hash || '').toLowerCase();
+  return isAuthorEntryRequested({ hash })
+    && hash !== '#author'
+    && hash !== '#author/approvals';
 }

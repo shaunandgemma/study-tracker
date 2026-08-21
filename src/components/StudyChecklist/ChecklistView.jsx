@@ -1,74 +1,191 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useExam } from '../../context/ExamContext';
 import { TopicCard } from './TopicCard';
 import { TerraformKnowledgeGuidePage } from './TerraformKnowledgeGuidePage.jsx';
 import {
-  TERRAFORM_KNOWLEDGE_GUIDE_ORDER,
-  getTerraformKnowledgeGuide
-} from '../../data/terraformKnowledgeGuide.js';
-import { getAwsKnowledgeGuide } from '../../data/awsKnowledgeGuide.js';
+  applyProtectedChecklistKnowledgeGuideVisibility,
+  buildProtectedChecklistTopics,
+  protectedChecklistKnowledgeGuideService
+} from '../../services/protectedChecklistKnowledgeGuideService.js';
 import { DemoContentNotice } from '../../features/demo/DemoContentNotice.jsx';
-import {
-  DEMO_CONTENT_LIMITS,
-  getDemoChecklistTopics,
-  getDemoKnowledgeGuideOrder
-} from '../../features/demo/demoContentPolicy.js';
+import { DEMO_CONTENT_LIMITS } from '../../features/demo/demoContentPolicy.js';
 import { 
   Search, 
   RotateCcw, 
   Sparkles, 
-  CheckCircle, 
-  Award, 
   Clock, 
   BookOpen, 
   Target,
-  BarChart2,
   Zap,
   Plus,
-  Layers,
   X,
   ChevronsUp,
   ChevronsDown,
-  CheckSquare
+  CheckSquare,
+  ShieldCheck
 } from 'lucide-react';
 
+const ProtectedStudyContentState = ({ status, onRetry }) => {
+  if (status === 'loading') {
+    return (
+      <div role="status" className="rounded-2xl border border-cyan-900/60 bg-slate-900/70 p-8 text-center">
+        <ShieldCheck className="mx-auto h-8 w-8 text-cyan-400" />
+        <p className="mt-3 text-sm font-bold text-slate-200">Loading protected Checklist and Knowledge Guide…</p>
+        <p className="mt-2 text-xs text-slate-500">Only content available for this exact exam and account will be shown.</p>
+      </div>
+    );
+  }
+
+  if (status === 'unavailable') {
+    return (
+      <div role="alert" className="rounded-2xl border border-amber-800/60 bg-amber-950/20 p-8 text-center">
+        <p className="text-sm font-bold text-amber-200">Protected study content is temporarily unavailable.</p>
+        <p className="mt-2 text-xs text-amber-200/80">No bundled Checklist or Knowledge Guide content was substituted.</p>
+        <button type="button" onClick={onRetry} className="mt-4 rounded-xl border border-amber-700 bg-amber-900/50 px-4 py-2 text-xs font-bold text-amber-100 hover:bg-amber-900">
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (status === 'guide-empty') {
+    return (
+      <div role="status" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-8 text-center">
+        <p className="text-sm font-bold text-slate-200">No published Knowledge Guide is available for this exam.</p>
+        <p className="mt-2 text-xs text-slate-500">No bundled Knowledge Guide content was substituted.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div role="status" className="rounded-2xl border border-slate-700 bg-slate-900/70 p-8 text-center">
+      <p className="text-sm font-bold text-slate-200">No published Checklist content is available for this exam.</p>
+      <p className="mt-2 text-xs text-slate-500">No bundled content was substituted.</p>
+    </div>
+  );
+};
+
 export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, onExitKnowledgeGuide = () => {} }) => {
-  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic, canManageContent, isDemoAccount } = useExam();
+  const { activeExam, activeExamId, checklist, checkGroupTasks, resetExamProgress, addTopic, isPreviewAccess } = useExam();
+  const canEditChecklist = false;
   const isAwsGuide = activeExamId === 'aws-saa-c03';
-  const knowledgeGuideOrder = isDemoAccount
-    ? getDemoKnowledgeGuideOrder(activeExam)
-    : isAwsGuide
-      ? (activeExam?.topics || []).flatMap(topic => (topic.items || []).map(item => item.id))
-      : TERRAFORM_KNOWLEDGE_GUIDE_ORDER;
+  const [contentRequestRevision, setContentRequestRevision] = useState(0);
+  const [protectedContentState, setProtectedContentState] = useState({
+    status: 'loading',
+    topics: [],
+    checklistItems: [],
+    knowledgeGuides: []
+  });
+  const knowledgeGuideOrder = useMemo(
+    () => protectedContentState.knowledgeGuides.map(guide => guide.id),
+    [protectedContentState.knowledgeGuides]
+  );
+  const knowledgeGuideById = useMemo(
+    () => new Map(protectedContentState.knowledgeGuides.map(guide => [guide.id, guide])),
+    [protectedContentState.knowledgeGuides]
+  );
   
   const [searchQuery, setSearchQuery] = useState('');
   const [allCollapsed, setAllCollapsed] = useState(false);
   const [isAddingTopic, setIsAddingTopic] = useState(false);
   const [newTopicTitle, setNewTopicTitle] = useState('');
   const [newTopicCode, setNewTopicCode] = useState('AWS Service');
-  const [newTopicWeight, setNewTopicWeight] = useState(15);
+  const [newTopicWeight] = useState(15);
   const [newTopicDesc, setNewTopicDesc] = useState('');
   const [selectedKnowledgeGuide, setSelectedKnowledgeGuide] = useState(() => (
-    startKnowledgeGuide
-      ? { itemId: knowledgeGuideOrder[0] }
-      : null
+    null
   ));
+
+  useEffect(() => {
+    let cancelled = false;
+    setSelectedKnowledgeGuide(null);
+    setProtectedContentState({ status: 'loading', topics: [], checklistItems: [], knowledgeGuides: [] });
+
+    const loadProtectedStudyContent = async () => {
+      const result = await protectedChecklistKnowledgeGuideService.listForExam(activeExamId);
+      if (cancelled) return;
+      if (!result.success) {
+        setProtectedContentState({ status: 'unavailable', topics: [], checklistItems: [], knowledgeGuides: [] });
+        return;
+      }
+
+      const visible = applyProtectedChecklistKnowledgeGuideVisibility({
+        checklistItems: result.checklistItems,
+        knowledgeGuides: result.knowledgeGuides,
+        examId: activeExamId,
+        previewOnly: isPreviewAccess
+      });
+      const topicResult = visible.success
+        ? buildProtectedChecklistTopics({ checklistItems: visible.checklistItems, examId: activeExamId })
+        : { success: false };
+      if (!visible.success || !topicResult.success) {
+        setProtectedContentState({ status: 'unavailable', topics: [], checklistItems: [], knowledgeGuides: [] });
+        return;
+      }
+
+      setProtectedContentState({
+        status: 'ready',
+        topics: topicResult.topics,
+        checklistItems: visible.checklistItems,
+        knowledgeGuides: visible.knowledgeGuides
+      });
+    };
+
+    loadProtectedStudyContent();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeExamId, contentRequestRevision, isPreviewAccess]);
+
+  useEffect(() => {
+    if (
+      startKnowledgeGuide
+      && protectedContentState.status === 'ready'
+      && !selectedKnowledgeGuide
+      && knowledgeGuideOrder[0]
+    ) {
+      setSelectedKnowledgeGuide({ itemId: knowledgeGuideOrder[0] });
+    }
+  }, [knowledgeGuideOrder, protectedContentState.status, selectedKnowledgeGuide, startKnowledgeGuide]);
 
   if (!activeExam) return null;
 
-  if ((activeExamId === 'terraform-associate-004' || isAwsGuide) && selectedKnowledgeGuide) {
+  if (protectedContentState.status !== 'ready' || !protectedContentState.checklistItems.length) {
+    return (
+      <ProtectedStudyContentState
+        status={protectedContentState.status === 'ready' ? 'empty' : protectedContentState.status}
+        onRetry={() => setContentRequestRevision(revision => revision + 1)}
+      />
+    );
+  }
+
+  if (startKnowledgeGuide && !protectedContentState.knowledgeGuides.length) {
+    return <ProtectedStudyContentState status="guide-empty" onRetry={() => {}} />;
+  }
+
+  if (selectedKnowledgeGuide) {
     const currentIndex = knowledgeGuideOrder.indexOf(selectedKnowledgeGuide.itemId);
+    const selectedGuide = knowledgeGuideById.get(selectedKnowledgeGuide.itemId) || null;
     const openGuideAtIndex = index => {
       const itemId = knowledgeGuideOrder[index];
       if (itemId) setSelectedKnowledgeGuide({ itemId });
     };
 
+    if (!selectedGuide || currentIndex < 0) {
+      return (
+        <ProtectedStudyContentState
+          status="unavailable"
+          onRetry={() => setContentRequestRevision(revision => revision + 1)}
+        />
+      );
+    }
+
     return (
       <TerraformKnowledgeGuidePage
-        guide={isAwsGuide ? getAwsKnowledgeGuide(selectedKnowledgeGuide.itemId) : getTerraformKnowledgeGuide(selectedKnowledgeGuide.itemId)}
-        objectiveCode={selectedKnowledgeGuide.objectiveCode || (isAwsGuide
-          ? getAwsKnowledgeGuide(selectedKnowledgeGuide.itemId)?.objectiveCode
-          : `Objective ${selectedKnowledgeGuide.itemId.split('-')[1].charAt(0)}`)}
+        guide={selectedGuide}
+        objectiveCode={selectedKnowledgeGuide.objectiveCode || selectedGuide.objectiveCode || (isAwsGuide
+          ? 'AWS SAA-C03'
+          : `Objective ${selectedKnowledgeGuide.itemId.split('-')[1]?.charAt(0) || ''}`)}
         currentIndex={currentIndex}
         totalLessons={knowledgeGuideOrder.length}
         onPrevious={currentIndex > 0 ? () => openGuideAtIndex(currentIndex - 1) : null}
@@ -79,9 +196,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
     );
   }
 
-  const topicsList = isDemoAccount
-    ? getDemoChecklistTopics(activeExam)
-    : activeExam.topics || activeExam.domains || [];
+  const topicsList = protectedContentState.topics;
 
   // Calculate statistics across active exam
   let totalTasks = 0;
@@ -194,7 +309,11 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
               </div>
               <div className="flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-pink-400" />
-                <span>{isDemoAccount ? DEMO_CONTENT_LIMITS.examQuestions : (activeExam.id === 'aws-saa-c03' ? 20 : (activeExam.questions?.length || 0))} Practice Questions</span>
+                <span>{isPreviewAccess
+                  ? `${DEMO_CONTENT_LIMITS.examQuestions} Preview Questions`
+                  : activeExam.questionSource === 'supabase' || activeExam.id === 'aws-saa-c03'
+                    ? 'Complete Question Bank'
+                    : `${activeExam.questions?.length || 0} Practice Questions`}</span>
               </div>
             </div>
           </div>
@@ -220,9 +339,9 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
         </div>
       </div>
 
-      {isDemoAccount && (
+      {isPreviewAccess && (
         <DemoContentNotice>
-          The first {DEMO_CONTENT_LIMITS.checklistItems} checklist rows and their matching Knowledge Guide pages are available for this exam. The paid exam workspace unlocks every objective and lesson.
+          Preview access includes the first {DEMO_CONTENT_LIMITS.checklistItems} checklist rows and their matching Knowledge Guide pages for this exam. Your progress is saved when you are signed in. An active exam entitlement unlocks every objective and lesson.
         </DemoContentNotice>
       )}
 
@@ -285,7 +404,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
             <span>Check All Groups</span>
           </button>
 
-          {canManageContent && <button
+          {canEditChecklist && <button
             onClick={() => setIsAddingTopic(!isAddingTopic)}
             className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2"
           >
@@ -305,7 +424,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
       </div>
 
       {/* Level 1: Inline Form for Adding New Topic / Service */}
-      {canManageContent && isAddingTopic && (
+      {canEditChecklist && isAddingTopic && (
         <form onSubmit={handleCreateTopic} className="p-6 rounded-3xl bg-slate-900 border border-indigo-800/80 shadow-2xl space-y-4 animate-fadeIn">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
@@ -383,6 +502,7 @@ export const ChecklistView = ({ onLaunchPrepExam, startKnowledgeGuide = false, o
             topic={topic}
             searchQuery={searchQuery}
             forceCollapsed={allCollapsed}
+            contentManagementEnabled={false}
             onOpenKnowledgeGuide={activeExamId === 'terraform-associate-004' || activeExamId === 'aws-saa-c03'
               ? (itemId, objectiveCode) => setSelectedKnowledgeGuide({ itemId, objectiveCode })
               : null}

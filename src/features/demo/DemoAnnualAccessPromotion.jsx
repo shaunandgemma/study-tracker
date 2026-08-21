@@ -38,7 +38,7 @@ const ANNUAL_ACCESS_BENEFITS = Object.freeze([
   },
   {
     title: 'Twelve months of access and updates',
-    description: 'Keep progress and exam history while receiving additions made to the purchased exam workspace during the access year.',
+    description: 'Unlock the purchased exam’s complete library and receive additions made to that workspace during the access year.',
     icon: CalendarDays
   }
 ]);
@@ -51,9 +51,10 @@ export const DemoAnnualAccessBanner = () => (
           <Crown className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-black text-white">The paid exam workspace unlocks the complete learning library for one year.</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-amber-300">Preview access is active for this exam</p>
+          <p className="mt-1 text-sm font-black text-white">An active exam entitlement unlocks the complete learning library for one year.</p>
           <p className="mt-1 text-xs leading-5 text-slate-300">
-            Full question banks, every checklist lesson, all assigned Follow Alongs and Troubleshooting Challenges, saved progress, exam history and updates are included.
+            Full question banks, every checklist lesson, all assigned Follow Alongs, Troubleshooting Challenges and updates are included. Signed-in accounts keep their progress even while using the preview.
           </p>
         </div>
       </div>

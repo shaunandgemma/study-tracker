@@ -1,9 +1,16 @@
 import React from 'react';
-import { ArrowRight, Award, BookOpenCheck, CheckCircle2, GraduationCap, PlusCircle, Sparkles } from 'lucide-react';
+import { ArrowRight, Award, BookOpenCheck, CheckCircle2, CreditCard, GraduationCap, PlusCircle, Sparkles } from 'lucide-react';
 import { getExamChecklistItemCount } from '../../utils/examNavigation.js';
 import { DemoAnnualAccessAdvert } from '../../features/demo/DemoAnnualAccessPromotion.jsx';
+import { getExamAccessDetails, isExamPreviewOnly } from '../../features/access/applicationAccessPolicy.js';
+import { ExamPaymentControls } from '../../features/payments/ExamPaymentControls.jsx';
 
-export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam = () => {}, canManageContent = false, isDemoAccount = false }) => (
+const canShowLandingPaymentControl = (accessPolicy, examId) => {
+  const accessKind = getExamAccessDetails(accessPolicy, examId).kind;
+  return accessKind === 'preview' || accessKind === 'paid';
+};
+
+export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam = () => {}, canManageContent = false, accessPolicy = null }) => (
   <div className="space-y-6 animate-fadeIn">
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-indigo-950/35 to-slate-950 p-7 sm:p-10 shadow-2xl">
@@ -66,7 +73,7 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
                 <h3 className="text-sm font-bold leading-5 text-white">{exam.title}</h3>
                 <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-400">
                   <BookOpenCheck className="h-3.5 w-3.5 text-cyan-400" />
-                  {isDemoAccount ? 'Curated Demo preview' : `${getExamChecklistItemCount(exam)} checklist items`}
+                  {isExamPreviewOnly(accessPolicy, exam.id) ? 'Curated preview access' : `${getExamChecklistItemCount(exam)} checklist items`}
                 </p>
               </div>
               <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-indigo-300" />
@@ -85,6 +92,37 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
       </aside>
     </div>
 
-    {isDemoAccount && <DemoAnnualAccessAdvert />}
+    {exams.some(exam => canShowLandingPaymentControl(accessPolicy, exam.id)) && (
+      <section className="rounded-3xl border border-slate-800 bg-slate-900/75 p-5 shadow-xl sm:p-7" aria-labelledby="annual-exam-access-title">
+        <div className="flex items-start gap-3">
+          <div className="rounded-xl border border-amber-700/70 bg-amber-950/60 p-2.5 text-amber-300">
+            <CreditCard className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Signed-in learner access</p>
+            <h2 id="annual-exam-access-title" className="text-xl font-bold text-white">Annual exam access</h2>
+            <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400">
+              Purchase one exam workspace at a time. Access, billing and renewal remain separate for every exam.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {exams
+            .filter(exam => canShowLandingPaymentControl(accessPolicy, exam.id))
+            .map(exam => (
+              <article key={exam.id} className="rounded-2xl border border-slate-800 bg-slate-950/65 p-4">
+                <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                  {exam.code}
+                </span>
+                <h3 className="mt-3 text-sm font-bold leading-5 text-white">{exam.title}</h3>
+                <ExamPaymentControls accessPolicy={accessPolicy} examId={exam.id} />
+              </article>
+            ))}
+        </div>
+      </section>
+    )}
+
+    {exams.some(exam => isExamPreviewOnly(accessPolicy, exam.id)) && <DemoAnnualAccessAdvert />}
   </div>
 );

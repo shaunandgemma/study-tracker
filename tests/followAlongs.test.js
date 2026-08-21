@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   FOLLOW_ALONG_LANDING_PROGRAMMES,
@@ -66,15 +67,12 @@ test('Follow Alongs - Navigation & View Mode Compatibility', async (t) => {
     assert.equal(vpcProg.pathId, 'vpc-learning-path');
   });
 
-  await t.test('6. Legacy vpc-learning-path state normalizes to follow-alongs and auto-opens VPC', () => {
-    // Normalization helper test
-    const normalizeMode = (mode) => (mode === 'vpc-learning-path' ? 'follow-alongs' : mode);
-    const getAutoOpenId = (mode) => (mode === 'vpc-learning-path' ? 'vpc-learning-path' : null);
+  await t.test('6. Retained VPC source is no longer an active learner route', () => {
+    const app = readFileSync('src/App.jsx', 'utf8');
+    const context = readFileSync('src/context/ExamContext.jsx', 'utf8');
+    const followAlongsView = readFileSync('src/components/FollowAlongs/FollowAlongsView.jsx', 'utf8');
 
-    assert.equal(normalizeMode('vpc-learning-path'), 'follow-alongs');
-    assert.equal(getAutoOpenId('vpc-learning-path'), 'vpc-learning-path');
-    assert.equal(normalizeMode('checklist'), 'checklist');
-    assert.equal(getAutoOpenId('checklist'), null);
+    assert.doesNotMatch(`${app}\n${context}\n${followAlongsView}`, /vpc-learning-path|legacyAutoOpenProgrammeId|VpcLearningPathView/);
   });
 });
 

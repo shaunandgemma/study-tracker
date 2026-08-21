@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { canAccessFollowAlongAuthor, getAuthorRoles, isAuthorEntryRequested } from '../src/features/followAlongAuthor/authorAccess.js';
+import { canAccessFollowAlongAuthor, getAuthorRoles, isAuthorEntryRequested, isUnsupportedAuthorEntryRequested } from '../src/features/followAlongAuthor/authorAccess.js';
 import { createAuthorDraft, getAuthorDraftStorageKey, loadAuthorDrafts, saveAuthorDraft, storeNewAuthorDraft } from '../src/features/followAlongAuthor/authorDraftService.js';
 
 function memoryStorage() {
@@ -24,6 +24,12 @@ test('Follow Along Author foundation', async t => {
     assert.equal(isAuthorEntryRequested({ hash: '#author/drafts' }), true);
     assert.equal(isAuthorEntryRequested({ hash: '#follow-alongs' }), false);
     assert.equal(isAuthorEntryRequested({ hash: '' }), false);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author' }), false);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author/approvals' }), false);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author/drafts' }), true);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author/' }), true);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#author/approvals/' }), true);
+    assert.equal(isUnsupportedAuthorEntryRequested({ hash: '#authorish' }), false);
 
     const navbar = readFileSync('src/components/Navbar.jsx', 'utf8');
     const mobile = readFileSync('src/components/MobileBottomNav.jsx', 'utf8');
@@ -112,5 +118,15 @@ test('Follow Along Author foundation', async t => {
     assert.match(app, /<AuthProvider>[\s\S]*<AuthenticatedApplication \/>/);
     assert.match(app, /return \([\s\S]*<ExamProvider[^>]*>[\s\S]*<MainContent \/>/);
     assert.doesNotMatch(app, /TaskProvider|TaskContext/);
+  });
+
+  await t.test('9. unsupported Author subroutes fail before authentication or role rendering', () => {
+    const entry = readFileSync('src/features/followAlongAuthor/AuthorEntry.jsx', 'utf8');
+    const unsupportedBoundary = entry.indexOf('if (unsupportedRequested)');
+    const authenticationBoundary = entry.indexOf('if (loadingAuth)');
+    assert.ok(unsupportedBoundary >= 0);
+    assert.ok(authenticationBoundary > unsupportedBoundary);
+    assert.match(entry, /Author page unavailable/);
+    assert.match(entry, /This Author address is not supported/);
   });
 });

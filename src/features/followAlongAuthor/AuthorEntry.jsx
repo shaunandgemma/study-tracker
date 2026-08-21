@@ -2,7 +2,7 @@ import React from 'react';
 import { LockKeyhole, LogOut } from 'lucide-react';
 import { AuthModal } from '../../components/Modals/AuthModal.jsx';
 import { useAuth } from '../auth/useAuth.js';
-import { canAccessFollowAlongApprovals, canAccessFollowAlongAuthor, isAuthorApprovalEntryRequested } from './authorAccess.js';
+import { canAccessFollowAlongApprovals, canAccessFollowAlongAuthor, isAuthorApprovalEntryRequested, isUnsupportedAuthorEntryRequested } from './authorAccess.js';
 import { AuthorHome } from './AuthorHome.jsx';
 import { AuthorApprovalQueue } from './AuthorApprovalQueue.jsx';
 import { isAuthorSharedStorageEnabled, isAuthorTrustedApprovalEnabled } from './authorSharedStorageService.js';
@@ -18,7 +18,9 @@ function AuthorAccountControls({ currentUser, onSignOut }) {
 export const AuthorEntry = () => {
   const { currentUser, loadingAuth, openAuthModal, signOut } = useAuth();
   const approvalRequested = isAuthorApprovalEntryRequested();
+  const unsupportedRequested = isUnsupportedAuthorEntryRequested();
 
+  if (unsupportedRequested) return <AccessMessage title="Author page unavailable" action={<button type="button" onClick={() => { globalThis.location.hash = ''; }} className="w-full px-4 py-2.5 rounded-xl bg-slate-800 text-sm font-bold text-white">Return to Study Tracker</button>}>This Author address is not supported. Use the exact Author or Approvals page address.</AccessMessage>;
   if (loadingAuth) return <AccessMessage title="Checking Author access">Please wait while your signed-in role is checked.</AccessMessage>;
   if (!currentUser) return <><AccessMessage title={approvalRequested ? 'Approver sign-in required' : 'Author sign-in required'} action={<button type="button" onClick={openAuthModal} className="w-full px-4 py-2.5 rounded-xl bg-cyan-600 text-sm font-bold text-white">Sign In</button>}>Sign in with an account that has the required server-managed role.</AccessMessage><AuthModal /></>;
   if (approvalRequested) {

@@ -38,7 +38,8 @@ test('exam-first landing navigation', async t => {
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === COMPTIA_SECURITY_PLUS_EXAM.id)?.title, COMPTIA_SECURITY_PLUS_EXAM.title);
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === TERRAFORM_ASSOCIATE_EXAM.id)?.topics.length, 8);
     assert.equal(getExamChecklistItemCount(TERRAFORM_ASSOCIATE_EXAM), 37);
-    assert.equal(TERRAFORM_ASSOCIATE_EXAM.questions.length, 100);
+    assert.equal(TERRAFORM_ASSOCIATE_EXAM.questionSource, 'supabase');
+    assert.equal('questions' in TERRAFORM_ASSOCIATE_EXAM, false);
   });
 
   await t.test('2. the app opens at the general landing page and then an exam landing page', () => {
@@ -74,7 +75,8 @@ test('exam-first landing navigation', async t => {
     const saaProgramme = { id: 'lambda-learning-path', examId: 'aws-saa-c03' };
     assert.equal(isFollowAlongProgrammeForExam(saaProgramme, 'aws-saa-c03'), true);
     assert.equal(isFollowAlongProgrammeForExam(saaProgramme, 'comptia-sec-plus'), false);
-    assert.match(followAlongLanding, /isFollowAlongProgrammeForExam\(programme, examId\)/);
+    assert.match(followAlongLanding, /protectedFollowAlongContentService\.listForExam\(examId\)/);
+    assert.match(followAlongLanding, /applyProtectedFollowAlongVisibility\([\s\S]*?examId,[\s\S]*?previewOnly/);
 
     const publishedCard = buildPublishedProgrammeCard({
       candidate_id: 'candidate-1',
@@ -130,7 +132,8 @@ test('exam-first landing navigation', async t => {
     });
     assert.equal(hcpTerraformCard.examId, 'terraform-associate-004');
     assert.equal(isFollowAlongProgrammeForExam(hcpTerraformCard, 'terraform-associate-004'), true);
-    assert.match(terraformFollowAlongOrder, /terraform-configuration-foundations-learning-path/);
+    assert.doesNotMatch(terraformFollowAlongOrder, /learning-path/);
+    assert.match(terraformFollowAlongOrder, /server-managed sort_order/);
     assert.match(followAlongLanding, /sortTerraformFollowAlongs/);
     assert.match(followAlongLanding, /cardNumber=\{numberedProgrammeIds\.get\(prog\.id\) \?\? null\}/);
   });

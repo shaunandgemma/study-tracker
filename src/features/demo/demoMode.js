@@ -1,3 +1,11 @@
+import {
+  getApplicationRoles,
+  isAdminUser,
+  isDemoIdentity
+} from '../access/applicationAccessPolicy.js';
+
+export { getApplicationRoles, isAdminUser };
+
 const runtimeEnv = import.meta.env || {};
 
 export const DEMO_MODE_FLAG = 'VITE_DEMO_MODE';
@@ -69,20 +77,7 @@ export function isDemoModeEnabled(environment = runtimeEnv) {
 }
 
 export function isDemoUser(user) {
-  return user?.is_demo === true || user?.id === DEMO_USER.id;
-}
-
-export function getApplicationRoles(user) {
-  const metadata = user?.app_metadata;
-  if (!metadata || typeof metadata !== 'object') return [];
-  const roles = [];
-  if (typeof metadata.role === 'string') roles.push(metadata.role);
-  if (Array.isArray(metadata.roles)) roles.push(...metadata.roles);
-  return [...new Set(roles.map(role => String(role).trim().toLowerCase()).filter(Boolean))];
-}
-
-export function isAdminUser(user) {
-  return Boolean(user?.id) && !isDemoUser(user) && getApplicationRoles(user).includes('admin');
+  return isDemoIdentity(user);
 }
 
 export function hasStoredDemoSession(storage = globalThis.sessionStorage) {
