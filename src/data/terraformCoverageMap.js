@@ -1,4 +1,5 @@
 import { TERRAFORM_ASSOCIATE_EXAM } from './exams/terraformAssociateExam.js';
+import { TERRAFORM_ASSOCIATE_QUESTIONS } from './exams/terraformAssociateQuestions.js';
 import { getTerraformKnowledgeGuide } from './terraformKnowledgeGuide/index.js';
 import { getTroubleshootingChallenge } from './troubleshootingChallenges/index.js';
 
@@ -88,7 +89,7 @@ const checklistItems = TERRAFORM_ASSOCIATE_EXAM.topics.flatMap(topic => (
   topic.items.map(item => ({ ...item, topicId: topic.id, topicTitle: topic.title, objectiveCode: topic.code }))
 ));
 
-const questionById = new Map(TERRAFORM_ASSOCIATE_EXAM.questions.map(question => [question.id, question]));
+const questionById = new Map(TERRAFORM_ASSOCIATE_QUESTIONS.map(question => [question.id, question]));
 const followAlongById = new Map(Object.values(TERRAFORM_FOLLOW_ALONG_REFERENCES).map(programme => [programme.id, programme]));
 const coverageByObjectiveId = new Map(TERRAFORM_OBJECTIVE_COVERAGE.map(coverage => [coverage.objectiveId, coverage]));
 
@@ -127,7 +128,7 @@ export function getTerraformCoverageSummary() {
     questionObjectives: count('questions'),
     followAlongObjectives: count('followAlong'),
     troubleshootingObjectives: count('troubleshooting'),
-    questionBankSize: TERRAFORM_ASSOCIATE_EXAM.questions.length,
+    questionBankSize: TERRAFORM_ASSOCIATE_QUESTIONS.length,
     followAlongProgrammes: Object.keys(TERRAFORM_FOLLOW_ALONG_REFERENCES).length,
     troubleshootingChallenges: new Set(rows.flatMap(row => row.troubleshooting.map(challenge => challenge.id))).size,
     gaps: {

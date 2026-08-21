@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { TERRAFORM_ASSOCIATE_EXAM } from '../src/data/exams/terraformAssociateExam.js';
+import { TERRAFORM_ASSOCIATE_QUESTIONS } from '../src/data/exams/terraformAssociateQuestions.js';
 import {
   TERRAFORM_FOLLOW_ALONG_REFERENCES,
   TERRAFORM_OBJECTIVE_COVERAGE,
@@ -21,7 +22,7 @@ test('Terraform 004 content coverage map', async t => {
 
   await t.test('resolves every mapped content reference', () => {
     const rows = getTerraformCoverageRows();
-    const questionIds = new Set(TERRAFORM_ASSOCIATE_EXAM.questions.map(question => question.id));
+    const questionIds = new Set(TERRAFORM_ASSOCIATE_QUESTIONS.map(question => question.id));
     const followAlongIds = new Set(Object.values(TERRAFORM_FOLLOW_ALONG_REFERENCES).map(programme => programme.id));
 
     for (const entry of TERRAFORM_OBJECTIVE_COVERAGE) {

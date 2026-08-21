@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { TERRAFORM_ASSOCIATE_EXAM } from '../src/data/exams/terraformAssociateExam.js';
+import { TERRAFORM_ASSOCIATE_QUESTIONS } from '../src/data/exams/terraformAssociateQuestions.js';
 
-const questions = TERRAFORM_ASSOCIATE_EXAM.questions;
+const questions = TERRAFORM_ASSOCIATE_QUESTIONS;
 const topicIds = new Set(TERRAFORM_ASSOCIATE_EXAM.topics.map(topic => topic.id));
 
 function wordCount(value) {

@@ -1,5 +1,3 @@
-import { TERRAFORM_ASSOCIATE_QUESTIONS } from './terraformAssociateQuestions.js';
-
 export const TERRAFORM_ASSOCIATE_EXAM = Object.freeze({
   id: 'terraform-associate-004',
   code: 'Terraform 004',
@@ -105,6 +103,5 @@ export const TERRAFORM_ASSOCIATE_EXAM = Object.freeze({
         { id: 'tf004-8d', text: 'Configure and use HCP Terraform integration' }
       ]
     }
-  ],
-  questions: TERRAFORM_ASSOCIATE_QUESTIONS
+  ]
 });

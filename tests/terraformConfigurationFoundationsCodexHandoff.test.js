@@ -86,12 +86,12 @@ test('Terraform Follow Along 0 teaches configuration construction rather than bl
   }
 });
 
-test('Terraform Follow Along 0 is sorted and numbered before the existing programmes', () => {
+test('Terraform card numbers preserve the protected server-managed order', () => {
   const programmes = [
+    { id: 'terraform-configuration-foundations-learning-path' },
+    { id: 'terraform-beginner-learning-path' },
     { id: 'terraform-state-backend-learning-path' },
     { id: 'future-terraform-learning-path' },
-    { id: 'terraform-beginner-learning-path' },
-    { id: 'terraform-configuration-foundations-learning-path' },
   ];
   const sorted = sortTerraformFollowAlongs(programmes);
   assert.deepEqual(sorted.map(programme => programme.id), [
@@ -100,6 +100,7 @@ test('Terraform Follow Along 0 is sorted and numbered before the existing progra
     'terraform-state-backend-learning-path',
     'future-terraform-learning-path',
   ]);
+  assert.notEqual(sorted, programmes);
   assert.equal(getTerraformFollowAlongNumber('terraform-configuration-foundations-learning-path', programmes), 0);
   assert.equal(getTerraformFollowAlongNumber('terraform-beginner-learning-path', programmes), 1);
   assert.equal(getTerraformFollowAlongNumber('terraform-state-backend-learning-path', programmes), 2);
