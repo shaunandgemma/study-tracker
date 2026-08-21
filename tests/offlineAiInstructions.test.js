@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 test('external AI instructions require portable source files without local builder access', () => {
-  const instructions = readFileSync('AI_Follow_Along_Steps.txt', 'utf8');
+  const instructions = readFileSync('output/txt/AI_Follow_Along_Steps.txt', 'utf8');
 
   assert.match(instructions, /offline-follow-along-manuscript\.json/);
   assert.match(instructions, /offline-follow-along-preview\.md/);
