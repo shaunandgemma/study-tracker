@@ -25,6 +25,31 @@ function invoiceSubscriptionId(invoice) {
   return objectId(invoice?.parent?.subscription_details?.subscription) || objectId(invoice?.subscription);
 }
 
+async function invoiceForPaymentIntent(stripe, paymentIntentId) {
+  if (!paymentIntentId) throw new Error('The Stripe refund has no PaymentIntent boundary.');
+
+  const invoicePayments = await stripe.invoicePayments.list({
+    limit: 2,
+    payment: {
+      payment_intent: paymentIntentId,
+      type: 'payment_intent'
+    }
+  });
+  const matches = Array.isArray(invoicePayments?.data)
+    ? invoicePayments.data.filter(invoicePayment => (
+        objectId(invoicePayment?.payment?.payment_intent) === paymentIntentId
+      ))
+    : [];
+
+  if (invoicePayments?.has_more === true || matches.length !== 1) {
+    throw new Error('The Stripe refund must resolve to exactly one Invoice Payment.');
+  }
+
+  const invoiceId = objectId(matches[0]?.invoice);
+  if (!invoiceId) throw new Error('The Stripe Invoice Payment has no Invoice boundary.');
+  return stripe.invoices.retrieve(invoiceId);
+}
+
 async function eventSubscription(event, stripe) {
   const object = event?.data?.object;
   let subscriptionId = null;
@@ -38,14 +63,17 @@ async function eventSubscription(event, stripe) {
     relatedInvoice = object;
     subscriptionId = invoiceSubscriptionId(object);
   } else if (event.type === 'charge.refunded') {
-    const invoiceId = objectId(object?.invoice);
-    if (invoiceId) relatedInvoice = await stripe.invoices.retrieve(invoiceId);
+    const paymentIntentId = objectId(object?.payment_intent);
+    relatedInvoice = await invoiceForPaymentIntent(stripe, paymentIntentId);
     subscriptionId = invoiceSubscriptionId(relatedInvoice);
   } else if (event.type.startsWith('refund.')) {
-    const chargeId = objectId(object?.charge);
-    const charge = chargeId ? await stripe.charges.retrieve(chargeId) : null;
-    const invoiceId = objectId(charge?.invoice);
-    if (invoiceId) relatedInvoice = await stripe.invoices.retrieve(invoiceId);
+    let paymentIntentId = objectId(object?.payment_intent);
+    if (!paymentIntentId) {
+      const chargeId = objectId(object?.charge);
+      const charge = chargeId ? await stripe.charges.retrieve(chargeId) : null;
+      paymentIntentId = objectId(charge?.payment_intent);
+    }
+    relatedInvoice = await invoiceForPaymentIntent(stripe, paymentIntentId);
     subscriptionId = invoiceSubscriptionId(relatedInvoice);
   }
 
@@ -89,7 +117,15 @@ export function createAuthoritativeStateResolver(stripe, { livemode = false } = 
     const currentPeriodStart = unixIso(item?.current_period_start ?? subscription?.current_period_start);
     const currentPeriodEnd = unixIso(item?.current_period_end ?? subscription?.current_period_end);
     const decision = reconciliationDecision(event.type, providerStatus);
-    const latestInvoiceId = objectId(relatedInvoice) || objectId(subscription?.latest_invoice);
+    const isRefundManualReview = decision.accessAction === 'no_change'
+      && decision.reasonCode === 'refund_manual_review';
+    const latestInvoiceId = isRefundManualReview
+      ? objectId(subscription?.latest_invoice)
+      : objectId(relatedInvoice) || objectId(subscription?.latest_invoice);
+
+    if (isRefundManualReview && !latestInvoiceId) {
+      throw new Error('The Stripe refund Subscription has no authoritative latest Invoice.');
+    }
 
     return {
       ...decision,

@@ -153,6 +153,160 @@ test('Step 008E1 Stripe sandbox runtime adapters', async t => {
     assert.equal(state.userId, fixture.userId);
   });
 
+  await t.test('current Stripe refund events resolve through PaymentIntent and Invoice Payment without changing access', async () => {
+    const paymentIntentId = 'pi_testRefund001';
+    const refundedInvoiceId = 'in_testRefunded001';
+    const calls = { invoicePayments: [], invoices: [], subscriptions: [] };
+    const subscription = {
+      cancel_at_period_end: false,
+      customer: fixture.customerId,
+      id: fixture.subscriptionId,
+      items: { data: [{
+        current_period_end: 1840046614,
+        current_period_start: 1808510614,
+        price: { id: fixture.priceId, product: { id: fixture.productId } }
+      }] },
+      latest_invoice: fixture.invoiceId,
+      livemode: false,
+      metadata: { latt_exam_id: fixture.examId, latt_user_id: fixture.userId },
+      status: 'past_due'
+    };
+    const stripe = {
+      charges: { retrieve: async () => { throw new Error('Charge lookup is not required when the event supplies its PaymentIntent.'); } },
+      invoicePayments: { list: async params => {
+        calls.invoicePayments.push(params);
+        return {
+          data: [{
+            id: 'inpay_testRefund001',
+            invoice: refundedInvoiceId,
+            payment: { payment_intent: paymentIntentId, type: 'payment_intent' }
+          }],
+          has_more: false
+        };
+      } },
+      invoices: { retrieve: async id => {
+        calls.invoices.push(id);
+        return {
+          id,
+          parent: { subscription_details: { subscription: fixture.subscriptionId } }
+        };
+      } },
+      subscriptions: { retrieve: async id => {
+        calls.subscriptions.push(id);
+        return subscription;
+      } }
+    };
+
+    for (const type of ['charge.refunded', 'refund.created', 'refund.updated']) {
+      const state = await createAuthoritativeStateResolver(stripe)({
+        created: 1787433464,
+        data: { object: {
+          charge: type.startsWith('refund.') ? 'ch_testRefund001' : undefined,
+          id: type === 'charge.refunded' ? 'ch_testRefund001' : 're_testRefund001',
+          payment_intent: paymentIntentId
+        } },
+        id: `evt_test_${type.replace('.', '_')}`,
+        livemode: false,
+        type
+      });
+
+      assert.equal(state.accessAction, 'no_change');
+      assert.equal(state.reasonCode, 'refund_manual_review');
+      assert.equal(state.latestInvoiceId, fixture.invoiceId);
+      assert.equal(state.paidThrough, null);
+      assert.equal(state.providerStatus, 'past_due');
+      assert.equal(state.currentPeriodEnd, '2028-04-22T20:03:34.000Z');
+      assert.equal(state.stripeSubscriptionId, fixture.subscriptionId);
+    }
+
+    assert.deepEqual(calls.invoicePayments, Array.from({ length: 3 }, () => ({
+      limit: 2,
+      payment: { payment_intent: paymentIntentId, type: 'payment_intent' }
+    })));
+    assert.deepEqual(calls.invoices, Array.from({ length: 3 }, () => refundedInvoiceId));
+    assert.deepEqual(calls.subscriptions, Array.from({ length: 3 }, () => fixture.subscriptionId));
+  });
+
+  await t.test('refund resolution fails closed without an authoritative Subscription latest Invoice', async () => {
+    const paymentIntentId = 'pi_testRefundLatestBoundary001';
+    const stripe = {
+      invoicePayments: { list: async () => ({
+        data: [{
+          invoice: 'in_testRefundedBoundary001',
+          payment: { payment_intent: paymentIntentId, type: 'payment_intent' }
+        }],
+        has_more: false
+      }) },
+      invoices: { retrieve: async id => ({
+        id,
+        parent: { subscription_details: { subscription: fixture.subscriptionId } }
+      }) },
+      subscriptions: { retrieve: async () => ({
+        cancel_at_period_end: false,
+        customer: fixture.customerId,
+        id: fixture.subscriptionId,
+        items: { data: [{
+          current_period_end: 1840046614,
+          current_period_start: 1808510614,
+          price: { id: fixture.priceId, product: { id: fixture.productId } }
+        }] },
+        latest_invoice: null,
+        livemode: false,
+        metadata: { latt_exam_id: fixture.examId, latt_user_id: fixture.userId },
+        status: 'past_due'
+      }) }
+    };
+
+    await assert.rejects(
+      createAuthoritativeStateResolver(stripe)({
+        created: 1787433464,
+        data: { object: { id: 're_testRefundLatestBoundary001', payment_intent: paymentIntentId } },
+        id: 'evt_testRefundLatestBoundary001',
+        livemode: false,
+        type: 'refund.updated'
+      }),
+      /authoritative latest Invoice/
+    );
+  });
+
+  await t.test('refund resolution fails closed when Invoice Payment is absent or ambiguous', async () => {
+    const paymentIntentId = 'pi_testRefundBoundary001';
+    const event = {
+      created: 1787433464,
+      data: { object: { id: 're_testRefundBoundary001', payment_intent: paymentIntentId } },
+      id: 'evt_testRefundBoundary001',
+      livemode: false,
+      type: 'refund.created'
+    };
+    const stripeWith = invoicePayments => ({
+      invoicePayments: { list: async () => invoicePayments },
+      invoices: { retrieve: async () => { throw new Error('No Invoice may be selected from an invalid boundary.'); } },
+      subscriptions: { retrieve: async () => { throw new Error('No Subscription may be selected from an invalid boundary.'); } }
+    });
+
+    await assert.rejects(
+      createAuthoritativeStateResolver(stripeWith({ data: [], has_more: false }))(event),
+      /exactly one Invoice Payment/
+    );
+    await assert.rejects(
+      createAuthoritativeStateResolver(stripeWith({
+        data: [
+          { invoice: 'in_testOne', payment: { payment_intent: paymentIntentId } },
+          { invoice: 'in_testTwo', payment: { payment_intent: paymentIntentId } }
+        ],
+        has_more: false
+      }))(event),
+      /exactly one Invoice Payment/
+    );
+    await assert.rejects(
+      createAuthoritativeStateResolver(stripeWith({
+        data: [{ invoice: fixture.invoiceId, payment: { payment_intent: paymentIntentId } }],
+        has_more: true
+      }))(event),
+      /exactly one Invoice Payment/
+    );
+  });
+
   await t.test('live-mode settings are rejected before any Stripe operation', () => {
     assert.equal(validateSandboxRuntimeSettings({
       livemode: false,
