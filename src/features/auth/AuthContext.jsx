@@ -35,6 +35,8 @@ export const AuthProvider = ({
   const [entitlementError, setEntitlementError] = useState(null);
   const [accessEvaluationTime, setAccessEvaluationTime] = useState(() => Date.now());
   const entitlementRequestIdRef = useRef(0);
+  const currentUserId = currentUser?.id || null;
+  const currentUserIsDemo = isDemoUser(currentUser);
 
   useEffect(() => {
     let isActive = true;
@@ -78,11 +80,11 @@ export const AuthProvider = ({
   const refreshEntitlements = useCallback(async ({ blocking = false } = {}) => {
     const requestId = entitlementRequestIdRef.current + 1;
     entitlementRequestIdRef.current = requestId;
-    const userId = currentUser?.id;
+    const userId = currentUserId;
 
     setAccessEvaluationTime(Date.now());
 
-    if (!userId || isDemoUser(currentUser)) {
+    if (!userId || currentUserIsDemo) {
       setVerifiedEntitlements([]);
       setEntitlementsLoading(false);
       setEntitlementError(null);
@@ -120,7 +122,7 @@ export const AuthProvider = ({
     } finally {
       if (requestId === entitlementRequestIdRef.current) setEntitlementsLoading(false);
     }
-  }, [currentUser, entitlementService]);
+  }, [currentUserId, currentUserIsDemo, entitlementService]);
 
   useEffect(() => {
     refreshEntitlements({ blocking: true });
@@ -131,7 +133,7 @@ export const AuthProvider = ({
   }, [refreshEntitlements]);
 
   useEffect(() => {
-    if (!currentUser?.id || isDemoUser(currentUser)) return undefined;
+    if (!currentUserId || currentUserIsDemo) return undefined;
 
     const refreshOnFocus = () => {
       setAccessEvaluationTime(Date.now());
@@ -140,10 +142,10 @@ export const AuthProvider = ({
 
     globalThis.addEventListener?.('focus', refreshOnFocus);
     return () => globalThis.removeEventListener?.('focus', refreshOnFocus);
-  }, [currentUser, refreshEntitlements]);
+  }, [currentUserId, currentUserIsDemo, refreshEntitlements]);
 
   useEffect(() => {
-    if (!currentUser?.id || isDemoUser(currentUser)) return undefined;
+    if (!currentUserId || currentUserIsDemo) return undefined;
 
     const now = Date.now();
     const nextBoundary = getNextExamEntitlementBoundary(verifiedEntitlements, now);
@@ -161,7 +163,7 @@ export const AuthProvider = ({
     return () => {
       if (timer !== undefined) globalThis.clearTimeout?.(timer);
     };
-  }, [currentUser, refreshEntitlements, verifiedEntitlements]);
+  }, [currentUserId, currentUserIsDemo, refreshEntitlements, verifiedEntitlements]);
 
   const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
   const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);

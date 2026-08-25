@@ -89,6 +89,19 @@ test('Step 005B signed-out and time-sensitive entitlement hardening', async t =>
     assert.match(context, /setVerifiedEntitlements\(\[\]\)[\s\S]*Unable to verify exam access/);
   });
 
+  await t.test('same-learner session refreshes preserve the mounted workspace', () => {
+    const context = read('src/features/auth/AuthContext.jsx');
+
+    assert.match(context, /const currentUserId = currentUser\?\.id \|\| null/);
+    assert.match(context, /const currentUserIsDemo = isDemoUser\(currentUser\)/);
+    assert.match(
+      context,
+      /const refreshEntitlements = useCallback[\s\S]*\}, \[currentUserId, currentUserIsDemo, entitlementService\]\)/
+    );
+    assert.doesNotMatch(context, /\}, \[currentUser, entitlementService\]\)/);
+    assert.match(context, /refreshEntitlements\(\{ blocking: false \}\)/);
+  });
+
   await t.test('the application always gates a signed-out visitor and hides Demo entry when disabled', () => {
     const app = read('src/App.jsx');
     const gate = read('src/features/demo/DemoAccessGate.jsx');
