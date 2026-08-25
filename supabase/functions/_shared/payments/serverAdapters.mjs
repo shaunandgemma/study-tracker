@@ -25,6 +25,12 @@ function invoiceSubscriptionId(invoice) {
   return objectId(invoice?.parent?.subscription_details?.subscription) || objectId(invoice?.subscription);
 }
 
+function isRefundEvent(eventType) {
+  return eventType === 'charge.refunded'
+    || eventType === 'refund.created'
+    || eventType === 'refund.updated';
+}
+
 async function invoiceForPaymentIntent(stripe, paymentIntentId) {
   if (!paymentIntentId) throw new Error('The Stripe refund has no PaymentIntent boundary.');
 
@@ -53,6 +59,7 @@ async function invoiceForPaymentIntent(stripe, paymentIntentId) {
 async function eventSubscription(event, stripe) {
   const object = event?.data?.object;
   let subscriptionId = null;
+  let relatedCharge = null;
   let relatedInvoice = null;
 
   if (event.type.startsWith('customer.subscription.')) {
@@ -62,16 +69,21 @@ async function eventSubscription(event, stripe) {
   } else if (event.type.startsWith('invoice.')) {
     relatedInvoice = object;
     subscriptionId = invoiceSubscriptionId(object);
-  } else if (event.type === 'charge.refunded') {
-    const paymentIntentId = objectId(object?.payment_intent);
-    relatedInvoice = await invoiceForPaymentIntent(stripe, paymentIntentId);
-    subscriptionId = invoiceSubscriptionId(relatedInvoice);
-  } else if (event.type.startsWith('refund.')) {
-    let paymentIntentId = objectId(object?.payment_intent);
-    if (!paymentIntentId) {
-      const chargeId = objectId(object?.charge);
-      const charge = chargeId ? await stripe.charges.retrieve(chargeId) : null;
-      paymentIntentId = objectId(charge?.payment_intent);
+  } else if (isRefundEvent(event.type)) {
+    const chargeId = event.type === 'charge.refunded'
+      ? objectId(object)
+      : objectId(object?.charge);
+    if (!chargeId) throw new Error('The Stripe refund has no Charge boundary.');
+
+    relatedCharge = await stripe.charges.retrieve(chargeId);
+    if (objectId(relatedCharge) !== chargeId) {
+      throw new Error('The Stripe refund Charge boundary changed unexpectedly.');
+    }
+
+    const paymentIntentId = objectId(relatedCharge?.payment_intent);
+    const eventPaymentIntentId = objectId(object?.payment_intent);
+    if (eventPaymentIntentId && eventPaymentIntentId !== paymentIntentId) {
+      throw new Error('The Stripe refund PaymentIntent boundary changed unexpectedly.');
     }
     relatedInvoice = await invoiceForPaymentIntent(stripe, paymentIntentId);
     subscriptionId = invoiceSubscriptionId(relatedInvoice);
@@ -81,12 +93,50 @@ async function eventSubscription(event, stripe) {
   const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
     expand: ['items.data.price.product', 'latest_invoice']
   });
-  return { relatedInvoice, subscription };
+  return { relatedCharge, relatedInvoice, subscription };
 }
 
-function reconciliationDecision(eventType, status) {
+function isQualifyingFullRefund(event, charge, invoice, livemode) {
+  if (!isRefundEvent(event.type) || charge?.livemode !== livemode) return false;
+
+  const amount = charge?.amount;
+  const amountRefunded = charge?.amount_refunded;
+  const invoiceAmountDue = invoice?.amount_due;
+  const invoiceAmountPaid = invoice?.amount_paid;
+  const invoiceAmountRemaining = invoice?.amount_remaining;
+  const invoicePaidAt = invoice?.status_transitions?.paid_at;
+  const refundStatus = event.type.startsWith('refund.')
+    ? event?.data?.object?.status
+    : 'succeeded';
+
+  return Number.isSafeInteger(amount)
+    && amount > 0
+    && Number.isSafeInteger(amountRefunded)
+    && amountRefunded === amount
+    && charge?.paid === true
+    && charge?.refunded === true
+    && charge?.status === 'succeeded'
+    && refundStatus === 'succeeded'
+    && invoice?.livemode === livemode
+    && invoice?.status === 'paid'
+    && Number.isSafeInteger(invoiceAmountDue)
+    && invoiceAmountDue === amount
+    && Number.isSafeInteger(invoiceAmountPaid)
+    && invoiceAmountPaid === amount
+    && Number.isSafeInteger(invoiceAmountRemaining)
+    && invoiceAmountRemaining === 0
+    && Number.isSafeInteger(invoicePaidAt)
+    && invoicePaidAt > 0;
+}
+
+function reconciliationDecision(eventType, status, qualifyingFullRefund = false) {
   if (eventType === 'invoice.paid' && (status === 'active' || status === 'trialing')) {
     return { accessAction: 'activate', reasonCode: 'invoice_paid' };
+  }
+  if (isRefundEvent(eventType)) {
+    return qualifyingFullRefund
+      ? { accessAction: 'revoke', reasonCode: 'full_refund' }
+      : { accessAction: 'no_change', reasonCode: 'refund_manual_review' };
   }
   if (eventType === 'customer.subscription.deleted' || status === 'canceled' || status === 'unpaid') {
     return { accessAction: 'revoke', reasonCode: 'subscription_ended' };
@@ -94,16 +144,17 @@ function reconciliationDecision(eventType, status) {
   if (eventType === 'invoice.payment_failed') {
     return { accessAction: 'no_change', reasonCode: 'invoice_payment_failed' };
   }
-  if (eventType === 'charge.refunded' || eventType.startsWith('refund.')) {
-    return { accessAction: 'no_change', reasonCode: 'refund_manual_review' };
-  }
   return { accessAction: 'no_change', reasonCode: 'provider_state_refreshed' };
 }
 
 export function createAuthoritativeStateResolver(stripe, { livemode = false } = {}) {
   return async event => {
-    const { relatedInvoice, subscription } = await eventSubscription(event, stripe);
+    const { relatedCharge, relatedInvoice, subscription } = await eventSubscription(event, stripe);
     if (subscription?.livemode !== livemode) throw new Error('Stripe subscription mode mismatch.');
+    if (event?.livemode !== livemode) throw new Error('Stripe event mode mismatch.');
+    if (relatedCharge && relatedCharge?.livemode !== livemode) {
+      throw new Error('Stripe refund Charge mode mismatch.');
+    }
 
     const items = subscription?.items?.data;
     if (!Array.isArray(items) || items.length !== 1) {
@@ -116,15 +167,20 @@ export function createAuthoritativeStateResolver(stripe, { livemode = false } = 
     const providerStatus = subscription?.status;
     const currentPeriodStart = unixIso(item?.current_period_start ?? subscription?.current_period_start);
     const currentPeriodEnd = unixIso(item?.current_period_end ?? subscription?.current_period_end);
-    const decision = reconciliationDecision(event.type, providerStatus);
-    const isRefundManualReview = decision.accessAction === 'no_change'
-      && decision.reasonCode === 'refund_manual_review';
-    const latestInvoiceId = isRefundManualReview
-      ? objectId(subscription?.latest_invoice)
+    const qualifyingFullRefund = isQualifyingFullRefund(
+      event,
+      relatedCharge,
+      relatedInvoice,
+      livemode
+    );
+    const decision = reconciliationDecision(event.type, providerStatus, qualifyingFullRefund);
+    const isRefund = isRefundEvent(event.type);
+    const latestInvoiceId = isRefund
+      ? objectId(relatedInvoice)
       : objectId(relatedInvoice) || objectId(subscription?.latest_invoice);
 
-    if (isRefundManualReview && !latestInvoiceId) {
-      throw new Error('The Stripe refund Subscription has no authoritative latest Invoice.');
+    if (isRefund && !latestInvoiceId) {
+      throw new Error('The Stripe refund has no authoritative paid Invoice.');
     }
 
     return {

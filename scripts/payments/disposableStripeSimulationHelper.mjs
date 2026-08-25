@@ -106,22 +106,34 @@ export function createDisposableSimulationHelper({
       return Object.freeze({ customerId, paymentMethodId, subscriptionId });
     },
 
-    async prepareSuccessfulRenewal({ frozenTime, learnerId, temporaryRestrictedKey }) {
+    async prepareSuccessfulRenewal({
+      clockName = DISPOSABLE_SIMULATION_CATALOGUE.clockName,
+      frozenTime,
+      learnerId,
+      scenario = DISPOSABLE_SIMULATION_CATALOGUE.scenario,
+      temporaryRestrictedKey
+    }) {
       requireExecutionApproval();
       const input = validateDisposableSimulationInput({ learnerId, temporaryRestrictedKey });
       if (!Number.isSafeInteger(frozenTime) || frozenTime <= 0) {
         fail('the test clock frozen time must be a positive Unix timestamp.');
       }
+      if (typeof clockName !== 'string' || !/^latt-[a-z0-9-]+$/.test(clockName)) {
+        fail('the test clock name is outside the approved LATT boundary.');
+      }
+      if (typeof scenario !== 'string' || !/^step-[a-z0-9-]+$/.test(scenario)) {
+        fail('the test scenario is outside the approved LATT boundary.');
+      }
 
       const clock = assertSandboxObject(await createClock({
         frozen_time: frozenTime,
-        name: DISPOSABLE_SIMULATION_CATALOGUE.clockName
+        name: clockName
       }), 'Test Clock');
       const clockId = assertStripeId(clock.id, 'clock', 'Test Clock');
 
       const customer = assertSandboxObject(await createCustomer({
         metadata: {
-          latt_test_scenario: DISPOSABLE_SIMULATION_CATALOGUE.scenario,
+          latt_test_scenario: scenario,
           latt_user_id: input.learnerId
         },
         test_clock: clockId
