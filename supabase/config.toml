@@ -397,6 +397,21 @@ enabled = true
 # Stripe authenticates this endpoint with its raw-body signature, not a Supabase JWT.
 verify_jwt = false
 
+# Step 010B prepares a separate live payment path locally. All three entrypoints
+# remain deployment-disabled until an independently approved live rollout.
+[functions.create-exam-checkout-live]
+enabled = false
+verify_jwt = true
+
+[functions.create-stripe-portal-session-live]
+enabled = false
+verify_jwt = true
+
+[functions.stripe-webhook-live]
+enabled = false
+# Stripe authenticates this endpoint with its raw-body signature, not a Supabase JWT.
+verify_jwt = false
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

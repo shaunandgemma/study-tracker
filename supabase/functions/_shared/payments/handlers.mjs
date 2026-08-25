@@ -52,6 +52,8 @@ export function createExamCheckoutHandler(dependencies) {
   const livemode = dependencies.livemode === true;
   const successUrl = dependencies.successUrl;
   const cancelUrl = dependencies.cancelUrl;
+  const checkoutPaymentMethodTypes = dependencies.checkoutPaymentMethodTypes;
+  const createIdempotencyKeys = dependencies.createIdempotencyKeys;
 
   return createBrowserRoute(dependencies, async request => {
     const user = assertAuthenticatedUser(await authenticate(request));
@@ -63,20 +65,31 @@ export function createExamCheckoutHandler(dependencies) {
       await getCheckoutContext({ userId: user.id, examId: body.examId, livemode }),
       { examId: body.examId, livemode }
     );
+    const idempotencyKeys = typeof createIdempotencyKeys === 'function'
+      ? createIdempotencyKeys({ examId: body.examId, userId: user.id })
+      : null;
+    if (idempotencyKeys && (
+      typeof idempotencyKeys.customer !== 'string'
+      || idempotencyKeys.customer.length === 0
+      || typeof idempotencyKeys.checkout !== 'string'
+      || idempotencyKeys.checkout.length === 0
+    )) {
+      throw new PaymentHttpError(503, 'payment_unavailable');
+    }
 
     let customerId = context.customerId;
     if (!customerId) {
       const customer = await createCustomer({
         email: user.email,
         metadata: { latt_user_id: user.id }
-      });
+      }, idempotencyKeys ? { idempotencyKey: idempotencyKeys.customer } : undefined);
       if (!isStripeId('customerId', customer?.id)) throw new PaymentHttpError(503, 'payment_unavailable');
       await bindCustomer({ userId: user.id, customerId: customer.id, livemode });
       customerId = customer.id;
     }
 
     const metadata = { latt_exam_id: body.examId, latt_user_id: user.id };
-    const session = await createCheckoutSession({
+    const checkoutInput = {
       cancel_url: cancelUrl,
       client_reference_id: user.id,
       customer: customerId,
@@ -85,7 +98,14 @@ export function createExamCheckoutHandler(dependencies) {
       mode: 'subscription',
       subscription_data: { metadata },
       success_url: successUrl
-    });
+    };
+    if (Array.isArray(checkoutPaymentMethodTypes)) {
+      checkoutInput.payment_method_types = [...checkoutPaymentMethodTypes];
+    }
+    const session = await createCheckoutSession(
+      checkoutInput,
+      idempotencyKeys ? { idempotencyKey: idempotencyKeys.checkout } : undefined
+    );
 
     if (!isStripeId('sessionId', session?.id) || typeof session?.url !== 'string') {
       throw new PaymentHttpError(503, 'payment_unavailable');

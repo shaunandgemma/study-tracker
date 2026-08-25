@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowLeft, CheckCircle2, CreditCard, ShieldCheck, XCircle } from 'lucide-react';
+import { PublicInformationLinks } from '../publicInformation/PublicInformationLinks.jsx';
 
 const screenContent = Object.freeze({
   success: {
@@ -67,6 +68,7 @@ export function PaymentReturnEntry({ route, signedIn = false, onReturnHome = () 
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Return to LATT
             </button>
+            <PublicInformationLinks className="mt-7" />
           </div>
         </section>
       </main>

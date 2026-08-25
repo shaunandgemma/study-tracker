@@ -7,6 +7,7 @@ import {
   paymentBrowserService
 } from './paymentBrowserService.js';
 import { getExamPaymentControlPolicy } from './examPaymentControlPolicy.js';
+import { PublicInformationLinks } from '../publicInformation/PublicInformationLinks.jsx';
 
 const comparisonPrice = formatAnnualExamPrice(annualExamPromotion.comparisonAmountMinor);
 const currentPrice = formatAnnualExamPrice(annualExamPromotion.currentAmountMinor);
@@ -102,6 +103,7 @@ export const ExamPaymentControls = ({
             : policy.actionEnabled ? 'Manage Billing' : 'Manage Billing — activation pending'}
         </PaymentAction>
         {actionError}
+        <PublicInformationLinks compact className="mt-3" />
       </div>
     );
   }
@@ -140,6 +142,10 @@ export const ExamPaymentControls = ({
         </p>
       )}
       {actionError}
+      <p className="mt-3 text-[10px] leading-4 text-slate-400">
+        £19.99 is the proposed tax-inclusive annual charge for this exact exam and is designed to renew yearly until cancelled through Stripe’s hosted Customer Portal. Proposed card statement: LATT LEARNING. Seller and professional review remain required before live payments.
+      </p>
+      <PublicInformationLinks compact className="mt-3" />
     </div>
   );
 };

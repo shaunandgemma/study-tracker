@@ -5,7 +5,9 @@ import test from 'node:test';
 import {
   PAYMENT_RUNTIME_INVOCATION_ENABLED,
   createPaymentBrowserService,
+  getPaymentRuntimeConfiguration,
   isCanonicalPaymentExamId,
+  isLivePaymentRuntimeEnabled,
   isSandboxPaymentRuntimeEnabled,
   validateStripeHostedReturnUrl
 } from '../src/features/payments/paymentBrowserService.js';
@@ -39,6 +41,11 @@ test('Step 008L local exact-exam payment controls', async t => {
     assert.equal(isSandboxPaymentRuntimeEnabled({ VITE_STRIPE_SANDBOX_PAYMENTS_ENABLED: 'false' }), false);
     assert.equal(isSandboxPaymentRuntimeEnabled({ VITE_STRIPE_SANDBOX_PAYMENTS_ENABLED: 'TRUE' }), false);
     assert.equal(isSandboxPaymentRuntimeEnabled({ VITE_STRIPE_SANDBOX_PAYMENTS_ENABLED: 'true' }), true);
+    assert.equal(isLivePaymentRuntimeEnabled({ VITE_STRIPE_LIVE_PAYMENTS_ENABLED: 'true' }), true);
+    assert.deepEqual(getPaymentRuntimeConfiguration({
+      VITE_STRIPE_LIVE_PAYMENTS_ENABLED: 'true',
+      VITE_STRIPE_SANDBOX_PAYMENTS_ENABLED: 'true'
+    }), { enabled: false, invalid: true, mode: null });
     const client = clientDouble();
     const service = createPaymentBrowserService({ supabaseClient: client });
     const result = await service.createExamCheckout({ examId: 'aws-saa-c03' });

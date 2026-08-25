@@ -2,6 +2,7 @@ import React from 'react';
 import { FlaskConical, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { AuthModal } from '../../components/Modals/AuthModal.jsx';
 import { DemoAnnualAccessAdvert } from './DemoAnnualAccessPromotion.jsx';
+import { PublicInformationLinks } from '../publicInformation/PublicInformationLinks.jsx';
 
 export const DemoAccessGate = ({
   onSignIn = () => {},
@@ -67,6 +68,9 @@ export const DemoAccessGate = ({
       </div>
 
       <DemoAnnualAccessAdvert />
+      <footer className="rounded-2xl border border-slate-800 bg-slate-900/70 px-5 py-4">
+        <PublicInformationLinks />
+      </footer>
     </div>
     <AuthModal />
   </main>

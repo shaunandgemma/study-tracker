@@ -8,6 +8,9 @@ import { AuthorEntry } from './features/followAlongAuthor/AuthorEntry.jsx';
 import { isAuthorEntryRequested } from './features/followAlongAuthor/authorAccess.js';
 import { PaymentReturnEntry } from './features/payments/PaymentReturnEntry.jsx';
 import { getPaymentRoute } from './features/payments/paymentRoutes.js';
+import { PublicInformationEntry } from './features/publicInformation/PublicInformationEntry.jsx';
+import { PublicInformationLinks } from './features/publicInformation/PublicInformationLinks.jsx';
+import { getPublicInformationRoute } from './features/publicInformation/publicInformationRoutes.js';
 import { Navbar } from './components/Navbar';
 import { ChecklistView } from './components/StudyChecklist/ChecklistView';
 import { ExamSetup } from './components/PrepExam/ExamSetup';
@@ -403,8 +406,9 @@ const MainContent = () => {
 
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center justify-between gap-3 lg:flex-row">
           <span>LATT — Learning All Things Tech</span>
+          <PublicInformationLinks />
           <span>Local Storage Persisted & Offline Ready</span>
         </div>
       </footer>
@@ -427,18 +431,29 @@ const MainContent = () => {
 const AuthenticatedApplication = () => {
   const [authorRequested, setAuthorRequested] = useState(() => isAuthorEntryRequested());
   const [paymentRoute, setPaymentRoute] = useState(() => getPaymentRoute());
+  const [publicInformationRoute, setPublicInformationRoute] = useState(() => getPublicInformationRoute());
   const { currentUser, loadingAuth, entitlementsLoading, demoModeEnabled, isDemoAccount, signInAsDemo, openAuthModal } = useAuth();
 
   useEffect(() => {
     const updateEntry = () => {
       setAuthorRequested(isAuthorEntryRequested());
       setPaymentRoute(getPaymentRoute());
+      setPublicInformationRoute(getPublicInformationRoute());
     };
     globalThis.addEventListener?.('hashchange', updateEntry);
     return () => globalThis.removeEventListener?.('hashchange', updateEntry);
   }, []);
 
   if (authorRequested) return <AuthorEntry />;
+
+  if (publicInformationRoute) {
+    return (
+      <PublicInformationEntry
+        route={publicInformationRoute}
+        onReturnHome={() => { globalThis.location.hash = ''; }}
+      />
+    );
+  }
 
   if (loadingAuth) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm font-semibold text-slate-300">Checking safe access...</div>;

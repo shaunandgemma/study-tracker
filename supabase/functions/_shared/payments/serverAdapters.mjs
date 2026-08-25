@@ -1,4 +1,13 @@
-import { PaymentHttpError } from './contracts.mjs';
+import {
+  PaymentHttpError,
+  isCanonicalExamId,
+  isUuid
+} from './contracts.mjs';
+
+export const LIVE_PAYMENT_SITE_ORIGIN = 'https://learningallthingstech.co.uk';
+export const STRIPE_PAYMENT_API_VERSION = '2026-07-29.dahlia';
+
+const LIVE_CHECKOUT_IDEMPOTENCY_WINDOW_MS = 30 * 60 * 1000;
 
 function requireValue(value, name) {
   if (typeof value !== 'string' || value.trim() === '') throw new Error(`Missing payment runtime setting: ${name}`);
@@ -205,18 +214,19 @@ export function createAuthoritativeStateResolver(stripe, { livemode = false } = 
   };
 }
 
-export function createServerPaymentDependencies({
+function createModePaymentDependencies({
   authClientFactory,
   serviceClient,
   stripe,
-  settings
+  settings,
+  createIdempotencyKeys = null,
+  checkoutPaymentMethodTypes = null
 }) {
   if (typeof authClientFactory !== 'function' || !serviceClient?.rpc || !stripe) {
     throw new TypeError('Payment server adapters require auth, service-role RPC and Stripe clients.');
   }
 
   const livemode = settings?.livemode === true;
-  if (livemode) throw new Error('Step 008E1 permits Stripe sandbox mode only.');
 
   const siteOrigin = requireValue(settings?.siteOrigin, 'PAYMENT_SITE_ORIGIN').replace(/\/$/, '');
   const allowedOrigins = Array.isArray(settings?.allowedOrigins)
@@ -240,6 +250,8 @@ export function createServerPaymentDependencies({
   return {
     allowedOrigins,
     authenticate,
+    checkoutPaymentMethodTypes,
+    createIdempotencyKeys,
     bindCustomer: async ({ userId, customerId }) => rpcResult(await serviceClient.rpc(
       'bind_stripe_customer',
       { p_user_id: userId, p_livemode: livemode, p_stripe_customer_id: customerId }
@@ -285,12 +297,47 @@ export function createServerPaymentDependencies({
         signature,
         settings.webhookSecret
       ),
-      createCheckoutSession: input => stripe.checkout.sessions.create(input),
-      createCustomer: input => stripe.customers.create(input),
+      createCheckoutSession: (input, requestOptions) => stripe.checkout.sessions.create(
+        input,
+        requestOptions
+      ),
+      createCustomer: (input, requestOptions) => stripe.customers.create(input, requestOptions),
       createPortalSession: input => stripe.billingPortal.sessions.create(input)
     },
     successUrl: `${siteOrigin}/#payment/success`
   };
+}
+
+export function createServerPaymentDependencies(options) {
+  if (options?.settings?.livemode === true) {
+    throw new Error('Step 008E1 permits Stripe sandbox mode only.');
+  }
+  return createModePaymentDependencies(options);
+}
+
+export function createLivePaymentIdempotencyKeys({ examId, now = Date.now(), userId }) {
+  if (!isUuid(userId) || !isCanonicalExamId(examId) || !Number.isFinite(now) || now < 0) {
+    throw new Error('Live Stripe idempotency inputs are invalid.');
+  }
+
+  const checkoutWindow = Math.floor(now / LIVE_CHECKOUT_IDEMPOTENCY_WINDOW_MS);
+  return Object.freeze({
+    checkout: `latt-live-v1-checkout-${userId}-${examId}-${checkoutWindow}`,
+    customer: `latt-live-v1-customer-${userId}`
+  });
+}
+
+export function createLiveServerPaymentDependencies(options) {
+  if (options?.settings?.livemode !== true) {
+    throw new Error('The Stripe live adapter requires fixed live mode.');
+  }
+
+  const now = typeof options.now === 'function' ? options.now : Date.now;
+  return createModePaymentDependencies({
+    ...options,
+    checkoutPaymentMethodTypes: Object.freeze(['card']),
+    createIdempotencyKeys: input => createLivePaymentIdempotencyKeys({ ...input, now: now() })
+  });
 }
 
 export function validateSandboxRuntimeSettings(settings) {
@@ -300,4 +347,37 @@ export function validateSandboxRuntimeSettings(settings) {
   if (!webhookSecret.startsWith('whsec_')) throw new Error('The Stripe webhook signing secret is invalid.');
   if (settings?.livemode === true) throw new Error('Stripe live mode is not permitted in Step 008E1.');
   return { ...settings, livemode: false, stripeSecretKey: secretKey, webhookSecret };
+}
+
+export function validateLiveRuntimeSettings(settings) {
+  const secretKey = requireValue(settings?.stripeSecretKey, 'STRIPE_LIVE_RESTRICTED_KEY');
+  const webhookSecret = requireValue(settings?.webhookSecret, 'STRIPE_LIVE_WEBHOOK_SECRET');
+  const siteOrigin = requireValue(settings?.siteOrigin, 'PAYMENT_LIVE_SITE_ORIGIN').replace(/\/$/, '');
+  const allowedOrigins = Array.isArray(settings?.allowedOrigins)
+    ? settings.allowedOrigins.map(value => requireValue(value, 'PAYMENT_LIVE_ALLOWED_ORIGINS'))
+    : [];
+
+  if (!secretKey.startsWith('rk_live_')) {
+    throw new Error('Only a Stripe live restricted key is permitted.');
+  }
+  if (!webhookSecret.startsWith('whsec_')) {
+    throw new Error('The Stripe live webhook signing secret is invalid.');
+  }
+  if (settings?.livemode !== true) {
+    throw new Error('The Stripe live runtime requires fixed live mode.');
+  }
+  if (siteOrigin !== LIVE_PAYMENT_SITE_ORIGIN
+      || allowedOrigins.length !== 1
+      || allowedOrigins[0] !== LIVE_PAYMENT_SITE_ORIGIN) {
+    throw new Error('The Stripe live runtime requires the canonical production origin.');
+  }
+
+  return {
+    ...settings,
+    allowedOrigins: Object.freeze([...allowedOrigins]),
+    livemode: true,
+    siteOrigin,
+    stripeSecretKey: secretKey,
+    webhookSecret
+  };
 }

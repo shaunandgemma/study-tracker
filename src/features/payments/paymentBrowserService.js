@@ -9,11 +9,36 @@ export function isSandboxPaymentRuntimeEnabled(env = {}) {
   return env.VITE_STRIPE_SANDBOX_PAYMENTS_ENABLED === 'true';
 }
 
-export const PAYMENT_RUNTIME_INVOCATION_ENABLED = isSandboxPaymentRuntimeEnabled(runtimeEnv);
+export function isLivePaymentRuntimeEnabled(env = {}) {
+  return env.VITE_STRIPE_LIVE_PAYMENTS_ENABLED === 'true';
+}
+
+export function getPaymentRuntimeConfiguration(env = {}) {
+  const sandboxEnabled = isSandboxPaymentRuntimeEnabled(env);
+  const liveEnabled = isLivePaymentRuntimeEnabled(env);
+  if (sandboxEnabled && liveEnabled) {
+    return Object.freeze({ enabled: false, invalid: true, mode: null });
+  }
+  if (liveEnabled) return Object.freeze({ enabled: true, invalid: false, mode: 'live' });
+  if (sandboxEnabled) return Object.freeze({ enabled: true, invalid: false, mode: 'sandbox' });
+  return Object.freeze({ enabled: false, invalid: false, mode: null });
+}
+
+const runtimeConfiguration = getPaymentRuntimeConfiguration(runtimeEnv);
+
+export const PAYMENT_RUNTIME_INVOCATION_ENABLED = runtimeConfiguration.enabled;
+export const PAYMENT_RUNTIME_MODE = runtimeConfiguration.mode;
+export const PAYMENT_RUNTIME_CONFIGURATION_INVALID = runtimeConfiguration.invalid;
 
 const PAYMENT_FUNCTIONS = Object.freeze({
-  checkout: 'create-exam-checkout',
-  portal: 'create-stripe-portal-session'
+  live: Object.freeze({
+    checkout: 'create-exam-checkout-live',
+    portal: 'create-stripe-portal-session-live'
+  }),
+  sandbox: Object.freeze({
+    checkout: 'create-exam-checkout',
+    portal: 'create-stripe-portal-session'
+  })
 });
 
 const STRIPE_HOSTS = Object.freeze({
@@ -48,6 +73,9 @@ export function validateStripeHostedReturnUrl(value, kind) {
 export function createPaymentBrowserService(options = {}) {
   const client = options.supabaseClient || supabase;
   const enabled = options.enabled === true;
+  const invalidConfiguration = options.invalidConfiguration === true;
+  const mode = options.mode === 'live' ? 'live' : 'sandbox';
+  const functions = PAYMENT_FUNCTIONS[mode];
 
   async function requireCurrentSession() {
     const { data, error } = await client.auth.getSession();
@@ -59,8 +87,11 @@ export function createPaymentBrowserService(options = {}) {
   }
 
   async function invokeProtectedFunction({ functionName, body, urlKind }) {
-    if (!enabled) {
-      return failure('Sandbox payment controls are prepared but not enabled.', { runtimeDisabled: true });
+    if (!enabled || invalidConfiguration) {
+      return failure('Payment controls are prepared but not enabled.', {
+        configurationInvalid: invalidConfiguration,
+        runtimeDisabled: true
+      });
     }
 
     const authenticated = await requireCurrentSession();
@@ -80,7 +111,7 @@ export function createPaymentBrowserService(options = {}) {
     }
 
     return invokeProtectedFunction({
-      functionName: PAYMENT_FUNCTIONS.checkout,
+      functionName: functions.checkout,
       body: { examId },
       urlKind: 'checkout'
     });
@@ -88,7 +119,7 @@ export function createPaymentBrowserService(options = {}) {
 
   async function createBillingPortalSession() {
     return invokeProtectedFunction({
-      functionName: PAYMENT_FUNCTIONS.portal,
+      functionName: functions.portal,
       body: {},
       urlKind: 'portal'
     });
@@ -98,5 +129,7 @@ export function createPaymentBrowserService(options = {}) {
 }
 
 export const paymentBrowserService = createPaymentBrowserService({
-  enabled: PAYMENT_RUNTIME_INVOCATION_ENABLED
+  enabled: PAYMENT_RUNTIME_INVOCATION_ENABLED,
+  invalidConfiguration: PAYMENT_RUNTIME_CONFIGURATION_INVALID,
+  mode: PAYMENT_RUNTIME_MODE
 });
