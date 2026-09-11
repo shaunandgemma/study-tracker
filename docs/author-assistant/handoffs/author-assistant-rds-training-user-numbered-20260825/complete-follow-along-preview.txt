@@ -1,0 +1,76 @@
+COMPLETE FOLLOW ALONG PREVIEW - RDS
+
+Operation: Update existing revision 4
+RDS, EC2, and Application Load Balancer Follow Along
+Build a beginner three-tier SAA-C03 practice architecture in Europe (London): internet → Application Load Balancer → EC2 → private RDS for MySQL.
+Outcome: Build, verify, monitor, troubleshoot, and clean up an internet-facing Application Load Balancer that routes HTTP traffic to private EC2 web targets while a private RDS for MySQL DB instance accepts MySQL traffic only from the EC2 security group. Recognize SAA-C03 requirements for ALB, private subnets, NAT gateways, security-group references, Multi-AZ, read replicas, Auto Scaling, RDS Proxy, Aurora, and Network Load Balancer.
+Region: eu-west-2
+Estimated time: Self-paced
+
+Phases: 7
+Tasks: 15
+Console checkboxes: 332
+CLI commands: 65
+Verification checks: 29
+Cleanup items: 11
+Official AWS sources: 20
+
+LEARNER JOURNEY
+
+1. Secure account access and AWS CLI setup
+   - Protect the root user and create the training IAM user
+     Console: 1 step(s); CLI: 1 command(s); Checks: 2
+   - Create and attach the scoped training policy
+     Console: 1 step(s); CLI: 2 command(s); Checks: 2
+   - Configure the named AWS CLI profile for eu-west-2
+     Console: 1 step(s); CLI: 2 command(s); Checks: 2
+
+2. Create the complete multi-tier VPC
+   - Create the dedicated VPC and six subnets
+     Console: 2 step(s); CLI: 9 command(s); Checks: 2
+   - Create internet, NAT, and route-table paths
+     Console: 3 step(s); CLI: 12 command(s); Checks: 2
+
+3. Create network access controls and managed instance access
+   - Create the three security-group chain
+     Console: 2 step(s); CLI: 6 command(s); Checks: 2
+   - Create the Session Manager role and private web target A
+     Console: 2 step(s); CLI: 6 command(s); Checks: 2
+
+4. Deploy private web targets and an Application Load Balancer
+   - Create the target group and internet-facing ALB
+     Console: 2 step(s); CLI: 4 command(s); Checks: 2
+   - Add target B and practice registration and graceful deregistration
+     Console: 2 step(s); CLI: 5 command(s); Checks: 2
+
+5. Create and connect to private RDS for MySQL
+   - Create the DB subnet group and private RDS for MySQL database
+     Console: 2 step(s); CLI: 4 command(s); Checks: 2
+   - Validate private EC2-to-RDS connectivity and separate failure layers
+     Console: 2 step(s); CLI: 3 command(s); Checks: 2
+
+6. Resilience, observability, backups, and controlled troubleshooting
+   - Monitor the architecture and create a manual recovery snapshot
+     Console: 2 step(s); CLI: 3 command(s); Checks: 2
+   - Practice controlled ALB failures and restore the baseline
+     Console: 2 step(s); CLI: 4 command(s); Checks: 2
+   - Apply SAA-C03 architecture decisions
+     Console: 1 step(s); CLI: 1 command(s); Checks: 1
+
+7. Remove the complete training environment
+   - Perform reverse-dependency cleanup
+     Console: 2 step(s); CLI: 3 command(s); Checks: 2
+
+MANUAL REVIEW FINDINGS (5)
+1. The supplied published source revision is 4. This replacement preserves the exact programme identity rds-learning-path and display name RDS, EC2, and Application Load Balancer Follow Along.
+2. Availability Zone letters are account-mapped. The Console path lets the learner select two distinct eu-west-2 Availability Zones if eu-west-2a or eu-west-2b is unavailable in the account.
+3. The scoped training policy uses broad service actions for disposable lab resources because several create operations do not yet have resource ARNs. An account administrator should review it against organizational SCPs, permissions boundaries, and service-control requirements before attachment.
+4. The task uses one NAT gateway in one Availability Zone to reduce training cost. For production fault tolerance, use a NAT gateway in each Availability Zone and route each private subnet to its local NAT gateway.
+5. Current DB engine versions and instance-class availability can vary by account and Region. The learner must confirm a supported MySQL version and db.t3.micro availability in eu-west-2 before creating the DB instance.
+
+SAFETY
+Nothing was written to Author, Supabase or AWS.
+No AWS command was executed.
+No candidate was created and nothing was approved or published.
+
+SHA-256: 95925ebe4bc84963ac10d5ac2a515a03ef0381ca09ebe27b2fc149685df013a9
