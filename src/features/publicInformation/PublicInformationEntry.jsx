@@ -19,7 +19,7 @@ const pages = Object.freeze({
         title: 'Seller and contract details',
         paragraphs: Object.freeze([
           'Learning All Things Tech is the trading name used by an individual UK app creator. The seller’s legal name, safe public contact address and monitored support email remain seller-review fields and must be completed before this draft is published.',
-          'The paid service provides twelve months of access to the complete learning workspace for one selected exam. AWS SAA-C03, Terraform Associate and CompTIA Security+ are separate purchases and separate entitlements.'
+          'The paid service provides twelve months of access to the complete learning workspace for one selected available exam. AWS SAA-C03 and Terraform Associate are separate purchases and separate entitlements. CompTIA Security+ is coming soon and cannot currently be opened or purchased.'
         ])
       }),
       Object.freeze({

@@ -68,6 +68,16 @@ test('Step 008L local exact-exam payment controls', async t => {
       name: 'create-exam-checkout',
       options: { body: { examId: 'terraform-associate-004' } }
     }]);
+
+    const comingSoonClient = clientDouble();
+    const comingSoonService = createPaymentBrowserService({
+      supabaseClient: comingSoonClient,
+      enabled: true
+    });
+    const comingSoon = await comingSoonService.createExamCheckout({ examId: 'comptia-sec-plus' });
+    assert.equal(comingSoon.success, false);
+    assert.equal(comingSoon.availabilityError, true);
+    assert.equal(comingSoonClient.calls.length, 0);
   });
 
   await t.test('only exact Stripe-hosted HTTPS destinations are accepted', () => {

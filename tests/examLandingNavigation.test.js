@@ -5,7 +5,13 @@ import { DEFAULT_EXAMS } from '../src/data/examData.js';
 import { AWS_SAA_C03_EXAM } from '../src/data/exams/awsSaaC03Exam.js';
 import { COMPTIA_SECURITY_PLUS_EXAM } from '../src/data/exams/comptiaSecurityPlusExam.js';
 import { TERRAFORM_ASSOCIATE_EXAM } from '../src/data/exams/terraformAssociateExam.js';
-import { BUILT_IN_EXAM_DEFINITIONS, getExamDefinition } from '../src/data/exams/examDefinitions.js';
+import {
+  BUILT_IN_EXAM_DEFINITIONS,
+  getExamDefinition,
+  isExamComingSoon,
+  isExamIdSelectable,
+  isExamSelectable
+} from '../src/data/exams/examDefinitions.js';
 import { getExamChecklistItemCount, getExamLandingDetails } from '../src/utils/examNavigation.js';
 import { isFollowAlongProgrammeForExam } from '../src/data/followAlongProgrammes.js';
 import { buildPublishedProgrammeCard } from '../src/features/followAlongs/published/publishedFollowAlongService.js';
@@ -37,9 +43,23 @@ test('exam-first landing navigation', async t => {
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === AWS_SAA_C03_EXAM.id)?.title, AWS_SAA_C03_EXAM.title);
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === COMPTIA_SECURITY_PLUS_EXAM.id)?.title, COMPTIA_SECURITY_PLUS_EXAM.title);
     assert.equal(DEFAULT_EXAMS.find(exam => exam.id === TERRAFORM_ASSOCIATE_EXAM.id)?.topics.length, 8);
+    assert.equal(COMPTIA_SECURITY_PLUS_EXAM.availability, 'coming-soon');
+    assert.equal(isExamComingSoon(COMPTIA_SECURITY_PLUS_EXAM), true);
+    assert.equal(isExamSelectable(COMPTIA_SECURITY_PLUS_EXAM), false);
+    assert.equal(isExamIdSelectable('comptia-sec-plus'), false);
+    assert.equal(isExamIdSelectable('aws-saa-c03'), true);
     assert.equal(getExamChecklistItemCount(TERRAFORM_ASSOCIATE_EXAM), 37);
     assert.equal(TERRAFORM_ASSOCIATE_EXAM.questionSource, 'supabase');
     assert.equal('questions' in TERRAFORM_ASSOCIATE_EXAM, false);
+  });
+
+  await t.test('2A. CompTIA is visibly coming soon, disabled and absent from payment controls', () => {
+    assert.match(appLanding, /disabled=\{comingSoon\}/);
+    assert.match(appLanding, /aria-disabled=\{comingSoon\}/);
+    assert.match(appLanding, /Coming Soon/);
+    assert.match(appLanding, /This exam workspace is not available yet/);
+    assert.match(appLanding, /if \(isExamComingSoon\(exam\)\) return false/);
+    assert.match(appLanding, /cursor-not-allowed/);
   });
 
   await t.test('2. the app opens at the general landing page and then an exam landing page', () => {

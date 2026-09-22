@@ -103,8 +103,9 @@ test('Step 005C exact-exam learner route enforcement', async t => {
     const catalogue = read('src/components/FollowAlongs/FollowAlongsView.jsx');
     const publishedView = read('src/components/FollowAlongs/PublishedFollowAlongView.jsx');
 
-    assert.match(context, /exams\.find\(e => e\.id === requestedActiveExamId\) \|\| exams\[0\]/);
-    assert.match(context, /if \(!exams\.some\(exam => exam\.id === id\)\) return false/);
+    assert.match(context, /const requestedExam = exams\.find\(e => e\.id === requestedActiveExamId\)/);
+    assert.match(context, /isExamSelectable\(requestedExam\)[\s\S]*exams\.find\(isExamSelectable\) \|\| exams\[0\]/);
+    assert.match(context, /if \(!isExamSelectable\(selectedExam\)\) return false/);
     assert.match(catalogue, /setSelection\(null\)[\s\S]*\[examId, previewOnly\]/);
     assert.doesNotMatch(catalogue, /initialProgrammeId|vpc-learning-path/);
     assert.match(catalogue, /selectedFromExamCatalogue=\{selection\?\.examId === examId\}/);

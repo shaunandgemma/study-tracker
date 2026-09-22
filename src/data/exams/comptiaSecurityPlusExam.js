@@ -2,6 +2,7 @@ export const COMPTIA_SECURITY_PLUS_EXAM = Object.freeze({
   id: 'comptia-sec-plus',
   code: 'CompTIA Security+',
   title: 'CompTIA Security+ (SY0-701)',
+  availability: 'coming-soon',
   description: 'Develop core cybersecurity knowledge covering threats, secure architecture, identity, risk, and operational security.',
   audience: 'Learners building practical security knowledge for the SY0-701 certification exam.',
   benefits: [

@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase.js';
 import { APPLICATION_EXAM_IDS } from '../access/applicationAccessPolicy.js';
+import { isExamIdSelectable } from '../../data/exams/examDefinitions.js';
 
 const runtimeEnv = (typeof import.meta !== 'undefined' && import.meta.env)
   ? import.meta.env
@@ -108,6 +109,9 @@ export function createPaymentBrowserService(options = {}) {
   async function createExamCheckout({ examId } = {}) {
     if (!isCanonicalPaymentExamId(examId)) {
       return failure('A supported exact exam is required.', { validationError: true });
+    }
+    if (!isExamIdSelectable(examId)) {
+      return failure('This exam is coming soon and cannot be purchased.', { availabilityError: true });
     }
 
     return invokeProtectedFunction({

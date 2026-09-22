@@ -11,3 +11,16 @@ export const BUILT_IN_EXAM_DEFINITIONS = Object.freeze([
 export function getExamDefinition(examId) {
   return BUILT_IN_EXAM_DEFINITIONS.find(exam => exam.id === examId) || null;
 }
+
+export function isExamComingSoon(exam) {
+  return exam?.availability === 'coming-soon';
+}
+
+export function isExamSelectable(exam) {
+  return Boolean(exam) && !isExamComingSoon(exam);
+}
+
+export function isExamIdSelectable(examId) {
+  const definition = getExamDefinition(examId);
+  return definition ? isExamSelectable(definition) : true;
+}

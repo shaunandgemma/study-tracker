@@ -23,6 +23,7 @@ import {
   supportsLearnerAccountProgress
 } from '../services/learnerChecklistFlagProgress.js';
 import { DEFAULT_EXAMS } from '../data/examData.js';
+import { isExamSelectable } from '../data/exams/examDefinitions.js';
 import { useAuth } from '../features/auth/useAuth.js';
 import {
   buildDemoAttempts,
@@ -82,13 +83,17 @@ export const ExamProvider = ({ children }) => {
   };
 
   const setActiveExamId = (id) => {
-    if (!exams.some(exam => exam.id === id)) return false;
+    const selectedExam = exams.find(exam => exam.id === id);
+    if (!isExamSelectable(selectedExam)) return false;
     setActiveExamIdState(id);
     if (!isDemoAccount) saveActiveExamId(id);
     return true;
   };
 
-  const activeExam = exams.find(e => e.id === requestedActiveExamId) || exams[0];
+  const requestedExam = exams.find(e => e.id === requestedActiveExamId);
+  const activeExam = isExamSelectable(requestedExam)
+    ? requestedExam
+    : exams.find(isExamSelectable) || exams[0];
   const activeExamId = activeExam?.id || null;
   const isPreviewAccess = isExamPreviewOnly(accessPolicy, activeExam?.id);
   const progressUserId = !isDemoAccount && currentUser?.id ? currentUser.id : null;

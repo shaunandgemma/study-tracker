@@ -1,12 +1,14 @@
 import React from 'react';
-import { ArrowRight, Award, BookOpenCheck, CheckCircle2, CreditCard, GraduationCap, PlusCircle, Sparkles } from 'lucide-react';
+import { ArrowRight, Award, BookOpenCheck, CheckCircle2, Clock3, CreditCard, GraduationCap, PlusCircle, Sparkles } from 'lucide-react';
 import { getExamChecklistItemCount } from '../../utils/examNavigation.js';
 import { DemoAnnualAccessAdvert } from '../../features/demo/DemoAnnualAccessPromotion.jsx';
 import { getExamAccessDetails, isExamPreviewOnly } from '../../features/access/applicationAccessPolicy.js';
 import { ExamPaymentControls } from '../../features/payments/ExamPaymentControls.jsx';
+import { isExamComingSoon } from '../../data/exams/examDefinitions.js';
 
-const canShowLandingPaymentControl = (accessPolicy, examId) => {
-  const accessKind = getExamAccessDetails(accessPolicy, examId).kind;
+const canShowLandingPaymentControl = (accessPolicy, exam) => {
+  if (isExamComingSoon(exam)) return false;
+  const accessKind = getExamAccessDetails(accessPolicy, exam.id).kind;
   return accessKind === 'preview' || accessKind === 'paid';
 };
 
@@ -58,28 +60,50 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
       </div>
 
       <div className="space-y-3">
-        {exams.map(exam => (
-          <button
-            key={exam.id}
-            type="button"
-            onClick={() => onSelectExam(exam.id)}
-            className="group w-full rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-left transition hover:border-indigo-500/70 hover:bg-slate-900"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
-                  <Award className="h-3 w-3 text-amber-400" /> {exam.code}
-                </span>
-                <h3 className="text-sm font-bold leading-5 text-white">{exam.title}</h3>
-                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-400">
-                  <BookOpenCheck className="h-3.5 w-3.5 text-cyan-400" />
-                  {isExamPreviewOnly(accessPolicy, exam.id) ? 'Curated preview access' : `${getExamChecklistItemCount(exam)} checklist items`}
-                </p>
+        {exams.map(exam => {
+          const comingSoon = isExamComingSoon(exam);
+          return (
+            <button
+              key={exam.id}
+              type="button"
+              disabled={comingSoon}
+              aria-disabled={comingSoon}
+              onClick={() => {
+                if (!comingSoon) onSelectExam(exam.id);
+              }}
+              className={`group w-full rounded-2xl border p-4 text-left transition ${comingSoon
+                ? 'cursor-not-allowed border-slate-800/70 bg-slate-950/40 opacity-60 grayscale'
+                : 'border-slate-800 bg-slate-950/70 hover:border-indigo-500/70 hover:bg-slate-900'}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                      <Award className={`h-3 w-3 ${comingSoon ? 'text-slate-500' : 'text-amber-400'}`} /> {exam.code}
+                    </span>
+                    {comingSoon && (
+                      <span className="inline-flex rounded-full border border-slate-600 bg-slate-800 px-2 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-300">
+                        Coming Soon
+                      </span>
+                    )}
+                  </div>
+                  <h3 className={`text-sm font-bold leading-5 ${comingSoon ? 'text-slate-400' : 'text-white'}`}>{exam.title}</h3>
+                  <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500">
+                    {comingSoon
+                      ? <Clock3 className="h-3.5 w-3.5 text-slate-500" />
+                      : <BookOpenCheck className="h-3.5 w-3.5 text-cyan-400" />}
+                    {comingSoon
+                      ? 'This exam workspace is not available yet'
+                      : isExamPreviewOnly(accessPolicy, exam.id)
+                        ? 'Curated preview access'
+                        : `${getExamChecklistItemCount(exam)} checklist items`}
+                  </p>
+                </div>
+                {!comingSoon && <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-indigo-300" />}
               </div>
-              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-indigo-300" />
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
 
         {canManageContent && <button
           type="button"
@@ -92,7 +116,7 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
       </aside>
     </div>
 
-    {exams.some(exam => canShowLandingPaymentControl(accessPolicy, exam.id)) && (
+    {exams.some(exam => canShowLandingPaymentControl(accessPolicy, exam)) && (
       <section className="rounded-3xl border border-slate-800 bg-slate-900/75 p-5 shadow-xl sm:p-7" aria-labelledby="annual-exam-access-title">
         <div className="flex items-start gap-3">
           <div className="rounded-xl border border-amber-700/70 bg-amber-950/60 p-2.5 text-amber-300">
@@ -109,7 +133,7 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
 
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {exams
-            .filter(exam => canShowLandingPaymentControl(accessPolicy, exam.id))
+            .filter(exam => canShowLandingPaymentControl(accessPolicy, exam))
             .map(exam => (
               <article key={exam.id} className="rounded-2xl border border-slate-800 bg-slate-950/65 p-4">
                 <span className="inline-flex rounded-full border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
@@ -123,6 +147,6 @@ export const AppLandingPage = ({ exams = [], onSelectExam = () => {}, onAddExam 
       </section>
     )}
 
-    {exams.some(exam => isExamPreviewOnly(accessPolicy, exam.id)) && <DemoAnnualAccessAdvert />}
+    {exams.some(exam => !isExamComingSoon(exam) && isExamPreviewOnly(accessPolicy, exam.id)) && <DemoAnnualAccessAdvert />}
   </div>
 );
