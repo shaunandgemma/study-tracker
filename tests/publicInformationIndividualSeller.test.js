@@ -12,7 +12,7 @@ const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'ut
 
 test('Step 010C5 individual UK app-creator publication model', async t => {
   await t.test('the checked-in seller is an individual using the exact trading name', () => {
-    assert.equal(PUBLIC_INFORMATION_PUBLICATION_SCHEMA_VERSION, 2);
+    assert.equal(PUBLIC_INFORMATION_PUBLICATION_SCHEMA_VERSION, 3);
     assert.deepEqual(PUBLIC_INFORMATION_PUBLICATION_MANIFEST.seller, {
       capacity: 'individual',
       legalName: null,
@@ -30,20 +30,19 @@ test('Step 010C5 individual UK app-creator publication model', async t => {
 
     assert.doesNotMatch(manifest, /legalTraderName|publicBusinessAddress|businessCountry/);
     assert.doesNotMatch(entry, /Example Learning Limited|1 Example Street|contact@example\.test/);
-    assert.match(entry, /individual UK app creator/);
-    assert.match(entry, /seller’s legal name, safe public contact address and monitored support email remain seller-review fields/);
+    assert.match(entry, /individual UK trader/);
+    assert.match(entry, /trader’s legal name, safe public service address and monitored public email will be inserted before live sales/);
     assert.match(entry, /SELLER REVIEW REQUIRED/);
-    assert.match(entry, /SELLER DECISION REQUIRED/);
   });
 
   await t.test('public and purchase copy use seller language without changing the product offer', () => {
     const entry = read('src/features/publicInformation/PublicInformationEntry.jsx');
     const paymentControls = read('src/features/payments/ExamPaymentControls.jsx');
 
-    assert.match(entry, /Seller and contract details/);
-    assert.match(entry, /Seller and professional review required before live payments can be enabled/);
-    assert.match(entry, /Seller and professional review pending/);
-    assert.match(paymentControls, /Seller and professional review remain required before live payments/);
+    assert.match(entry, /Seller and these terms/);
+    assert.match(entry, /seller identity, public contact details and independent legal and privacy approval remain required/);
+    assert.match(entry, /Seller identity, contact details and independent review pending/);
+    assert.match(paymentControls, /Seller identity, contact details and independent review remain required before live payments/);
     assert.match(paymentControls, /£19\.99/);
     assert.match(paymentControls, /LATT LEARNING/);
   });

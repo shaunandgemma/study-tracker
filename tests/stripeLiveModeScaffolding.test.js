@@ -15,6 +15,7 @@ import {
   createStripeWebhookHandler
 } from '../supabase/functions/_shared/payments/handlers.mjs';
 import {
+  PURCHASE_POLICY_VERSION,
   createPaymentBrowserService,
   getPaymentRuntimeConfiguration,
   isLivePaymentRuntimeEnabled
@@ -25,6 +26,13 @@ const examId = 'aws-saa-c03';
 const customerId = 'cus_liveLearner001';
 const productId = 'prod_liveAws001';
 const priceId = 'price_liveAwsAnnual001';
+const checkoutRequestBody = (overrides = {}) => ({
+  examId,
+  immediateAccessRequested: true,
+  policyVersion: PURCHASE_POLICY_VERSION,
+  termsAccepted: true,
+  ...overrides
+});
 
 const read = path => readFileSync(path, 'utf8');
 
@@ -161,8 +169,8 @@ test('Step 010B deployment-disabled Stripe live-mode scaffolding', async t => {
   await t.test('live Checkout uses only server catalogue values, card payment and server retry keys', async () => {
     const { calls, dependencies } = createLiveRuntime();
     const handler = createExamCheckoutHandler(dependencies);
-    const first = await handler(request({ examId }));
-    const retry = await handler(request({ examId }));
+    const first = await handler(request(checkoutRequestBody()));
+    const retry = await handler(request(checkoutRequestBody()));
 
     assert.equal(first.status, 200);
     assert.equal(retry.status, 200);
@@ -174,6 +182,9 @@ test('Step 010B deployment-disabled Stripe live-mode scaffolding', async t => {
     assert.match(calls.checkout[0].options.idempotencyKey, /^latt-live-v1-checkout-/);
     assert.deepEqual(calls.checkout[0].input.payment_method_types, ['card']);
     assert.deepEqual(calls.checkout[0].input.line_items, [{ price: priceId, quantity: 1 }]);
+    assert.equal(calls.checkout[0].input.metadata.latt_policy_version, PURCHASE_POLICY_VERSION);
+    assert.equal(calls.checkout[0].input.metadata.latt_terms_accepted, 'true');
+    assert.equal(calls.checkout[0].input.metadata.latt_immediate_access_requested, 'true');
     assert.equal(calls.checkout[0].input.customer, customerId);
     assert.equal(calls.checkout[0].input.success_url, `${LIVE_PAYMENT_SITE_ORIGIN}/#payment/success`);
     assert.equal(calls.checkout[0].input.cancel_url, `${LIVE_PAYMENT_SITE_ORIGIN}/#payment/cancelled`);
@@ -183,7 +194,7 @@ test('Step 010B deployment-disabled Stripe live-mode scaffolding', async t => {
       p_user_id: userId
     });
 
-    const injected = await handler(request({ examId, priceId: 'price_attacker' }));
+    const injected = await handler(request(checkoutRequestBody({ priceId: 'price_attacker' })));
     assert.equal(injected.status, 400);
     assert.equal(calls.checkout.length, 2);
   });
@@ -253,9 +264,9 @@ test('Step 010B deployment-disabled Stripe live-mode scaffolding', async t => {
         } }
       }
     });
-    assert.equal((await service.createExamCheckout({ examId })).success, true);
+    assert.equal((await service.createExamCheckout(checkoutRequestBody())).success, true);
     assert.deepEqual(calls, [{
-      name: 'create-exam-checkout-live', options: { body: { examId } }
+      name: 'create-exam-checkout-live', options: { body: checkoutRequestBody() }
     }]);
 
     const failClosed = createPaymentBrowserService({
@@ -264,7 +275,7 @@ test('Step 010B deployment-disabled Stripe live-mode scaffolding', async t => {
       mode: 'live',
       supabaseClient: { auth: {}, functions: {} }
     });
-    const rejected = await failClosed.createExamCheckout({ examId });
+    const rejected = await failClosed.createExamCheckout(checkoutRequestBody());
     assert.equal(rejected.runtimeDisabled, true);
     assert.equal(rejected.configurationInvalid, true);
   });

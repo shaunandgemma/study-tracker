@@ -12,6 +12,7 @@ import {
   createStripeTestDependencies,
   stripeTestFixture as fixture
 } from './fixtures/stripe/paymentFixtures.mjs';
+import { PURCHASE_POLICY_VERSION } from '../supabase/functions/_shared/payments/contracts.mjs';
 
 const config = readFileSync('supabase/config.toml', 'utf8');
 const sharedSources = [
@@ -39,6 +40,14 @@ function browserRequest(path, body = {}, options = {}) {
   });
 }
 
+const checkoutBody = (overrides = {}) => ({
+  examId: fixture.examId,
+  immediateAccessRequested: true,
+  policyVersion: PURCHASE_POLICY_VERSION,
+  termsAccepted: true,
+  ...overrides
+});
+
 async function responseJson(response) {
   return JSON.parse(await response.text());
 }
@@ -57,7 +66,7 @@ test('Step 008C local Stripe server functions', async t => {
   await t.test('2. checkout uses only the server-selected annual Price, customer and fixed redirects', async () => {
     const { calls, dependencies } = createStripeTestDependencies();
     const response = await createExamCheckoutHandler(dependencies)(
-      browserRequest('/checkout', { examId: fixture.examId })
+      browserRequest('/checkout', checkoutBody())
     );
 
     assert.equal(response.status, 200);
@@ -69,10 +78,22 @@ test('Step 008C local Stripe server functions', async t => {
       client_reference_id: fixture.userId,
       customer: fixture.customerId,
       line_items: [{ price: fixture.priceId, quantity: 1 }],
-      metadata: { latt_exam_id: fixture.examId, latt_user_id: fixture.userId },
+      metadata: {
+        latt_exam_id: fixture.examId,
+        latt_immediate_access_requested: 'true',
+        latt_policy_version: PURCHASE_POLICY_VERSION,
+        latt_terms_accepted: 'true',
+        latt_user_id: fixture.userId
+      },
       mode: 'subscription',
       subscription_data: {
-        metadata: { latt_exam_id: fixture.examId, latt_user_id: fixture.userId }
+        metadata: {
+          latt_exam_id: fixture.examId,
+          latt_immediate_access_requested: 'true',
+          latt_policy_version: PURCHASE_POLICY_VERSION,
+          latt_terms_accepted: 'true',
+          latt_user_id: fixture.userId
+        }
       },
       success_url: fixture.successUrl
     });
@@ -91,7 +112,7 @@ test('Step 008C local Stripe server functions', async t => {
       })
     });
     const response = await createExamCheckoutHandler(dependencies)(
-      browserRequest('/checkout', { examId: fixture.examId })
+      browserRequest('/checkout', checkoutBody())
     );
     assert.equal(response.status, 200);
     assert.deepEqual(calls.customers[0], {
@@ -105,10 +126,10 @@ test('Step 008C local Stripe server functions', async t => {
     });
   });
 
-  await t.test('4. checkout rejects identity, origin, exam and client-controlled payment fields fail closed', async () => {
+  await t.test('4. checkout requires current purchase consent and rejects identity, origin and client-controlled payment fields', async () => {
     const unauthenticated = createStripeTestDependencies({ authenticate: async () => null });
     const unauthenticatedResponse = await createExamCheckoutHandler(unauthenticated.dependencies)(
-      browserRequest('/checkout', { examId: fixture.examId })
+      browserRequest('/checkout', checkoutBody())
     );
     assert.equal(unauthenticatedResponse.status, 401);
 
@@ -117,25 +138,36 @@ test('Step 008C local Stripe server functions', async t => {
     });
     assert.equal(
       (await createExamCheckoutHandler(unverified.dependencies)(
-        browserRequest('/checkout', { examId: fixture.examId })
+        browserRequest('/checkout', checkoutBody())
       )).status,
       403
     );
 
     const standard = createStripeTestDependencies();
+    const missingConsentResponse = await createExamCheckoutHandler(standard.dependencies)(
+      browserRequest('/checkout', { examId: fixture.examId })
+    );
+    assert.equal(missingConsentResponse.status, 400);
+    assert.deepEqual(await responseJson(missingConsentResponse), { error: 'purchase_consent_required' });
+
+    const stalePolicyResponse = await createExamCheckoutHandler(standard.dependencies)(
+      browserRequest('/checkout', checkoutBody({ policyVersion: '2026-08-25' }))
+    );
+    assert.equal(stalePolicyResponse.status, 400);
+    assert.deepEqual(await responseJson(stalePolicyResponse), { error: 'purchase_consent_required' });
+
     const injectionResponse = await createExamCheckoutHandler(standard.dependencies)(
-      browserRequest('/checkout', {
-        examId: fixture.examId,
+      browserRequest('/checkout', checkoutBody({
         priceId: 'price_attacker',
         customerId: 'cus_attacker',
         amount: 1,
         successUrl: 'https://attacker.invalid'
-      })
+      }))
     );
     assert.equal(injectionResponse.status, 400);
     assert.equal(standard.calls.checkoutSessions.length, 0);
 
-    const invalidOriginRequest = browserRequest('/checkout', { examId: fixture.examId }, {
+    const invalidOriginRequest = browserRequest('/checkout', checkoutBody(), {
       headers: { Origin: 'https://attacker.invalid', 'Content-Type': 'application/json' }
     });
     assert.equal(
@@ -157,7 +189,7 @@ test('Step 008C local Stripe server functions', async t => {
       })
     });
     const response = await createExamCheckoutHandler(dependencies)(
-      browserRequest('/checkout', { examId: fixture.examId })
+      browserRequest('/checkout', checkoutBody())
     );
     assert.equal(response.status, 409);
     assert.deepEqual(await responseJson(response), { error: 'exam_access_already_active' });

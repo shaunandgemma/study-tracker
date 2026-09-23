@@ -4,6 +4,7 @@ import test from 'node:test';
 
 import {
   PAYMENT_RUNTIME_INVOCATION_ENABLED,
+  PURCHASE_POLICY_VERSION,
   createPaymentBrowserService,
   getPaymentRuntimeConfiguration,
   isCanonicalPaymentExamId,
@@ -14,6 +15,12 @@ import {
 import { getExamPaymentControlPolicy } from '../src/features/payments/examPaymentControlPolicy.js';
 
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const acceptedPurchase = examId => ({
+  examId,
+  immediateAccessRequested: true,
+  policyVersion: PURCHASE_POLICY_VERSION,
+  termsAccepted: true
+});
 
 function clientDouble({ responseUrl = 'https://checkout.stripe.com/c/pay/test' } = {}) {
   const calls = [];
@@ -48,7 +55,7 @@ test('Step 008L local exact-exam payment controls', async t => {
     }), { enabled: false, invalid: true, mode: null });
     const client = clientDouble();
     const service = createPaymentBrowserService({ supabaseClient: client });
-    const result = await service.createExamCheckout({ examId: 'aws-saa-c03' });
+    const result = await service.createExamCheckout(acceptedPurchase('aws-saa-c03'));
     assert.equal(result.runtimeDisabled, true);
     assert.equal(client.calls.length, 0);
   });
@@ -62,11 +69,16 @@ test('Step 008L local exact-exam payment controls', async t => {
 
     const client = clientDouble();
     const service = createPaymentBrowserService({ supabaseClient: client, enabled: true });
-    const result = await service.createExamCheckout({ examId: 'terraform-associate-004' });
+    const missingConsent = await service.createExamCheckout({ examId: 'terraform-associate-004' });
+    assert.equal(missingConsent.success, false);
+    assert.equal(missingConsent.consentRequired, true);
+    assert.equal(client.calls.length, 0);
+
+    const result = await service.createExamCheckout(acceptedPurchase('terraform-associate-004'));
     assert.equal(result.success, true);
     assert.deepEqual(client.calls, [{
       name: 'create-exam-checkout',
-      options: { body: { examId: 'terraform-associate-004' } }
+      options: { body: acceptedPurchase('terraform-associate-004') }
     }]);
 
     const comingSoonClient = clientDouble();
@@ -74,7 +86,7 @@ test('Step 008L local exact-exam payment controls', async t => {
       supabaseClient: comingSoonClient,
       enabled: true
     });
-    const comingSoon = await comingSoonService.createExamCheckout({ examId: 'comptia-sec-plus' });
+    const comingSoon = await comingSoonService.createExamCheckout(acceptedPurchase('comptia-sec-plus'));
     assert.equal(comingSoon.success, false);
     assert.equal(comingSoon.availabilityError, true);
     assert.equal(comingSoonClient.calls.length, 0);
@@ -109,8 +121,13 @@ test('Step 008L local exact-exam payment controls', async t => {
     assert.match(appLanding, /Annual exam access/);
     assert.match(appLanding, /canShowLandingPaymentControl/);
     assert.match(appLanding, /<ExamPaymentControls accessPolicy=\{accessPolicy\} examId=\{exam\.id\}/);
-    assert.match(controls, /<del[^>]*>\{comparisonPrice\}<\/del>/);
+    assert.doesNotMatch(controls, /<del/);
     assert.match(controls, /\{currentPrice\}/);
+    assert.match(controls, /Pay \$\{currentPrice\} — start annual subscription/);
+    assert.match(controls, /full refund may be requested within 14 days/i);
+    assert.match(controls, /immediateAccessRequested: true/);
+    assert.match(controls, /termsAccepted: true/);
+    assert.match(controls, /purchaseConsentAccepted/);
     assert.match(controls, /access\.kind === 'staff'/);
     assert.match(controls, /access\.kind === 'paid'/);
     assert.match(controls, /access\.kind === 'demo'/);

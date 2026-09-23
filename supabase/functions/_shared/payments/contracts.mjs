@@ -4,6 +4,8 @@ export const CANONICAL_EXAM_IDS = Object.freeze([
   'comptia-sec-plus'
 ]);
 
+export const PURCHASE_POLICY_VERSION = '2026-09-23';
+
 export const SUPPORTED_STRIPE_EVENT_TYPES = Object.freeze([
   'checkout.session.completed',
   'invoice.paid',

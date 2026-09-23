@@ -81,11 +81,11 @@ const approvedScreenContent = () => Object.fromEntries(
 );
 
 test('Step 010C4 fail-closed public-information publication readiness', async t => {
-  await t.test('the checked-in manifest is explicitly blocked for all four exact routes', () => {
-    assert.deepEqual(PUBLIC_INFORMATION_REQUIRED_ROUTES, ['terms', 'privacy', 'refunds', 'support']);
+  await t.test('the checked-in manifest is explicitly blocked for all five exact routes', () => {
+    assert.deepEqual(PUBLIC_INFORMATION_REQUIRED_ROUTES, ['terms', 'privacy', 'refunds', 'cookies', 'support']);
     assert.equal(PUBLIC_INFORMATION_PUBLICATION_MANIFEST.publicationStatus, 'blocked');
     assert.equal(PUBLIC_INFORMATION_PUBLICATION_GATE.ready, false);
-    assert.ok(PUBLIC_INFORMATION_PUBLICATION_GATE.blockers.length >= 30);
+    assert.ok(PUBLIC_INFORMATION_PUBLICATION_GATE.blockers.length >= 15);
 
     for (const route of PUBLIC_INFORMATION_REQUIRED_ROUTES) {
       const screen = PUBLIC_INFORMATION_PUBLICATION_MANIFEST.screens[route];

@@ -1,4 +1,5 @@
 export const PUBLIC_INFORMATION_ROUTE_HASHES = Object.freeze({
+  cookies: '#legal/cookies-storage',
   privacy: '#legal/privacy',
   refunds: '#legal/refund-cancellation',
   support: '#support',

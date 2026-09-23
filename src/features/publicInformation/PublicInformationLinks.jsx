@@ -4,6 +4,7 @@ import { PUBLIC_INFORMATION_ROUTE_HASHES } from './publicInformationRoutes.js';
 const PUBLIC_INFORMATION_LINKS = Object.freeze([
   Object.freeze({ href: PUBLIC_INFORMATION_ROUTE_HASHES.terms, label: 'Terms' }),
   Object.freeze({ href: PUBLIC_INFORMATION_ROUTE_HASHES.privacy, label: 'Privacy' }),
+  Object.freeze({ href: PUBLIC_INFORMATION_ROUTE_HASHES.cookies, label: 'Cookies & storage' }),
   Object.freeze({ href: PUBLIC_INFORMATION_ROUTE_HASHES.refunds, label: 'Refunds & cancellation' }),
   Object.freeze({ href: PUBLIC_INFORMATION_ROUTE_HASHES.support, label: 'Support' })
 ]);

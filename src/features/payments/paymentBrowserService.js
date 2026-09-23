@@ -30,6 +30,7 @@ const runtimeConfiguration = getPaymentRuntimeConfiguration(runtimeEnv);
 export const PAYMENT_RUNTIME_INVOCATION_ENABLED = runtimeConfiguration.enabled;
 export const PAYMENT_RUNTIME_MODE = runtimeConfiguration.mode;
 export const PAYMENT_RUNTIME_CONFIGURATION_INVALID = runtimeConfiguration.invalid;
+export const PURCHASE_POLICY_VERSION = '2026-09-23';
 
 const PAYMENT_FUNCTIONS = Object.freeze({
   live: Object.freeze({
@@ -106,17 +107,31 @@ export function createPaymentBrowserService(options = {}) {
     return Object.freeze({ success: true, url });
   }
 
-  async function createExamCheckout({ examId } = {}) {
+  async function createExamCheckout({
+    examId,
+    immediateAccessRequested = false,
+    policyVersion,
+    termsAccepted = false
+  } = {}) {
     if (!isCanonicalPaymentExamId(examId)) {
       return failure('A supported exact exam is required.', { validationError: true });
     }
     if (!isExamIdSelectable(examId)) {
       return failure('This exam is coming soon and cannot be purchased.', { availabilityError: true });
     }
+    if (
+      termsAccepted !== true
+      || immediateAccessRequested !== true
+      || policyVersion !== PURCHASE_POLICY_VERSION
+    ) {
+      return failure('Accept the annual subscription and immediate-access terms before checkout.', {
+        consentRequired: true
+      });
+    }
 
     return invokeProtectedFunction({
       functionName: functions.checkout,
-      body: { examId },
+      body: { examId, immediateAccessRequested, policyVersion, termsAccepted },
       urlKind: 'checkout'
     });
   }

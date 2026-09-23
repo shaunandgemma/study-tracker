@@ -1,11 +1,12 @@
 import { PUBLIC_INFORMATION_ROUTE_HASHES } from './publicInformationRoutes.js';
 
-export const PUBLIC_INFORMATION_PUBLICATION_SCHEMA_VERSION = 2;
+export const PUBLIC_INFORMATION_PUBLICATION_SCHEMA_VERSION = 3;
 
 export const PUBLIC_INFORMATION_REQUIRED_ROUTES = Object.freeze([
   'terms',
   'privacy',
   'refunds',
+  'cookies',
   'support'
 ]);
 
@@ -68,6 +69,7 @@ export const PUBLIC_INFORMATION_PUBLICATION_MANIFEST = Object.freeze({
     terms: blockedScreen('terms'),
     privacy: blockedScreen('privacy'),
     refunds: blockedScreen('refunds'),
+    cookies: blockedScreen('cookies'),
     support: blockedScreen('support')
   }),
   seller: Object.freeze({
@@ -80,8 +82,8 @@ export const PUBLIC_INFORMATION_PUBLICATION_MANIFEST = Object.freeze({
   }),
   support: Object.freeze({
     monitoredEmail: null,
-    responseTarget: null,
-    complaintsRoute: null
+    responseTarget: 'Acknowledge within two working days and aim to resolve within ten working days.',
+    complaintsRoute: 'Send a written complaint through the published support address with Formal complaint in the subject line.'
   }),
   legal: Object.freeze({
     termsApproved: false,
@@ -96,19 +98,35 @@ export const PUBLIC_INFORMATION_PUBLICATION_MANIFEST = Object.freeze({
   }),
   retention: Object.freeze({
     scheduleApproved: false,
-    scheduleReference: null
+    scheduleReference: 'Customer-data retention schedule dated 23 September 2026'
   }),
   processors: Object.freeze({
     inventoryApproved: false,
-    entries: Object.freeze([])
+    entries: Object.freeze([
+      Object.freeze({
+        name: 'Stripe',
+        purpose: 'Hosted checkout, subscription billing, fraud prevention, refunds and payment records',
+        locationOrTransferSafeguard: 'Stripe DPA and its UK international data-transfer safeguards'
+      }),
+      Object.freeze({
+        name: 'Supabase',
+        purpose: 'Authentication, protected application data, learner progress and server-side payment reconciliation',
+        locationOrTransferSafeguard: 'Selected project region plus the Supabase DPA and applicable UK transfer safeguards'
+      }),
+      Object.freeze({
+        name: 'AWS',
+        purpose: 'Amplify website hosting, content delivery, TLS and operational hosting logs',
+        locationOrTransferSafeguard: 'Configured AWS region and AWS data-processing terms with applicable UK transfer safeguards'
+      })
+    ])
   }),
   coolingOff: Object.freeze({
     decisionApproved: false,
-    immediateDigitalAccessWording: null
+    immediateDigitalAccessWording: 'The learner requests immediate access after payment. Learning All Things Tech separately promises a full refund when requested within 14 days of the initial charge or an annual renewal, even if access has started.'
   }),
   tax: Object.freeze({
-    priceTreatment: null,
-    customerWording: null,
+    priceTreatment: 'tax_inclusive',
+    customerWording: 'The total charged is £19.99 per year, including any applicable tax. No additional mandatory fee is added at checkout.',
     adviceRecord: null
   }),
   statementDescriptor: Object.freeze({

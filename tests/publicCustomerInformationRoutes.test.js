@@ -10,14 +10,16 @@ import {
 const read = path => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
 test('Step 010C3 public customer information screens', async t => {
-  await t.test('only the four exact public hashes resolve', () => {
+  await t.test('only the five exact public hashes resolve', () => {
     assert.deepEqual(PUBLIC_INFORMATION_ROUTE_HASHES, {
+      cookies: '#legal/cookies-storage',
       privacy: '#legal/privacy',
       refunds: '#legal/refund-cancellation',
       support: '#support',
       terms: '#legal/terms'
     });
     assert.equal(getPublicInformationRoute({ hash: '#legal/terms' }), 'terms');
+    assert.equal(getPublicInformationRoute({ hash: '#legal/cookies-storage' }), 'cookies');
     assert.equal(getPublicInformationRoute({ hash: '#LEGAL/PRIVACY' }), 'privacy');
     assert.equal(getPublicInformationRoute({ hash: '#legal/refund-cancellation' }), 'refunds');
     assert.equal(getPublicInformationRoute({ hash: '#support' }), 'support');
@@ -35,18 +37,21 @@ test('Step 010C3 public customer information screens', async t => {
     assert.match(app, /<PublicInformationEntry/);
   });
 
-  await t.test('all four draft screens fail closed on unresolved individual-seller information', () => {
+  await t.test('all five policy screens fail closed on unresolved individual-seller information', () => {
     const entry = read('src/features/publicInformation/PublicInformationEntry.jsx');
-    assert.match(entry, /Draft — not approved for live sales/);
-    assert.match(entry, /individual UK app creator/);
-    assert.match(entry, /Seller and professional review required before live payments can be enabled/);
+    assert.match(entry, /Not yet approved for live sales/);
+    assert.match(entry, /individual UK trader/);
+    assert.match(entry, /seller identity, public contact details and independent legal and privacy approval remain required/);
     assert.match(entry, /SELLER REVIEW REQUIRED/);
     assert.match(entry, /£19\.99/);
-    assert.match(entry, /renew annually/);
+    assert.match(entry, /renews automatically every twelve months/);
     assert.match(entry, /LATT LEARNING/);
     assert.match(entry, /Stripe’s hosted Customer Portal/);
-    assert.match(entry, /does not receive or store full card details/);
-    assert.match(entry, /Statutory rights remain unaffected/);
+    assert.match(entry, /does not receive or store the full card number/);
+    assert.match(entry, /does not replace or restrict statutory rights/);
+    assert.match(entry, /Fourteen-day full-refund promise/);
+    assert.match(entry, /does not currently set advertising cookies/);
+    assert.match(entry, /Formal complaints process/);
     assert.doesNotMatch(entry, /functions\.invoke|STRIPE_LIVE_RESTRICTED_KEY|SUPABASE_SERVICE_ROLE_KEY/);
   });
 
@@ -58,6 +63,7 @@ test('Step 010C3 public customer information screens', async t => {
     const paymentReturn = read('src/features/payments/PaymentReturnEntry.jsx');
     assert.match(links, /Terms/);
     assert.match(links, /Privacy/);
+    assert.match(links, /Cookies & storage/);
     assert.match(links, /Refunds & cancellation/);
     assert.match(links, /Support/);
     assert.match(app, /<PublicInformationLinks/);

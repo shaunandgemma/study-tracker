@@ -1,5 +1,6 @@
 import {
   PaymentHttpError,
+  PURCHASE_POLICY_VERSION,
   assertAuthenticatedUser,
   assertCheckoutContext,
   assertExactObject,
@@ -58,8 +59,15 @@ export function createExamCheckoutHandler(dependencies) {
   return createBrowserRoute(dependencies, async request => {
     const user = assertAuthenticatedUser(await authenticate(request));
     const body = await readJsonObject(request);
-    assertExactObject(body, ['examId']);
+    assertExactObject(body, ['examId', 'immediateAccessRequested', 'policyVersion', 'termsAccepted']);
     if (!isCanonicalExamId(body.examId)) throw new PaymentHttpError(400, 'invalid_exam');
+    if (
+      body.termsAccepted !== true
+      || body.immediateAccessRequested !== true
+      || body.policyVersion !== PURCHASE_POLICY_VERSION
+    ) {
+      throw new PaymentHttpError(400, 'purchase_consent_required');
+    }
 
     const context = assertCheckoutContext(
       await getCheckoutContext({ userId: user.id, examId: body.examId, livemode }),
@@ -88,7 +96,13 @@ export function createExamCheckoutHandler(dependencies) {
       customerId = customer.id;
     }
 
-    const metadata = { latt_exam_id: body.examId, latt_user_id: user.id };
+    const metadata = {
+      latt_exam_id: body.examId,
+      latt_immediate_access_requested: 'true',
+      latt_policy_version: PURCHASE_POLICY_VERSION,
+      latt_terms_accepted: 'true',
+      latt_user_id: user.id
+    };
     const checkoutInput = {
       cancel_url: cancelUrl,
       client_reference_id: user.id,

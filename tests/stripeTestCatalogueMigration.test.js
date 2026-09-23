@@ -72,16 +72,15 @@ test('Step 008D exact Stripe test-mode catalogue', async t => {
     assert.match(migration, /has_table_privilege\('service_role', 'public\.payment_exam_products', 'SELECT'\)/);
   });
 
-  await t.test('6. retains £29.99 only as local comparison display and £19.99 as the current price', () => {
+  await t.test('6. presents only the verified £19.99 annual price without an unsupported comparison claim', () => {
     assert.deepEqual(annualExamPromotion, {
       billingInterval: 'year',
-      comparisonAmountMinor: 2999,
       currency: 'GBP',
       currentAmountMinor: 1999,
-      label: 'Limited-time annual price'
+      label: 'Annual subscription price'
     });
-    assert.equal(formatAnnualExamPrice(annualExamPromotion.comparisonAmountMinor), '£29.99');
     assert.equal(formatAnnualExamPrice(annualExamPromotion.currentAmountMinor), '£19.99');
+    assert.equal(Object.hasOwn(annualExamPromotion, 'comparisonAmountMinor'), false);
     assert.doesNotMatch(migration, /2999|29\.99/);
   });
 

@@ -4,12 +4,12 @@ import { formatExamEntitlementExpiry } from '../access/ExamAccessStatus.jsx';
 import { annualExamPromotion, formatAnnualExamPrice } from './examPricing.js';
 import {
   PAYMENT_RUNTIME_INVOCATION_ENABLED,
+  PURCHASE_POLICY_VERSION,
   paymentBrowserService
 } from './paymentBrowserService.js';
 import { getExamPaymentControlPolicy } from './examPaymentControlPolicy.js';
 import { PublicInformationLinks } from '../publicInformation/PublicInformationLinks.jsx';
 
-const comparisonPrice = formatAnnualExamPrice(annualExamPromotion.comparisonAmountMinor);
 const currentPrice = formatAnnualExamPrice(annualExamPromotion.currentAmountMinor);
 
 function PaymentAction({ children, disabled, loading, onClick }) {
@@ -47,14 +47,26 @@ export const ExamPaymentControls = ({
   const policy = getExamPaymentControlPolicy(accessPolicy, examId, runtimeEnabled);
   const { access } = policy;
   const [actionState, setActionState] = useState({ error: '', loading: false });
+  const [purchaseConsentAccepted, setPurchaseConsentAccepted] = useState(false);
+  const purchaseConsentRequired = policy.action === 'checkout';
 
   const startProtectedAction = async () => {
-    if (!policy.actionEnabled || !policy.action || actionState.loading) return;
+    if (
+      !policy.actionEnabled
+      || !policy.action
+      || actionState.loading
+      || (purchaseConsentRequired && !purchaseConsentAccepted)
+    ) return;
     setActionState({ error: '', loading: true });
 
     try {
       const result = policy.action === 'checkout'
-        ? await paymentService.createExamCheckout({ examId })
+        ? await paymentService.createExamCheckout({
+          examId,
+          immediateAccessRequested: true,
+          policyVersion: PURCHASE_POLICY_VERSION,
+          termsAccepted: true
+        })
         : await paymentService.createBillingPortalSession();
       if (!result?.success || !result.url) {
         setActionState({ error: result?.error || 'The protected payment service was unavailable.', loading: false });
@@ -112,10 +124,9 @@ export const ExamPaymentControls = ({
     <div className="mt-5 rounded-2xl border border-amber-700/60 bg-gradient-to-br from-amber-950/45 to-slate-950/80 p-4">
       <div className="flex items-center gap-2 text-amber-200">
         <Sparkles className="h-4 w-4" aria-hidden="true" />
-        <p className="text-[10px] font-black uppercase tracking-wider">Limited-time annual access</p>
+        <p className="text-[10px] font-black uppercase tracking-wider">Annual subscription access</p>
       </div>
       <div className="mt-3 flex items-end gap-2">
-        <del className="pb-0.5 text-sm font-bold text-slate-500">{comparisonPrice}</del>
         <span className="text-2xl font-black text-white">{currentPrice}</span>
         <span className="pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">per year</span>
       </div>
@@ -123,8 +134,21 @@ export const ExamPaymentControls = ({
         <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" aria-hidden="true" />
         <span>Unlock this exact exam’s complete workspace for twelve months. Other exams remain separate.</span>
       </div>
+      {purchaseConsentRequired && (
+        <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-slate-700 bg-slate-900/70 p-3 text-[11px] leading-5 text-slate-300">
+          <input
+            type="checkbox"
+            checked={purchaseConsentAccepted}
+            onChange={event => setPurchaseConsentAccepted(event.target.checked)}
+            className="mt-1 h-4 w-4 shrink-0 accent-amber-400"
+          />
+          <span>
+            I agree to the <a className="font-bold text-indigo-300 underline" href="#legal/terms">Terms</a>, understand that £19.99 is charged now and automatically every twelve months until cancelled, and request immediate access. I acknowledge that immediate digital supply can affect statutory cancellation rights, while Learning All Things Tech’s separate 14-day full-refund promise still applies.
+          </span>
+        </label>
+      )}
       <PaymentAction
-        disabled={!policy.actionEnabled}
+        disabled={!policy.actionEnabled || (purchaseConsentRequired && !purchaseConsentAccepted)}
         loading={actionState.loading}
         onClick={startProtectedAction}
       >
@@ -133,8 +157,8 @@ export const ExamPaymentControls = ({
           : access.kind === 'demo'
             ? 'Sign in with a learner account to purchase'
             : policy.actionEnabled
-              ? `Purchase annual access — ${currentPrice}`
-              : 'Purchase annual access — activation pending'}
+              ? `Pay ${currentPrice} — start annual subscription`
+              : 'Annual subscription — activation pending'}
       </PaymentAction>
       {!runtimeEnabled && (
         <p className="mt-2 text-center text-[10px] leading-4 text-slate-500">
@@ -143,7 +167,7 @@ export const ExamPaymentControls = ({
       )}
       {actionError}
       <p className="mt-3 text-[10px] leading-4 text-slate-400">
-        £19.99 is the proposed tax-inclusive annual charge for this exact exam and is designed to renew yearly until cancelled through Stripe’s hosted Customer Portal. Proposed card statement: LATT LEARNING. Seller and professional review remain required before live payments.
+        £19.99 is charged now for twelve months of this exact exam and automatically every twelve months until cancelled through Stripe’s hosted Customer Portal. The total includes any applicable tax and no additional mandatory fee is added at checkout. Cancel any time to stop the next renewal. A full refund may be requested within 14 days of the initial charge or an annual renewal, even if access has started. Proposed card statement: LATT LEARNING. Seller identity, contact details and independent review remain required before live payments.
       </p>
       <PublicInformationLinks compact className="mt-3" />
     </div>
